@@ -1,0 +1,9 @@
+{
+  "name": "jiancheng-daka-api",
+  "version": "0.2.0",
+  "private": true,
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "4.0.2"
+  }
+}

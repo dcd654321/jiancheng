@@ -1,0 +1,13 @@
+{
+  "name": "jiancheng-miniprogram",
+  "version": "0.1.0",
+  "private": true,
+  "description": "渐成习惯打卡原生微信小程序：习惯养成工具开发版",
+  "scripts": {
+    "test": "node --test tests/*.test.cjs",
+    "check": "node scripts/check.cjs",
+    "build:cloud": "node scripts/build-cloud.cjs",
+    "check:cloud": "node scripts/build-cloud.cjs --check"
+  },
+  "engines": { "node": ">=20" }
+}

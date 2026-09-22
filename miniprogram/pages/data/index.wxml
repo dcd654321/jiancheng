@@ -1,0 +1,17 @@
+<view class="page">
+  <view wx:if="{{needsConsent}}" class="empty"><view class="section-title">还没有开始使用</view><view class="sub">请先到“今日”了解数据说明并开始使用。</view></view>
+  <view wx:elif="{{loading}}" class="empty"><view class="section-title">正在读取记录</view><view class="sub">请稍候。</view></view>
+  <view wx:elif="{{dataUnavailable}}" class="empty"><view class="section-title">暂时无法读取记录</view><view class="sub">{{error}}</view></view>
+  <block wx:elif="{{dataReady}}">
+    <view class="heading">数据与隐私</view><view class="sub">记录跟随当前微信账号。</view>
+    <view wx:if="{{error}}" class="error spaced">{{error}}</view>
+    <view class="group"><view class="group-label">同步与导出</view>
+      <button class="setting-row" bindtap="onSync"><view class="grow">数据同步<view class="sub">{{syncText}}</view></view><view class="chevron" /></button>
+      <button class="setting-row" disabled="{{deleting}}" bindtap="onExport"><view class="grow">导出打卡记录<view class="sub">CSV表格，可选择是否包含备注</view></view><view class="chevron" /></button>
+      <button class="setting-row" bindtap="onBackupHub"><view class="grow">导出与找回<view class="sub">完整备份、换机与旧版记录</view></view><view class="chevron" /></button>
+      <button wx:if="{{exportPath}}" class="setting-row" bindtap="onResend">重新发送导出文件</button>
+    </view>
+    <view class="group"><view class="group-label">隐私说明</view><button class="setting-row" bindtap="onPrivacy"><text class="grow">哪些数据会保存？</text><view class="chevron" /></button></view>
+    <view class="danger-zone"><view class="field-label danger">清除个人数据</view><view class="sub">清除云端习惯、打卡和备注，以及本机缓存与导出文件。操作不可恢复，请先导出备份。</view><button class="text-button danger spaced" disabled="{{deleting}}" loading="{{deleting}}" bindtap="onDelete">清除全部打卡数据</button></view>
+  </block>
+</view>

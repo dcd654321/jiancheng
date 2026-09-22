@@ -1,0 +1,26 @@
+<view class="page compact-form">
+  <view class="heading">帮我定个小目标</view><view class="sub">选择方向和时间，先看看建议。</view>
+  <view class="form-field"><view class="field-label">想从什么开始</view><view class="direction-options"><button wx:for="{{directions}}" wx:key="id" class="day-option {{direction === item.id ? 'selected' : ''}}" data-id="{{item.id}}" disabled="{{busy}}" bindtap="onDirection" aria-label="{{item.label}}{{direction === item.id ? '已选' : '未选'}}">{{item.label}}</button></view></view>
+  <view class="form-field"><label class="field-label" for="minutes">每次最多几分钟</label><input id="minutes" class="input" type="number" maxlength="2" value="{{minutes}}" disabled="{{busy}}" bindinput="onMinutes" placeholder="1—60分钟" /><view class="sub">1—60分钟，建议不会超过这个时间。</view></view>
+  <button class="disclosure spaced" disabled="{{busy}}" bindtap="onMore" aria-expanded="{{moreOpen}}"><view class="grow"><view>安排在哪些天</view><view class="sub">{{inputSchedule}}</view></view><view class="chevron {{moreOpen ? 'up' : 'down'}}" /></button>
+  <view wx:if="{{moreOpen}}">
+    <view class="form-field"><view class="field-label">哪些天做</view><view class="week-options"><button wx:for="{{days}}" wx:key="value" class="day-option {{item.selected ? 'selected' : ''}}" data-day="{{item.value}}" disabled="{{busy}}" bindtap="onDay" aria-label="周{{item.label}}{{item.selected ? '已选' : '未选'}}">{{item.label}}</button></view><view class="sub spaced">按星期安排，不含节假日调休。</view></view>
+    <view class="form-field"><view class="field-label">计划时间（选填）</view><picker mode="time" disabled="{{busy}}" value="{{time || '20:30'}}" bindchange="onTime"><view class="picker picker-select">{{time || '不固定时间'}}<view class="chevron down" /></view></picker><button wx:if="{{time}}" class="text-button" disabled="{{busy}}" bindtap="onClearTime">不固定时间</button><view class="sub">只用于排序，不会自动提醒。</view></view>
+  </view>
+  <view wx:if="{{error}}" class="error spaced">{{error}}</view>
+  <view class="actions"><button class="primary" disabled="{{busy}}" bindtap="onRules">给我一个建议</button></view>
+  <view class="sub spaced">基础建议按填写信息生成，不发送给AI。预览不会创建习惯或打卡。</view>
+  <view wx:if="{{configured}}">
+    <view class="notice">AI只接收本页的方向、分钟数、星期和时间，不上传历史打卡或私人备注。结果需要自行核对。</view>
+    <checkbox-group bindchange="onConsent"><label class="consent"><checkbox value="agree" checked="{{consent}}" disabled="{{busy}}" color="#245c44" /><text>同意将本次安排发送给AI服务，仅用于生成计划建议。</text></label></checkbox-group>
+    <button class="secondary spaced" loading="{{busy}}" disabled="{{busy || !consent}}" bindtap="onGenerate">请AI细化建议</button>
+  </view>
+  <view wx:if="{{preview}}" id="plan-preview" class="preview">
+    <view class="sub">{{preview.source === 'ai' ? 'AI生成 · 请自行核对' : '基础建议 · 非AI生成'}}</view>
+    <view class="result-title">{{preview.draft.title}} · {{preview.draft.target}}分钟</view><view>{{preview.draft.action}}</view>
+    <view class="sub spaced">{{schedule}}{{preview.draft.time ? ' · ' + preview.draft.time : ''}}</view><view class="sub">忙时的小目标：{{preview.draft.minimum ? preview.draft.minimum + '分钟' : '不设置'}}</view>
+    <view class="sub spaced">{{preview.draft.reason}}</view><view class="sub spaced">下一步确认名称、目标和安排。动作建议供参考，不作为长期计划说明保存。</view>
+    <button class="primary spaced" disabled="{{busy}}" bindtap="onAdopt">使用这个计划</button>
+  </view>
+  <view class="sub spaced">不承诺固定天数养成习惯，不提供医疗或训练处方。</view>
+</view>

@@ -1,0 +1,15 @@
+<view class="page">
+  <view wx:if="{{needsConsent}}" class="empty"><view class="section-title">还没有开始使用</view><view class="sub">请先到“今日”了解数据说明并开始使用。</view></view>
+  <view wx:elif="{{loading}}" class="empty"><view class="section-title">正在读取记录</view><view class="sub">请稍候。</view></view>
+  <view wx:elif="{{dataUnavailable}}" class="empty"><view class="section-title">暂时无法读取记录</view><view class="sub">{{error}}</view></view>
+  <block wx:elif="{{dataReady}}">
+    <view class="heading">导出与找回</view>
+    <view class="section-title">换手机，怎么找回？</view><view class="sub">使用同一微信账号打开小程序，即可读取已同步到云端的记录。</view>
+    <view class="notice">有待同步记录时，请先联网完成同步，再清缓存或换手机。未同步的记录只在当前设备。</view>
+    <view wx:if="{{error}}" class="error spaced">{{error}}</view>
+    <view class="section-title">保存一份备份</view><view class="sub">JSON备份用于留存完整数据，可能包含私人备注。本版本暂不支持从文件导入恢复。</view>
+    <button class="setting-row" disabled="{{busy}}" bindtap="onCloudBackup"><view class="grow">导出完整备份<view class="sub">含当前记录与待同步操作</view></view><view class="chevron" /></button>
+    <view wx:if="{{hasLegacyData}}" class="group"><view class="group-label">旧版记录</view><button class="setting-row" disabled="{{busy}}" bindtap="onLegacyBackup"><view class="grow">导出旧版本机记录<view class="sub">不会上传或合并到云端</view></view><view class="chevron" /></button></view>
+    <button wx:if="{{exportPath}}" class="text-button spaced" bindtap="onResend">重新发送备份文件</button>
+  </block>
+</view>

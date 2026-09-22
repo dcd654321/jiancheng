@@ -1,0 +1,2 @@
+.preview { margin-top: 24px; border: 1px solid #dce4dc; border-radius: 12px; padding: 16px; }
+.preview-line { margin-top: 10px; overflow-wrap: anywhere; }

@@ -1,0 +1,28 @@
+node_modules/
+project.private.config.json
+.env
+.env.*
+!.env.example
+*.log
+coverage/
+qa/local/
+
+# Local package runner cache and developer-only evidence.
+_npx/
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+.DS_Store
+Thumbs.db
+docs/evidence-*/
+docs/evidence-*.png
+docs/b*-before-*.png
+docs/audits/**/*.png
+docs/UPLOAD-DIAGNOSIS*.md
+docs/CLEANUP-B*.md
+
+# The shared environment contains other applications; only publish this app.
+/cloudfunctions/*
+!/cloudfunctions/jiancheng_daka_api/
