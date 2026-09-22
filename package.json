@@ -7,7 +7,13 @@
     "test": "node --test tests/*.test.cjs",
     "check": "node scripts/check.cjs",
     "build:cloud": "node scripts/build-cloud.cjs",
-    "check:cloud": "node scripts/build-cloud.cjs --check"
+    "check:cloud": "node scripts/build-cloud.cjs --check",
+    "openspec": "node scripts/openspec.cjs"
   },
-  "engines": { "node": ">=20" }
+  "engines": {
+    "node": ">=20.19.0"
+  },
+  "devDependencies": {
+    "@fission-ai/openspec": "1.13.1"
+  }
 }

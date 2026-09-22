@@ -20,11 +20,13 @@
 
 仓库：<https://github.com/dcd654321/jiancheng>
 
-使用 Node.js 20 或更新版本运行 `npm test`、`npm run check` 和 `npm run check:cloud`。真实 SDK 合同测试需要先在 `cloudfunctions/jiancheng_daka_api` 执行 `npm ci` 安装锁定依赖；未安装时该项测试会跳过。微信开发者工具导入仓库根目录的 `project.config.json`。
+使用 Node.js 20.19.0 或更新版本运行 `npm test`、`npm run check`、`npm run check:cloud` 和 OpenSpec。真实 SDK 合同测试需要先在 `cloudfunctions/jiancheng_daka_api` 执行 `npm ci` 安装锁定依赖；未安装时该项测试会跳过。微信开发者工具导入仓库根目录的 `project.config.json`。
 
 仓库不包含 `node_modules`、本机开发者工具配置、密钥、临时缓存、本地诊断记录和验收截图；历史文档中的本机证据路径仅供原开发环境追溯。共享环境中其他小程序的函数不在本项目提交范围内。
 
 修改、未部署边界和回滚见[共享云资源命名记录](docs/CLOUD-NAMESPACE-20260921.md)。
+
+开发变更现使用 OpenSpec 留存提案、验收条件和任务；初始流程与首个共享正式云接入提案见 [OpenSpec 使用说明](docs/OPENSPEC.md)。
 
 ## 当前产品形态
 
@@ -96,7 +98,7 @@ AppSecret没有写入工程，也不应写入前端包。当前身份方案直�
 
 2026-09-20 B019结果：174项测试、105项结构检查、5个云共享模块一致性及原生编译通过；新增15项可靠性回归、4张363×785截图。备注草稿已在真实模拟器验证；离线显示采用运行时状态注入，物理断网重连仍待真机验证。改动与回滚见[可靠性修复记录](docs/RELIABILITY-FIX-20260920.md)。B018真实云基础流程见[启动修复记录](docs/STARTUP-FIX-20260920.md)。
 
-自动化测试需要 Node.js 20或更高；云函数目标运行时另用 Node.js 16.13.2检查。2026-09-16的本地发布门禁结果：147项测试、97项结构检查、5个云共享模块一致性检查全部通过；10个WXML输入编译为99902字节，全部WXSS通过；Node 16检查6个云包文件、SDK加载及 `crypto.randomUUID` 均通过。
+当前开发工具链需要 Node.js 20.19.0 或更高；云函数目标运行时另用 Node.js 16.13.2检查。2026-09-16的本地发布门禁结果：147项测试、97项结构检查、5个云共享模块一致性检查全部通过；10个WXML输入编译为99902字节，全部WXSS通过；Node 16检查6个云包文件、SDK加载及 `crypto.randomUUID` 均通过。
 
 ```powershell
 Set-Location 'D:\codex\coding\yidian-miniprogram'
