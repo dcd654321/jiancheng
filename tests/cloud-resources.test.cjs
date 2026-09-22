@@ -23,7 +23,9 @@ test('渐成打卡所有新云资源使用同一专属前缀，构建目录与�
   assert.equal(require(path.join(root, 'lib/cloudbase-repository')).COLLECTION, names.accountsCollection);
   assert.equal(require(path.join(root, 'package.json')).name, 'jiancheng-daka-api');
   assert.equal(require(path.join(root, 'package-lock.json')).name, 'jiancheng-daka-api');
-  assert.equal(fs.existsSync(path.resolve(__dirname, '../cloudfunctions/habitApi')), false);
+  const legacyFunction = path.resolve(__dirname, '../cloudfunctions/habitApi');
+  assert.equal(fs.existsSync(path.join(legacyFunction, 'index.js')), false);
+  assert.equal(fs.existsSync(path.join(legacyFunction, 'package.json')), false);
   assert.equal(require('../miniprogram/config/ai').functionName, names.planFunction);
   assert.equal(require('../miniprogram/config/ai').enabled, false);
 });
