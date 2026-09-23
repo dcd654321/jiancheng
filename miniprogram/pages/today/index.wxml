@@ -1,7 +1,9 @@
 <import src="../../templates/task.wxml" />
 <view class="page">
   <view wx:if="{{needsConsent}}" class="empty">
-    <view class="heading">从今天的一小步开始。</view><view class="sub">习惯和打卡保存到云端，同一微信账号可找回已同步记录。</view>
+    <view class="heading">再忙，也能做一点。</view>
+    <view class="sub">选一件小事，设好平时目标和忙时的小目标。做完就打卡，回头能看到自己做了几次。</view>
+    <view class="sub">习惯和打卡保存到云端，同一微信账号可找回已同步记录。</view>
     <button class="primary spaced" bindtap="onDataStart">开始使用</button>
   </view>
   <view wx:elif="{{loading}}" class="empty"><view class="section-title">正在读取记录</view><view class="sub">请稍候，不会创建重复数据。</view></view>
@@ -21,8 +23,8 @@
       <button wx:if="{{completed.length}}" class="disclosure spaced" bindtap="onToggleCompleted" aria-expanded="{{showCompleted}}"><text class="grow">已完成 · {{completed.length}}</text><text class="sub">{{showCompleted ? '收起' : '查看'}}</text><view class="chevron {{showCompleted ? 'up' : 'down'}}" /></button>
       <block wx:if="{{showCompleted}}"><block wx:for="{{completed}}" wx:key="id"><template is="task" data="{{task: item}}" /></block></block>
     </block>
-    <view wx:else class="empty"><view class="heading">{{hasHabits ? '今天没有安排' : '开始第一件小事'}}</view><view class="sub">{{hasHabits ? '休息日不算漏做，看看接下来的安排。' : '选一件本来就想做的小事，完成后打卡。'}}</view>
-      <view wx:if="{{!hasHabits}}" class="template-row"><button class="template-choice" data-template="read" bindtap="onCreate">读5分钟</button><button class="template-choice" data-template="study" bindtap="onCreate">复习5分钟</button><button class="template-choice" data-template="tidy" bindtap="onCreate">整理3分钟</button></view>
+    <view wx:else class="empty"><view class="heading">{{hasHabits ? '今天没有安排' : '选一件今天就能做的事'}}</view><view class="sub">{{hasHabits ? '休息日不算漏做，看看接下来的安排。' : '先选一个现成目标，创建前可以改；忙时的小目标也已填好。'}}</view>
+      <view wx:if="{{!hasHabits}}" class="template-row"><button class="template-choice" data-template="read" bindtap="onCreate">读5分钟</button><button class="template-choice" data-template="walk" bindtap="onCreate">走路10分钟</button><button class="template-choice" data-template="study" bindtap="onCreate">复习5分钟</button><button class="template-choice" data-template="tidy" bindtap="onCreate">整理3分钟</button></view>
       <button wx:if="{{hasHabits}}" class="secondary" bindtap="onManage">查看习惯安排</button>
     </view>
     <button class="disclosure spaced" bindtap="onAssistant"><view class="grow"><view>帮我定个小目标</view><view class="sub">填写可用时间，获取一个基础建议</view></view><view class="chevron" /></button>
