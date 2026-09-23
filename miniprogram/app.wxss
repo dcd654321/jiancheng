@@ -20,6 +20,9 @@ button[disabled] { color: #65756c; background: #f1f4ef; }
 .notice { background: #f1f5ee; border-radius: 10px; padding: 12px 14px; font-size: 14px; color: #53675b; margin-top: 20px; }
 .first-guide { display: flex; align-items: flex-start; gap: 8px; overflow-wrap: anywhere; }
 .first-guide .text-button { flex-shrink: 0; }
+.return-heading { color: #183b31; font-weight: 600; overflow-wrap: anywhere; }
+.return-actions { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+.return-actions .secondary { flex: 1 1 116px; min-width: 0; min-height: 48px; padding: 8px; font-size: 14px; overflow-wrap: anywhere; }
 .error { background: #fff0e9; color: #983e28; border-radius: 10px; padding: 12px; margin: 0 0 16px; font-size: 14px; overflow-wrap: anywhere; }
 .empty { padding: 30px 0; }
 .empty .heading { font-size: 23px; }

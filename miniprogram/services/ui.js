@@ -39,6 +39,8 @@ function mutate(page, command, message, options = {}) {
     const info = storageInfo();
     const notice = options.firstCompletion && command.type === 'complete'
       ? (info.pending ? '首次打卡待同步' : '第一步已记下')
+      : options.returnCompletion && command.type === 'complete'
+      ? (info.pending ? '今天继续了，待同步' : '今天继续了')
       : ['complete', 'undo', 'simplify', 'restore', 'note'].includes(command.type)
       ? (info.pending ? '已记录，待同步' : '已记录') : '已保存';
     if (notice) wx.showToast({ title: notice, icon: 'none' });
@@ -119,7 +121,9 @@ const taskActions = {
       try { firstCompletion = !Object.values(store().read().records).some(record => record.status !== 'pending'); }
       catch (err) { error(this, err); return false; }
     }
-    return mutate(this, { type: done ? 'undo' : 'complete', id, date: taskDate }, '', { firstCompletion });
+    const guide = this.data.returnGuide;
+    const returnCompletion = !done && guide && guide.id === id && guide.date === taskDate;
+    return mutate(this, { type: done ? 'undo' : 'complete', id, date: taskDate }, '', { firstCompletion, returnCompletion });
   },
   onSimplify(event) {
     const { id, date: taskDate } = event.currentTarget.dataset;

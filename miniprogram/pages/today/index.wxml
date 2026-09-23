@@ -13,6 +13,14 @@
     <view class="page-header"><view><view class="heading">今日</view><view class="sub">{{dateLabel}}</view></view><button class="add-button" bindtap="onCreate">添加习惯</button></view>
     <button wx:if="{{syncAttention}}" class="notice text-button" bindtap="onSync">{{syncText}} · 查看</button>
     <view wx:if="{{firstHabitGuide}}" class="notice first-guide"><text class="grow">{{firstHabitGuide}}</text><button class="text-button" bindtap="onDismissGuide">知道了</button></view>
+    <view wx:if="{{returnGuide}}" class="notice return-guide">
+      <view class="return-heading">今天继续「{{returnGuide.title}}」</view>
+      <view>隔了几次也没关系，过去不用补打卡。做完今天的目标，再点“打卡”。</view>
+      <view class="return-actions">
+        <button class="secondary" data-id="{{returnGuide.id}}" data-date="{{date}}" bindtap="onReturnOriginal">{{returnGuide.simplified ? '恢复原目标' : '按原目标继续'}}</button>
+        <button wx:if="{{returnGuide.originalTarget > 1}}" class="secondary" data-id="{{returnGuide.id}}" data-date="{{date}}" bindtap="onReturnSmall">少做一点{{returnGuide.minimum ? ' · ' + returnGuide.minimum + returnGuide.unit : ''}}</button>
+      </view>
+    </view>
     <view wx:if="{{!hideQuote}}" class="sub quote">{{quote}}</view>
     <block wx:if="{{total}}">
       <view class="row between section-title"><text>今日进度</text><text>{{done}} / {{total}}</text></view>

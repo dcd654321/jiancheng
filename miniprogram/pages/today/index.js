@@ -1,10 +1,12 @@
 const ui = require('../../services/ui');
 const { QUOTES } = require('../../services/quotes');
+const { firstReturnTask } = require('../../services/gentle-return');
 
 Page(ui.withLifecycle({
   data: { error: '', needsConsent: false, loading: true, dataUnavailable: false, dataReady: false,
     date: '', dateLabel: '', pending: [], completed: [], total: 0, done: 0, minimum: 0, rate: 0,
-    hasHabits: false, hideQuote: false, quote: QUOTES[0], showCompleted: false, firstHabitGuide: '' },
+    hasHabits: false, hideQuote: false, quote: QUOTES[0], showCompleted: false,
+    firstHabitGuide: '', returnGuide: null },
   refresh() {
     ui.read(this, (state, date) => {
       const tasks = ui.domain.tasksOn(state, date);
@@ -28,15 +30,31 @@ Page(ui.withLifecycle({
         const task = pending.find(item => item.id === this._firstGuideId);
         if (task) { pending.splice(pending.indexOf(task), 1); pending.unshift(task); }
       }
-      this.setData({ date, dateLabel: ui.date.label(date), pending, completed, firstHabitGuide,
+      const returnGuide = ui.storageInfo().syncAttention ? null : firstReturnTask(state, date, pending);
+      this.setData({ date, dateLabel: ui.date.label(date), pending, completed, firstHabitGuide, returnGuide,
         total: tasks.length, done: completed.length, minimum: completed.filter(t => t.status === 'minimum').length,
         rate: tasks.length ? completed.length / tasks.length * 100 : 0,
         hasHabits: state.habits.length > 0, hideQuote: state.settings.hideQuote,
         quote: state.settings.hideQuote ? '' : (getApp().quoteSession ? getApp().quoteSession.current() : QUOTES[0]) });
     });
   },
-  onHide() { this.setData({ firstHabitGuide: '' }); this._firstGuideId = null; },
+  onHide() { this.setData({ firstHabitGuide: '', returnGuide: null }); this._firstGuideId = null; },
   onDismissGuide() { this.setData({ firstHabitGuide: '' }); this._firstGuideId = null; },
+  onReturnOriginal(event) {
+    const guide = this.data.returnGuide;
+    if (!guide || guide.id !== event.currentTarget.dataset.id || this.data.date !== ui.date.today()) {
+      this.refresh(); return;
+    }
+    if (guide.simplified) return ui.taskActions.onRestore.call(this, event);
+    wx.navigateTo({ url: '/pages/detail/index?id=' + guide.id });
+  },
+  onReturnSmall(event) {
+    const guide = this.data.returnGuide;
+    if (!guide || guide.id !== event.currentTarget.dataset.id || guide.originalTarget <= 1 || this.data.date !== ui.date.today()) {
+      this.refresh(); return;
+    }
+    return ui.taskActions.onSimplify.call(this, event);
+  },
   onDataStart() { wx.navigateTo({ url: '/pages/sync/index' }); },
   async onDataRetry() {
     if (this._retrying) return;
