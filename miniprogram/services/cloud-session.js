@@ -1,6 +1,7 @@
 'use strict';
 
 const { createCloudTransport } = require('./cloud-transport');
+const { apiFunction } = require('../config/cloud-resources');
 const { createCloudBinding, cloudStorageScope } = require('./cloud-binding');
 const { createSyncEngine, PREFIX } = require('./sync-engine');
 const dates = require('../core/date');
@@ -23,7 +24,13 @@ function createCloudSession(wxApi, config, transportFactory = createCloudTranspo
   let lastError = '';
   const envValid = typeof config.envId === 'string' && /^[a-zA-Z0-9_-]{1,100}$/.test(config.envId)
     && !config.envId.startsWith('YOUR_');
-  const configured = config.enabled === true && envValid;
+  const sharedValid = config.mode !== 'shared' || (
+    typeof config.resourceAppid === 'string' && /^wx[a-f0-9]{16}$/.test(config.resourceAppid)
+    && (config.functionName === undefined || config.functionName === apiFunction)
+    && config.storageNamespace === 'jiancheng_daka'
+  );
+  const configured = config.enabled === true && envValid && sharedValid
+    && (config.mode === undefined || config.mode === 'default' || config.mode === 'shared');
   const now = typeof options.now === 'function' ? options.now : Date.now;
   const scope = cloudStorageScope(envValid ? config.envId : '__invalid__', config.storageNamespace);
   const storage = {
@@ -168,6 +175,7 @@ function createCloudSession(wxApi, config, transportFactory = createCloudTranspo
 
   async function acceptConsent(consent) {
     if (consent !== true) throw Error('请先阅读并同意数据说明');
+    if (!configured) throw Error('云环境尚未配置，本机记录不受影响');
     binding.accept();
     return start();
   }

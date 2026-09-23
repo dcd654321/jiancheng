@@ -3,6 +3,7 @@ const assert = require('node:assert/strict');
 const { fixture, plan, domain, dates } = require('./helpers/cloud-fixture.cjs');
 const { createRepository, isMissingDocument } = require('../server/cloudbase-repository');
 const { createCloudTransport } = require('../miniprogram/services/cloud-transport');
+const { createApi } = require('../server/handler');
 
 test('云端身份只接受服务端上下文，拒绝错误AppID、缺失身份和客户端身份字段', async () => {
   const f = fixture();
@@ -107,6 +108,19 @@ test('坏账户不能被空状态覆盖，错误不暴露原始数据', async ()
   const result = await f.pull(); assert.equal(result.code, 'SERVICE_UNAVAILABLE');
   assert.equal(result.state, undefined); assert.equal(f.db.get(initial.accountId).state.schemaVersion, 99);
   assert.doesNotMatch(JSON.stringify(result), /test_user|schemaVersion|stack/);
+});
+test('云端 SDK 失败与非法备注响应不回显密钥、原始身份或备注', async () => {
+  const sensitive = 'private-sentinel-value';
+  const identity = { APPID: 'wx-test-app', OPENID: 'raw_identity_sentinel', SOURCE: 'wx_client' };
+  const api = createApi({ repository: { async transact() { throw Error(`SDK failure ${sensitive} ${identity.OPENID}`); } },
+    domain, dates, allowedAppId: identity.APPID, allowedSources: ['wx_client'] });
+  const unavailable = await api({ action: 'pull' }, identity);
+  assert.equal(unavailable.code, 'SERVICE_UNAVAILABLE');
+  assert.doesNotMatch(JSON.stringify(unavailable), /private-sentinel-value|raw_identity_sentinel|SDK failure/);
+  const f = fixture(), initial = await f.seed();
+  const invalid = await f.api(f.request(initial, { type: 'note', id: 'read', date: f.date, note: sensitive.repeat(200) }));
+  assert.equal(invalid.code, 'INVALID_REQUEST');
+  assert.doesNotMatch(JSON.stringify(invalid), /private-sentinel-value|test_user_a/);
 });
 test('旧回执淘汰后，旧版本仍拒绝重放，不重复修改', async () => {
   const f = fixture(), initial = await f.seed();
