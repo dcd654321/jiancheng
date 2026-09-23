@@ -20,6 +20,7 @@
       <view class="sub">{{targetHint}} · 完成后打卡，不自动计时或累计</view>
       <view wx:if="{{fieldErrors.target}}" class="field-error">{{fieldErrors.target}}</view>
     </view>
+    <view id="field-minimum" class="form-field"><label class="field-label" for="minimum">忙时的小目标（选填）</label><input id="minimum" class="input" type="number" maxlength="4" disabled="{{saving}}" value="{{minimum}}" placeholder="例如：平时5分钟，忙时2分钟" data-field="minimum" bindinput="onInput" bindblur="onBlur" /><view class="sub">与每次目标同单位，填更小的正整数；留空也能创建。忙时需手动选择，不会自动打卡。</view><view wx:if="{{fieldErrors.minimum}}" class="field-error">{{fieldErrors.minimum}}</view></view>
     <view id="field-weekdays" class="form-field">
       <view class="row between"><view class="field-label">哪些天做</view><text class="sub">{{frequencyLabel}}</text></view>
       <view class="week-options"><button wx:for="{{days}}" wx:key="value" class="day-option {{item.selected ? 'selected' : ''}}" disabled="{{saving}}" data-day="{{item.value}}" bindtap="onDay" aria-label="周{{item.label}}{{item.selected ? '已选' : '未选'}}">{{item.label}}</button></view>
@@ -30,7 +31,6 @@
     <button class="disclosure spaced" disabled="{{saving}}" bindtap="onMore" aria-expanded="{{moreOpen}}"><view class="grow"><view>更多设置</view><view class="sub">{{moreSummary}}</view></view><view class="chevron {{moreOpen ? 'up' : 'down'}}" /></button>
     <view wx:if="{{moreOpen}}" class="optional-fields">
       <view id="field-time" class="form-field"><view class="field-label">计划时间（选填）</view><view class="row"><picker class="grow" mode="time" disabled="{{saving}}" value="{{time || '21:30'}}" bindchange="onTime"><view class="picker picker-select">{{time || '不固定时间'}}<view class="chevron down" /></view></picker><button wx:if="{{time}}" class="text-button" disabled="{{saving}}" bindtap="clearTime">清除</button></view><view class="sub">只用于排序，不会发送提醒。</view><view wx:if="{{fieldErrors.time}}" class="field-error">{{fieldErrors.time}}</view></view>
-      <view id="field-minimum" class="form-field"><label class="field-label" for="minimum">忙时的小目标（选填）</label><input id="minimum" class="input" type="number" maxlength="4" disabled="{{saving}}" value="{{minimum}}" placeholder="比每次目标更小，单位相同" data-field="minimum" bindinput="onInput" bindblur="onBlur" /><view class="sub">忙时手动选择“今天少做一点”，不会自动降低目标。</view><view wx:if="{{fieldErrors.minimum}}" class="field-error">{{fieldErrors.minimum}}</view></view>
       <view wx:if="{{!editing}}" class="segments"><button class="segment {{startOffset === 0 ? 'selected' : ''}}" disabled="{{saving}}" data-offset="0" bindtap="onStart">今天开始</button><button class="segment {{startOffset === 1 ? 'selected' : ''}}" disabled="{{saving}}" data-offset="1" bindtap="onStart">明天开始</button></view>
     </view>
     <view class="sub spaced">{{editing ? '修改生效：' + effectiveLabel : '首次安排：' + firstLabel}}</view>

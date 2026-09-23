@@ -12,6 +12,7 @@
     <view wx:if="{{error}}" class="error">{{error}}</view>
     <view class="page-header"><view><view class="heading">今日</view><view class="sub">{{dateLabel}}</view></view><button class="add-button" bindtap="onCreate">添加习惯</button></view>
     <button wx:if="{{syncAttention}}" class="notice text-button" bindtap="onSync">{{syncText}} · 查看</button>
+    <view wx:if="{{firstHabitGuide}}" class="notice first-guide"><text class="grow">{{firstHabitGuide}}</text><button class="text-button" bindtap="onDismissGuide">知道了</button></view>
     <view wx:if="{{!hideQuote}}" class="sub quote">{{quote}}</view>
     <block wx:if="{{total}}">
       <view class="row between section-title"><text>今日进度</text><text>{{done}} / {{total}}</text></view>

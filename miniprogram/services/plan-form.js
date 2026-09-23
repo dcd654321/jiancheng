@@ -12,10 +12,9 @@ function fields(input) {
 function presentation(input) {
   const extras = [];
   if (input.time) extras.push(input.time);
-  if (input.minimum) extras.push(`忙时${input.minimum}${input.unit}`);
   if (!input.editing && input.startOffset === 1) extras.push('明天开始');
   return { titleCount: Array.from(String(input.title || '')).length,
     targetHint: `1—${input.unit === '分钟' ? 120 : 999}，填整数`,
-    frequencyLabel: domain.weekdayText(input.weekdays), moreSummary: extras.join(' · ') || '时间、忙时目标、开始日期' };
+    frequencyLabel: domain.weekdayText(input.weekdays), moreSummary: extras.join(' · ') || (input.editing ? '计划时间' : '计划时间、开始日期') };
 }
 module.exports = { fields, presentation };

@@ -18,6 +18,8 @@ button[disabled] { color: #65756c; background: #f1f4ef; }
 .text-button { min-height: 44px; padding: 10px 8px; color: #245c44; font-size: 14px; }
 .actions { display: flex; flex-direction: column; gap: 12px; margin-top: 24px; }
 .notice { background: #f1f5ee; border-radius: 10px; padding: 12px 14px; font-size: 14px; color: #53675b; margin-top: 20px; }
+.first-guide { display: flex; align-items: flex-start; gap: 8px; overflow-wrap: anywhere; }
+.first-guide .text-button { flex-shrink: 0; }
 .error { background: #fff0e9; color: #983e28; border-radius: 10px; padding: 12px; margin: 0 0 16px; font-size: 14px; overflow-wrap: anywhere; }
 .empty { padding: 30px 0; }
 .empty .heading { font-size: 23px; }
@@ -25,6 +27,8 @@ button[disabled] { color: #65756c; background: #f1f4ef; }
 .task { border-bottom: 1px solid #e8ede7; padding: 10px 0; }
 .task-open { flex: 1; text-align: left; min-height: 52px; min-width: 0; padding: 5px 0; }
 .task-title { font-size: 17px; font-weight: 600; overflow-wrap: anywhere; }
+.task-goals { overflow-wrap: anywhere; }
+.task-current { color: #245c44; font-weight: 600; overflow-wrap: anywhere; }
 .check-button { width: 60px; min-height: 60px; display: flex; flex-direction: column; align-items: center; justify-content: center; flex-shrink: 0; }
 .check-label { font-size: 14px; color: #53675b; line-height: 1.4; }
 .task-options { display: flex; gap: 8px; flex-wrap: wrap; }
@@ -62,7 +66,7 @@ textarea.input { height: 104px; line-height: 1.6; }
 .template-choice { border: 1px solid #dce4dc; border-radius: 10px; font-size: 14px; padding: 10px 12px; min-height: 44px; }
 .inline-note { border-left: 3px solid #ddf3a4; padding-left: 12px; margin: 14px 0; }
 .compact-form .form-field { margin-top: 16px; }
-.week-options { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; }
+.week-options { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
 .week-options .day-option { min-width: 0; width: 100%; min-height: 48px; padding: 10px 0; font-size: 16px; }
 .direction-options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
 .direction-options .day-option { min-width: 0; min-height: 48px; }
@@ -83,7 +87,7 @@ textarea.input { height: 104px; line-height: 1.6; }
 .group-label { font-size: 14px; color: #65756c; margin-bottom: 4px; }
 .menu-value { text-align: right; max-width: 55%; overflow-wrap: anywhere; }
 .setting-row > .sub { flex-shrink: 0; }
-.completed-status { display: flex; align-items: center; gap: 5px; font-size: 14px; color: #245c44; flex-shrink: 0; }
+.completed-status { display: flex; align-items: center; gap: 5px; max-width: 112px; font-size: 14px; line-height: 1.4; color: #245c44; flex-shrink: 0; }
 .task-options .undo { margin-left: auto; }
 .note-preview { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 14px; color: #53675b; margin: 12px 0; }
 .metric-caption { font-size: 16px; }

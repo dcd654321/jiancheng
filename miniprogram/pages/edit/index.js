@@ -57,6 +57,7 @@ Page(ui.withLifecycle({
     const value = field === 'title' ? Array.from(event.detail.value).slice(0, 20).join('') : event.detail.value;
     this.setData({ [field]: value, error: '' });
     this.updateSchedule(); this.validateField(field);
+    if (field === 'target') this.validateField('minimum');
     return value;
   },
   validateField(field) { const errors = form.fields(this.data); this.setData({ fieldErrors: { ...this.data.fieldErrors, [field]: errors[field] || '' } }); },
@@ -81,11 +82,15 @@ Page(ui.withLifecycle({
   onSave() {
     if (this.data.saving) return;
     this.setData({ saving: true, error: '' });
+    let firstGuide = null;
     const finish = () => {
       if (this._gone) return;
       this.setData({ saving: false });
       if (this.data.editing) wx.navigateBack();
-      else wx.switchTab({ url: '/pages/today/index' });
+      else {
+        if (firstGuide) getApp().firstHabitGuide = firstGuide;
+        wx.switchTab({ url: '/pages/today/index' });
+      }
       wx.showToast({ title: '已保存', icon: 'none' });
     };
     const failed = err => { if (!this._gone) { ui.error(this, err); this.setData({ saving: false }); } };
@@ -94,15 +99,19 @@ Page(ui.withLifecycle({
       if (this._editContext !== ui.contextKey()) throw Error('数据状态已变化，请返回后重新打开表单');
       const fieldErrors = form.fields(this.data), first = Object.keys(fieldErrors)[0];
       if (first) {
-        this.setData({ fieldErrors, moreOpen: this.data.moreOpen || !!fieldErrors.minimum || !!fieldErrors.time }, () => {
+        this.setData({ fieldErrors, moreOpen: this.data.moreOpen || !!fieldErrors.time }, () => {
           if (!this._gone && this._visible !== false && wx.pageScrollTo) wx.pageScrollTo({ selector: '#field-' + first, duration: 200 });
         });
         throw Error(fieldErrors[first]);
       }
       const plan = ui.domain.validatePlan(this.data);
+      const startDate = ui.date.shift(ui.date.today(), this.data.startOffset);
+      if (!this.data.editing && !ui.store().read().habits.length) firstGuide = {
+        id: this._id, title: plan.title, firstDate: ui.domain.firstExecution(plan, startDate)
+      };
       const command = this.data.editing
         ? { type: 'edit', id: this._id, baseRevision: this._baseRevision, plan }
-        : { type: 'create', id: this._id, startDate: ui.date.shift(ui.date.today(), this.data.startOffset), plan };
+        : { type: 'create', id: this._id, startDate, plan };
       const result = ui.store().dispatch(command);
       if (result && typeof result.then === 'function') return result.then(finish).catch(failed);
       finish();
