@@ -33,7 +33,7 @@ Page(ui.withLifecycle({
       const task = ui.domain.taskAt(state, habit, date);
       const history = ui.date.range(date, 28).reverse().map(day => {
         const record = ui.domain.taskAt(state, habit, day);
-        return record ? { date: day, status: record.statusText, goal: `${record.target} ${record.unit}` } : null;
+        return record ? { date: day, status: ui.taskStatusLabel(record), goal: `${record.target} ${record.unit}` } : null;
       }).filter(Boolean);
       this.setData({ title: display.title, current, future, task, history, date,
         visibleHistory: this.data.showHistory ? history : history.slice(0, 7),

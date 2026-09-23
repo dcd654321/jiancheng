@@ -29,14 +29,17 @@ function read(page, callback) {
     else error(page, err);
   }
 }
-function mutate(page, command, message) {
+function taskStatusLabel(task) { return task.status === 'minimum' ? '小目标完成' : task.statusText; }
+function mutate(page, command, message, options = {}) {
   if (page._mutating) return false;
   const finish = () => {
     page._mutating = false;
     if (page._gone) return true;
     page.refresh();
     const info = storageInfo();
-    const notice = ['complete', 'undo', 'simplify', 'restore', 'note'].includes(command.type)
+    const notice = options.firstCompletion && command.type === 'complete'
+      ? (info.pending ? '首次打卡待同步' : '第一步已记下')
+      : ['complete', 'undo', 'simplify', 'restore', 'note'].includes(command.type)
       ? (info.pending ? '已记录，待同步' : '已记录') : '已保存';
     if (notice) wx.showToast({ title: notice, icon: 'none' });
     return true;
@@ -111,7 +114,12 @@ const taskActions = {
   onOpen(event) { wx.navigateTo({ url: '/pages/detail/index?id=' + event.currentTarget.dataset.id }); },
   onComplete(event) {
     const { id, date: taskDate, done } = event.currentTarget.dataset;
-    mutate(this, { type: done ? 'undo' : 'complete', id, date: taskDate }, done ? '已撤销' : '已保存到本机');
+    let firstCompletion = false;
+    if (!done) {
+      try { firstCompletion = !Object.values(store().read().records).some(record => record.status !== 'pending'); }
+      catch (err) { error(this, err); return false; }
+    }
+    return mutate(this, { type: done ? 'undo' : 'complete', id, date: taskDate }, '', { firstCompletion });
   },
   onSimplify(event) {
     const { id, date: taskDate } = event.currentTarget.dataset;
@@ -135,4 +143,4 @@ const taskActions = {
   }
 };
 
-module.exports = { date, domain, store, read, mutate, error, id, contextKey, assertContext, storageInfo, withLifecycle, taskActions };
+module.exports = { date, domain, store, read, mutate, error, id, contextKey, assertContext, storageInfo, taskStatusLabel, withLifecycle, taskActions };

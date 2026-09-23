@@ -85,6 +85,10 @@ test('today task keeps choosing a smaller goal separate from completing it', t =
   assert.equal(p.data.pending[0].target,2); assert.equal(p.data.pending[0].done,false);
   p.onComplete(e({id:'read',date:dates.today(),done:false}));
   assert.equal(p.data.completed[0].status,'minimum');
+  const progress=h.page('progress');
+  assert.equal(progress.data.selected.tasks[0].statusText,'小目标完成');
+  assert.match(progress.data.selected.description,/小目标1项/);
+  assert.equal(h.page('detail',{id:'read'}).data.history[0].status,'小目标完成');
   p.onComplete(e({id:'read',date:dates.today(),done:true}));
   p.onRestore(e({id:'read',date:dates.today()}));
   p.onComplete(e({id:'read',date:dates.today(),done:false}));

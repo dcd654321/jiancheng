@@ -195,7 +195,7 @@ test('today and progress use only the cloud cache and expose pending sync status
   const today = app.page('today');
   today.onComplete({ currentTarget: { dataset: { id: 'read', date: h.f.date, done: false } } });
   assert.equal(today.data.done, 1);
-  assert.match(app.toasts[0].title, /待同步/);
+  assert.equal(app.toasts[0].title, '首次打卡待同步');
   assert.match(today.data.syncText, /待同步/);
   assert.equal(app.page('progress').data.stats.done, 1);
 });
