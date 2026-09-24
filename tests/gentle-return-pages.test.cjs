@@ -143,4 +143,7 @@ test('native markup provides one conditional prompt and hides invalid smaller ac
   assert.match(markup, /bindtap="onReturnOriginal"/);
   assert.match(markup, /bindtap="onReturnSmall"/);
   assert.match(markup, /过去不用补打卡/);
+  assert.match(markup, /wx:if="\{\{!hideQuote && !returnGuide\}\}" class="sub quote"/);
+  assert.match(markup, /wx:if="\{\{!hideQuote && returnGuide\}\}" class="sub quote"/);
+  assert.ok(markup.indexOf('wx:if="{{!hideQuote && returnGuide}}"') > markup.indexOf('wx:for="{{pending}}"'));
 });
