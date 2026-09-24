@@ -18,7 +18,8 @@
     </view>
     <view class="task-options">
       <block wx:if="{{!task.done && task.originalTarget > 1}}">
-        <button class="text-button" data-id="{{task.id}}" data-date="{{task.date}}" bindtap="onSimplify">今天少做一点{{task.minimum ? ' · ' + task.minimum + task.unit : ' · 自己填'}}</button>
+        <button wx:if="{{task.minimum && !task.simplified}}" class="text-button quick-checkin" data-id="{{task.id}}" data-date="{{task.date}}" bindtap="onCompleteMinimum" aria-label="已完成{{task.title}}忙时目标，按{{task.minimum}}{{task.unit}}打卡">按忙时目标打卡 · {{task.minimum}}{{task.unit}}</button>
+        <button wx:if="{{!task.minimum || detail || task.simplified}}" class="text-button" data-id="{{task.id}}" data-date="{{task.date}}" bindtap="onSimplify">{{task.minimum ? '调整今天目标' : '今天少做一点 · 自己填'}}</button>
         <button wx:if="{{task.simplified}}" class="text-button" data-id="{{task.id}}" data-date="{{task.date}}" bindtap="onRestore">恢复原目标</button>
       </block>
       <button wx:if="{{task.done}}" class="text-button undo" data-id="{{task.id}}" data-date="{{task.date}}" data-done="{{true}}" bindtap="onComplete" aria-label="撤销{{task.title}}今天的打卡">撤销打卡</button>

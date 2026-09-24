@@ -100,9 +100,37 @@ test('unconfigured small goal stays unset and target one offers no lower-goal ac
   h.storage[STORAGE_KEY]=JSON.stringify(domain.reduce(domain.emptyState(),{type:'create',id:'water',startDate:day,plan},day));
   const p=h.page('today'); assert.equal(p.data.pending[0].minimum,null); assert.equal(p.data.pending[0].originalTarget,1);
   const markup=fs.readFileSync(path.resolve(__dirname,'../miniprogram/templates/task.wxml'),'utf8');
-  assert.match(markup,/task\.originalTarget > 1/); assert.match(markup,/task\.minimum \? ' · ' \+ task\.minimum \+ task\.unit : ' · 自己填'/);
+  assert.match(markup,/task\.originalTarget > 1/); assert.match(markup,/task\.minimum && !task\.simplified/);
+  assert.match(markup,/!task\.minimum \|\| detail \|\| task\.simplified/);
+  assert.match(markup,/按忙时目标打卡/); assert.match(markup,/今天少做一点 · 自己填/);
   assert.match(markup,/小目标完成/); assert.match(markup,/原目标完成/);
   assert.match(markup,/平时 \{\{task\.originalTarget\}\}/); assert.match(markup,/忙时 \{\{task\.minimum\}\}/);
+});
+test('one-tap busy-goal check-in moves only that habit to completed', t => {
+  const h=harness(t); h.seed();
+  const day=dates.today();
+  h.store.dispatch({type:'create',id:'walk',startDate:day,plan:{title:'走路',target:10,minimum:3,unit:'分钟',time:'10:00',weekdays:[1,2,3,4,5,6,7]}});
+  const p=h.page('today');
+  assert.equal(p.data.pending.length,2); assert.equal(p.data.completed.length,0);
+  p.onCompleteMinimum(e({id:'read',date:day}));
+  assert.equal(p.data.pending.length,1); assert.equal(p.data.pending[0].id,'walk');
+  assert.equal(p.data.completed.length,1); assert.equal(p.data.completed[0].status,'minimum');
+  assert.equal(p.data.completed[0].target,2);
+  assert.equal(h.store.read().records['walk@'+day],undefined);
+  const todayMarkup=fs.readFileSync(path.resolve(__dirname,'../miniprogram/pages/today/index.wxml'),'utf8');
+  assert.match(todayMarkup,/待做 \{\{pending\.length\}\} · 已做 \{\{completed\.length\}\}/);
+  const mineMarkup=fs.readFileSync(path.resolve(__dirname,'../miniprogram/pages/mine/index.wxml'),'utf8');
+  assert.match(mineMarkup,/open-type="feedback"[^>]*>.*意见与问题反馈/);
+});
+test('five scheduled habits keep independent cards and an accurate remaining count', t => {
+  const h=harness(t); h.seed(); const day=dates.today();
+  for (let i=1; i<5; i++) h.store.dispatch({type:'create',id:'habit'+i,startDate:day,
+    plan:{title:'任务'+i,target:5,minimum:2,unit:'次',time:'1'+i+':00',weekdays:[1,2,3,4,5,6,7]}});
+  const p=h.page('today'); assert.equal(p.data.total,5); assert.equal(p.data.pending.length,5);
+  p.onCompleteMinimum(e({id:'habit2',date:day}));
+  assert.equal(p.data.pending.length,4); assert.equal(p.data.completed.length,1);
+  assert.equal(p.data.completed[0].id,'habit2');
+  assert.equal(Object.keys(h.store.read().records).length,1);
 });
 test('first created habit is the next visible task, without auto-completion', t => {
   const h=harness(t), edit=h.page('edit',{template:'read'}); edit.onSave();

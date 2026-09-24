@@ -11,11 +11,11 @@ function object(value, allowed) {
 }
 function string(value, min, max) { return typeof value === 'string' && value.length >= min && value.length <= max; }
 function token(value) { return string(value, 1, 100) && /^[a-zA-Z0-9_-]+$/.test(value) && !['__proto__', 'constructor', 'prototype'].includes(value); }
-const RECORD_TYPES = ['complete', 'undo', 'simplify', 'restore', 'note'];
+const RECORD_TYPES = ['complete', 'completeMinimum', 'undo', 'simplify', 'restore', 'note'];
 const COMMAND_FIELDS = {
   create: ['type', 'id', 'startDate', 'plan'], edit: ['type', 'id', 'baseRevision', 'plan'],
   status: ['type', 'id', 'baseRevision', 'status'], cancelFuture: ['type', 'id', 'baseRevision'],
-  complete: ['type', 'id', 'date'], undo: ['type', 'id', 'date'],
+  complete: ['type', 'id', 'date'], completeMinimum: ['type', 'id', 'date'], undo: ['type', 'id', 'date'],
   simplify: ['type', 'id', 'date', 'target'], restore: ['type', 'id', 'date'],
   note: ['type', 'id', 'date', 'note'], settings: ['type', 'hideQuote']
 };

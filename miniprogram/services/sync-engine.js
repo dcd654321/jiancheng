@@ -1,6 +1,6 @@
 const domain = require('../core/habits');
 const dates = require('../core/date');
-const RECORD_TYPES = ['complete', 'undo', 'simplify', 'restore', 'note'];
+const RECORD_TYPES = ['complete', 'completeMinimum', 'undo', 'simplify', 'restore', 'note'];
 const ONLINE_TYPES = ['create', 'edit', 'status', 'cancelFuture', 'settings'];
 const clone = value => JSON.parse(JSON.stringify(value));
 const PREFIX = 'yidian.sync.v1:';

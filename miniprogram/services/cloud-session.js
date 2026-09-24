@@ -5,7 +5,7 @@ const { apiFunction } = require('../config/cloud-resources');
 const { createCloudBinding, cloudStorageScope } = require('./cloud-binding');
 const { createSyncEngine, PREFIX } = require('./sync-engine');
 const dates = require('../core/date');
-const RECORD_TYPES = ['complete', 'undo', 'simplify', 'restore', 'note'];
+const RECORD_TYPES = ['complete', 'completeMinimum', 'undo', 'simplify', 'restore', 'note'];
 
 function createCloudSession(wxApi, config, transportFactory = createCloudTransport, options = {}) {
   let engine = null;

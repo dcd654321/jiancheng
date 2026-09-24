@@ -37,11 +37,12 @@ function mutate(page, command, message, options = {}) {
     if (page._gone) return true;
     page.refresh();
     const info = storageInfo();
-    const notice = options.firstCompletion && command.type === 'complete'
+    const completion = ['complete', 'completeMinimum'].includes(command.type);
+    const notice = options.firstCompletion && completion
       ? (info.pending ? '首次打卡待同步' : '第一步已记下')
-      : options.returnCompletion && command.type === 'complete'
+      : options.returnCompletion && completion
       ? (info.pending ? '今天继续了，待同步' : '今天继续了')
-      : ['complete', 'undo', 'simplify', 'restore', 'note'].includes(command.type)
+      : ['complete', 'completeMinimum', 'undo', 'simplify', 'restore', 'note'].includes(command.type)
       ? (info.pending ? '已记录，待同步' : '已记录') : '已保存';
     if (notice) wx.showToast({ title: notice, icon: 'none' });
     return true;
@@ -116,14 +117,21 @@ const taskActions = {
   onOpen(event) { wx.navigateTo({ url: '/pages/detail/index?id=' + event.currentTarget.dataset.id }); },
   onComplete(event) {
     const { id, date: taskDate, done } = event.currentTarget.dataset;
+    return this.recordCompletion(id, taskDate, done ? 'undo' : 'complete');
+  },
+  onCompleteMinimum(event) {
+    const { id, date: taskDate } = event.currentTarget.dataset;
+    return this.recordCompletion(id, taskDate, 'completeMinimum');
+  },
+  recordCompletion(id, taskDate, type) {
     let firstCompletion = false;
-    if (!done) {
+    if (type !== 'undo') {
       try { firstCompletion = !Object.values(store().read().records).some(record => record.status !== 'pending'); }
       catch (err) { error(this, err); return false; }
     }
     const guide = this.data.returnGuide;
-    const returnCompletion = !done && guide && guide.id === id && guide.date === taskDate;
-    return mutate(this, { type: done ? 'undo' : 'complete', id, date: taskDate }, '', { firstCompletion, returnCompletion });
+    const returnCompletion = type !== 'undo' && guide && guide.id === id && guide.date === taskDate;
+    return mutate(this, { type, id, date: taskDate }, '', { firstCompletion, returnCompletion });
   },
   onSimplify(event) {
     const { id, date: taskDate } = event.currentTarget.dataset;

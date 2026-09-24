@@ -26,7 +26,7 @@
       <view class="row between section-title"><text>今日进度</text><text>{{done}} / {{total}}</text></view>
       <view class="meter"><view class="meter-fill" style="width: {{rate}}%"></view></view>
       <view wx:if="{{minimum}}" class="sub">其中 {{minimum}} 项为小目标完成</view>
-      <view wx:if="{{pending.length}}" class="section-title">待完成 · {{pending.length}}</view>
+      <view class="section-title">待做 {{pending.length}} · 已做 {{completed.length}}</view>
       <block wx:for="{{pending}}" wx:key="id"><template is="task" data="{{task: item}}" /></block>
       <view wx:if="{{!pending.length}}" class="sub spaced">今天的安排已全部记录。</view>
       <button wx:if="{{completed.length}}" class="disclosure spaced" bindtap="onToggleCompleted" aria-expanded="{{showCompleted}}"><text class="grow">已完成 · {{completed.length}}</text><text class="sub">{{showCompleted ? '收起' : '查看'}}</text><view class="chevron {{showCompleted ? 'up' : 'down'}}" /></button>

@@ -7,6 +7,6 @@
     <view wx:if="{{error}}" class="error spaced">{{error}}</view>
     <view class="group"><view class="group-label">习惯管理</view><button class="setting-row" bindtap="onManage"><text class="grow">我的习惯</text><text class="sub">{{count}} 个</text><view class="chevron" /></button></view>
     <view class="group"><view class="group-label">偏好设置</view><view class="setting-row"><text class="grow">显示首页短句</text><switch checked="{{!hideQuote}}" color="#245c44" bindchange="onQuote" aria-label="显示首页短句" /></view></view>
-    <view class="group"><view class="group-label">数据与支持</view><button class="setting-row" bindtap="onData"><view class="grow">数据与隐私<view class="sub">同步、导出与清除</view></view><view class="chevron" /></button><button class="setting-row" bindtap="onHelp"><text class="grow">使用帮助</text><view class="chevron" /></button><button class="setting-row" open-type="feedback"><text class="grow">问题反馈</text><view class="chevron" /></button></view>
+    <view class="group"><view class="group-label">数据与支持</view><button class="setting-row" bindtap="onData"><view class="grow">数据与隐私<view class="sub">同步、导出与清除</view></view><view class="chevron" /></button><button class="setting-row" bindtap="onHelp"><text class="grow">使用帮助</text><view class="chevron" /></button><button class="setting-row" open-type="feedback"><text class="grow">意见与问题反馈</text><view class="chevron" /></button></view>
   </block>
 </view>

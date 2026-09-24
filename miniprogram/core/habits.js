@@ -98,7 +98,7 @@ function reduce(state, command, nowDate) {
       habit.versions.push({ ...plan, effectiveDate: tomorrow, status, revision: habit.revision });
     }
     assertCapacity(next, nowDate);
-  } else if (['complete', 'undo', 'simplify', 'restore', 'note'].includes(command.type)) {
+  } else if (['complete', 'completeMinimum', 'undo', 'simplify', 'restore', 'note'].includes(command.type)) {
     if (command.date !== nowDate) throw Error('日期已经变化，请刷新后记录今天');
     const habit = findHabit(next, command.id);
     const task = taskAt(next, habit, nowDate);
@@ -107,6 +107,13 @@ function reduce(state, command, nowDate) {
     const record = next.records[recordKey] || { id: habit.id, date: nowDate,
       versionRevision: task.versionRevision, todayTarget: task.originalTarget, status: 'pending', note: '' };
     if (command.type === 'complete') record.status = record.todayTarget < task.originalTarget ? 'minimum' : 'standard';
+    if (command.type === 'completeMinimum') {
+      if (task.minimum === null) throw Error('这个习惯没有设置忙时目标');
+      if (record.status !== 'pending') throw Error('今天已打卡，如需修改请先撤销');
+      if (record.todayTarget !== task.originalTarget) throw Error('今天目标已调整，请按当前目标打卡');
+      record.todayTarget = task.minimum;
+      record.status = 'minimum';
+    }
     if (command.type === 'undo') record.status = 'pending';
     if (['simplify', 'restore'].includes(command.type)) {
       if (record.status !== 'pending') throw Error('请先撤销今天的记录，再调整目标');

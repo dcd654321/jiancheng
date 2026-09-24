@@ -36,6 +36,7 @@ button[disabled] { color: #65756c; background: #f1f4ef; }
 .check-label { font-size: 14px; color: #53675b; line-height: 1.4; }
 .task-options { display: flex; gap: 8px; flex-wrap: wrap; }
 .task-options .text-button { padding-left: 0; text-align: left; }
+.task-options .quick-checkin { font-weight: 600; }
 .completed .task-title { color: #53675b; }
 .minimum-tag { color: #496934; }
 .form-field { margin-top: 20px; }
