@@ -143,6 +143,61 @@ test('five scheduled habits keep independent cards and an accurate remaining cou
   assert.equal(p.data.completed[0].id,'habit2');
   assert.equal(Object.keys(h.store.read().records).length,1);
 });
+test('recent completion keeps an inline undo slot and undo only restores that habit', t => {
+  const h=harness(t); h.seed(); const day=dates.today();
+  for (const id of ['a','z']) h.store.dispatch({type:'create',id,startDate:day,plan:{title:id,target:5,minimum:2,unit:'分钟',time:'',weekdays:[1,2,3,4,5,6,7]}});
+  const p=h.page('today'); assert.deepEqual(p.data.pending.map(t=>t.id),['a','read','z']);
+  p.onComplete(e({id:'read',date:day,done:false}));
+  assert.deepEqual(p.data.pendingRows.map(t=>[t.id,t.undo]),[['a',false],['read',true],['z',false]]);
+  p.onQuickUndo(e({id:'read'})); assert.equal(p.data.done,0); assert.equal(p.data.pendingRows.some(t=>t.undo),false);
+  assert.equal(h.store.read().records['a@'+day],undefined);
+});
+test('expired, hidden, cross-day and changed-account undo controls never dispatch', t => {
+  const h=harness(t); h.seed(); const day=dates.today(), p=h.page('today');
+  p.onComplete(e({id:'read',date:day,done:false})); const valid={...p._recentDone};
+  let dispatches=0; h.store.dispatch=()=>{dispatches++;};
+  for(const patch of [{until:0},{date:dates.shift(day,-1)},{context:'another-account'}]) {
+    p._recentDone={...valid,...patch}; p.onQuickUndo(e({id:'read'}));
+    assert.equal(dispatches,0); assert.equal(p._recentDone,null);
+  }
+  p._recentDone=valid; p.onHide(); p.onQuickUndo(e({id:'read'}));
+  assert.equal(dispatches,0); assert.equal(p._undoTimer,null);
+});
+test('failed completion does not create inline success and hidden pending response does not create a timer', async t => {
+  const h=harness(t); h.seed(); const p=h.page('today'), day=dates.today();
+  h.store.dispatch=()=>{throw Error('disk full');};
+  assert.equal(p.onComplete(e({id:'read',date:day})),false); assert.equal(p._recentDone,undefined);
+  assert.equal(p.data.done,0); assert.equal(p.data.pendingRows.some(t=>t.undo),false);
+  let resolve; h.store.dispatch=()=>new Promise(r=>{resolve=r;});
+  const work=p.onComplete(e({id:'read',date:day})); p.onHide(); resolve(); await work;
+  assert.equal(p._recentDone,null); assert.equal(p._undoTimer,null);
+});
+test('full capacity leads to management and a free tomorrow opens the correct start date', t => {
+  const h=harness(t); h.seed(); const day=dates.today();
+  for(let i=1;i<5;i++) h.store.dispatch({type:'create',id:'h'+i,startDate:day,plan:{title:'任务'+i,target:5,minimum:2,unit:'次',time:'',weekdays:[1,2,3,4,5,6,7]}});
+  const p=h.page('today'); p.onCreate(e({})); assert.equal(h.nav.length,0);
+  assert.match(h.modals.at(-1).content,/最多同时进行 5/); h.modals.pop().success({confirm:true});
+  assert.equal(h.nav.at(-1),'/pages/manage/index');
+  h.store.dispatch({type:'status',id:'read',baseRevision:1,status:'paused'});
+  p.refresh(); assert.equal(p.data.canCreateToday,false); assert.equal(p.data.canCreateTomorrow,true);
+  p.onCreate(e({template:'walk'})); assert.equal(h.nav.at(-1),'/pages/edit/index?template=walk&start=tomorrow');
+  const edit=h.page('edit',{template:'walk',start:'tomorrow'}); assert.equal(edit.data.startOffset,1);
+  edit.onSave(); assert.equal(h.store.read().habits.length,6);
+});
+test('tomorrow summary uses future versions, limits visible titles and never modifies records', t => {
+  const h=harness(t); h.seed(); const day=dates.today();
+  for(let i=1;i<5;i++) h.store.dispatch({type:'create',id:'h'+i,startDate:day,plan:{title:'任务'+i,target:5,minimum:2,unit:'次',time:'',weekdays:[1,2,3,4,5,6,7]}});
+  const p=h.page('today'), before=h.store.rawBackup();
+  assert.equal(p.data.tomorrow.count,5); assert.equal(p.data.tomorrow.tasks.length,3); assert.equal(p.data.tomorrow.remaining,2);
+  assert.equal(h.store.rawBackup(),before);
+  h.store.dispatch({type:'status',id:'read',baseRevision:1,status:'paused'}); p.refresh();
+  assert.equal(p.data.tomorrow.count,4); assert.equal(p.data.total,5);
+});
+test('legacy help describes only the enabled two-step busy goal flow', t => {
+  const h=harness(t); h.seed(); const p=h.page('mine'); p.onHelp();
+  assert.doesNotMatch(h.modals.at(-1).content,/按忙时目标打卡/);
+  assert.match(h.modals.at(-1).content,/调整本身不会打卡/);
+});
 test('first created habit is the next visible task, without auto-completion', t => {
   const h=harness(t), edit=h.page('edit',{template:'read'}); edit.onSave();
   const firstId=h.store.read().habits[0].id, day=dates.today();

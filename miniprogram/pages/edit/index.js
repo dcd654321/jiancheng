@@ -17,6 +17,7 @@ Page(ui.withLifecycle({
     this._loaded = false;
     this._editContext = ui.contextKey();
     this.setData({ editing: !!options.id });
+    if (!options.id && options.start === 'tomorrow') this.setData({ startOffset: 1 });
     if (options.draft) {
       try {
         if (options.id) throw Error('新计划草稿不能直接覆盖已有习惯');

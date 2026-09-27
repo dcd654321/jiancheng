@@ -35,9 +35,12 @@ function read(page, callback) {
 function taskStatusLabel(task) { return task.status === 'minimum' ? '小目标完成' : task.statusText; }
 function mutate(page, command, message, options = {}) {
   if (page._mutating) return false;
+  const mutationContext = contextKey();
+  const previousOrder = (page.data.pending || []).map(task => task.id);
   const finish = () => {
     page._mutating = false;
-    if (page._gone) return true;
+    if (page._gone || mutationContext !== contextKey()) return true;
+    if (page.onRecorded && page._visible !== false) page.onRecorded(command, previousOrder);
     page.refresh();
     const info = storageInfo();
     const completion = ['complete', 'completeMinimum'].includes(command.type);

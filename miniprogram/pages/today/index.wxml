@@ -27,7 +27,10 @@
       <view class="meter"><view class="meter-fill" style="width: {{rate}}%"></view></view>
       <view wx:if="{{minimum}}" class="sub">其中 {{minimum}} 项为小目标完成</view>
       <view class="section-title">待做 {{pending.length}} · 已做 {{completed.length}}</view>
-      <block wx:for="{{pending}}" wx:key="id"><template is="task" data="{{task: item, quickMinimumEnabled: quickMinimumEnabled}}" /></block>
+      <block wx:for="{{pendingRows}}" wx:key="id">
+        <view wx:if="{{item.undo}}" class="recent-done row between" aria-live="polite"><view class="grow"><view>{{item.task.title}}</view><view class="sub">已记录{{syncAttention ? ' · 请留意同步状态' : ''}}</view></view><button class="text-button" data-id="{{item.id}}" bindtap="onQuickUndo" aria-label="撤销{{item.task.title}}刚刚的打卡">撤销</button></view>
+        <template wx:else is="task" data="{{task: item.task, quickMinimumEnabled: quickMinimumEnabled}}" />
+      </block>
       <view wx:if="{{!pending.length}}" class="sub spaced">今天的安排已全部记录。</view>
       <button wx:if="{{completed.length}}" class="disclosure spaced" bindtap="onToggleCompleted" aria-expanded="{{showCompleted}}"><text class="grow">已完成 · {{completed.length}}</text><text class="sub">{{showCompleted ? '收起' : '查看'}}</text><view class="chevron {{showCompleted ? 'up' : 'down'}}" /></button>
       <block wx:if="{{showCompleted}}"><block wx:for="{{completed}}" wx:key="id"><template is="task" data="{{task: item, quickMinimumEnabled: quickMinimumEnabled}}" /></block></block>
@@ -37,6 +40,12 @@
       <view wx:if="{{!hasHabits}}" class="template-row"><button class="template-choice" data-template="read" bindtap="onCreate">读5分钟</button><button class="template-choice" data-template="walk" bindtap="onCreate">走路10分钟</button><button class="template-choice" data-template="study" bindtap="onCreate">复习5分钟</button><button class="template-choice" data-template="tidy" bindtap="onCreate">整理3分钟</button></view>
       <button wx:if="{{hasHabits}}" class="secondary" bindtap="onManage">查看习惯安排</button>
     </view>
-    <button class="disclosure spaced" bindtap="onAssistant"><view class="grow"><view>帮我定个小目标</view><view class="sub">填写可用时间，获取一个基础建议</view></view><view class="chevron" /></button>
+    <view wx:if="{{hasHabits && !pending.length && tomorrow}}" class="tomorrow spaced">
+      <view class="section-title">明天{{tomorrow.count ? '有 ' + tomorrow.count + ' 项安排' : '没有安排'}}</view>
+      <view class="sub">{{tomorrow.label}}{{tomorrow.count ? ' · 按计划时间排序，不发送通知' : ' · 休息日也算计划的一部分'}}</view>
+      <view wx:for="{{tomorrow.tasks}}" wx:key="id" class="tomorrow-task"><text class="grow">{{item.title}}</text><text class="sub">{{item.time || '时间自定'}} · {{item.target}}{{item.unit}}</text></view>
+      <button class="text-button" bindtap="onManage">{{tomorrow.remaining ? '还有 ' + tomorrow.remaining + ' 项 · 查看安排' : '管理习惯安排'}}</button>
+    </view>
+    <button wx:if="{{canCreateToday || canCreateTomorrow}}" class="disclosure spaced" bindtap="onAssistant"><view class="grow"><view>帮我定个小目标</view><view class="sub">填写可用时间，获取一个基础建议</view></view><view class="chevron" /></button>
   </block>
 </view>
