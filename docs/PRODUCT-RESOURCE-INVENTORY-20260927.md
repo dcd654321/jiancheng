@@ -34,21 +34,21 @@
 
 此前 checkCollection 对七集合都返回 exists=true，describeCollection/listIndexes 又没有明细。本轮完整 listCollections（limit=100，pager.Total=6）中没有任何 jiancheng_daka_ 集合。因此撤销“七集合已存在”的结论，按完整清单缺失处理；不发布其他应用的统计或数据。今后必须以完整列表、明确索引数组和实际返回交叉核验，不把 success 文案当资源存在证据。
 
-### 首次创建任务（不得重复提交）
+### 首次创建任务（已确认完成，不得重复提交）
 
-tool=`cloud_db_write_struct`，client=`codex`，action=`createCollection`；appid/env 见顶部。七个独立任务均是第一次提交，返回时为 pending；用户确认前不主动轮询，不进入依赖索引写入。
+tool=`cloud_db_write_struct`，client=`codex`，action=`createCollection`；appid/env 见顶部。七个独立任务首次返回 pending。用户回复“已全部允许”后逐一查询原任务：均为 success/execution_success，内层均为 createCollection 成功；随后完整列表也返回七个精确名称，记录数均为 0。创建已完成，无须再次允许或重发。
 
 | 集合后缀（统一 jiancheng_daka_） | taskId | 最后已知状态 |
 | --- | --- | --- |
-| accounts | confirmation_cloud_db_write_struct_371fba62-9cf5-4490-b6b2-422ecb91d897 | pending |
-| preferences | confirmation_cloud_db_write_struct_58accee2-dff0-433a-afa2-560af3f06756 | pending |
-| shares | confirmation_cloud_db_write_struct_0419e876-b124-4642-b1cc-e93b099ed40f | pending |
-| limits | confirmation_cloud_db_write_struct_78e3dd01-0318-44f9-b718-d3d7abf1c4f5 | pending |
-| reminders | confirmation_cloud_db_write_struct_ea013409-4e0b-44f1-a5fa-1a5e04d16c8f | pending |
-| ai_requests | confirmation_cloud_db_write_struct_96d491e2-37a7-47f4-b0b9-9e32d8626ae0 | pending |
-| ai_budget | confirmation_cloud_db_write_struct_b1f6d18c-43ee-43d0-8312-246f77349e91 | pending |
+| accounts | confirmation_cloud_db_write_struct_371fba62-9cf5-4490-b6b2-422ecb91d897 | success；列表已核验 |
+| preferences | confirmation_cloud_db_write_struct_58accee2-dff0-433a-afa2-560af3f06756 | success；列表已核验 |
+| shares | confirmation_cloud_db_write_struct_0419e876-b124-4642-b1cc-e93b099ed40f | success；列表已核验 |
+| limits | confirmation_cloud_db_write_struct_78e3dd01-0318-44f9-b718-d3d7abf1c4f5 | success；列表已核验 |
+| reminders | confirmation_cloud_db_write_struct_ea013409-4e0b-44f1-a5fa-1a5e04d16c8f | success；列表已核验 |
+| ai_requests | confirmation_cloud_db_write_struct_96d491e2-37a7-47f4-b0b9-9e32d8626ae0 | success；列表已核验 |
+| ai_budget | confirmation_cloud_db_write_struct_b1f6d18c-43ee-43d0-8312-246f77349e91 | success；列表已核验 |
 
-确认后逐一读取原任务内层结果，再用 listCollections 核对七个精确名字；不因外层 success 或旧 checkCollection=true 标记完成。集合创建成功后立即核验权限；未核验前不写任何个人记录、不启用客户端。
+交叉核验 listCollections 的 requestId 为 `ba12837f-915b-4f57-9f7d-0d509c494035`，limit=100，响应未分页遗漏；不记录其他应用明细。七个集合各有两个默认索引。安全规则不在这个结果中，不能据此声称 deny-all 已配置；未核验前不写任何个人记录、不启用客户端。
 
 ## 3. 索引（4 个业务索引 + 1 项 TTL 要求）
 
@@ -59,7 +59,16 @@ tool=`cloud_db_write_struct`，client=`codex`，action=`createCollection`；appi
 | reminders | jiancheng_daka_reminder_due | status ASC, dueAt ASC | 按时间取待发送任务 |
 | reminders | jiancheng_daka_reminder_claimed | status ASC, claimedAt ASC | 收敛超时认领状态 |
 
-四项均非唯一；其余访问按默认 _id，不新增无用索引。参数已备好于 `deploy/indexes/*.json`，尚未执行。依据[官方管理 SDK](https://docs.cloudbase.net/api-reference/manager/node/database)，同名创建可能先删后建，执行前必须读取现有索引；只对确认缺失项创建，不直接重跑全量文件。
+四项均非唯一；其余访问按默认 _id，不新增无用索引。参数位于 `deploy/indexes/*.json`。依据[官方管理 SDK](https://docs.cloudbase.net/api-reference/manager/node/database)，同名创建可能先删后建，执行前必须读取现有索引；只对确认缺失项创建，不直接重跑全量文件。
+
+用户确认集合创建后，真实 listIndexes 返回 shares 与 reminders 均只有 `_id_`、`_openid_1` 两个默认索引，四个业务索引都不存在；查询 requestId 分别为 `d5144e83-71b2-4fa5-9897-22eca6f5fa27`、`1533001a-ca57-4864-831a-e172096d0823`。据此各提交一次 updateCollection（只有 CreateIndexes，没有 DropIndexes）：
+
+| 集合 | 新增范围 | taskId | 最后状态 |
+| --- | --- | --- | --- |
+| jiancheng_daka_shares | owner_epoch 1 项 | confirmation_cloud_db_write_struct_7d5281f0-ab93-45ac-a116-31f0060929f0 | pending，待本次索引确认 |
+| jiancheng_daka_reminders | owner_epoch、due、claimed 3 项 | confirmation_cloud_db_write_struct_6c4ba448-9abe-4bd0-a42a-584d8bbd2654 | pending，待本次索引确认 |
+
+这两个任务是新增索引确认，不是重复创建集合。已通知用户确认；按 wechatide-skill 规则不主动轮询、不重发，用户确认后读取原任务并检查索引名称、键顺序、非唯一属性。
 
 reminders 的 `expiresAt` 需 Date 类型 TTL，expireAfterSeconds=0，不能用一个普通升序索引冒充 TTL。当前工具参数资料只明确了普通索引字段，TTL 接口/控制台仍待核实，不猜参数或提前勾选 HABIT_REMINDER_TTL_VERIFIED。TTL 会删除到期提醒元数据，不作用于账户/习惯/分享历史。
 
@@ -81,4 +90,5 @@ reminders 的 `expiresAt` 需 Date 类型 TTL，expireAfterSeconds=0，不能用
 - 全量测试：301 通过，0 失败、0 跳过；新增 3 项验证清单覆盖、索引参数一致性及默认安全边界。
 - 静态检查：236 项通过；云端生成副本一致性：61 文件通过；OpenSpec 严格校验：9 项通过；git diff --check 通过。
 - 本轮仅新增部署清单、索引参数、测试和执行文档，未修改业务逻辑。上述测试不证明云端创建成功或权限已生效。
-- 七个集合创建任务待平台确认，暂不提交依赖索引写入；权限、TTL、函数实际版本与超时配置仍须逐项核验。共享初始化 403 仍未解除。
+- 后续用户已允许七集合创建，原任务及完整列表交叉核验通过；四个业务索引已分两批提交，待平台确认。权限、TTL、函数实际版本与超时配置仍须逐项核验。共享初始化 403 仍未解除。
+- 权限/TTL 补查：describeCollection 仅返回索引明细，不返回安全规则；Computer Use 只读查看时当前工作区被本次索引确认弹窗遮挡，未继续输入或操作其他工程；未取得权限/TTL 配置证据。
