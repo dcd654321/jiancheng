@@ -1,0 +1,9 @@
+{
+  "CreateIndexes": [{
+    "IndexName": "jiancheng_daka_share_owner_epoch",
+    "MgoKeySchema": {
+      "MgoIsUnique": false,
+      "MgoIndexKeys": [{ "Name": "owner", "Direction": "1" }, { "Name": "ownerEpoch", "Direction": "1" }]
+    }
+  }]
+}

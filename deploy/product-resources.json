@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "environment": "product-d2g59zty74d7d1ec1",
+  "resourceAppid": "wx7ad85943fe81e095",
+  "consumerAppid": "wx58e61dffcbfa4249",
+  "prefix": "jiancheng_daka_",
+  "functions": [
+    { "name": "jiancheng_daka_api", "path": "cloudfunctions/jiancheng_daka_api", "purpose": "账户、习惯、打卡、同步、删除关联数据", "enableFlag": "HABIT_API_ENABLED" },
+    { "name": "jiancheng_daka_features", "path": "cloudfunctions/jiancheng_daka_features", "purpose": "偏好、置顶、私人分享管理、提醒申请与取消", "enableFlag": "HABIT_FEATURES_ENABLED" },
+    { "name": "jiancheng_daka_public_share", "path": "cloudfunctions/jiancheng_daka_public_share", "purpose": "公开分享白名单读取", "enableFlag": "HABIT_PUBLIC_SHARES_ENABLED" },
+    { "name": "jiancheng_daka_plan", "path": "cloudfunctions/jiancheng_daka_plan", "purpose": "带预算与目录约束的 AI 计划建议", "enableFlag": "HABIT_AI_ENABLED" },
+    { "name": "jiancheng_daka_reminder_tick", "path": "cloudfunctions/jiancheng_daka_reminder_tick", "purpose": "仅由受信定时器触发的提醒执行", "enableFlag": "HABIT_REMINDERS_ENABLED" }
+  ],
+  "collections": [
+    { "name": "jiancheng_daka_accounts", "purpose": "账户快照、习惯、打卡、代际与幂等回执", "clientRules": { "read": false, "write": false }, "indexes": [] },
+    { "name": "jiancheng_daka_preferences", "purpose": "置顶与偏好、本人分享目录及有界回执", "clientRules": { "read": false, "write": false }, "indexes": [] },
+    { "name": "jiancheng_daka_shares", "purpose": "分享快照、所有者与有效状态", "clientRules": { "read": false, "write": false }, "indexes": [
+      { "name": "jiancheng_daka_share_owner_epoch", "unique": false, "keys": [{ "name": "owner", "direction": "1" }, { "name": "ownerEpoch", "direction": "1" }] }
+    ] },
+    { "name": "jiancheng_daka_limits", "purpose": "各功能全局和个人限流计数", "clientRules": { "read": false, "write": false }, "indexes": [] },
+    { "name": "jiancheng_daka_reminders", "purpose": "提醒任务、加密接收者、发送与取消状态", "clientRules": { "read": false, "write": false }, "indexes": [
+      { "name": "jiancheng_daka_reminder_owner_epoch", "unique": false, "keys": [{ "name": "owner", "direction": "1" }, { "name": "ownerEpoch", "direction": "1" }] },
+      { "name": "jiancheng_daka_reminder_due", "unique": false, "keys": [{ "name": "status", "direction": "1" }, { "name": "dueAt", "direction": "1" }] },
+      { "name": "jiancheng_daka_reminder_claimed", "unique": false, "keys": [{ "name": "status", "direction": "1" }, { "name": "claimedAt", "direction": "1" }] }
+    ], "ttlRequirement": { "field": "expiresAt", "fieldType": "Date", "expireAfterSeconds": 0, "deadline": "dueAt 后 14 天", "deployment": "需先核实平台 TTL 接口，不当作普通索引已创建" } },
+    { "name": "jiancheng_daka_ai_requests", "purpose": "每用户 AI 请求去重、状态与每日次数", "clientRules": { "read": false, "write": false }, "indexes": [] },
+    { "name": "jiancheng_daka_ai_budget", "purpose": "全局日/月 AI 预算预留", "clientRules": { "read": false, "write": false }, "indexes": [] }
+  ],
+  "boundaries": {
+    "seedBusinessData": false,
+    "createTimerBeforeAcceptance": false,
+    "enableFeaturesBeforeAcceptance": false,
+    "switchActiveClientBeforeAcceptance": false,
+    "manageOtherApps": false,
+    "sharedAuthFunction": "cloudbase_auth",
+    "sharedAuthManagedHere": false
+  }
+}

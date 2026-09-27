@@ -4,6 +4,10 @@
 
 ## 当前摘要（以此处为准，后文保留过程记录）
 
+- 集合存在性结论更正：完整 listCollections 中无 jiancheng_daka_ 集合，与旧 checkCollection=true 不一致。七个空集合首次创建已提交，待平台确认；精确任务和当前清单见 PRODUCT-RESOURCE-INVENTORY-20260927.md，不再声称七集合已存在。
+- 已整理机器可读清单：5 函数、7 集合、4 个业务索引、1 项提醒 TTL 要求；普通索引参数已备好，未在集合创建确认前执行。
+- 资源清单新增 3 项回归后，全量 301 测试、236 静态检查、61 云文件一致性与 9 项 OpenSpec 严格校验通过；不作为正式环境创建/权限/联调完成证据。
+
 - `jiancheng_daka_api`：现有版本未覆盖，平台版本 1 已留作回滚材料；尚未演练回滚。
 - `jiancheng_daka_public_share`、`jiancheng_daka_plan`、`jiancheng_daka_reminder_tick`：已取得代码上传成功结果并确认 Active，功能未启用。
 - `jiancheng_daka_features`：资源 Active；旧部署任务已丢失，代码版本及调用待验证，未重复上传。

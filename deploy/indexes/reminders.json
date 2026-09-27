@@ -1,0 +1,16 @@
+{
+  "CreateIndexes": [
+    {
+      "IndexName": "jiancheng_daka_reminder_owner_epoch",
+      "MgoKeySchema": { "MgoIsUnique": false, "MgoIndexKeys": [{ "Name": "owner", "Direction": "1" }, { "Name": "ownerEpoch", "Direction": "1" }] }
+    },
+    {
+      "IndexName": "jiancheng_daka_reminder_due",
+      "MgoKeySchema": { "MgoIsUnique": false, "MgoIndexKeys": [{ "Name": "status", "Direction": "1" }, { "Name": "dueAt", "Direction": "1" }] }
+    },
+    {
+      "IndexName": "jiancheng_daka_reminder_claimed",
+      "MgoKeySchema": { "MgoIsUnique": false, "MgoIndexKeys": [{ "Name": "status", "Direction": "1" }, { "Name": "claimedAt", "Direction": "1" }] }
+    }
+  ]
+}

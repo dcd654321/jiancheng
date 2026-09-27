@@ -1,5 +1,7 @@
 # 原生与正式云只读核验
 
+> 后续更正：本文件的 checkCollection 存在性结果未得到完整列表证实。后续 listCollections（limit=100，Total=6）无任何 jiancheng_daka_ 集合，因此不能据旧 exists=true 宣称已创建。最新资源清单和实际创建任务以 PRODUCT-RESOURCE-INVENTORY-20260927.md 为准；这里保留当时工具原始结论的历史记录。
+
 日期：2026-09-27。分支：dev。业务代码检查点：701e341。
 
 ## 工具与范围
