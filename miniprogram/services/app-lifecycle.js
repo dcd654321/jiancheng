@@ -17,7 +17,7 @@ function createAppLifecycle(dependencies) {
       app.noteDrafts = createNoteDrafts();
       app.store = d.createWorkspaceStore(d.createStore(d.wxApi), app.cloudSession, app.noteDrafts);
       app.networkRecovery = createNetworkRecovery(d.wxApi, app.cloudSession);
-      app.planAssistant = d.createPlanAssistant(d.wxApi, d.cloudConfig, d.aiConfig);
+      app.planAssistant = d.createPlanAssistant(d.wxApi, d.cloudConfig, d.aiConfig, { session: app.cloudSession });
       app.quoteSession = d.createQuoteSession(d.wxApi);
       return settle(app, app.cloudSession.start());
     },

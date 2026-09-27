@@ -1,6 +1,6 @@
 const fs = require('node:fs');
 const path = require('node:path');
-const { apiFunction, featuresFunction, publicShareFunction, reminderTickFunction } = require('../miniprogram/config/cloud-resources');
+const { apiFunction, featuresFunction, publicShareFunction, reminderTickFunction, planFunction } = require('../miniprogram/config/cloud-resources');
 const root = path.resolve(__dirname, '..');
 const files = [
   ['server/handler.js', 'lib/handler.js'],
@@ -37,7 +37,9 @@ function emit(destination, bytes) {
 for (const [name, entries] of [[apiFunction, files],
   [featuresFunction, [['server/entries/features.js', 'index.js'], ...featureFiles]],
   [publicShareFunction, [['server/entries/public-share.js', 'index.js'], ...featureFiles]],
-  [reminderTickFunction, [['server/entries/reminder-tick.js', 'index.js'], ['server/reminder-worker.js','lib/reminder-worker.js'], ...featureFiles]]]) {
+  [reminderTickFunction, [['server/entries/reminder-tick.js', 'index.js'], ['server/reminder-worker.js','lib/reminder-worker.js'], ...featureFiles]],
+  [planFunction, [['server/entries/plan.js','index.js'],['server/ai-plan.js','lib/ai-plan.js'],['server/ai-provider.js','lib/ai-provider.js'],
+    ['miniprogram/core/ai-catalog.js','shared/ai-catalog.js'],['miniprogram/core/ai-contract.js','shared/ai-contract.js'],['miniprogram/core/plan-assistant.js','shared/plan-assistant.js'],...featureFiles]]]) {
   const output = path.join(root, 'cloudfunctions', name);
   for (const [source, target] of entries) emit(path.join(output, target), fs.readFileSync(path.join(root, source)));
   if ([featuresFunction,reminderTickFunction].includes(name)) emit(path.join(output,'lib/reminders.js'),fs.readFileSync(path.join(root,'server/reminders.js')));

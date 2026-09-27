@@ -10,5 +10,7 @@ module.exports = {
   preferencesCollection: 'jiancheng_daka_preferences',
   sharesCollection: 'jiancheng_daka_shares',
   limitsCollection: 'jiancheng_daka_limits',
-  remindersCollection: 'jiancheng_daka_reminders'
+  remindersCollection: 'jiancheng_daka_reminders',
+  aiRequestsCollection: 'jiancheng_daka_ai_requests',
+  aiBudgetCollection: 'jiancheng_daka_ai_budget'
 };

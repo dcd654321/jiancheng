@@ -11,12 +11,12 @@
   <view class="actions"><button class="primary" disabled="{{busy}}" bindtap="onRules">给我一个建议</button></view>
   <view class="sub spaced">基础建议按填写信息生成，不发送给AI。预览不会创建习惯或打卡。</view>
   <view wx:if="{{configured}}">
-    <view class="notice">AI只接收本页的方向、分钟数、星期和时间，不上传历史打卡或私人备注。结果需要自行核对。</view>
-    <checkbox-group bindchange="onConsent"><label class="consent"><checkbox value="agree" checked="{{consent}}" disabled="{{busy}}" color="#245c44" /><text>同意将本次安排发送给AI服务，仅用于生成计划建议。</text></label></checkbox-group>
+    <view class="notice">云端只接收本页安排；DeepSeek 仅接收方向和可用分钟，不接收执行时间、身份、历史打卡或私人备注。AI在预设动作中选择目标，不保证效果。</view>
+    <checkbox-group bindchange="onConsent"><label class="consent"><checkbox value="agree" checked="{{consent}}" disabled="{{busy}}" color="#245c44" /><text>同意将本次方向和可用分钟发送给 DeepSeek，仅用于细化计划建议。</text></label></checkbox-group>
     <button class="secondary spaced" loading="{{busy}}" disabled="{{busy || !consent}}" bindtap="onGenerate">请AI细化建议</button>
   </view>
   <view wx:if="{{preview}}" id="plan-preview" class="preview">
-    <view class="sub">{{preview.source === 'ai' ? 'AI生成 · 请自行核对' : '基础建议 · 非AI生成'}}</view>
+    <view class="sub">{{preview.source === 'ai' ? 'AI辅助建议 · 请自行核对' : '基础建议 · 非AI生成'}}</view>
     <view class="result-title">{{preview.draft.title}} · {{preview.draft.target}}分钟</view><view>{{preview.draft.action}}</view>
     <view class="sub spaced">{{schedule}}{{preview.draft.time ? ' · ' + preview.draft.time : ''}}</view><view class="sub">忙时的小目标：{{preview.draft.minimum ? preview.draft.minimum + '分钟' : '不设置'}}</view>
     <view class="sub spaced">{{preview.draft.reason}}</view><view class="sub spaced">下一步确认名称、目标和安排。动作建议供参考，不作为长期计划说明保存。</view>

@@ -12,7 +12,7 @@ function entryFixture(name) {
   f.main=exports.main;return f;
 }
 test('feature and public entries are disabled by default without any database access',async()=>{
-  for(const name of ['jiancheng_daka_features','jiancheng_daka_public_share']) {
+  for(const name of ['jiancheng_daka_features','jiancheng_daka_public_share','jiancheng_daka_plan']) {
     const f=entryFixture(name);assert.equal((await f.main({action:'pull'})).ok,false);assert.equal(f.calls,0);
   }
   const f=entryFixture('jiancheng_daka_features');
@@ -35,4 +35,11 @@ test('reminder timer entry is closed by default and forged client timers make no
   for(const key of ['HABIT_REMINDERS_ENABLED','HABIT_REMINDER_STORAGE_READY','HABIT_TIMER_VERIFIED','HABIT_TEMPLATE_VERIFIED','HABIT_REMINDER_TTL_VERIFIED','HABIT_LIMITS_VERIFIED','HABIT_IDENTITY_VERIFIED','HABIT_SIDECAR_CLEANUP_ENABLED'])f.env[key]='true';
   f.env.HABIT_TIMER_SECRET='e'.repeat(64);f.env.HABIT_TIMER_NAME='jiancheng_daka_digest';
   const response=await f.main({Type:'Timer',TriggerName:f.env.HABIT_TIMER_NAME,Message:f.env.HABIT_TIMER_SECRET});assert.equal(response.code,'UNAUTHORIZED');assert.equal(f.calls,0);
+});
+
+test('AI entry cannot open with missing budget or provider configuration and reveals no configuration details',async()=>{
+  const f=entryFixture('jiancheng_daka_plan');
+  for(const key of ['HABIT_AI_ENABLED','HABIT_AI_STORAGE_READY','HABIT_AI_BUDGET_VERIFIED','HABIT_AI_CATALOG_VERIFIED','HABIT_IDENTITY_VERIFIED','HABIT_MINIPROGRAM_ONLY','HABIT_LIMITS_VERIFIED','HABIT_SIDECAR_CLEANUP_ENABLED'])f.env[key]='true';
+  f.env.HABIT_APP_ID='wx-entry';f.env.HABIT_AI_PROVIDER='deepseek';
+  const result=await f.main({action:'suggest'});assert.equal(result.code,'AI_UNAVAILABLE');assert.equal(f.calls,0);assert.doesNotMatch(JSON.stringify(result),/KEY|budget|provider/i);
 });

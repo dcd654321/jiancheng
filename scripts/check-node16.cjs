@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const vm = require('vm');
 
-const { apiFunction, featuresFunction, publicShareFunction, reminderTickFunction } = require('../miniprogram/config/cloud-resources');
+const { apiFunction, featuresFunction, publicShareFunction, reminderTickFunction, planFunction } = require('../miniprogram/config/cloud-resources');
 const root = path.resolve(__dirname, '../cloudfunctions', apiFunction);
 
 function files(directory) {
@@ -15,7 +15,7 @@ function files(directory) {
   }, []);
 }
 
-const targets = [apiFunction, featuresFunction, publicShareFunction, reminderTickFunction].flatMap(name =>
+const targets = [apiFunction, featuresFunction, publicShareFunction, reminderTickFunction, planFunction].flatMap(name =>
   files(path.resolve(__dirname, '../cloudfunctions', name))).filter(file => /\.(?:js|cjs)$/.test(file));
 targets.forEach(file => {
   new vm.Script(fs.readFileSync(file, 'utf8'), { filename: file });

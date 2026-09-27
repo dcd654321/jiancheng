@@ -21,8 +21,10 @@ module.exports = {
       ? '使用置顶或分享时，还会保存偏好和你确认创建的公开快照；私人名称与备注不进入分享。可以在我的分享撤回或删除。' : '';
     const reminderNotice = require('./features-client').features().status().reminders
       ? '申请提醒时，服务端加密保存用于本次发送的微信用户标识；处理结束清除接收标识，提醒状态在计划时间14天后进入到期清理。删除个人数据会清理提醒，已在途消息无法撤回。' : '';
+    const aiNotice = getApp().planAssistant && getApp().planAssistant.status().configured
+      ? '主动同意AI建议后，本次方向和可用分钟发送给DeepSeek；云端另存最多32条受限结果和请求指纹用于去重，不存模型任意文本。删除个人数据会清理这些结果，但不能撤回已发送给服务商的请求。' : '';
     wx.showModal({ title: '隐私与数据说明', showCancel: false,
-      content: '习惯名称、目标、执行日期、打卡数量和你填写的备注会保存到微信云开发环境，用于同步和换机找回。不会获取手机号、头像、昵称、联系人或位置。打卡在离线时会先保存在当前设备，联网后自动同步。' + featureNotice + reminderNotice + '你可以导出记录或清除全部数据。' });
+      content: '习惯名称、目标、执行日期、打卡数量和你填写的备注会保存到微信云开发环境，用于同步和换机找回。不会获取手机号、头像、昵称、联系人或位置。打卡在离线时会先保存在当前设备，联网后自动同步。' + featureNotice + reminderNotice + aiNotice + '你可以导出记录或清除全部数据。' });
   },
   onExport() {
     if (this._deleting) return;
@@ -85,7 +87,7 @@ module.exports = {
     const release = () => { this._deleting = false; if (!this._gone) this.setData({ deleting: false }); };
     const context = ui.contextKey();
     wx.showModal({ title: '清除全部打卡数据？',
-      content: '将删除云端习惯、打卡、备注和已启用功能的偏好/分享/提醒，并清理本机缓存与导出文件。建议先导出备份。',
+      content: '将删除云端习惯、打卡、备注和已启用功能的偏好/分享/提醒/AI结果，并清理本机缓存与导出文件。建议先导出备份。',
       confirmText: '继续', confirmColor: '#983e28',
       success: first => {
         if (!first.confirm || this._gone) { release(); return; }

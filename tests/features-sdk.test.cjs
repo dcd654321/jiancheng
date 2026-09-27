@@ -8,6 +8,8 @@ const { COLLECTION }=require('../server/cloudbase-repository');
 const { LIMITS,createLimiter,createLimitRepository }=require('../server/limits');
 const { REMINDERS,createReminderRepository,createRecipientCodec,createReminderApi }=require('../server/reminders');
 const { createReminderWorker }=require('../server/reminder-worker');
+const { REQUESTS:AI_REQUESTS,BUDGET:AI_BUDGET,createAiRepository,createAiApi }=require('../server/ai-plan');
+const inputCore=require('../miniprogram/core/plan-assistant'),catalog=require('../miniprogram/core/ai-catalog');
 const { createFeaturesApi,createPublicShareApi }=require('../server/features');
 const { fixture,domain,dates }=require('./helpers/cloud-fixture.cjs');
 const sdkPath=path.resolve(__dirname,'../cloudfunctions/jiancheng_daka_api/node_modules/wx-server-sdk');
@@ -33,7 +35,7 @@ test('feature repositories use installed SDK document transactions, owner-isolat
         saved=transactions.get(params.transactionId);transactions.delete(params.transactionId);return {ok:1};
       }
       if(action==='database.abortTransaction'){transactions.delete(params.transactionId);return {ok:1};}
-      assert.ok([COLLECTION,PREFERENCES,SHARES,LIMITS,REMINDERS].includes(params.collectionName));
+      assert.ok([COLLECTION,PREFERENCES,SHARES,LIMITS,REMINDERS,AI_REQUESTS,AI_BUDGET].includes(params.collectionName));
       const target=params.transactionId?transactions.get(params.transactionId):saved;assert.ok(target);
       const query=JSON.parse(params.query),prefix=params.collectionName+':';
       if(action==='database.getDocument') {
@@ -90,4 +92,13 @@ test('feature repositories use installed SDK document transactions, owner-isolat
   await createSidecarCleanup(db,{limitsEnabled:true})(owner,'obsolete');assert.ok(saved.has(LIMITS+':features-'+owner));
   await createSidecarCleanup(db,{limitsEnabled:true})(owner,a.epoch);assert.equal(saved.has(LIMITS+':features-'+owner),false);
   assert.equal((await createLimitRepository(db).transact(async tx=>({ok:true,row:await tx.read('global-features')}))).row.minuteUsed,1);
+  let paid=0;const aiRepo=createAiRepository(db),ai=createAiApi({repository:aiRepo,inputCore,catalog,dates,
+    allowedAppId:f.identity.APPID,allowedSources:['wx_client'],clock:()=>now,budget:{perCall:100,daily:200,monthly:500,perUser:2},
+    provider:async()=>{paid++;return {actionKey:'read-resume',reasonKey:'start-small',target:3,minimum:1};}});
+  const aiRequest={action:'suggest',operationId:'sdk-request',operationDate:f.date,epoch:a.epoch,consent:true,input:{direction:'read',minutes:5,weekdays:[1],time:''}};
+  conflict=true;const generated=await ai(aiRequest,f.identity);assert.equal(generated.ok,true,JSON.stringify(generated));
+  assert.equal((await ai(aiRequest,f.identity)).replayed,true);assert.equal(paid,1);
+  assert.equal((await aiRepo.transact(owner,async tx=>({ok:true,value:await tx.budget()}))).value.dayReserved,100);
+  await createSidecarCleanup(db,{aiEnabled:true})(owner,'obsolete');assert.ok(saved.has(AI_REQUESTS+':'+owner));
+  await createSidecarCleanup(db,{aiEnabled:true})(owner,a.epoch);assert.equal(saved.has(AI_REQUESTS+':'+owner),false);assert.ok(saved.has(AI_BUDGET+':global'));
 });

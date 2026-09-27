@@ -6,12 +6,13 @@ const { DIRECTIONS, validateInput, ruleSuggestion } = require('../miniprogram/co
 const { createStore } = require('../miniprogram/services/store');
 const { createWorkspaceStore } = require('../miniprogram/services/workspace-store');
 const input = extra => ({ direction: 'read', minutes: 5, weekdays: [1, 2, 3, 4, 5], time: '12:30', ...extra });
-const cloudConfig = { enabled: true, envId: 'local-test' }, aiConfig = { enabled: true, functionName: 'jiancheng_daka_plan', timeoutMs: 1000 };
+const cloudConfig = { enabled: true, envId: 'local-test', functionName:'jiancheng_daka_api' }, aiConfig = { enabled: true, functionName: 'jiancheng_daka_plan', timeoutMs: 1000 };
 function fixture(reply, config = aiConfig, cloud = cloudConfig) {
   const calls = [], inits = [];
   const wx = { cloud: { init: o => inits.push(o), callFunction: o => { calls.push(o); return reply ? reply(o) : Promise.resolve({ result: {
-    ok: true, source: 'ai', moderated: true, operationId: o.data.operationId, draft: ruleSuggestion(o.data.input).draft } }); } } };
-  const service = createPlanAssistant(wx, cloud, config); return { service, calls, inits, wx };
+    ok: true, source: 'ai', moderated: true, safetyMode:'allowlist-v1', operationId: o.data.operationId, draft: ruleSuggestion(o.data.input).draft } }); } } };
+  const session={status:()=>({consented:true,ready:true,accountId:'a'.repeat(64),epoch:'epoch-fixture',pending:0})};
+  const service = createPlanAssistant(wx, cloud, config, {session}); return { service, calls, inits, wx };
 }
 const deferred = () => { let resolve, reject; const promise = new Promise((a, b) => { resolve = a; reject = b; }); return { promise, resolve, reject }; };
 
@@ -36,7 +37,7 @@ test('AI双开关/占位符/同意门控，打开和本机模板不联网', asyn
   const f = fixture(); await assert.rejects(f.service.generate(input(), false), /同意/); assert.equal(f.calls.length, 0);
 });
 test('AI仅发送必要安排，检验请求ID/来源/安全标记；星期和时间仍由用户决定', async () => {
-  const f = fixture(o => Promise.resolve({ result: { ok: true, source: 'ai', moderated: true, operationId: o.data.operationId,
+  const f = fixture(o => Promise.resolve({ result: { ok: true, source: 'ai', moderated: true, safetyMode:'allowlist-v1', operationId: o.data.operationId,
     draft: { ...ruleSuggestion(input()).draft, weekdays: [7], time: '23:59' } } }));
   const result = await f.service.generate(input({ privateNote: '不得上传' }), true);
   assert.equal(result.source, 'ai'); assert.deepEqual(result.draft.weekdays, [1, 2, 3, 4, 5]); assert.equal(result.draft.time, '12:30');
@@ -46,7 +47,7 @@ test('AI仅发送必要安排，检验请求ID/来源/安全标记；星期和�
 test('未审核、错误来源/请求ID、额度耗尽及非法AI目标均不产生可用预览', async () => {
   for (const change of [r => { r.moderated = false; }, r => { r.source = 'rule'; }, r => { r.operationId = 'different'; },
     r => { r.draft.target = 80; }, r => { r.draft.target = '5'; }, r => { r.draft.action = '<script>x</script>'; }, r => { r.ok = false; r.code = 'RATE_LIMITED'; }]) {
-    const f = fixture(o => { const result = { ok: true, source: 'ai', moderated: true, operationId: o.data.operationId, draft: ruleSuggestion(input()).draft }; change(result); return Promise.resolve({ result }); });
+    const f = fixture(o => { const result = { ok: true, source: 'ai', moderated: true, safetyMode:'allowlist-v1', operationId: o.data.operationId, draft: ruleSuggestion(input()).draft }; change(result); return Promise.resolve({ result }); });
     await assert.rejects(f.service.generate(input(), true)); assert.equal(f.service.status().busy, false);
   }
 });
@@ -117,7 +118,7 @@ test('生成过程中禁止改输入与重复请求，离开后的结果不会�
   const work = p.onGenerate(); p.onMinutes({ detail: { value: '2' } }); assert.equal(p.data.minutes, '5');
   await p.onGenerate(); assert.equal(f.calls.length, 1);
   p.onHide(); p.onUnload();
-  pending.resolve({ result: { ok: true, source: 'ai', moderated: true, operationId: f.calls[0].data.operationId, draft: ruleSuggestion(input()).draft } });
+  pending.resolve({ result: { ok: true, source: 'ai', moderated: true, safetyMode:'allowlist-v1', operationId: f.calls[0].data.operationId, draft: ruleSuggestion(input()).draft } });
   await work; assert.equal(p.data.preview, null); assert.equal(f.store.read().habits.length, 0);
 });
 

@@ -2,7 +2,7 @@
 const { PREFERENCES, SHARES, read } = require('./features-repository');
 const { LIMITS, PRIVATE_SCOPES } = require('./limits');
 // Account tombstone blocks new writes while this runs. Queries exclude new epochs.
-function createSidecarCleanup(db, { remindersEnabled = false, limitsEnabled = false } = {}) {
+function createSidecarCleanup(db, { remindersEnabled = false, limitsEnabled = false, aiEnabled = false } = {}) {
   const collections = [SHARES, ...(remindersEnabled ? ['jiancheng_daka_reminders'] : [])];
   return async (owner, ownerEpoch) => {
     if (!/^[a-f0-9]{64}$/.test(owner) || !/^[a-zA-Z0-9_-]{1,100}$/.test(ownerEpoch)) throw Error('INVALID_CLEANUP_SCOPE');
@@ -32,6 +32,11 @@ function createSidecarCleanup(db, { remindersEnabled = false, limitsEnabled = fa
         else if (doc && doc.owner !== owner) throw Error('INVALID_LIMIT_OWNER');
       });
     }
+    if (aiEnabled) await db.runTransaction(async tx=>{
+      const ref=tx.collection('jiancheng_daka_ai_requests').doc(owner),doc=await read(ref);
+      if(doc && doc.owner===owner && doc.ownerEpoch===ownerEpoch)await ref.remove();
+      else if(doc && doc.owner!==owner)throw Error('INVALID_AI_OWNER');
+    });
   };
 }
 module.exports = { createSidecarCleanup };

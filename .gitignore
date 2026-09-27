@@ -29,3 +29,4 @@ docs/CLEANUP-B*.md
 !/cloudfunctions/jiancheng_daka_features/
 !/cloudfunctions/jiancheng_daka_public_share/
 !/cloudfunctions/jiancheng_daka_reminder_tick/
+!/cloudfunctions/jiancheng_daka_plan/
