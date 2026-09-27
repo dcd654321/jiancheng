@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>渐成习惯打卡 · 设计图</title>
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({ startOnLoad: true, theme: 'neutral', securityLevel: 'loose' });
+</script>
+<style>
+  body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; color:#183b31; max-width: 980px; margin: 0 auto; padding: 24px; background:#fff; }
+  h1 { font-size: 22px; }
+  h2 { font-size: 18px; border-bottom: 1px solid #e8ede7; padding-bottom: 6px; margin-top: 32px; }
+  .diagram { background:#fafcfa; border:1px solid #e8ede7; border-radius:8px; padding:16px; margin:16px 0; overflow-x:auto; }
+  .note { color:#65756c; font-size:14px; }
+</style>
+</head>
+<body>
+<h1>渐成习惯打卡 · 设计图</h1>
+<p class="note">打开本文件即可在浏览器中看到渲染后的图（需联网加载 Mermaid）。源图同步维护在 DESIGN-CONCEPT.md / DESIGN-DETAIL.md / DESIGN-DATABASE.md。</p>
+
+<h2>架构总览（概设）</h2>
+<div class="diagram">
+<pre class="mermaid">
+flowchart TB
+    subgraph FE["小程序前端 miniprogram/"]
+        direction TB
+        P["pages/ 原生交互<br/>今日·进度·我的·编辑·详情·同步…"]
+        S["services/ 云端主数据·确认快照·离线队列·同步引擎"]
+        CORE["core/ 纯业务规则<br/>日期·习惯状态机·统计·CSV·AI契约"]
+        P --> S --> CORE
+    end
+    subgraph CLOUD["微信云开发"]
+        FN["云函数 jiancheng_daka_api<br/>protocol → handler → repository"]
+        DB[("集合 jiancheng_daka_accounts")]
+        FN --> DB
+    end
+    S -->|"callFunction（可信身份 APPID+OPENID）"| FN
+</pre>
+</div>
+
+<h2>数据权威模型（概设）</h2>
+<div class="diagram">
+<pre class="mermaid">
+flowchart LR
+    CLOUD[("云端账户<br/>唯一数据源")]
+    SNAP[("本机确认快照<br/>断网可读")]
+    QUEUE[("本机待同步队列<br/>恢复自动重试")]
+    CLOUD -->|"pull 确认"| SNAP
+    QUEUE -->|"mutate 顺序提交"| CLOUD
+</pre>
+</div>
+
+<h2>习惯状态机（详设）</h2>
+<div class="diagram">
+<pre class="mermaid">
+stateDiagram-v2
+    [*] --> active : 创建（今天/明天开始）
+    active --> paused : 暂停（次日生效）
+    paused --> active : 恢复（次日生效）
+    active --> archived : 归档（次日生效）
+    paused --> archived : 归档（次日生效）
+    active --> active : 编辑（次日生效，另存版本）
+    paused --> paused : 编辑（次日生效，另存版本）
+    archived --> [*]
+</pre>
+</div>
+
+<h2>当天记录状态机（详设）</h2>
+<div class="diagram">
+<pre class="mermaid">
+stateDiagram-v2
+    [*] --> pending : 当天有安排
+    pending --> standard : complete（按原目标）
+    pending --> minimum : complete（按简化目标）
+    standard --> pending : undo
+    minimum --> pending : undo
+    pending --> pending : simplify/restore（调整当天目标）
+</pre>
+</div>
+
+<h2>同步时序（详设）</h2>
+<div class="diagram">
+<pre class="mermaid">
+sequenceDiagram
+    autonumber
+    participant P as 页面
+    participant S as sync-engine
+    participant C as 云函数 handler
+    participant R as repository（事务）
+    P->>S: 打卡/撤销/简化/恢复/备注
+    S->>S: 乐观投影 + 持久化队列（带 operationId）
+    S->>C: mutate(operationId, epoch, expectedRevision, operationDate, command)
+    C->>C: 身份校验 / 回执查重 / 版本与代际比较
+    C->>R: transact(owner)
+    R->>R: 读账户 → reduce 应用命令 → 校验 → revision+1
+    R-->>C: 同事务写回 state + receipt
+    C-->>S: { ok, snapshot, appliedRevision }
+    S->>S: 更新确认快照，清队首
+</pre>
+</div>
+
+<h2>页面导航图（原型）</h2>
+<div class="diagram">
+<pre class="mermaid">
+flowchart TD
+    TODAY["今日（首页 / Tab）"]
+    PROGRESS["进度（Tab）"]
+    MINE["我的（Tab）"]
+    EDIT["编辑 / 添加习惯"]
+    DETAIL["习惯详情"]
+    MANAGE["习惯管理"]
+    SYNC["数据同步"]
+    DATA["数据管理"]
+    RESTORE["导出与找回"]
+    ASSISTANT["计划助手"]
+    TODAY --> EDIT
+    TODAY --> DETAIL
+    TODAY --> ASSISTANT
+    TODAY --> SYNC
+    PROGRESS --> DETAIL
+    MINE --> MANAGE
+    MINE --> DATA
+    MINE --> SYNC
+    DATA --> SYNC
+    DATA --> RESTORE
+    ASSISTANT --> EDIT
+    EDIT --> DETAIL
+    MANAGE --> DETAIL
+    DETAIL --> EDIT
+</pre>
+</div>
+
+<h2>ER 图（数据库）</h2>
+<div class="diagram">
+<pre class="mermaid">
+erDiagram
+    ACCOUNT ||--o{ HABIT : "state.habits"
+    ACCOUNT ||--o{ RECEIPT : "receipts"
+    HABIT ||--o{ VERSION : "versions"
+    HABIT ||--o{ RECORD : "records[id@date]"
+    ACCOUNT {
+        string owner PK "SHA256(APPID:OPENID)"
+        string epoch "数据代际"
+        int revision "账户版本"
+        string updatedAt "ISO-8601"
+    }
+    HABIT {
+        string id PK "客户端稳定ID"
+        string createdDate "YYYY-MM-DD"
+        int revision "习惯版本"
+    }
+    VERSION {
+        string title "1-20字"
+        int target "原目标"
+        int minimum "忙时小目标可空"
+        string unit "分钟/页/次"
+        string weekdays "1-7集合"
+        string time "HH:mm可空"
+        string effectiveDate "次日生效"
+        string status "active/paused/archived"
+        int revision "版本号"
+    }
+    RECORD {
+        string id PK "habitId"
+        string date PK "YYYY-MM-DD"
+        int versionRevision "绑定生效版本"
+        int todayTarget "当天目标"
+        string status "pending/standard/minimum"
+        string note "<=140字"
+        string lastSyncedAt "审计字段"
+        bool delayedSync "延迟补同步"
+    }
+    RECEIPT {
+        string id PK "operationId"
+        string fingerprint "sha256(canonical)"
+        int revision "appliedRevision"
+    }
+</pre>
+</div>
+
+</body>
+</html>

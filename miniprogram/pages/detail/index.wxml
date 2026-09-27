@@ -7,7 +7,7 @@
     <view wx:if="{{error}}" class="error">{{error}}</view>
     <view class="heading">{{title}}</view><view class="sub">{{statusText}} · {{schedule}}</view>
     <view wx:if="{{future}}" class="notice">{{future.effectiveDate}} 生效：{{future.title}} · {{future.target}} {{future.unit}} · {{nextStatusText}}<button wx:if="{{current}}" class="text-button" bindtap="onCancelFuture">撤销这次修改</button></view>
-    <view wx:if="{{task}}"><view class="section-title">今天</view><template is="task" data="{{task: task, detail: true}}" /></view>
+    <view wx:if="{{task}}"><view class="section-title">今天</view><template is="task" data="{{task: task, detail: true, quickMinimumEnabled: quickMinimumEnabled}}" /></view>
     <view wx:else class="notice">今天没有安排，不计入未记录。</view>
     <view wx:if="{{task || noteDirty}}">
       <button class="disclosure" bindtap="onToggleNote" aria-expanded="{{noteOpen || noteDirty}}"><text class="grow">{{noteDirty ? '备注草稿 · 尚未保存' : note ? '今天的备注' : '留一句话（选填）'}}</text><text class="sub">{{noteDirty ? '编辑中' : noteOpen ? '收起' : '编辑'}}</text><view class="chevron {{noteOpen || noteDirty ? 'up' : 'down'}}" /></button>

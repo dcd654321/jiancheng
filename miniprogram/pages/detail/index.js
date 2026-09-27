@@ -11,7 +11,8 @@ Page(ui.withLifecycle({
   data: { error: '', needsConsent: false, loading: true, dataUnavailable: false, dataReady: false,
     title: '', schedule: '', current: null, future: null, task: null, history: [], note: '',
     noteDirty: false, noteExpired: false, noteDate: '', date: '', statusText: '',
-    noteOpen: false, moreOpen: false, showHistory: false, visibleHistory: [] },
+    noteOpen: false, moreOpen: false, showHistory: false, visibleHistory: [],
+    quickMinimumEnabled: ui.quickMinimumEnabled },
   onLoad(options) { this._id = options.id; this.refresh(); },
   refresh() {
     if (!this._id) return;

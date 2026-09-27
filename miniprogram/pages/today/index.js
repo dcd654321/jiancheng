@@ -6,6 +6,7 @@ Page(ui.withLifecycle({
   data: { error: '', needsConsent: false, loading: true, dataUnavailable: false, dataReady: false,
     date: '', dateLabel: '', pending: [], completed: [], total: 0, done: 0, minimum: 0, rate: 0,
     hasHabits: false, hideQuote: false, quote: QUOTES[0], showCompleted: false,
+    quickMinimumEnabled: ui.quickMinimumEnabled,
     firstHabitGuide: '', returnGuide: null },
   refresh() {
     ui.read(this, (state, date) => {

@@ -27,10 +27,10 @@
       <view class="meter"><view class="meter-fill" style="width: {{rate}}%"></view></view>
       <view wx:if="{{minimum}}" class="sub">其中 {{minimum}} 项为小目标完成</view>
       <view class="section-title">待做 {{pending.length}} · 已做 {{completed.length}}</view>
-      <block wx:for="{{pending}}" wx:key="id"><template is="task" data="{{task: item}}" /></block>
+      <block wx:for="{{pending}}" wx:key="id"><template is="task" data="{{task: item, quickMinimumEnabled: quickMinimumEnabled}}" /></block>
       <view wx:if="{{!pending.length}}" class="sub spaced">今天的安排已全部记录。</view>
       <button wx:if="{{completed.length}}" class="disclosure spaced" bindtap="onToggleCompleted" aria-expanded="{{showCompleted}}"><text class="grow">已完成 · {{completed.length}}</text><text class="sub">{{showCompleted ? '收起' : '查看'}}</text><view class="chevron {{showCompleted ? 'up' : 'down'}}" /></button>
-      <block wx:if="{{showCompleted}}"><block wx:for="{{completed}}" wx:key="id"><template is="task" data="{{task: item}}" /></block></block>
+      <block wx:if="{{showCompleted}}"><block wx:for="{{completed}}" wx:key="id"><template is="task" data="{{task: item, quickMinimumEnabled: quickMinimumEnabled}}" /></block></block>
       <view wx:if="{{!hideQuote && returnGuide}}" class="sub quote">{{quote}}</view>
     </block>
     <view wx:else class="empty"><view class="heading">{{hasHabits ? '今天没有安排' : '选一件今天就能做的事'}}</view><view class="sub">{{hasHabits ? '休息日不算漏做，看看接下来的安排。' : '先选一个现成目标，创建前可以改；忙时的小目标也已填好。'}}</view>

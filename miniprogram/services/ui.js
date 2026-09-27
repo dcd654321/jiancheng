@@ -1,5 +1,8 @@
 const date = require('../core/date');
 const domain = require('../core/habits');
+const cloudConfig = require('../config/cloud');
+const { apiFunction } = require('../config/cloud-resources');
+const quickMinimumEnabled = cloudConfig.enabled === true && cloudConfig.functionName === apiFunction && cloudConfig.completeMinimumEnabled === true;
 
 function store() { return getApp().store; }
 function contextKey() { return store().contextKey ? store().contextKey() : 'cloud'; }
@@ -155,4 +158,4 @@ const taskActions = {
   }
 };
 
-module.exports = { date, domain, store, read, mutate, error, id, contextKey, assertContext, storageInfo, taskStatusLabel, withLifecycle, taskActions };
+module.exports = { date, domain, store, read, mutate, error, id, contextKey, assertContext, storageInfo, taskStatusLabel, quickMinimumEnabled, withLifecycle, taskActions };

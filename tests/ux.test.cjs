@@ -106,6 +106,17 @@ test('unconfigured small goal stays unset and target one offers no lower-goal ac
   assert.match(markup,/小目标完成/); assert.match(markup,/原目标完成/);
   assert.match(markup,/平时 \{\{task\.originalTarget\}\}/); assert.match(markup,/忙时 \{\{task\.minimum\}\}/);
 });
+test('legacy cloud API hides the unsupported one-tap command and keeps manual adjustment available', t => {
+  const h=harness(t); h.seed(); const today=h.page('today');
+  const detail=h.page('detail',{id:'read'});
+  assert.equal(today.data.quickMinimumEnabled,false);
+  assert.equal(detail.data.quickMinimumEnabled,false);
+  assert.equal(today.data.pending[0].minimum,2);
+  const markup=fs.readFileSync(path.resolve(__dirname,'../miniprogram/templates/task.wxml'),'utf8');
+  assert.match(markup,/quickMinimumEnabled && task\.minimum && !task\.simplified/);
+  assert.match(markup,/!quickMinimumEnabled \|\| !task\.minimum/);
+  assert.match(markup,/今天少做一点 · /);
+});
 test('one-tap busy-goal check-in moves only that habit to completed', t => {
   const h=harness(t); h.seed();
   const day=dates.today();
