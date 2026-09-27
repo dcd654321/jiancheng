@@ -16,7 +16,17 @@ function createCloudTransport(wxApi, { enabled, envId, consent, functionName = a
       if (!initPromise) {
         const instance = new wxApi.cloud.Cloud({ resourceAppid, resourceEnv: envId });
         if (typeof instance.init !== 'function' || typeof instance.callFunction !== 'function') throw Error('共享云实例接口不可用');
-        initPromise = Promise.resolve().then(() => instance.init()).then(() => instance).catch(error => {
+        initPromise = Promise.resolve().then(() => instance.init()).then(result => {
+          // Some shared authorization failures resolve instead of rejecting.
+          // Do not mask that failure with a later "cloud not initialized" error.
+          if (result && typeof result === 'object' && 'errCode' in result && result.errCode !== 0) {
+            const denied = result.errCode === 403;
+            const error = Error(denied ? '正式云共享权限尚未开通，请联系开发者处理' : '云服务初始化失败，请稍后重试');
+            error.code = denied ? 'SHARED_CLOUD_PERMISSION_DENIED' : 'SHARED_CLOUD_INIT_FAILED';
+            throw error;
+          }
+          return instance;
+        }).catch(error => {
           initPromise = null;
           throw error;
         });

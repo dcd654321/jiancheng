@@ -110,6 +110,52 @@ test('共享云初始化失败可再次尝试，不回退旧环境也不伪造�
   assert.equal(calls, 1);
 });
 
+test('共享初始化 resolve 403 时并发共同失败，不调用业务且不泄露原始错误，随后可重试', async () => {
+  let attempts = 0, calls = 0, release;
+  const firstInit = new Promise(resolve => { release = resolve; });
+  const wx = { cloud: {
+    init() { throw Error('不得回退默认云'); },
+    callFunction() { throw Error('不得调用默认云'); },
+    Cloud: class {
+      init() { return ++attempts === 1 ? firstInit : Promise.resolve({ errCode: 0 }); }
+      async callFunction() { calls++; return { result: { ok: true } }; }
+    }
+  } };
+  const invoke = createCloudTransport(wx, { ...require('../miniprogram/config/cloud.product'), enabled: true, consent: true });
+  const outcomes = Promise.allSettled([invoke({ action: 'pull' }), invoke({ action: 'pull' })]);
+  await Promise.resolve();
+  assert.equal(attempts, 1);
+  release({ errCode: 403, errMsg: 'PRIVATE_RAW_AUTH_DETAIL', auth: 'PRIVATE_AUTH_VALUE' });
+  for (const outcome of await outcomes) {
+    assert.equal(outcome.status, 'rejected');
+    assert.equal(outcome.reason.code, 'SHARED_CLOUD_PERMISSION_DENIED');
+    assert.equal(outcome.reason.message, '正式云共享权限尚未开通，请联系开发者处理');
+    assert.doesNotMatch(String(outcome.reason) + JSON.stringify(outcome.reason), /PRIVATE_/);
+  }
+  assert.equal(calls, 0);
+  assert.deepEqual(await invoke({ action: 'pull' }), { ok: true });
+  assert.equal(attempts, 2);
+  assert.equal(calls, 1);
+});
+
+test('共享初始化显式错误码必须为数值零，异常码不透传且不发业务请求', async () => {
+  for (const errCode of [-1, 500, '0', '403', null, undefined, NaN, {}]) {
+    let calls = 0;
+    const wx = { cloud: { Cloud: class {
+      async init() { return { errCode, errMsg: 'PRIVATE_RAW_DETAIL' }; }
+      async callFunction() { calls++; return { result: { ok: true } }; }
+    } } };
+    const invoke = createCloudTransport(wx, { ...require('../miniprogram/config/cloud.product'), enabled: true, consent: true });
+    await assert.rejects(invoke({ action: 'pull' }), error => {
+      assert.equal(error.code, 'SHARED_CLOUD_INIT_FAILED');
+      assert.equal(error.message, '云服务初始化失败，请稍后重试');
+      assert.doesNotMatch(String(error), /PRIVATE_/);
+      return true;
+    });
+    assert.equal(calls, 0);
+  }
+});
+
 test('正式云调用使用前缀函数和明确环境，不自动回退到旧函数', async () => {
   const calls = [], init = [];
   const wx = { cloud: { init: options => init.push(options), callFunction: async options => {

@@ -5,10 +5,11 @@
 ## 当前摘要（以此处为准，后文保留过程记录）
 
 - `jiancheng_daka_api`：现有版本未覆盖，平台版本 1 已留作回滚材料；尚未演练回滚。
-- `jiancheng_daka_public_share`、`jiancheng_daka_plan`：已取得代码上传成功结果并确认 Active，功能未启用。
+- `jiancheng_daka_public_share`、`jiancheng_daka_plan`、`jiancheng_daka_reminder_tick`：已取得代码上传成功结果并确认 Active，功能未启用。
 - `jiancheng_daka_features`：资源 Active；旧部署任务已丢失，代码版本及调用待验证，未重复上传。
-- `jiancheng_daka_reminder_tick`：首次部署待用户确认，taskId 见本文末及部署日志；不设定时器、不发送消息。
-- 实际共享调用仍报初始化错误，未进入业务响应。模拟器 API 类型正常不能抵销该失败；正式配置保持关闭，活动客户端未切换。
+- reminder_tick 补传任务 7a04bed4 已成功：13 文件、33.3 KB；不再待确认，不设定时器、不发送消息。
+- 共享连接真实阻塞已定位：init Promise resolve `{errCode:403}`，提示当前小程序未获资源方云环境共享权限。已修复客户端忽略返回码的问题，298 项测试通过；修复后原生复测因诊断工程运行时异常未通过。共享授权本身未调整，正式配置仍关闭。
+- 若接通需要修改共用 cloudbase_auth 或共享配置，须另行授权，只补充本 AppID、保留其他应用既有规则；不得把此前专属资源授权扩展成共用认证授权。
 - 仍需云端安全规则/索引/TTL、身份隔离、提醒模板及送达、AI 配置和真机验收；目前不能宣布上线就绪。
 
 ## 已交付检查点

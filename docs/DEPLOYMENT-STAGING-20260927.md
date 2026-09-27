@@ -161,3 +161,42 @@
 - 在该上下文执行一次新共享实例的受控公开调用：初始化步骤完成，仍在 call 阶段返回 errCode=-1 和 `Cloud API isn't enabled, please call wx.cloud.init first`。尚未拿到业务层 SHARE_UNAVAILABLE 响应；没有依据此错误修改业务初始化、切换活动云配置或放宽权限。
 - 核对了 [CloudBase 官方共享实例示例](https://docs.cloudbase.net/run/develop/access/mini)；示例是云托管 callContainer 场景，不能用它冒充当前云函数调用已验收。当前 SDK 类型可用与共享调用成功是不同证据，后续仍需定位实例/工具上下文和真实调用路径。
 - `npm run check:cloud` 再次通过，61 个生成文件与源码一致；`git diff --check` 通过。本次仅变更部署记录，没有业务代码改动，也未重新执行全量单测或真机验收。
+
+## 提醒补传完成与隔离复现准备
+
+用户询问正式环境是否初始化完成时，查询 reminder_tick 首次任务 `643b8c20-c4ef-4910-b6e8-0e0730a8b008` 得到终态 success，但内层报 `FailedOperation.UpdateFunctionCode`：当前函数处于 Creating 状态，RequestId `e6979298-ccf3-4243-8eee-69040a35cbe3`。同时五个本应用函数均已 Active，七个集合的 checkCollection 均报告存在；accounts/reminders 的 listIndexes 仅返回成功提示，没有索引数组，不能据此确认索引已配置。
+
+用户要求继续后，同步 dev 并复核 reminder_tick 为 Active，仅补传明确失败的代码。修复任务 `confirmation_cloud_fn_deploy_7a04bed4-7682-4707-a329-a2de5e21fcd4` 经用户回复“点了”后查询成功，内层返回 `filesCount=13`、`packSize=33.3 KB`，无 error；再次查询函数 Active、Nodejs16.13、超时 3 秒。此项不再待确认，没有定时器、启用变量或消息发送。
+
+- 云控制台界面连续返回 `user input was detected in this window; call get_window_state before continuing`。刷新后再次出现相同提示，停止界面输入，避免干扰正在发生的人工操作；未在控制台修改共享关系、权限或其他资源。
+- 现有 automation_evaluate 中 API 形态可用，但仍不足以区分工具上下文与真实 Page 生命周期调用。准备一个 `qa/local/shared-cloud-probe-20260927/` 独立诊断工程，沿用本小程序 AppID，目标只为正式环境的已关闭 public_share 接口及固定无效 ID。
+- 诊断工程不导入业务 store、缓存或离线队列，不读取/写入个人记录，不设 mock，不修改主工程活动配置；不上传或发布。只通过真实页面事件初始化共享实例和发起该公开请求，界面仅保留脱敏阶段/业务码。目录被 Git 忽略，诊断源代码和结果另在记录中说明。
+
+### 真实拒绝原因：初始化 resolve 403
+
+诊断工程已通过 project_import 导入，并以 liteMode 打开。与原工程使用相同 AppID 和基础库 3.17.3，但不导入其账户/缓存/队列。真实 Page 事件执行 `new wx.cloud.Cloud({resourceAppid:'wx7ad85943fe81e095', resourceEnv:'product-d2g59zty74d7d1ec1'})` 后等待 init，再调用已关闭 public_share 和固定全零 ID。单独共享初始化、先基础初始化两种路径都复现了 call 阶段的 -1/未初始化错误。
+
+为进一步分离自动化影响，仅在该诊断工程临时关闭 useApiHook，并在 Page.onReady 执行一次同范围诊断。init Promise 实际 resolve 对象的键为 errCode/errMsg。随后记录白名单字段并在非零码处停止，得到：
+
+```text
+stage: init
+initThenable: true
+initCode: 403
+initMessage: 当前小程序未获得备婚待办云环境的共享权限
+```
+
+这直接证明共享初始化拒绝发生在业务接口之前。此前“init 已完成”只表示 Promise 完成，不表示鉴权成功；后续 call 抛出的未初始化掩盖了该真实拒绝。尚未读取共用认证源码或核实控制台共享条目，不能断定拒绝来自哪个白名单实现，也不能将其描述为已修改或已恢复。
+
+### 本应用错误处理修复与验证
+
+- 先补 OpenSpec 场景，再修改 `miniprogram/services/cloud-transport.js`：init 返回对象显式含 errCode 时，只有数值 0 允许继续；403 映射固定权限提示，其他异常码映射固定初始化失败提示，不把资源方 errMsg/auth 原文透传到页面。
+- 失败后清空 initPromise，已有并发请求共同失败，不调用业务函数，不回退默认环境；后续显式请求可重新初始化。保持 SDK 不返回值的成功形式兼容。未改共享身份映射、共用权限、活动配置或服务端代码。
+- 新增两项回归覆盖并发 403、原始错误脱敏、成功重试及异常类型错误码拒绝。`npm test`：298/298 通过，无跳过；`npm run check`：232 通过；`npm run check:cloud`：61 文件一致；OpenSpec strict：9/9 通过。
+- 尝试在诊断工程复测修复后传输层：新模块先报 `module 'services/cloud-transport.js' is not defined`，重新开窗后自动化超时。恢复诊断工程 useApiHook=true，并以内联同一函数消除跨文件依赖（函数体与仓库源文一致性检查通过），最后读取返回 `cant find runtimeid by projectpath`。停止重复工具尝试，不能将修复后原生复测记为通过。
+- 本地诊断工程已取消自动执行，仅保留显式诊断按钮；不上传、不发布。它的调试设置不影响主工程。本回合真正验证的远端业务仍是“共享初始化拒绝”，没有账户写入、消息、模型请求或成功的正式业务调用。
+
+### 当前恢复与权限边界
+
+- reminder_tick 补传已成功，没有待确认上传；保持关闭即可，无需删除。plan/public_share 的成功记录不变，features 仍只有 Active 证据，主函数版本 1 留存且未覆盖。
+- 本应用代码/文档修复可单独撤销对应 Git 提交；撤销提交不会撤销远端函数上传。诊断工程在 qa/local 忽略目录，未进入生产包（主工程 miniprogramRoot 仍为 miniprogram/）。
+- 当前正式接入停在共享授权。下一步可先核对资源方共享条目和共用 cloudbase_auth；若需修改共用认证，只能在用户另行授权后，为 `wx58e61dffcbfa4249` 补充最小范围授权，先保存可恢复版本，保留其他应用既有规则。此前只改 jiancheng_daka_* 的授权不能自动扩展至共用认证。
