@@ -6,6 +6,7 @@
   <block wx:elif="{{dataReady}}">
     <view wx:if="{{error}}" class="error">{{error}}</view>
     <view class="heading">{{title}}</view><view class="sub">{{statusText}} · {{schedule}}</view>
+    <block wx:if="{{featuresEnabled && current.status === 'active'}}"><button class="text-button" disabled="{{pinning}}" loading="{{pinning}}" bindtap="onPin">{{pinned ? '取消置顶' : '置顶这个习惯'}}</button><view class="sub">最多置顶一个；今天有安排时优先显示。</view><view wx:if="{{pinError}}" class="error">{{pinError}}</view></block>
     <view wx:if="{{future}}" class="notice">{{future.effectiveDate}} 生效：{{future.title}} · {{future.target}} {{future.unit}} · {{nextStatusText}}<button wx:if="{{current}}" class="text-button" bindtap="onCancelFuture">撤销这次修改</button></view>
     <view wx:if="{{task}}"><view class="section-title">今天</view><template is="task" data="{{task: task, detail: true, quickMinimumEnabled: quickMinimumEnabled}}" /></view>
     <view wx:else class="notice">今天没有安排，不计入未记录。</view>

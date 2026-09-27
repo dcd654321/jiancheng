@@ -4,6 +4,19 @@ const { featuresFixture }=require('./helpers/features-fixture.cjs');
 const { dates }=require('./helpers/cloud-fixture.cjs');
 const { PUBLIC_UNAVAILABLE }=require('../server/features');
 
+test('share identifiers never accept coercible arrays and late requests cannot roll daily counters backwards',async()=>{
+  const f=featuresFixture(),a=await f.seed(),req=await f.requestShare(),id='a'.repeat(64);
+  for(const [action,patch] of [['getMyShare',{shareId:[id]}],['listMyShares',{cursor:[id]}],['createShare',{...req,requestId:[id]}]]) {
+    assert.equal((await f.features({epoch:a.epoch,action,...patch},f.identity)).code,'INVALID_REQUEST');
+  }
+  assert.deepEqual(await f.publicShare({action:'getPublicShare',shareId:[id]}),PUBLIC_UNAVAILABLE);
+  assert.equal((await f.features(req,f.identity)).ok,true);
+  f.prefs.get(a.accountId).dailyCreates.date=dates.shift(f.date,1);
+  const before=JSON.stringify([...f.prefs]);
+  assert.equal((await f.features(await f.requestShare(),f.identity)).code,'RECONFIRM_REQUIRED');
+  assert.equal(JSON.stringify([...f.prefs]),before);
+});
+
 test('features require trusted identity, matching epoch and an existing account without creating one',async()=>{
   const f=featuresFixture();
   const get={action:'getPreferences',epoch:'epoch-1'};

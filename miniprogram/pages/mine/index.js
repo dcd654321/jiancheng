@@ -1,7 +1,13 @@
 const ui = require('../../services/ui');
 const actions = require('../../services/data-actions');
+const { features } = require('../../services/features-client');
+const { APP_NAME } = require('../../config/brand');
 Page(ui.withLifecycle({
   ...actions,
+  data: { ...actions.data, sharingEnabled: false },
+  refresh() { actions.refresh.call(this); this.setData({ sharingEnabled: features().status().enabled }); },
+  onShares() { wx.navigateTo({ url: '/pages/share-list/index' }); },
+  onShareAppMessage() { return { title: APP_NAME + '：再忙，也能做一点', path: '/pages/today/index' }; },
   onData() { wx.navigateTo({ url: '/pages/data/index' }); },
   onHelp() {
     const smallGoalHelp = ui.quickMinimumEnabled

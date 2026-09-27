@@ -2,6 +2,7 @@ const ui = require('../../services/ui');
 const { QUOTES } = require('../../services/quotes');
 const { firstReturnTask } = require('../../services/gentle-return');
 const flow = require('../../services/today-flow');
+const { features } = require('../../services/features-client');
 
 Page(ui.withLifecycle({
   data: { error: '', needsConsent: false, loading: true, dataUnavailable: false, dataReady: false,
@@ -11,7 +12,13 @@ Page(ui.withLifecycle({
     firstHabitGuide: '', returnGuide: null, pendingRows: [], tomorrow: null, canCreateToday: true, canCreateTomorrow: true },
   refresh() {
     ui.read(this, (state, date) => {
-      const tasks = ui.domain.tasksOn(state, date);
+      if (this._pinContext !== ui.contextKey()) this._visitPinnedId = null;
+      this._pinContext = ui.contextKey();
+      const cached = features().cachedPreferences();
+      const pinnedId = this._visitPinnedId || (cached && cached.pinnedHabitId);
+      const tasks = ui.domain.tasksOn(state, date).map(task => ({ ...task, pinned: task.id === pinnedId }));
+      const pinned = tasks.findIndex(task => task.pinned);
+      if (pinned > 0) tasks.unshift(tasks.splice(pinned, 1)[0]);
       const completed = tasks.filter(t => t.done);
       const pending = tasks.filter(t => !t.done);
       const app = getApp();
@@ -47,6 +54,17 @@ Page(ui.withLifecycle({
     });
   },
   clearRecent() { clearTimeout(this._undoTimer); this._undoTimer = null; this._recentDone = null; },
+  async onShow() {
+    const service = features();
+    if (!service.status().enabled) return;
+    const key = ui.contextKey();
+    try {
+      const preferences = await service.preferences();
+      if (!this._gone && this._visible && key === ui.contextKey()) {
+        this._visitPinnedId = preferences && preferences.pinnedHabitId; this.refresh();
+      }
+    } catch (_) { /* Keep the stable time/ID order when preferences are unavailable. */ }
+  },
   onRecorded(command, order) {
     if (command.type === 'undo') { this.clearRecent(); return; }
     if (!['complete', 'completeMinimum'].includes(command.type) || command.date !== ui.date.today()) return;
@@ -62,7 +80,7 @@ Page(ui.withLifecycle({
     }
     return this.recordCompletion(recent.id, recent.date, 'undo');
   },
-  onHide() { this.clearRecent(); this.setData({ firstHabitGuide: '', returnGuide: null, pendingRows: [] }); this._firstGuideId = null; },
+  onHide() { this.clearRecent(); this._visitPinnedId = null; this.setData({ firstHabitGuide: '', returnGuide: null, pendingRows: [] }); this._firstGuideId = null; },
   onUnload() { this.clearRecent(); },
   onDismissGuide() { this.setData({ firstHabitGuide: '' }); this._firstGuideId = null; },
   onReturnOriginal(event) {

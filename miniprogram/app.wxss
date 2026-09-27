@@ -103,3 +103,5 @@ textarea.input { height: 104px; line-height: 1.6; }
 .legend-mark.pending { background: #f1f4ef; }
 .cell-status { display: block; font-size: 12px; line-height: 1.4; }
 .danger-zone { margin-top: 32px; padding-top: 16px; border-top: 1px solid #e8ede7; }
+.share-sheet { margin-top: 24px; padding: 24px 20px; border: 1px solid #e5ebe6; border-radius: 16px; background: #f6f8f4; overflow-wrap: anywhere; }
+.share-line { margin-top: 18px; line-height: 1.6; }

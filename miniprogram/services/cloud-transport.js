@@ -1,4 +1,4 @@
-const { apiFunction } = require('../config/cloud-resources');
+const { apiFunction, featuresFunction, publicShareFunction, planFunction } = require('../config/cloud-resources');
 
 /** Cloud-authoritative workspace transport; identity comes only from the server context. */
 function createCloudTransport(wxApi, { enabled, envId, consent, functionName = apiFunction, mode = 'default', resourceAppid } = {}) {
@@ -9,7 +9,7 @@ function createCloudTransport(wxApi, { enabled, envId, consent, functionName = a
   if (mode === 'shared') {
     if (typeof resourceAppid !== 'string' || !/^wx[a-f0-9]{16}$/.test(resourceAppid)) throw Error('共享云资源方 AppID 无效');
     if (!/^[a-zA-Z0-9_-]{1,100}$/.test(envId) || envId.startsWith('YOUR_')) throw Error('共享云环境标识无效');
-    if (functionName !== apiFunction) throw Error('共享云仅允许调用本项目专属函数');
+    if (![apiFunction, featuresFunction, publicShareFunction, planFunction].includes(functionName)) throw Error('共享云仅允许调用本项目专属函数');
     if (typeof wxApi.cloud.Cloud !== 'function') throw Error('当前环境不支持共享云实例');
     let initPromise = null;
     function ready() {

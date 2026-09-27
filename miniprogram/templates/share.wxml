@@ -1,0 +1,8 @@
+<template name="share-content">
+  <view class="share-sheet">
+    <view class="sub">渐成习惯打卡</view>
+    <view class="heading spaced">{{view.title}}</view>
+    <view class="sub">{{view.subtitle}}</view>
+    <view wx:for="{{view.lines}}" wx:key="*this" class="share-line">{{item}}</view>
+  </view>
+</template>

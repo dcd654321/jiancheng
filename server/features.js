@@ -6,6 +6,7 @@ const hash = value => crypto.createHash('sha256').update(value).digest('hex');
 const copy = value => JSON.parse(JSON.stringify(value));
 const own = (object, key) => Object.prototype.hasOwnProperty.call(object, key);
 const HEX = /^[a-f0-9]{64}$/;
+const hex = value => typeof value === 'string' && HEX.test(value);
 const CATEGORIES = ['read', 'walk', 'study', 'tidy'];
 const SLOTS = ['08:00', '12:30', '20:30'];
 const CAPTIONS = ['small-steps', 'keep-going', 'busy-still-counts'];
@@ -42,12 +43,12 @@ function validateRequest(event, dates) {
     if (event.kind === 'plan' && (!token(event.sourceHabitId) || !CATEGORIES.includes(event.categoryKey) || typeof event.includeWeekdays !== 'boolean')) fail('INVALID_REQUEST', '请选择习惯和公开类别');
     if (event.kind === 'weekly' && !CAPTIONS.includes(event.captionKey)) fail('INVALID_REQUEST', '请选择预设文案');
     if (event.action === 'createShare') {
-      if (!HEX.test(event.requestId || '') || !Number.isSafeInteger(event.sourceRevision) || event.sourceRevision < 0) fail('INVALID_REQUEST', '分享请求标识无效');
+      if (!hex(event.requestId) || !Number.isSafeInteger(event.sourceRevision) || event.sourceRevision < 0) fail('INVALID_REQUEST', '分享请求标识无效');
       try { dates.assertDate(event.requestDate); } catch (_) { fail('INVALID_REQUEST', '分享日期无效'); }
     }
   }
-  if (['getMyShare', 'revokeShare', 'deleteShare'].includes(event.action) && !HEX.test(event.shareId || '')) fail('INVALID_REQUEST', '分享标识无效');
-  if (event.action === 'listMyShares' && event.cursor != null && !HEX.test(event.cursor)) fail('INVALID_REQUEST', '分页标识无效');
+  if (['getMyShare', 'revokeShare', 'deleteShare'].includes(event.action) && !hex(event.shareId)) fail('INVALID_REQUEST', '分享标识无效');
+  if (event.action === 'listMyShares' && event.cursor != null && !hex(event.cursor)) fail('INVALID_REQUEST', '分页标识无效');
 }
 
 function newPreferences(owner, epoch, now) {
@@ -58,11 +59,11 @@ function readPreferences(saved, owner, epoch, now) {
   if (!saved) return newPreferences(owner, epoch, now);
   if (saved.schemaVersion !== 1 || saved.owner !== owner || saved.ownerEpoch !== epoch || !Number.isSafeInteger(saved.revision) || saved.revision < 0 ||
     !Array.isArray(saved.shareIndex) || saved.shareIndex.length > 200 || !Array.isArray(saved.preferenceReceipts) || saved.preferenceReceipts.length > 64 ||
-    !saved.dailyCreates || !Array.isArray(saved.dailyCreates.requests) || saved.dailyCreates.requests.length > 10 ||
+    !saved.dailyCreates || typeof saved.dailyCreates.date !== 'string' || !Array.isArray(saved.dailyCreates.requests) || saved.dailyCreates.requests.length > 10 ||
     (saved.pinnedHabitId !== null && !token(saved.pinnedHabitId)) || (saved.reminderSlot !== null && !SLOTS.includes(saved.reminderSlot))) throw Error('PREFERENCES_CORRUPT');
   const unique = new Set();
   for (const row of saved.shareIndex) {
-    if (!HEX.test(row.id || '') || unique.has(row.id) || !['active', 'revoked'].includes(row.status) ||
+    if (!hex(row.id) || unique.has(row.id) || !['active', 'revoked'].includes(row.status) ||
       !Number.isFinite(Date.parse(row.createdAt)) || !Number.isFinite(Date.parse(row.expiresAt))) throw Error('SHARE_INDEX_CORRUPT');
     unique.add(row.id);
   }
@@ -108,7 +109,7 @@ function safeSnapshot(snapshot, domain, dates) {
   return copy(snapshot);
 }
 function shareView(share, now, domain, dates) {
-  if (!HEX.test(share._id || '') || !['active', 'revoked'].includes(share.status) || !Number.isFinite(Date.parse(share.expiresAt)) ||
+  if (!hex(share._id) || !['active', 'revoked'].includes(share.status) || !Number.isFinite(Date.parse(share.expiresAt)) ||
     !Number.isFinite(Date.parse(share.createdAt))) throw Error('SHARE_CORRUPT');
   return { shareId: share._id, status: share.status === 'revoked' ? 'revoked' : Date.parse(share.expiresAt) <= now.getTime() ? 'expired' : 'active',
     createdAt: share.createdAt, expiresAt: share.expiresAt, publicSnapshot: safeSnapshot(share.publicSnapshot, domain, dates) };
@@ -154,6 +155,7 @@ function createFeaturesApi({ repository, domain, dates, allowedAppId, allowedSou
         if (event.action === 'createShare') {
           if (event.requestDate !== day) fail('RECONFIRM_REQUIRED', '日期已变化，请重新预览后创建分享');
           const id = hash(owner + ':' + account.epoch + ':' + event.requestId), fingerprint = hash(canonical(event));
+          if (p.dailyCreates.date > day) fail('RECONFIRM_REQUIRED', '日期已变化，请重新预览后创建分享');
           if (p.dailyCreates.date !== day) p.dailyCreates = { date: day, requests: [] };
           const prior = p.dailyCreates.requests.find(r => r.id === id);
           if (prior) {
@@ -210,10 +212,10 @@ function createPublicShareApi({ repository, domain, dates, clock = () => new Dat
   return async function handle(event) {
     try {
       object(event, ['action', 'shareId']); size(event, 256);
-      if (event.action !== 'getPublicShare' || !HEX.test(event.shareId || '')) return { ...PUBLIC_UNAVAILABLE };
+      if (event.action !== 'getPublicShare' || !hex(event.shareId)) return { ...PUBLIC_UNAVAILABLE };
       const now = clock(), share = await repository.share(event.shareId);
       if (!share || share.schemaVersion !== 1 || share._id !== event.shareId || share.status !== 'active' ||
-        !HEX.test(share.owner || '') || !token(share.ownerEpoch) || !Number.isFinite(Date.parse(share.expiresAt)) || Date.parse(share.expiresAt) <= now.getTime()) return { ...PUBLIC_UNAVAILABLE };
+        !hex(share.owner) || !token(share.ownerEpoch) || !Number.isFinite(Date.parse(share.expiresAt)) || Date.parse(share.expiresAt) <= now.getTime()) return { ...PUBLIC_UNAVAILABLE };
       const account = await repository.account(share.owner);
       if (!account || account.cleanupPending || account.epoch !== share.ownerEpoch) return { ...PUBLIC_UNAVAILABLE };
       return { ok: true, publicSnapshot: safeSnapshot(share.publicSnapshot, domain, dates), expiresAt: share.expiresAt };

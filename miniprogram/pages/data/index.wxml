@@ -12,6 +12,6 @@
       <button wx:if="{{exportPath}}" class="setting-row" bindtap="onResend">重新发送导出文件</button>
     </view>
     <view class="group"><view class="group-label">隐私说明</view><button class="setting-row" bindtap="onPrivacy"><text class="grow">哪些数据会保存？</text><view class="chevron" /></button></view>
-    <view class="danger-zone"><view class="field-label danger">清除个人数据</view><view class="sub">清除云端习惯、打卡和备注，以及本机缓存与导出文件。操作不可恢复，请先导出备份。</view><button class="text-button danger spaced" disabled="{{deleting}}" loading="{{deleting}}" bindtap="onDelete">清除全部打卡数据</button></view>
+    <view class="danger-zone"><view class="field-label danger">清除个人数据</view><view class="sub">清除云端习惯、打卡、备注和已启用功能的偏好/分享，以及本机缓存与导出文件。操作不可恢复，请先导出备份。</view><button class="text-button danger spaced" disabled="{{deleting}}" loading="{{deleting}}" bindtap="onDelete">清除全部打卡数据</button></view>
   </block>
 </view>

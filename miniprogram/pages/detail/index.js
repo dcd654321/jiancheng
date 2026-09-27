@@ -1,5 +1,6 @@
 const ui = require('../../services/ui');
 const { createNoteDrafts } = require('../../services/note-drafts');
+const { features } = require('../../services/features-client');
 
 function drafts() {
   const app = getApp();
@@ -12,8 +13,17 @@ Page(ui.withLifecycle({
     title: '', schedule: '', current: null, future: null, task: null, history: [], note: '',
     noteDirty: false, noteExpired: false, noteDate: '', date: '', statusText: '',
     noteOpen: false, moreOpen: false, showHistory: false, visibleHistory: [],
-    quickMinimumEnabled: ui.quickMinimumEnabled },
+    quickMinimumEnabled: ui.quickMinimumEnabled, featuresEnabled: false, pinned: false, pinning: false, pinError: '' },
   onLoad(options) { this._id = options.id; this.refresh(); },
+  async onShow() {
+    const service = features();
+    if (!service.status().enabled) return;
+    const key = ui.contextKey();
+    try {
+      await service.preferences();
+      if (!this._gone && this._visible && key === ui.contextKey()) this.refresh();
+    } catch (_) { if (!this._gone && this._visible && key === ui.contextKey()) this.setData({ pinError: '暂时未读取到置顶设置，打卡不受影响' }); }
+  },
   refresh() {
     if (!this._id) return;
     ui.read(this, (state, date) => {
@@ -32,11 +42,13 @@ Page(ui.withLifecycle({
       const future = last.effectiveDate > date ? last : null;
       const display = current || last;
       const task = ui.domain.taskAt(state, habit, date);
+      const preferences = features().cachedPreferences();
       const history = ui.date.range(date, 28).reverse().map(day => {
         const record = ui.domain.taskAt(state, habit, day);
         return record ? { date: day, status: ui.taskStatusLabel(record), goal: `${record.target} ${record.unit}` } : null;
       }).filter(Boolean);
       this.setData({ title: display.title, current, future, task, history, date,
+        featuresEnabled: features().status().enabled, pinned: !!preferences && preferences.pinnedHabitId === this._id,
         visibleHistory: this.data.showHistory ? history : history.slice(0, 7),
         note: draft ? draft.text : task ? task.note : '', noteDirty: !!draft,
         noteDate: draft ? draft.date : date, noteExpired: !!draft && (draft.date !== date || !task),
@@ -46,6 +58,17 @@ Page(ui.withLifecycle({
     });
   },
   onEdit() { wx.navigateTo({ url: '/pages/edit/index?id=' + this._id }); },
+  async onPin() {
+    if (this._pinning) return;
+    const key = ui.contextKey();
+    this._pinning = true; this.setData({ pinning: true, pinError: '' });
+    try {
+      ui.assertContext(this);
+      await features().setPinned(this.data.pinned ? null : this._id);
+      if (!this._gone && this._visible && key === ui.contextKey()) this.refresh();
+    } catch (err) { if (!this._gone && this._visible && key === ui.contextKey()) this.setData({ pinError: err.message || '置顶未保存，请重试' }); }
+    finally { this._pinning = false; if (!this._gone) this.setData({ pinning: false }); }
+  },
   onToggleNote() { this.setData({ noteOpen: !this.data.noteOpen }); },
   onMore() { this.setData({ moreOpen: !this.data.moreOpen }); },
   onToggleHistory() { this.setData({ showHistory: !this.data.showHistory }); this.refresh(); },

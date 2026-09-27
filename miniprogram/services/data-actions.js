@@ -17,8 +17,10 @@ module.exports = {
   onBackupHub() { wx.navigateTo({ url: '/pages/restore/index' }); },
   onQuote(event) { ui.mutate(this, { type: 'settings', hideQuote: event.detail.value !== true }); },
   onPrivacy() {
+    const featureNotice = require('./features-client').features().status().enabled
+      ? '使用置顶或分享时，还会保存偏好和你确认创建的公开快照；私人名称与备注不进入分享。可以在我的分享撤回或删除。' : '';
     wx.showModal({ title: '隐私与数据说明', showCancel: false,
-      content: '习惯名称、目标、执行日期、打卡数量和你填写的备注会保存到微信云开发环境，用于同步和换机找回。不会获取手机号、头像、昵称、联系人或位置。打卡在离线时会先保存在当前设备，联网后自动同步。你可以导出记录或清除全部数据。' });
+      content: '习惯名称、目标、执行日期、打卡数量和你填写的备注会保存到微信云开发环境，用于同步和换机找回。不会获取手机号、头像、昵称、联系人或位置。打卡在离线时会先保存在当前设备，联网后自动同步。' + featureNotice + '你可以导出记录或清除全部数据。' });
   },
   onExport() {
     if (this._deleting) return;
@@ -81,7 +83,7 @@ module.exports = {
     const release = () => { this._deleting = false; if (!this._gone) this.setData({ deleting: false }); };
     const context = ui.contextKey();
     wx.showModal({ title: '清除全部打卡数据？',
-      content: '将删除云端习惯、打卡和备注，并清理本机缓存与导出文件。建议先导出备份。',
+      content: '将删除云端习惯、打卡、备注和已启用功能的偏好/分享，并清理本机缓存与导出文件。建议先导出备份。',
       confirmText: '继续', confirmColor: '#983e28',
       success: first => {
         if (!first.confirm || this._gone) { release(); return; }

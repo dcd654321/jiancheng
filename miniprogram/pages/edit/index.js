@@ -18,6 +18,13 @@ Page(ui.withLifecycle({
     this._editContext = ui.contextKey();
     this.setData({ editing: !!options.id });
     if (!options.id && options.start === 'tomorrow') this.setData({ startOffset: 1 });
+    if (options.sharedDraft) {
+      try {
+        if (options.id || options.draft || options.template) throw Error('分享草稿不能覆盖已有计划或其他草稿');
+        const plan = require('../../services/features-client').features().consume(options.sharedDraft);
+        this.setData({ ...plan, target: String(plan.target), minimum: String(plan.minimum), source: '来自公开轻计划 · 请核对后创建自己的习惯' });
+      } catch (err) { this._invalidDraft = true; ui.error(this, err); }
+    }
     if (options.draft) {
       try {
         if (options.id) throw Error('新计划草稿不能直接覆盖已有习惯');

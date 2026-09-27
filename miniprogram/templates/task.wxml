@@ -2,7 +2,7 @@
   <view class="task {{task.done ? 'completed' : ''}}">
     <view class="row">
       <button wx:if="{{!detail}}" class="task-open" data-id="{{task.id}}" bindtap="onOpen" aria-label="查看{{task.title}}">
-        <view class="task-title">{{task.title}}</view>
+        <view class="task-title">{{task.title}}<text wx:if="{{task.pinned}}" class="small"> · 置顶</text></view>
         <view class="sub task-goals">平时 {{task.originalTarget}}{{task.unit}}<text wx:if="{{task.minimum}}"> · 忙时 {{task.minimum}}{{task.unit}}</text></view>
         <view class="small task-current">{{task.time ? task.time + ' · ' : ''}}今天按 {{task.target}}{{task.unit}}{{task.simplified ? '（已调小）' : ''}}</view>
       </button>
