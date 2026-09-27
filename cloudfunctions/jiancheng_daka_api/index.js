@@ -2,6 +2,7 @@
 const cloud = require('wx-server-sdk');
 const { createApi } = require('./lib/handler');
 const { createRepository } = require('./lib/cloudbase-repository');
+const { createSidecarCleanup } = require('./lib/sidecar-cleanup');
 const domain = require('./shared/habits');
 const dates = require('./shared/date');
 cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV });
@@ -11,7 +12,10 @@ exports.main = async event => {
   if (process.env.HABIT_API_ENABLED !== 'true' || process.env.HABIT_MINIPROGRAM_ONLY !== 'true' || !process.env.HABIT_APP_ID) {
     return { ok: false, code: 'NOT_ENABLED', message: '云同步尚未配置完成，本机功能不受影响' };
   }
-  const handle = createApi({ repository: createRepository(cloud.database()), domain, dates,
+  const db = cloud.database();
+  const handle = createApi({ repository: createRepository(db), domain, dates,
+    cleanup: process.env.HABIT_SIDECAR_CLEANUP_ENABLED === 'true'
+      ? createSidecarCleanup(db, { remindersEnabled: process.env.HABIT_REMINDERS_ENABLED === 'true' }) : undefined,
     allowedAppId: process.env.HABIT_APP_ID, allowedSources: ['wx_client', 'wx_devtools'] });
   // The WeChat/CloudBase invocation adds userInfo and tcbContext to event.
   // These are transport metadata,

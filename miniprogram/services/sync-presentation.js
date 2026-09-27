@@ -13,7 +13,8 @@ function syncPresentation(status) {
   const pending = status.pending || 0;
   const offline = status.networkOffline || status.phase === 'offline';
   let syncText = '', syncAttention = false;
-  if (status.conflict) { syncText = '需要处理同步冲突'; syncAttention = true; }
+  if (status.deletionPending) { syncText = '删除尚未确认 · 请到数据管理重试'; syncAttention = true; }
+  else if (status.conflict) { syncText = '需要处理同步冲突'; syncAttention = true; }
   else if (pending) {
     syncText = (offline ? '当前离线 · ' : '') + pending + ' 条待同步';
     syncAttention = true;

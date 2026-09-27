@@ -42,6 +42,7 @@ function createWorkspaceStore(legacy, session, noteDrafts) {
         ready: status.ready,
         phase: status.phase,
         pending: status.pending || 0,
+        deletionPending: !!status.deletionPending,
         conflict: status.conflict || null,
         lastError: status.lastError || '',
         lastSyncedAt: status.lastSyncedAt || '',

@@ -64,6 +64,7 @@ function createCloudSession(wxApi, config, transportFactory = createCloudTranspo
       epoch: current ? current.epoch : '',
       accountLabel: accountId ? accountId.slice(-6) : '',
       pending: current ? current.pending : 0,
+      deletionPending: current ? current.deletionPending : false,
       count: current ? current.state.habits.length : 0,
       conflict: current ? current.conflict : null,
       lastError: current && current.lastError ? current.lastError : lastError,

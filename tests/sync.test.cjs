@@ -52,11 +52,14 @@ test('purge failure or invalid acknowledgement preserves the confirmed snapshot 
   h.storage.setStorageSync(h.key + ':recovery', 'keep-recovery');
   const before = h.engine.exportPending();
   await assert.rejects(h.engine.purge('DELETE_MY_DATA'), /offline/);
-  assert.equal(h.engine.exportPending(), before);
+  const firstAttempt = JSON.parse(h.engine.exportPending());
+  assert.ok(firstAttempt.pendingPurge);
+  const { pendingPurge, ...retained } = firstAttempt;
+  assert.deepEqual(retained, JSON.parse(before));
   assert.equal(h.storage.getStorageSync(h.key + ':recovery'), 'keep-recovery');
   mode = 'invalid';
   await assert.rejects(h.engine.purge('DELETE_MY_DATA'), /确认无效/);
-  assert.equal(h.engine.exportPending(), before);
+  assert.deepEqual(JSON.parse(h.engine.exportPending()), firstAttempt);
   assert.equal(h.storage.getStorageSync(h.key + ':recovery'), 'keep-recovery');
 });
 

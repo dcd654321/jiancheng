@@ -2,6 +2,16 @@
 
 日期：2026-09-24　状态：待实施设计。配套：[功能详设](FEATURE-DESIGN-20260924.md) · [现有主数据设计](DESIGN-DATABASE.md)
 
+2026-09-27 实施增补：偏好、分享及删除联动已进入本地后端实现，尚未部署。以 `openspec/changes/add-private-preferences-and-sharing` 为增量规范；以下原设计保留，差异如下：
+
+- 私有请求增加期望 `epoch`；创建增加服务端预览的 `sourceRevision`、`requestDate`。旧页面、跨日和源数据改变必须重新预览。
+- 分享 ID 使用 `SHA256(owner:epoch:requestId)`，`requestId` 要求 64 位十六进制安全随机值，删除后新代际不复用旧链接。
+- 预览响应提供服务端安全随机 `requestId`，客户端确认和重试复用该值；本人详情使用受认证的 `getMyShare` 点读，可回看撤回或到期快照，公开入口不开放它们。
+- 偏好文档增加仅服务端可见的 `shareIndex`（最多 200 条）、`dailyCreates`（当天最多 10 个 ID/指纹）和 `preferenceReceipts`（最多 64 条）。事务仅点读写文档，索引为每 owner 串行化配额和分页提供依据，不依赖事务范围查询。
+- `listMyShares` 使用上述有界索引的最后一条 ID 作游标，每页最多 20 条；私有响应只返回业务白名单，不含内部索引和回执。
+- 主账户清理标记增加 `cleanupSourceEpoch`；物理删除按 owner 和旧 epoch 限定，迟到的重试不能删除新代际内容。客户端持久保存 `pendingPurge`，清理中断时不能用后台空快照覆盖原缓存。原始习惯 `state.schemaVersion` 不变。
+- 提醒及其实际集合尚未实现/启用；清理适配器仅在明确配置提醒功能时包含该集合。
+
 ## 1. 设计原则及数据边界
 
 本设计以当前源码为基线，不把规划字段写成已部署事实。现有 `jiancheng_daka_accounts` 每人一份文档，`_id=SHA256(APPID:OPENID)`，文档 `payload` 包含 `epoch/revision/state/receipts/updatedAt`；`state.schemaVersion=1`，习惯与记录的有效数据仍由现有 `habits.js` 校验。账户及幂等回执同事务写入。正式共享云配置仍关闭，不能把旧测试云的 `habitApi` 或其他小程序集合当成新功能的数据源。

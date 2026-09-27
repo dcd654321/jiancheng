@@ -26,3 +26,5 @@ docs/CLEANUP-B*.md
 # The shared environment contains other applications; only publish this app.
 /cloudfunctions/*
 !/cloudfunctions/jiancheng_daka_api/
+!/cloudfunctions/jiancheng_daka_features/
+!/cloudfunctions/jiancheng_daka_public_share/

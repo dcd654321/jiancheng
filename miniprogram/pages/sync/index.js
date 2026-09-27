@@ -26,6 +26,7 @@ Page(ui.withLifecycle({
   onConsentAndStart() { return this.run(() => getApp().cloudSession.acceptConsent(true)); },
   onRefresh() { return this.run(() => getApp().cloudSession.refresh()); },
   onRetry() { return this.run(() => getApp().cloudSession.retry()); },
+  onData() { wx.navigateTo({ url: '/pages/data/index' }); },
   onUseRemote() {
     if (this.data.busy) return;
     wx.showModal({ title: '舍弃待同步记录？',

@@ -9,7 +9,7 @@ const PREFIX = 'yidian.sync.v1:';
 function createSyncEngine({ storage, call, accountId, consent, clock = dates.today, newId = () => 'op_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2) }) {
   if (consent !== true || !/^[a-f0-9]{64}$/.test(accountId || '') || typeof call !== 'function') throw Error('同步需要明确授权和已验证的账户绑定');
   const key = PREFIX + accountId;
-  let running = null;
+  let running = null, purging = false;
 
   function validateSnapshot(value) {
     if (!value || value.accountId !== accountId || typeof value.epoch !== 'string' || !/^[a-zA-Z0-9_-]{1,100}$/.test(value.epoch) || !Number.isSafeInteger(value.revision) || value.revision < 0) throw Error('云端账户或版本不匹配，未覆盖本机数据');
@@ -33,6 +33,12 @@ function createSyncEngine({ storage, call, accountId, consent, clock = dates.tod
       dates.assertDate(e.operationDate); seen.add(e.operationId);
     });
     if (data.conflict && data.conflict.snapshot) validateSnapshot(data.conflict.snapshot);
+    if (data.pendingPurge) {
+      const p = data.pendingPurge;
+      if (p.action !== 'purge' || p.confirmation !== 'DELETE_MY_DATA' || !/^[a-zA-Z0-9_-]{1,100}$/.test(p.operationId || '') ||
+        p.epoch !== data.base.epoch || p.expectedRevision !== data.base.revision || data.queue.length || data.conflict) throw Error('待确认删除记录无效，已停止写入');
+      dates.assertDate(p.operationDate);
+    }
     return data;
   }
   function save(value) {
@@ -52,10 +58,12 @@ function createSyncEngine({ storage, call, accountId, consent, clock = dates.tod
   function read() {
     const envelope = load();
     return { state: project(envelope), pending: envelope.queue.length, conflict: clone(envelope.conflict),
-      lastError: envelope.lastError, lastSyncedAt: envelope.lastSyncedAt, accountId, epoch: envelope.base.epoch };
+      lastError: envelope.lastError, lastSyncedAt: envelope.lastSyncedAt, accountId, epoch: envelope.base.epoch,
+      deletionPending: !!envelope.pendingPurge };
   }
   function enqueue(command, online = false) {
     const envelope = load();
+    if (envelope.pendingPurge) throw Error('删除尚未确认，请到数据管理重试完成删除');
     if (envelope.conflict) throw Error('请先处理同步冲突，再添加操作');
     const management = command && ONLINE_TYPES.includes(command.type) && online === true;
     if (!command || (!RECORD_TYPES.includes(command.type) && !management)) throw Error('此队列只接受打卡、撤销、今天简化和备注，长期修改需在线确认');
@@ -122,6 +130,7 @@ function createSyncEngine({ storage, call, accountId, consent, clock = dates.tod
     let envelope = load();
     if (running) await running;
     envelope = load();
+    if (envelope.pendingPurge) throw Error('删除尚未确认，请到数据管理重试完成删除');
     if (envelope.queue.length && !envelope.conflict) return flush();
     const result = await call({ action: 'pull' });
     if (!result || !result.ok) throw Error('读取云端失败，本机数据未改变');
@@ -131,6 +140,7 @@ function createSyncEngine({ storage, call, accountId, consent, clock = dates.tod
     validateSnapshot(result);
     const envelope = load();
     // A slow pull must not roll back a newer mutation acknowledgement persisted while it was in flight.
+    if (envelope.pendingPurge) throw Error('删除尚未确认，本机恢复材料保持不变');
     if (result.revision < envelope.base.revision) return read();
     if (envelope.queue.length && !envelope.conflict && result.revision === envelope.base.revision && result.epoch === envelope.base.epoch) return read();
     if (envelope.queue.length || envelope.conflict) {
@@ -150,17 +160,33 @@ function createSyncEngine({ storage, call, accountId, consent, clock = dates.tod
   }
   async function purge(confirmation) {
     if (confirmation !== 'DELETE_MY_DATA') throw Error('删除数据需要明确确认');
-    if (running) throw Error('正在同步，请等待当前请求完成');
+    if (running || purging) throw Error('正在同步，请等待当前请求完成');
     const envelope = load();
     if (envelope.queue.length || envelope.conflict) throw Error('请先处理待同步操作或冲突');
-    const operationId = newId();
-    const event = { action: 'purge', operationId, epoch: envelope.base.epoch,
+    const event = envelope.pendingPurge || { action: 'purge', operationId: newId(), epoch: envelope.base.epoch,
       expectedRevision: envelope.base.revision, operationDate: clock(), confirmation: 'DELETE_MY_DATA' };
+    if (!/^[a-zA-Z0-9_-]{1,100}$/.test(event.operationId || '')) throw Error('删除操作标识无效');
+    envelope.pendingPurge = clone(event); save(envelope); // Durable before the first network request.
+    purging = true;
+    try {
     const result = await call(event);
-    if (!result || result.ok !== true) throw Error(result && result.message || '云端未确认删除，本机数据未清理');
+    if (!result || result.ok !== true) {
+      // These explicit precondition failures mean this operation was not applied.
+      if (result && ['CONFLICT', 'EPOCH_CHANGED', 'RECONFIRM_REQUIRED'].includes(result.code)) {
+        delete envelope.pendingPurge; save(envelope);
+      }
+      throw Error(result && result.message || '云端未确认删除，本机数据未清理');
+    }
     validateSnapshot(result);
     const empty = result.state.habits.length === 0 && Object.keys(result.state.records).length === 0;
-    if (result.operationId !== operationId || result.appliedRevision !== envelope.base.revision + 1 ||
+    if (result.operationId === event.operationId && result.appliedRevision === envelope.base.revision + 1 &&
+      result.revision > result.appliedRevision && result.epoch !== envelope.base.epoch) {
+      delete envelope.pendingPurge;
+      envelope.conflict = { code: 'DELETE_REMOTE_ADVANCED', snapshot: clone(result) };
+      envelope.lastError = '删除请求已确认，但另一设备随后修改了数据。请先导出备份，在同步页查看云端新记录';
+      save(envelope); throw Error(envelope.lastError);
+    }
+    if (result.operationId !== event.operationId || result.appliedRevision !== envelope.base.revision + 1 ||
       result.revision !== result.appliedRevision || result.epoch === envelope.base.epoch || !empty) {
       throw Error('云端删除确认无效，本机数据未清理');
     }
@@ -168,6 +194,7 @@ function createSyncEngine({ storage, call, accountId, consent, clock = dates.tod
       lastError: '', lastSyncedAt: new Date().toISOString() });
     storage.removeStorageSync(key + ':recovery');
     return read();
+    } finally { purging = false; }
   }
   return { attach, read, enqueue, flush, refresh, observeRemote, useRemote, purge, exportRecovery: () => storage.getStorageSync(key + ':recovery'),
     exportPending: () => storage.getStorageSync(key) };

@@ -94,7 +94,7 @@ module.exports = {
               if (context !== ui.contextKey()) throw Error('数据状态已变化，请重新确认删除');
               await ui.store().clear('DELETE_MY_DATA');
             } catch (_) {
-              if (!this._gone) this.setData({ error: '云端未确认删除，所有数据均已保留' });
+              if (!this._gone) this.setData({ error: '云端尚未完成或未确认删除。本机记录与导出文件未清理，请重试完成删除。' });
               release();
               return;
             }

@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const vm = require('vm');
 
-const { apiFunction } = require('../miniprogram/config/cloud-resources');
+const { apiFunction, featuresFunction, publicShareFunction } = require('../miniprogram/config/cloud-resources');
 const root = path.resolve(__dirname, '../cloudfunctions', apiFunction);
 
 function files(directory) {
@@ -15,7 +15,8 @@ function files(directory) {
   }, []);
 }
 
-const targets = files(root).filter(file => /\.(?:js|cjs)$/.test(file));
+const targets = [apiFunction, featuresFunction, publicShareFunction].flatMap(name =>
+  files(path.resolve(__dirname, '../cloudfunctions', name))).filter(file => /\.(?:js|cjs)$/.test(file));
 targets.forEach(file => {
   new vm.Script(fs.readFileSync(file, 'utf8'), { filename: file });
 });
@@ -24,4 +25,4 @@ const sdk = require(path.join(root, 'node_modules/wx-server-sdk'));
 const randomUUID = require('crypto').randomUUID;
 if (!sdk || typeof randomUUID !== 'function') throw Error('Node 16 SDK/runtime check failed');
 
-console.log(`PASS Node16 syntax: ${targets.length} files; wx-server-sdk loaded; crypto.randomUUID available`);
+console.log(`PASS runtime ${process.version}: ${targets.length} cloud files; wx-server-sdk loaded; crypto.randomUUID available. Node 16 compatibility requires running this script with Node 16.`);
