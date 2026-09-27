@@ -7,5 +7,6 @@ module.exports = {
   publicShareFunction: 'jiancheng_daka_public_share',
   accountsCollection: 'jiancheng_daka_accounts',
   preferencesCollection: 'jiancheng_daka_preferences',
-  sharesCollection: 'jiancheng_daka_shares'
+  sharesCollection: 'jiancheng_daka_shares',
+  limitsCollection: 'jiancheng_daka_limits'
 };

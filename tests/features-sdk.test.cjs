@@ -5,6 +5,7 @@ const fs=require('node:fs');
 const { createFeaturesRepository, PREFERENCES, SHARES }=require('../server/features-repository');
 const { createSidecarCleanup }=require('../server/sidecar-cleanup');
 const { COLLECTION }=require('../server/cloudbase-repository');
+const { LIMITS,createLimiter,createLimitRepository }=require('../server/limits');
 const { createFeaturesApi,createPublicShareApi }=require('../server/features');
 const { fixture,domain,dates }=require('./helpers/cloud-fixture.cjs');
 const sdkPath=path.resolve(__dirname,'../cloudfunctions/jiancheng_daka_api/node_modules/wx-server-sdk');
@@ -30,7 +31,7 @@ test('feature repositories use installed SDK document transactions, owner-isolat
         saved=transactions.get(params.transactionId);transactions.delete(params.transactionId);return {ok:1};
       }
       if(action==='database.abortTransaction'){transactions.delete(params.transactionId);return {ok:1};}
-      assert.ok([COLLECTION,PREFERENCES,SHARES].includes(params.collectionName));
+      assert.ok([COLLECTION,PREFERENCES,SHARES,LIMITS].includes(params.collectionName));
       const target=params.transactionId?transactions.get(params.transactionId):saved;assert.ok(target);
       const query=JSON.parse(params.query),prefix=params.collectionName+':';
       if(action==='database.getDocument') {
@@ -68,4 +69,10 @@ test('feature repositories use installed SDK document transactions, owner-isolat
   assert.equal(saved.has(SHARES+':'+first.share.shareId),false);assert.ok(saved.has(SHARES+':other'));assert.ok(saved.has(SHARES+':new'));
   assert.equal(JSON.parse(saved.get(PREFERENCES+':'+owner)).ownerEpoch,'new-epoch');
   assert.ok(calls.includes('database.abortTransaction'));assert.ok(calls.includes('database.removeDocument'));
+  const limiter=createLimiter({repository:createLimitRepository(db),scope:'features',limits:{minute:4,day:10,userMinute:1,userDay:4},clock:()=>Date.parse(f.date+'T04:00:00Z')});
+  conflict=true;await limiter(owner,a.epoch);await assert.rejects(limiter(owner,a.epoch),e=>e.code==='RATE_LIMITED');
+  assert.equal((await createLimitRepository(db).transact(async tx=>({ok:true,row:await tx.read('global-features')}))).row.minuteUsed,1);
+  await createSidecarCleanup(db,{limitsEnabled:true})(owner,'obsolete');assert.ok(saved.has(LIMITS+':features-'+owner));
+  await createSidecarCleanup(db,{limitsEnabled:true})(owner,a.epoch);assert.equal(saved.has(LIMITS+':features-'+owner),false);
+  assert.equal((await createLimitRepository(db).transact(async tx=>({ok:true,row:await tx.read('global-features')}))).row.minuteUsed,1);
 });

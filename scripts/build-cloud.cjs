@@ -9,10 +9,12 @@ const files = [
   ['server/cloudbase-repository.js', 'lib/cloudbase-repository.js'],
   ['server/features-repository.js', 'lib/features-repository.js'],
   ['server/sidecar-cleanup.js', 'lib/sidecar-cleanup.js'],
+  ['server/limits.js', 'lib/limits.js'],
   ['miniprogram/core/habits.js', 'shared/habits.js'],
   ['miniprogram/core/date.js', 'shared/date.js']
 ];
 const featureFiles = [
+  ['server/limits.js', 'lib/limits.js'],
   ['server/features.js', 'lib/features.js'],
   ['server/features-repository.js', 'lib/features-repository.js'],
   ['server/identity.js', 'lib/identity.js'],

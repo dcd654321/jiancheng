@@ -115,11 +115,12 @@ function shareView(share, now, domain, dates) {
     createdAt: share.createdAt, expiresAt: share.expiresAt, publicSnapshot: safeSnapshot(share.publicSnapshot, domain, dates) };
 }
 
-function createFeaturesApi({ repository, domain, dates, allowedAppId, allowedSources, clock = () => new Date() }) {
+function createFeaturesApi({ repository, domain, dates, allowedAppId, allowedSources, limiter, clock = () => new Date() }) {
   return async function handle(event, identity) {
     try {
       const owner = authenticate(identity, allowedAppId, allowedSources);
       validateRequest(event, dates);
+      if (limiter) await limiter(owner, event.epoch);
       const now = clock(), day = dates.today(now.getTime());
       return await repository.transact(owner, async tx => {
         const account = await tx.account();
@@ -208,11 +209,12 @@ function createFeaturesApi({ repository, domain, dates, allowedAppId, allowedSou
   };
 }
 
-function createPublicShareApi({ repository, domain, dates, clock = () => new Date() }) {
+function createPublicShareApi({ repository, domain, dates, limiter, clock = () => new Date() }) {
   return async function handle(event) {
     try {
       object(event, ['action', 'shareId']); size(event, 256);
       if (event.action !== 'getPublicShare' || !hex(event.shareId)) return { ...PUBLIC_UNAVAILABLE };
+      if (limiter) await limiter();
       const now = clock(), share = await repository.share(event.shareId);
       if (!share || share.schemaVersion !== 1 || share._id !== event.shareId || share.status !== 'active' ||
         !hex(share.owner) || !token(share.ownerEpoch) || !Number.isFinite(Date.parse(share.expiresAt)) || Date.parse(share.expiresAt) <= now.getTime()) return { ...PUBLIC_UNAVAILABLE };

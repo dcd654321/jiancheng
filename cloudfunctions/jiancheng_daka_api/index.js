@@ -15,7 +15,7 @@ exports.main = async event => {
   const db = cloud.database();
   const handle = createApi({ repository: createRepository(db), domain, dates,
     cleanup: process.env.HABIT_SIDECAR_CLEANUP_ENABLED === 'true'
-      ? createSidecarCleanup(db, { remindersEnabled: process.env.HABIT_REMINDERS_ENABLED === 'true' }) : undefined,
+      ? createSidecarCleanup(db, { remindersEnabled: process.env.HABIT_REMINDERS_ENABLED === 'true', limitsEnabled: process.env.HABIT_LIMITS_VERIFIED === 'true' }) : undefined,
     allowedAppId: process.env.HABIT_APP_ID, allowedSources: ['wx_client', 'wx_devtools'] });
   // The WeChat/CloudBase invocation adds userInfo and tcbContext to event.
   // These are transport metadata,
