@@ -65,10 +65,10 @@ tool=`cloud_db_write_struct`，client=`codex`，action=`createCollection`；appi
 
 | 集合 | 新增范围 | taskId | 最后状态 |
 | --- | --- | --- | --- |
-| jiancheng_daka_shares | owner_epoch 1 项 | confirmation_cloud_db_write_struct_7d5281f0-ab93-45ac-a116-31f0060929f0 | pending，待本次索引确认 |
-| jiancheng_daka_reminders | owner_epoch、due、claimed 3 项 | confirmation_cloud_db_write_struct_6c4ba448-9abe-4bd0-a42a-584d8bbd2654 | pending，待本次索引确认 |
+| jiancheng_daka_shares | owner_epoch 1 项 | confirmation_cloud_db_write_struct_7d5281f0-ab93-45ac-a116-31f0060929f0 | success；索引明细已核验 |
+| jiancheng_daka_reminders | owner_epoch、due、claimed 3 项 | confirmation_cloud_db_write_struct_6c4ba448-9abe-4bd0-a42a-584d8bbd2654 | success；索引明细已核验 |
 
-这两个任务是新增索引确认，不是重复创建集合。已通知用户确认；按 wechatide-skill 规则不主动轮询、不重发，用户确认后读取原任务并检查索引名称、键顺序、非唯一属性。
+2026-09-28 用户继续后查询原任务，两项均为 success/execution_success，内层 updateCollection 成功。随后 listIndexes 核实 shares 增至 3 个（含默认索引），reminders 增至 5 个（含默认索引）；四项名称、键顺序、非唯一属性与清单一致，查询 requestId 分别为 `85e8a994-e7e0-4a58-b151-a8c8ded9b059`、`007f5799-ee35-4cf7-85ff-ba457c9745e1`。四个普通业务索引已完成，不能据此宣称 TTL 或集合安全规则完成。
 
 reminders 的 `expiresAt` 需 Date 类型 TTL，expireAfterSeconds=0，不能用一个普通升序索引冒充 TTL。当前工具参数资料只明确了普通索引字段，TTL 接口/控制台仍待核实，不猜参数或提前勾选 HABIT_REMINDER_TTL_VERIFIED。TTL 会删除到期提醒元数据，不作用于账户/习惯/分享历史。
 
@@ -90,5 +90,6 @@ reminders 的 `expiresAt` 需 Date 类型 TTL，expireAfterSeconds=0，不能用
 - 全量测试：301 通过，0 失败、0 跳过；新增 3 项验证清单覆盖、索引参数一致性及默认安全边界。
 - 静态检查：236 项通过；云端生成副本一致性：61 文件通过；OpenSpec 严格校验：9 项通过；git diff --check 通过。
 - 本轮仅新增部署清单、索引参数、测试和执行文档，未修改业务逻辑。上述测试不证明云端创建成功或权限已生效。
-- 后续用户已允许七集合创建，原任务及完整列表交叉核验通过；四个业务索引已分两批提交，待平台确认。权限、TTL、函数实际版本与超时配置仍须逐项核验。共享初始化 403 仍未解除。
+- 后续用户已允许七集合创建，原任务及完整列表交叉核验通过；四个普通业务索引的原任务及实际索引列表也已交叉核验通过。权限、TTL、函数实际版本与超时配置仍须逐项核验。共享初始化 403 尚无解除证据。
 - 权限/TTL 补查：describeCollection 仅返回索引明细，不返回安全规则；Computer Use 只读查看时当前工作区被本次索引确认弹窗遮挡，未继续输入或操作其他工程；未取得权限/TTL 配置证据。
+- 2026-09-28 只读复核：本应用五个函数与共用 `cloudbase_auth` 均为 Active/Nodejs16.13/超时 3 秒；该元信息不含实际代码、变量或共享授权条目。官方环境共享说明要求资源方将目标环境授权给使用方；上一轮本 AppID 的原生共享 init 返回 403。浏览器控制在微信公众平台登录页被安全策略阻止，未绕行登录；当前桌面窗口被另一个工程使用，因此未点击其配置。已请求用户提供资源方正式环境“环境共享”条目截图；在核实并取得必要的共用资源变更授权前，客户端和云函数业务开关保持关闭。
