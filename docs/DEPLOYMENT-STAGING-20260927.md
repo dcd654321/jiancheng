@@ -92,3 +92,39 @@
 - 定位到新出现的独立无标题窗口，尝试激活、Raise、暂时最小化主窗口解除遮挡，返回画面仍是其他窗口内容，未能可靠定位确认按钮。已停止对确认框输入并恢复本项目主窗口；不以旧坐标盲点，不改用未授权自动化机制。
 - 下一步需要用户在标明 `jiancheng_daka_public_share` 的开发者工具确认框点击“允许”；不要关闭/重启开发者工具导致当前确认记录再次丢失。之后先读取 public_share 原 taskId 结果，不重新上传。features 旧任务丢失仍独立保留为未决问题；plan/reminder_tick 尚未提交。
 - 没有业务代码改动，没有新增函数部署成功证据；不能说新功能已可用或已完成上线。无云配置、数据库、main 或小程序发布变更。
+
+## 手动确认后的首次执行结果与一次修复重试
+
+用户回复“已点”后读取 public_share 原任务，确认交互已结束：外层 `status=success`、`detail=execution_success`，但内层 `result.jiancheng_daka_public_share.error` 明确报告代码更新失败。必须检查内层资源结果，不能以确认任务的 success 宣告部署完成。
+
+- 错误码：`FailedOperation.UpdateFunctionCode`。
+- 错误原文：“当前函数处于Creating状态，无法进行此操作，请稍后重试。”
+- RequestId：`9c37e75f-e13c-4567-8bdb-c0675cf13d17`。
+- 随后只读查询 `jiancheng_daka_public_share` 已为 Active、Nodejs16.13、超时 3 秒；旧主函数 `jiancheng_daka_api` 同样 Active。这证明新函数资源已创建，不证明仓库业务代码及依赖已经部署。
+- 首次执行已进入终态且内层更新明确失败，因此仅对同一 public_share 函数重试一次失败的完整代码部署，继续使用同一 appid/env/path 和 remote-npm-install=true。不删除/重建资源，不设置启用变量，不重试状态未知的 features。
+- 修复任务：`confirmation_cloud_fn_deploy_385f9ede-ab51-4486-a1ad-ad9aaaca6ddf`，tool/client 为 `cloud_fn_deploy` / `codex`，最后状态 pending。已通知用户确认这个新任务；不要再查询旧的 c74ad372 任务来判断本次结果。
+- 后续先读取修复任务的内层结果，再查实际函数状态；成功后仍需受控验证关闭响应。若仍出现 Creating/CreateFailed 或其他错误，停止重复部署并保留实际错误，不能删除函数试错。
+- 本回合无业务代码更改；已同步 dev。当前云端已有 public_share 新资源、未验证成功更新；主函数和客户端配置未修改，plan/reminder_tick 未提交。
+
+## public_share 修复部署成功与下一项
+
+用户确认修复弹窗后，任务 `confirmation_cloud_fn_deploy_385f9ede-ab51-4486-a1ad-ad9aaaca6ddf` 返回终态 success，内层 `jiancheng_daka_public_share` 返回 `filesCount=11`、`packSize=27.2 KB`，无资源 error。后续 cloud_fn_info 确认该函数 Active。这次取得了业务代码上传成功证据，不只是资源创建成功。
+
+随后逐一核对 plan/reminder_tick 均返回 `ResourceNotFound.Function`，在既定授权范围首次提交 plan：
+
+- taskId：`confirmation_cloud_fn_deploy_77e095df-53d5-45a4-b4df-ac39e432e28e`
+- tool/client：`cloud_fn_deploy` / `codex`
+- appid/env：`wx7ad85943fe81e095` / `product-d2g59zty74d7d1ec1`
+- path：`D:\codex\coding\yidian-miniprogram\cloudfunctions\jiancheng_daka_plan`
+- remote-npm-install：true；最后状态 pending；已请用户确认，未轮询或重发。
+- AI 所有启用变量、供应商密钥及客户端开关均未设置/启用，不调用模型。reminder_tick 尚未发起；features 丢失任务仍未重发。
+
+### 公开函数受控调用的结果及限制
+
+- 使用官方 automator 场景，明确目标仍为本工程 `pages/today/index`。只构造该正式环境共享实例，请求公开函数和固定全零无效 shareId，不调用私有主接口、不创建账户、写记录、订阅或发送消息。
+- 首次表达式因 Windows 命令引号解析报 `Uncaught init is not defined`，发生在初始化前；改为单引号 JS 字符串后消除此工具参数问题。
+- 共享实例 init 完成后，callFunction 报 `errCode=-1`。通过限定关键词、再脱敏短文本取证得到：`Cloud API isn't enabled, please call wx.cloud.init first / 请先调用 wx.cloud.init() 完成初始化后再调用其他云 API。`
+- 在同一受控表达式先调用 `wx.cloud.init({traceUser:false})` 再初始化共享实例，仍得到相同错误；没有切换活动配置或调用默认环境业务函数。
+- 使用 `automation_wx_api --action call --method cloud.init` 的独立诊断返回 `Uncaught TypeError: wx.cloud.init is not a function`。不能由此断言真实小程序不支持该 API：工具对嵌套 method 的处理和 evaluate 上下文尚需区分。未据此修改 cloud-transport 或放宽门禁。
+- 诊断参数文件 `qa/local/20260927-acceptance/sdk-init-args.json` 仅含 traceUser=false，在 Git 忽略目录；不含身份、密钥或生产数据。
+- 没有取得预期 SHARE_UNAVAILABLE 云响应，因此未勾选共享调用或正式功能验收。现有单测与结构检查不能替代该证据；public_share 的状态是“代码部署成功、真实共享调用未通过”，不是“分享功能已可用”。

@@ -41,3 +41,7 @@
 用户已进一步允许仅查看另一开发者工具窗口中的本次部署确认。原任务仍 pending；实际操作被其他前台程序遮挡，Computer Use 拦截了落在游戏窗口的点击，恢复焦点后仍无法可靠观察，已停止输入。当前障碍是桌面目标窗口不可可靠操作，不再是缺少查看授权；须将游戏最小化、开发者工具置前后继续。该回合无新云变更。
 
 19:56 后再次恢复：主窗口遮挡已解决，CLI 重连后旧 features 任务返回 `Task not found`，状态未知且未重发。首次提交另一个已授权、尚未发起过的 public_share 函数，产生新的 pending 确认任务；具体 taskId、目标及恢复顺序见 DEPLOYMENT-STAGING-20260927.md。新确认框曾可见，但自动化无法可靠操控其独立窗口，点击后没有确认成功证据，云清单也尚无新增函数。需要用户手动点该 public_share 部署框的“允许”，再读取原任务结果；不是重新扫码、再次聊天授权或重复上传。
+
+用户手动确认已生效。原 public_share 任务已结束，但内层代码部署报 `FailedOperation.UpdateFunctionCode`（函数还在 Creating 时尝试更新）；随后只读核验该资源已 Active。已对明确失败的代码更新发起一次修复重试，新 taskId `confirmation_cloud_fn_deploy_385f9ede-ab51-4486-a1ad-ad9aaaca6ddf` 待用户确认。新函数资源创建与业务代码部署成功必须区分；当前尚未取得后者证据。features 旧任务状态未知不重发；plan/reminder_tick 未提交，所有新能力未启用。
+
+修复确认后 public_share 代码部署已成功（11 文件、27.2 KB，内层无错误），Active 已复核。无效公开分享 ID 的共享调用诊断仍在 call 阶段报 -1/Cloud API 未初始化，额外基础初始化未消除；未盲改业务代码或开放入口。plan 已首次提交，最新待确认任务为 `confirmation_cloud_fn_deploy_77e095df-53d5-45a4-b4df-ac39e432e28e`；用户确认后先查此任务并检查内层资源 error。reminder_tick 未提交，features 旧任务未知；主函数及活动客户端未修改，未调用任何 AI 模型。
