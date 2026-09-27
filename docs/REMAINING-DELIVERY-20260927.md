@@ -45,3 +45,5 @@
 用户手动确认已生效。原 public_share 任务已结束，但内层代码部署报 `FailedOperation.UpdateFunctionCode`（函数还在 Creating 时尝试更新）；随后只读核验该资源已 Active。已对明确失败的代码更新发起一次修复重试，新 taskId `confirmation_cloud_fn_deploy_385f9ede-ab51-4486-a1ad-ad9aaaca6ddf` 待用户确认。新函数资源创建与业务代码部署成功必须区分；当前尚未取得后者证据。features 旧任务状态未知不重发；plan/reminder_tick 未提交，所有新能力未启用。
 
 修复确认后 public_share 代码部署已成功（11 文件、27.2 KB，内层无错误），Active 已复核。无效公开分享 ID 的共享调用诊断仍在 call 阶段报 -1/Cloud API 未初始化，额外基础初始化未消除；未盲改业务代码或开放入口。plan 已首次提交，最新待确认任务为 `confirmation_cloud_fn_deploy_77e095df-53d5-45a4-b4df-ac39e432e28e`；用户确认后先查此任务并检查内层资源 error。reminder_tick 未提交，features 旧任务未知；主函数及活动客户端未修改，未调用任何 AI 模型。
+
+最新恢复结果：plan 原 77e095df 任务实际上已结束，内层同样报 Creating 阶段更新失败，后续资源 Active。补传第一次被自动审批额度拦截而未执行；恢复时间后通过同一通道发起的实际补传任务为 `confirmation_cloud_fn_deploy_b4fd7fbc-1fee-447b-a669-c9d65ea14e12`，最后已知 pending。已核实这个新弹窗，自动点击被非目标窗口拦截，等待用户手动确认新任务。不得让用户继续查找旧弹窗或重复创建资源。

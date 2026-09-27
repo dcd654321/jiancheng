@@ -128,3 +128,14 @@
 - 使用 `automation_wx_api --action call --method cloud.init` 的独立诊断返回 `Uncaught TypeError: wx.cloud.init is not a function`。不能由此断言真实小程序不支持该 API：工具对嵌套 method 的处理和 evaluate 上下文尚需区分。未据此修改 cloud-transport 或放宽门禁。
 - 诊断参数文件 `qa/local/20260927-acceptance/sdk-init-args.json` 仅含 traceUser=false，在 Git 忽略目录；不含身份、密钥或生产数据。
 - 没有取得预期 SHARE_UNAVAILABLE 云响应，因此未勾选共享调用或正式功能验收。现有单测与结构检查不能替代该证据；public_share 的状态是“代码部署成功、真实共享调用未通过”，不是“分享功能已可用”。
+
+## plan 原任务已结束，21:13 后补传恢复
+
+用户反馈“没有看到弹窗”后查询原 plan 任务 `77e095df-53d5-45a4-b4df-ac39e432e28e`：确认交互实际上早已执行结束。外层 success，内层 `jiancheng_daka_plan.error` 报 `FailedOperation.UpdateFunctionCode`，原文“当前函数处于Creating状态，无法进行此操作，请稍后重试。”，RequestId `1d5d8387-4eb4-4459-b3cd-09b7f2129f4c`。不能继续让用户查找这个已结束的旧确认框；已向用户更正之前的待确认描述。
+
+- 只读核验 plan 已 Active。首次准备补传时自动审批服务因额度不足拒绝执行命令，明确说明操作未执行，因此那次没有新部署任务或云写入；没有改用别的通道绕过。
+- 用户再次要求继续后，核实当前北京时间已过审批提示恢复时间（21:13），通过同一审批通道只读查询成功，plan 仍 Active，再首次真正发起失败代码的补传。
+- 新补传 taskId：`confirmation_cloud_fn_deploy_b4fd7fbc-1fee-447b-a669-c9d65ea14e12`；tool/client 为 cloud_fn_deploy/codex；appid/env/path/remote-npm-install 沿用 plan 原参数；最后已知状态 pending。
+- Computer Use 已捕获明确标明 jiancheng_daka_plan 的独立确认框。按既有授权点击“允许”时，工具报告点击落点为 ChatGPT 窗口而非目标，操作被拦截；重新激活后截图仍被遮挡。停止点击，没有操作聊天界面、修改安全设置或按旧坐标盲点。
+- 已请用户手动确认这个新的补传任务。用户答复后先查 b4fd7fbc 任务并检查内层资源结果，不能再用原 77e095df 任务或之前的截图来判断当前状态。
+- 本阶段仍未获得 plan 业务代码上传成功证据。public_share 部署成功但调用未通过；features 旧任务未知；reminder_tick 未提交。未启用任何新能力、调用 AI 模型或修改主函数。
