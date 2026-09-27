@@ -139,3 +139,25 @@
 - Computer Use 已捕获明确标明 jiancheng_daka_plan 的独立确认框。按既有授权点击“允许”时，工具报告点击落点为 ChatGPT 窗口而非目标，操作被拦截；重新激活后截图仍被遮挡。停止点击，没有操作聊天界面、修改安全设置或按旧坐标盲点。
 - 已请用户手动确认这个新的补传任务。用户答复后先查 b4fd7fbc 任务并检查内层资源结果，不能再用原 77e095df 任务或之前的截图来判断当前状态。
 - 本阶段仍未获得 plan 业务代码上传成功证据。public_share 部署成功但调用未通过；features 旧任务未知；reminder_tick 未提交。未启用任何新能力、调用 AI 模型或修改主函数。
+
+## plan 补传成功，首次提交提醒执行函数
+
+用户回复“允许了”后，读取 plan 补传任务 `confirmation_cloud_fn_deploy_b4fd7fbc-1fee-447b-a669-c9d65ea14e12`：外层 success/execution_success，内层 `jiancheng_daka_plan` 返回 `filesCount=16`、`packSize=36.2 KB`，没有资源 error。随后只读查询确认 plan 为 Active、Nodejs16.13、超时 3 秒。这证明代码上传成功，不证明 AI 已启用或真实建议验收完成；未配置供应商密钥、启用变量或调用模型。
+
+- 同次只读查询发现 `jiancheng_daka_features` 已为 Active、Nodejs16.13、超时 3 秒。此前丢失的 features 任务没有恢复终态，不能将这个资源状态视为已验证代码版本；未再次创建或上传该函数，代码及真实调用仍待核验。
+- `jiancheng_daka_reminder_tick` 同次查询仍为 `ResourceNotFound.Function`，因此在已授权范围内首次提交该函数。上传包不包含定时触发器配置；不启用提醒、不发送消息、不修改主函数或共享认证配置。
+- 新 pendingTask：
+  - taskId：`confirmation_cloud_fn_deploy_643b8c20-c4ef-4910-b6e8-0e0730a8b008`
+  - tool/client：`cloud_fn_deploy` / `codex`
+  - appid/env：`wx7ad85943fe81e095` / `product-d2g59zty74d7d1ec1`
+  - path：`D:\codex\coding\yidian-miniprogram\cloudfunctions\jiancheng_daka_reminder_tick`
+  - remote-npm-install：true；最后状态 pending；已通知用户确认，没有主动轮询或重发。
+- 恢复顺序：用户确认后先查上述 reminder_tick 原任务并检查内层结果。若首次创建发生明确的 Creating 代码更新失败，先查资源状态再决定是否只补传失败代码；不得删除重建、重复提交 pending 任务或将外层 success 当成部署成功。
+- 当前已验证代码上传的是 public_share 和 plan；features 仅确认资源 Active，reminder_tick 待确认。正式共享调用、数据库规则/索引/TTL、真实消息和 AI 等验收仍未完成，活动客户端配置保持不变。
+
+### 同回合补充只读诊断
+
+- 本工程模拟器通过受控表达式返回 `cloudSession.phase=ready`、configured/consented/connected 均为 true；`wx.cloud.init`、`wx.cloud.callFunction`、`wx.cloud.Cloud` 均为 function，基础库为 3.17.3。仅读取布尔值、阶段及 API 类型，没有输出账户 ID、缓存内容或原始云响应。这些结果不能单独证明当前网络请求成功。
+- 在该上下文执行一次新共享实例的受控公开调用：初始化步骤完成，仍在 call 阶段返回 errCode=-1 和 `Cloud API isn't enabled, please call wx.cloud.init first`。尚未拿到业务层 SHARE_UNAVAILABLE 响应；没有依据此错误修改业务初始化、切换活动云配置或放宽权限。
+- 核对了 [CloudBase 官方共享实例示例](https://docs.cloudbase.net/run/develop/access/mini)；示例是云托管 callContainer 场景，不能用它冒充当前云函数调用已验收。当前 SDK 类型可用与共享调用成功是不同证据，后续仍需定位实例/工具上下文和真实调用路径。
+- `npm run check:cloud` 再次通过，61 个生成文件与源码一致；`git diff --check` 通过。本次仅变更部署记录，没有业务代码改动，也未重新执行全量单测或真机验收。
