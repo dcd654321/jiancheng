@@ -75,3 +75,20 @@
 - 点击目标窗口“最大化”时，Computer Use 返回 `point (1413, 260) is over ACShadows.exe "Assassin's Creed Shadows", not target window 微信开发者工具.exe "灵感拾光簿-离线验证"`，点击被拦截。按技能重新激活并刷新后画面仍不可靠，停止输入；不改用其他 UI 自动化机制绕过目标校验。
 - 当前需要用户将游戏最小化，并将获授权的开发者工具窗口置于前台，随后才能安全继续查找确认；不需要再次给聊天授权，也没有证据表明用户尚未登录。
 - 本次没有新云端写入，没有修改业务代码或另一项目资料。恢复时仍先查询原任务；此前主函数版本 1 保留不动，未合并 main 或发布小程序。
+
+## 19:56 后恢复：旧任务丢失与独立新函数确认
+
+- 用户再次要求继续后，本项目窗口可正常观察，前次游戏遮挡不再作为当前阻塞。此前获准查看的“灵感拾光簿-离线验证”窗口已不在清单中；没有访问新出现的其他项目窗口。
+- 查询旧 features taskId 时 CLI 首先提示连接失败并自动尝试 auth，随后连接恢复，但原查询返回 `Task not found`。之后 status 核验版本 equal、登录有效、tokenRequired=false。没有操作安全设置或读取凭据。旧任务目前状态未知，不把它擅自归为 cancelled/failed，也未重新部署 features。
+- 正式函数清单仍只有本应用主函数及其他应用函数，没有四个新增函数。`npm run check:cloud` 再次通过，61 个生成文件一致。
+- 在已授权的四函数阶段范围内，首次提交尚无旧任务的 `jiancheng_daka_public_share`。无功能变量、无定时器或客户端启用，未覆盖主函数。返回以下确认任务，尚不代表部署成功：
+  - taskId：`confirmation_cloud_fn_deploy_c74ad372-54a1-4fcb-9a43-2233ccab0904`
+  - tool/client：`cloud_fn_deploy` / `codex`
+  - appid/env：`wx7ad85943fe81e095` / `product-d2g59zty74d7d1ec1`
+  - path：`D:\codex\coding\yidian-miniprogram\cloudfunctions\jiancheng_daka_public_share`
+  - remote-npm-install：true
+  - 最后任务状态：pending。
+- 本项目截图出现明确部署 public_share 的确认框。针对主窗口截图中的“允许”操作后，确认框被主窗口遮住；查询原任务一次仍 pending，云清单仍无新增函数，因此该点击未获得实际确认成功证据。
+- 定位到新出现的独立无标题窗口，尝试激活、Raise、暂时最小化主窗口解除遮挡，返回画面仍是其他窗口内容，未能可靠定位确认按钮。已停止对确认框输入并恢复本项目主窗口；不以旧坐标盲点，不改用未授权自动化机制。
+- 下一步需要用户在标明 `jiancheng_daka_public_share` 的开发者工具确认框点击“允许”；不要关闭/重启开发者工具导致当前确认记录再次丢失。之后先读取 public_share 原 taskId 结果，不重新上传。features 旧任务丢失仍独立保留为未决问题；plan/reminder_tick 尚未提交。
+- 没有业务代码改动，没有新增函数部署成功证据；不能说新功能已可用或已完成上线。无云配置、数据库、main 或小程序发布变更。
