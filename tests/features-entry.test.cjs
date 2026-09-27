@@ -29,3 +29,10 @@ test('public entry normalizes SDK faults to the same unavailable result',async()
   Object.assign(f.env,{HABIT_PUBLIC_SHARES_ENABLED:'true',HABIT_SIDECAR_CLEANUP_ENABLED:'true',HABIT_LIMITS_VERIFIED:'true'});
   assert.deepEqual(await f.main({action:'getPublicShare',shareId:'a'.repeat(64)}),disabled);
 });
+
+test('reminder timer entry is closed by default and forged client timers make no database request',async()=>{
+  const f=entryFixture('jiancheng_daka_reminder_tick');assert.equal((await f.main({Type:'Timer'})).code,'NOT_ENABLED');assert.equal(f.calls,0);
+  for(const key of ['HABIT_REMINDERS_ENABLED','HABIT_REMINDER_STORAGE_READY','HABIT_TIMER_VERIFIED','HABIT_TEMPLATE_VERIFIED','HABIT_REMINDER_TTL_VERIFIED','HABIT_LIMITS_VERIFIED','HABIT_IDENTITY_VERIFIED','HABIT_SIDECAR_CLEANUP_ENABLED'])f.env[key]='true';
+  f.env.HABIT_TIMER_SECRET='e'.repeat(64);f.env.HABIT_TIMER_NAME='jiancheng_daka_digest';
+  const response=await f.main({Type:'Timer',TriggerName:f.env.HABIT_TIMER_NAME,Message:f.env.HABIT_TIMER_SECRET});assert.equal(response.code,'UNAUTHORIZED');assert.equal(f.calls,0);
+});

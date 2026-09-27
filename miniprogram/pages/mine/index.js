@@ -4,8 +4,9 @@ const { features } = require('../../services/features-client');
 const { APP_NAME } = require('../../config/brand');
 Page(ui.withLifecycle({
   ...actions,
-  data: { ...actions.data, sharingEnabled: false },
-  refresh() { actions.refresh.call(this); this.setData({ sharingEnabled: features().status().enabled }); },
+  data: { ...actions.data, sharingEnabled: false, remindersEnabled:false },
+  refresh() { actions.refresh.call(this); this.setData({ sharingEnabled: features().status().enabled, remindersEnabled:features().status().reminders }); },
+  onReminders() { wx.navigateTo({url:'/pages/reminder/index'}); },
   onShares() { wx.navigateTo({ url: '/pages/share-list/index' }); },
   onShareAppMessage() { return { title: APP_NAME + '：再忙，也能做一点', path: '/pages/today/index' }; },
   onData() { wx.navigateTo({ url: '/pages/data/index' }); },

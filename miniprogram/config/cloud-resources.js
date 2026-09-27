@@ -5,8 +5,10 @@ module.exports = {
   planFunction: 'jiancheng_daka_plan',
   featuresFunction: 'jiancheng_daka_features',
   publicShareFunction: 'jiancheng_daka_public_share',
+  reminderTickFunction: 'jiancheng_daka_reminder_tick',
   accountsCollection: 'jiancheng_daka_accounts',
   preferencesCollection: 'jiancheng_daka_preferences',
   sharesCollection: 'jiancheng_daka_shares',
-  limitsCollection: 'jiancheng_daka_limits'
+  limitsCollection: 'jiancheng_daka_limits',
+  remindersCollection: 'jiancheng_daka_reminders'
 };

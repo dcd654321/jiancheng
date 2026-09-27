@@ -3,7 +3,8 @@ const { fail } = require('./protocol');
 const { read, readAccount } = require('./features-repository');
 const { COLLECTION } = require('./cloudbase-repository');
 const LIMITS = 'jiancheng_daka_limits';
-const SCOPES = ['features', 'public', 'reminders', 'ai'];
+const SCOPES = ['features', 'public', 'reminders', 'ai', 'reminder-send'];
+const PRIVATE_SCOPES = ['features', 'reminders', 'ai'];
 const denied = () => fail('RATE_LIMITED', '访问次数已达上限，请稍后再试');
 const valid = n => Number.isSafeInteger(n) && n > 0 && n <= 1000000;
 function configuration(env, prefix, user = true) {
@@ -38,15 +39,15 @@ function createLimitRepository(db) {
 }
 function createLimiter({ repository, scope, limits, clock = Date.now }) {
   if (!SCOPES.includes(scope) || !valid(limits.minute) || !valid(limits.day) ||
-    (scope !== 'public' && (!valid(limits.userMinute) || !valid(limits.userDay)))) throw Error('LIMIT_CONFIG_REQUIRED');
+    (PRIVATE_SCOPES.includes(scope) && (!valid(limits.userMinute) || !valid(limits.userDay)))) throw Error('LIMIT_CONFIG_REQUIRED');
   const blocked = new Map();
   return async (owner, epoch) => {
     const now = clock(), minute = Math.floor(now / 60000), day = Math.floor((now + 28800000) / 86400000);
     if (!Number.isSafeInteger(minute) || now < 0) throw Error('LIMIT_CLOCK_INVALID');
     const globalId = 'global-' + scope;
     const userId = owner ? scope + '-' + owner : null;
-    if (scope !== 'public' && (!owner || !epoch)) fail('UNAUTHORIZED', '账户身份无效');
-    if (scope === 'public' && owner) throw Error('PUBLIC_LIMIT_HAS_OWNER');
+    if (PRIVATE_SCOPES.includes(scope) && (!owner || !epoch)) fail('UNAUTHORIZED', '账户身份无效');
+    if (!PRIVATE_SCOPES.includes(scope) && owner) throw Error('PUBLIC_LIMIT_HAS_OWNER');
     for (const [key, until] of blocked) if (until <= now) blocked.delete(key);
     if (blocked.has(globalId) || (userId && blocked.has(userId))) denied();
     const result = await repository.transact(async tx => {
@@ -75,4 +76,4 @@ function createLimiter({ repository, scope, limits, clock = Date.now }) {
     }
   };
 }
-module.exports = { LIMITS, SCOPES, configuration, createLimitRepository, createLimiter };
+module.exports = { LIMITS, SCOPES, PRIVATE_SCOPES, configuration, createLimitRepository, createLimiter };

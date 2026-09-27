@@ -1,6 +1,6 @@
 const fs = require('node:fs');
 const path = require('node:path');
-const { apiFunction, featuresFunction, publicShareFunction } = require('../miniprogram/config/cloud-resources');
+const { apiFunction, featuresFunction, publicShareFunction, reminderTickFunction } = require('../miniprogram/config/cloud-resources');
 const root = path.resolve(__dirname, '..');
 const files = [
   ['server/handler.js', 'lib/handler.js'],
@@ -36,9 +36,11 @@ function emit(destination, bytes) {
 }
 for (const [name, entries] of [[apiFunction, files],
   [featuresFunction, [['server/entries/features.js', 'index.js'], ...featureFiles]],
-  [publicShareFunction, [['server/entries/public-share.js', 'index.js'], ...featureFiles]]]) {
+  [publicShareFunction, [['server/entries/public-share.js', 'index.js'], ...featureFiles]],
+  [reminderTickFunction, [['server/entries/reminder-tick.js', 'index.js'], ['server/reminder-worker.js','lib/reminder-worker.js'], ...featureFiles]]]) {
   const output = path.join(root, 'cloudfunctions', name);
   for (const [source, target] of entries) emit(path.join(output, target), fs.readFileSync(path.join(root, source)));
+  if ([featuresFunction,reminderTickFunction].includes(name)) emit(path.join(output,'lib/reminders.js'),fs.readFileSync(path.join(root,'server/reminders.js')));
   if (name !== apiFunction) for (const file of ['package.json', 'package-lock.json']) {
     const manifest = JSON.parse(fs.readFileSync(path.join(root, 'cloudfunctions', apiFunction, file), 'utf8'));
     manifest.name = name.replaceAll('_', '-');

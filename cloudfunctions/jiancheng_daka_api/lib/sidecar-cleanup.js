@@ -1,6 +1,6 @@
 'use strict';
 const { PREFERENCES, SHARES, read } = require('./features-repository');
-const { LIMITS, SCOPES } = require('./limits');
+const { LIMITS, PRIVATE_SCOPES } = require('./limits');
 // Account tombstone blocks new writes while this runs. Queries exclude new epochs.
 function createSidecarCleanup(db, { remindersEnabled = false, limitsEnabled = false } = {}) {
   const collections = [SHARES, ...(remindersEnabled ? ['jiancheng_daka_reminders'] : [])];
@@ -25,7 +25,7 @@ function createSidecarCleanup(db, { remindersEnabled = false, limitsEnabled = fa
       if (pref && pref.owner === owner && pref.ownerEpoch === ownerEpoch) await ref.remove();
       else if (pref && pref.owner !== owner) throw Error('INVALID_PREFERENCE_OWNER');
     });
-    if (limitsEnabled) for (const scope of SCOPES.filter(s => s !== 'public')) {
+    if (limitsEnabled) for (const scope of PRIVATE_SCOPES) {
       await db.runTransaction(async tx => {
         const ref = tx.collection(LIMITS).doc(scope + '-' + owner), doc = await read(ref);
         if (doc && doc.owner === owner && doc.ownerEpoch === ownerEpoch) await ref.remove();

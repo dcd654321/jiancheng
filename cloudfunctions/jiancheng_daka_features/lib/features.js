@@ -27,7 +27,7 @@ const FIELDS = {
 };
 function validateRequest(event, dates) {
   size(event);
-  if (!event || !own(FIELDS, event.action)) fail('INVALID_REQUEST', '不支持的请求');
+  if (!event || typeof event.action !== 'string' || !own(FIELDS, event.action)) fail('INVALID_REQUEST', '不支持的请求');
   object(event, ['action', 'epoch', ...FIELDS[event.action]]);
   if (!token(event.epoch)) fail('INVALID_REQUEST', '账户版本无效');
   if (event.action === 'setPreferences') {

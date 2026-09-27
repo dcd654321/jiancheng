@@ -6,6 +6,8 @@ const { createFeaturesRepository, PREFERENCES, SHARES }=require('../server/featu
 const { createSidecarCleanup }=require('../server/sidecar-cleanup');
 const { COLLECTION }=require('../server/cloudbase-repository');
 const { LIMITS,createLimiter,createLimitRepository }=require('../server/limits');
+const { REMINDERS,createReminderRepository,createRecipientCodec,createReminderApi }=require('../server/reminders');
+const { createReminderWorker }=require('../server/reminder-worker');
 const { createFeaturesApi,createPublicShareApi }=require('../server/features');
 const { fixture,domain,dates }=require('./helpers/cloud-fixture.cjs');
 const sdkPath=path.resolve(__dirname,'../cloudfunctions/jiancheng_daka_api/node_modules/wx-server-sdk');
@@ -31,11 +33,13 @@ test('feature repositories use installed SDK document transactions, owner-isolat
         saved=transactions.get(params.transactionId);transactions.delete(params.transactionId);return {ok:1};
       }
       if(action==='database.abortTransaction'){transactions.delete(params.transactionId);return {ok:1};}
-      assert.ok([COLLECTION,PREFERENCES,SHARES,LIMITS].includes(params.collectionName));
+      assert.ok([COLLECTION,PREFERENCES,SHARES,LIMITS,REMINDERS].includes(params.collectionName));
       const target=params.transactionId?transactions.get(params.transactionId):saved;assert.ok(target);
       const query=JSON.parse(params.query),prefix=params.collectionName+':';
       if(action==='database.getDocument') {
-        const rows=[...target].filter(([key,value])=>key.startsWith(prefix)&&Object.entries(query).every(([field,value2])=>JSON.parse(value)[field]===value2));
+        const rows=[...target].filter(([key,value])=>key.startsWith(prefix)&&Object.entries(query).every(([field,value2])=>{
+          const actual=JSON.parse(value)[field];return value2&&typeof value2==='object'&&'$lte' in value2?actual<=value2.$lte:actual===value2;
+        }));
         return {data:{list:rows.slice(0,params.limit||100).map(([,value])=>value)}};
       }
       if(action==='database.modifyDocument') {
@@ -72,6 +76,17 @@ test('feature repositories use installed SDK document transactions, owner-isolat
   const limiter=createLimiter({repository:createLimitRepository(db),scope:'features',limits:{minute:4,day:10,userMinute:1,userDay:4},clock:()=>Date.parse(f.date+'T04:00:00Z')});
   conflict=true;await limiter(owner,a.epoch);await assert.rejects(limiter(owner,a.epoch),e=>e.code==='RATE_LIMITED');
   assert.equal((await createLimitRepository(db).transact(async tx=>({ok:true,row:await tx.read('global-features')}))).row.minuteUsed,1);
+  let now=new Date(f.date+'T04:00:00Z');const reminders=createReminderRepository(db),codec=createRecipientCodec('f'.repeat(64));
+  const reminderApi=createReminderApi({repository:reminders,domain,dates,codec,templateId:'sdk-template-fixture',allowedAppId:f.identity.APPID,allowedSources:['wx_client'],clock:()=>now});
+  const preview=(await reminderApi({action:'previewReminder',epoch:a.epoch,slot:'12:30'},f.identity)).preview;
+  const {templateId,...fields}=preview;conflict=true;
+  const scheduled=await reminderApi({action:'scheduleReminder',epoch:a.epoch,...fields,subscriptionResult:'accept'},f.identity);assert.equal(scheduled.ok,true,JSON.stringify(scheduled));
+  const reminderKey=[...saved.keys()].find(k=>k.startsWith(REMINDERS+':'));
+  assert.ok(JSON.parse(saved.get(reminderKey)).expiresAt.$date,'TTL must serialize as SDK database date, not plain ISO text');
+  now=new Date(preview.dueAt);let sends=0;
+  const worker=createReminderWorker({repository:reminders,domain,dates,codec,templateId:'sdk-template-fixture',clock:()=>now,send:async()=>{sends++;return {errCode:0};}});
+  await worker();assert.equal(sends,1);await worker();assert.equal(sends,1);
+  await createSidecarCleanup(db,{remindersEnabled:true})(owner,a.epoch);assert.equal(saved.has(reminderKey),false);
   await createSidecarCleanup(db,{limitsEnabled:true})(owner,'obsolete');assert.ok(saved.has(LIMITS+':features-'+owner));
   await createSidecarCleanup(db,{limitsEnabled:true})(owner,a.epoch);assert.equal(saved.has(LIMITS+':features-'+owner),false);
   assert.equal((await createLimitRepository(db).transact(async tx=>({ok:true,row:await tx.read('global-features')}))).row.minuteUsed,1);

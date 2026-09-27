@@ -108,7 +108,7 @@
   businessDate: "2026-09-25",   // 北京时间 YYYY-MM-DD
   slot: "20:30",                  // 三个固定时段之一
   dueAt: "<UTC ISO-8601>",
-  templateKey: "habit-digest",   // 模板实际 ID 只在服务端配置
+  templateKey: "habit-digest",   // 后续实现见下文：公开模板 ID 还需传给客户端申请订阅
   generation: 1,                 // 同日取消后重新授权再安排时递增
   status: "pending" | "claimed" | "sent" | "cancelled" | "failed" | "unknown",
   acceptedReportedAt: "<UTC ISO-8601>", // 服务端收到客户端 accept 报告的时间；非平台凭证
@@ -185,3 +185,11 @@ claimed --超时或结果不明--> unknown
 主账户 `state.schemaVersion=1` 不变；新 `completeMinimum` 写出的仍是既有 `Record` 形状。先发布可识别新命令的服务端，再发布客户端；旧客户端继续走原命令。旁路集合从空开始，不搬旧测试云或本机开发记录。新集合或函数任一不可用，不得影响既有打卡、导出和删除；但涉及个人数据删除时必须真实清理旁路资源，不能静默降级。
 
 测试至少覆盖：两个 owner 互不可读写；不同小程序来源被拒；分享 ID 猜测／篡改、撤回／到期、公开接口故障、删除后立刻不可读；重复创建只出一份；提醒同日去重、时区、取消、平台超时 `unknown` 不重发、已完成不发；偏好 CAS 冲突；主账户 700 KiB 边界不变；删除半途失败及同 operationId 续清理。自动化、模拟仓库、微信工具、Android/iOS 真机、实际云权限和实际消息送达分别留证。当前没有执行任何数据库创建、迁移、部署或数据写入。
+
+## 10. 2026-09-27 提醒实现补充（未部署）
+
+实际提醒记录使用 `templateId`（服务端配置、预览返回前端申请订阅）、`recipient={iv,data,tag}`（AES-GCM 加密 OpenID）、`receipts`（最多 8 个 operationId/指纹）、`claimId`、`claimedAt`，以及真正 Date 类型 `expiresAt`。不落原始 OpenID，不保存原始平台响应，终态清除 recipient。TTL 截止为 dueAt 后 14 天，到期执行存在平台延迟。
+
+新增认证动作 `previewReminder` 返回 slot/businessDate/dueAt/sourceRevision/generation/operationId/templateId；`scheduleReminder` 带回预览字段和 accept 报告，拒绝陈旧版本；`getReminders` 点读昨日至未来六日共 8 条；`cancelReminder` 校验日期及 generation。发布前主 API 开启独立持久清理门禁 `HABIT_REMINDER_STORAGE_READY`，产品停用不能关闭清理。
+
+当前实现不写 providerAcceptedAt 或 lastResultCode；对外仅返回白名单日期/时段/generation/status/updatedAt。状态 sent 表示调用明确成功，不代表送达。额外 `jiancheng_daka_limits` 使用固定作用域/用户 ID 的分钟+日计数，派生 owner/epoch 仅在私有文档；全局计数不记录身份。

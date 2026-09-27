@@ -60,8 +60,19 @@ function createFeaturesClient(wxApi, cloudConfig, config, session, options = {})
     }).finally(() => { if (inFlight === flight) inFlight = null; });
     inFlight = flight; return flight.work;
   }
+  function reminder(value) {
+    if (!value || !['pending','claimed','sent','cancelled','failed','unknown'].includes(value.status) ||
+      !['08:00','12:30','20:30'].includes(value.slot) || !Number.isInteger(value.generation) || value.generation<1 || value.generation>8 ||
+      typeof value.dueAt!=='string' || !Number.isFinite(Date.parse(value.dueAt))) throw Error('提醒响应格式无效');
+    dates.assertDate(value.businessDate);
+    return {businessDate:value.businessDate,slot:value.slot,dueAt:value.dueAt,generation:value.generation,status:value.status};
+  }
+  const remindersEnabled=()=>configured() && (options.remindersConfig || require('../config/reminders')).enabled === true;
+  const reminderRequest=payload=>{
+    if(!remindersEnabled())throw Error('提醒功能尚未开放');return request(payload);
+  };
   return {
-    status: () => ({ enabled: configured(), publicShares: publicConfigured(), timeline: publicConfigured() && config.timeline === true }),
+    status: () => ({ enabled: configured(), publicShares: publicConfigured(), timeline: publicConfigured() && config.timeline === true, reminders:remindersEnabled() }),
     contextKey: () => context().key,
     preferences,
     cachedPreferences() { try { return cache && cache.key === context().key ? clone(cache.value) : null; } catch (_) { return null; } },
@@ -97,6 +108,23 @@ function createFeaturesClient(wxApi, cloudConfig, config, session, options = {})
     },
     async revoke(shareId) { return request({ action: 'revokeShare', shareId }); },
     async remove(shareId) { return request({ action: 'deleteShare', shareId }); },
+    async reminderPreview(slot) {
+      const key=context().key,result=await reminderRequest({action:'previewReminder',slot}),p=result.preview;
+      if(!p || p.slot!==slot || typeof p.templateId!=='string' || !/^[a-zA-Z0-9_-]{10,128}$/.test(p.templateId) ||
+        typeof p.operationId!=='string'|| !/^[a-zA-Z0-9_-]{1,100}$/.test(p.operationId) || !Number.isSafeInteger(p.sourceRevision) ||
+        !Number.isInteger(p.generation)||p.generation<0||p.generation>=8||typeof p.dueAt!=='string'||!Number.isFinite(Date.parse(p.dueAt)))throw Error('提醒预览响应无效');
+      dates.assertDate(p.businessDate);return {...clone(p),context:key};
+    },
+    async scheduleReminder(preview) {
+      if(!remindersEnabled())throw Error('提醒功能尚未开放');
+      const {context:expected,templateId,...fields}=preview;
+      return reminder((await request({action:'scheduleReminder',...fields,subscriptionResult:'accept'},expected)).reminder);
+    },
+    async reminders() {
+      const result=await reminderRequest({action:'getReminders'});
+      if(!Array.isArray(result.items)||result.items.length>8)throw Error('提醒列表响应无效');return result.items.map(reminder);
+    },
+    async cancelReminder(item) {return reminder((await reminderRequest({action:'cancelReminder',businessDate:item.businessDate,generation:item.generation})).reminder);},
     async publicShare(shareId) {
       if (!publicConfigured()) throw Error('公开分享暂未开放');
       if (!hex(shareId)) throw Error('这份分享暂不可用或已失效');
