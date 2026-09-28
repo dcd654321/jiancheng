@@ -1,251 +1,136 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const path = require('node:path');
-const { fixture, storageFixture, dates } = require('./helpers/cloud-fixture.cjs');
+const { fixture, dates } = require('./helpers/cloud-fixture.cjs');
 const { createCloudSession } = require('../miniprogram/services/cloud-session');
-const { PREFIX } = require('../miniprogram/services/sync-engine');
-const deferred = () => { let resolve; const promise = new Promise(r => { resolve = r; }); return { promise, resolve }; };
-async function setup({ route, now } = {}) {
-  const f = fixture();
-  f.date = dates.today();
-  const snapshot = await f.seed(), wx = storageFixture(), requests = [];
-  const stats = { active: 0, maxConcurrent: 0, mutationIds: [] };
-  const factory = () => async event => {
-    requests.push(JSON.parse(JSON.stringify(event)));
-    stats.active += 1;
-    stats.maxConcurrent = Math.max(stats.maxConcurrent, stats.active);
-    if (event.action === 'mutate') stats.mutationIds.push(event.operationId);
-    try { return route ? await route(event, f) : await f.api(event); }
-    finally { stats.active -= 1; }
-  };
-  const config = { enabled: true, envId: 'test-env' };
-  const session = createCloudSession(wx, config, factory, { now });
-  const key = 'yidian.cloud.env:test-env:' + PREFIX + snapshot.accountId;
-  return { f, snapshot, wx, requests, stats, factory, config, session, key };
+
+const deferred = () => { let resolve; const promise = new Promise(done => { resolve = done; }); return { promise, resolve }; };
+const forbiddenStorage = () => ({
+  getStorageSync() { throw Error('device read forbidden'); },
+  setStorageSync() { throw Error('device write forbidden'); },
+  removeStorageSync() { throw Error('device delete forbidden'); },
+  getFileSystemManager() { throw Error('device file forbidden'); }
+});
+
+async function setup(route) {
+  const f = fixture(); f.date = dates.today(); await f.seed();
+  const calls = [], wx = forbiddenStorage();
+  const factory = () => async event => { calls.push(JSON.parse(JSON.stringify(event))); return route ? route(event, f) : f.api(event); };
+  const config = { enabled: true, envId: 'cloud-only-test' };
+  const session = createCloudSession(wx, config, factory);
+  return { f, wx, calls, factory, config, session };
 }
-async function readySetup(options = {}) {
-  const h = await setup(options);
+
+test('cold start and restart each pull cloud data; no device storage API is touched', async () => {
+  const h = await setup();
+  assert.equal(h.session.status().ready, false);
+  assert.throws(() => h.session.read(), /尚未读取/);
   await h.session.start();
-  h.requests.length = 0;
-  h.stats.maxConcurrent = 0;
-  h.stats.mutationIds.length = 0;
-  return h;
-}
-function injectQueue(h) {
-  const cache = JSON.parse(h.wx.getStorageSync(h.key));
-  cache.queue.push({ event: { action: 'mutate', operationId: 'offline-test', epoch: cache.base.epoch,
-    expectedRevision: cache.base.revision, operationDate: h.f.date,
-    command: { type: 'complete', id: 'read', date: h.f.date } } });
-  h.wx.setStorageSync(h.key, JSON.stringify(cache));
-}
-
-test('configured session starts with a cloud pull without an app consent flag', async () => {
-  const h = await setup();
-  assert.equal(h.requests.length, 0);
-  const ready = await h.session.start();
-  assert.equal(ready.phase, 'ready');
-  assert.deepEqual(h.requests, [{ action: 'pull' }]);
-  const resumed = createCloudSession(h.wx, h.config, h.factory);
-  assert.equal(resumed.status().ready, true);
-  assert.equal(resumed.read().habits[0].id, 'read');
-  assert.equal(h.requests.length, 1);
+  assert.equal(h.session.read().habits[0].id, 'read');
+  const second = createCloudSession(h.wx, h.config, h.factory);
+  assert.equal(second.status().ready, false);
+  await second.start();
+  assert.equal(second.read().habits[0].id, 'read');
+  assert.deepEqual(h.calls.map(call => call.action), ['pull', 'pull']);
 });
 
-test('failed first pull has no editable state; failed refresh with cache stays offline', async () => {
-  const h = await setup();
-  let offline = true;
-  const session = createCloudSession(h.wx, h.config, () => async event => {
-    if (offline) throw Error('offline');
-    return h.f.api(event);
-  });
-  await assert.rejects(session.start(), /offline/);
-  assert.equal(session.status().ready, false);
-  offline = false;
-  await session.start();
-  assert.equal(session.status().ready, true);
+test('failed read and offline status hide prior in-memory snapshot instead of showing editable cache', async () => {
+  let offline = false;
+  const h = await setup((event, f) => offline ? Promise.reject(Error('offline')) : f.api(event));
+  await h.session.start();
   offline = true;
-  await session.start();
-  assert.equal(session.status().phase, 'offline');
-  assert.equal(session.read().habits.length, 1);
+  await assert.rejects(h.session.refresh(), /offline/);
+  assert.equal(h.session.status().ready, false);
+  assert.throws(() => h.session.read(), /offline/);
+  assert.throws(() => h.session.dispatch({ type: 'complete', id: 'read', date: h.f.date }), /offline/);
+  offline = false;
+  await h.session.refresh();
+  assert.equal(h.session.status().ready, true);
 });
 
-test('record dispatch is durable before one background flush and reuses its operation id', async () => {
-  const started = deferred(), release = deferred();
-  const h = await readySetup({ route: async (event, f) => {
-    if (event.action === 'mutate') { started.resolve(); await release.promise; }
+test('direct mutation is not displayed until matching cloud receipt; only one mutation may be in flight', async () => {
+  const gate = deferred(); let seen;
+  const h = await setup(async (event, f) => {
+    if (event.action === 'mutate') { seen = event; await gate.promise; }
     return f.api(event);
-  } });
-  const projected = h.session.dispatch({ type: 'complete', id: 'read', date: h.f.date });
-  assert.equal(projected.records['read@' + h.f.date].status, 'standard');
+  });
+  await h.session.start();
+  const pending = h.session.dispatch({ type: 'complete', id: 'read', date: h.f.date });
   assert.equal(h.session.status().pending, 1);
-  await new Promise(resolve => setImmediate(resolve));
-  assert.equal(h.stats.mutationIds.length, 1, 'the durable queue should start one background mutation');
-  await started.promise;
-  h.session.dispatch({ type: 'note', id: 'read', date: h.f.date, note: '继续' });
-  assert.equal(h.session.status().pending, 2);
-  assert.equal(h.stats.maxConcurrent, 1);
-  release.resolve();
-  await h.session.onForeground();
+  assert.equal(h.session.read().records[`read@${h.f.date}`], undefined);
+  assert.throws(() => h.session.dispatch({ type: 'note', id: 'read', date: h.f.date, note: 'x' }), /上一操作|正在处理/);
+  assert.equal(seen.action, 'mutate');
+  gate.resolve(); await pending;
   assert.equal(h.session.status().pending, 0);
-  assert.equal(new Set(h.stats.mutationIds).size, 2);
+  assert.equal(h.session.read().records[`read@${h.f.date}`].status, 'standard');
 });
 
-test('foreground does not poll before 30 seconds but refreshes once when stale', async () => {
-  let currentTime = 100000;
-  const h = await readySetup({ now: () => currentTime });
-  const pulls = h.requests.filter(event => event.action === 'pull').length;
-  await h.session.onForeground();
-  assert.equal(h.requests.filter(event => event.action === 'pull').length, pulls);
-  currentTime += 31000;
-  await h.session.onForeground();
-  assert.equal(h.requests.filter(event => event.action === 'pull').length, pulls + 1);
+test('lost response stays unconfirmed and retries the exact operation id in this app session', async () => {
+  let lost = true;
+  const h = await setup(async (event, f) => {
+    const result = await f.api(event);
+    if (event.action === 'mutate' && lost) { lost = false; throw Error('response lost'); }
+    return result;
+  });
+  await h.session.start();
+  await assert.rejects(h.session.dispatch({ type: 'complete', id: 'read', date: h.f.date }), /未确认/);
+  assert.equal(h.session.status().ready, false);
+  assert.equal(h.session.status().pending, 1);
+  assert.throws(() => h.session.read(), /未确认/);
+  await h.session.retry();
+  const mutations = h.calls.filter(call => call.action === 'mutate');
+  assert.equal(mutations.length, 2);
+  assert.deepEqual(mutations[0], mutations[1]);
+  assert.equal((await h.f.pull()).revision, h.session.status().count + 1);
+  assert.equal(h.session.read().records[`read@${h.f.date}`].status, 'standard');
 });
 
-test('automatic foreground work stops after a visible conflict', async () => {
-  let currentTime = 100000;
-  const h = await readySetup({ now: () => currentTime });
+test('restart after a lost acknowledgement pulls the cloud result without repeating the write', async () => {
+  let lost = true;
+  const h = await setup(async (event, f) => {
+    const result = await f.api(event);
+    if (event.action === 'mutate' && lost) { lost = false; throw Error('response lost'); }
+    return result;
+  });
+  await h.session.start();
+  await assert.rejects(h.session.dispatch({ type: 'complete', id: 'read', date: h.f.date }));
+  const restarted = createCloudSession(h.wx, h.config, h.factory);
+  await restarted.start();
+  assert.equal(restarted.read().records[`read@${h.f.date}`].status, 'standard');
+  assert.equal(h.calls.filter(call => call.action === 'mutate').length, 1);
+});
+
+test('conflict never reports the local command as saved; cloud snapshot becomes authoritative', async () => {
+  const h = await setup(); await h.session.start();
   await h.f.mutate({ type: 'note', id: 'read', date: h.f.date, note: '另一设备' });
-  h.session.dispatch({ type: 'complete', id: 'read', date: h.f.date });
-  await h.session.onForeground();
-  assert.ok(h.session.status().conflict);
-  const callsAtConflict = h.requests.length;
-  currentTime += 60000;
-  await h.session.onForeground();
-  assert.equal(h.requests.length, callsAtConflict);
-});
-
-test('session purge is cloud-confirmed before the local snapshot becomes empty', async () => {
-  const h = await readySetup();
-  await assert.rejects(h.session.purge(''), /确认/);
-  const result = await h.session.purge('DELETE_MY_DATA');
-  assert.equal(result.state.habits.length, 0);
+  await assert.rejects(h.session.dispatch({ type: 'complete', id: 'read', date: h.f.date }), /另一设备/);
   assert.equal(h.session.status().pending, 0);
-  assert.equal(h.requests.filter(event => event.action === 'purge').length, 1);
+  assert.equal(h.session.read().records[`read@${h.f.date}`].note, '另一设备');
+  assert.equal(h.session.read().records[`read@${h.f.date}`].status, 'pending');
 });
 
-test('云会话构造及状态读取不联网，未配置时不访问云端', async () => {
-  const h = await setup(); assert.equal(h.session.status().connected, false); assert.equal(h.requests.length, 0);
-  const disabled = createCloudSession(h.wx, { enabled: false, envId: '' }, h.factory);
-  assert.equal((await disabled.start()).lastError, '云环境尚未配置'); assert.equal(h.requests.length, 0);
+test('purge requires confirmation and only empties state after cloud acknowledgement', async () => {
+  const h = await setup(); await h.session.start();
+  await assert.rejects(h.session.purge(''), /确认/);
+  await h.session.purge('DELETE_MY_DATA');
+  assert.equal(h.session.read().habits.length, 0);
+  assert.equal(h.calls.filter(call => call.action === 'purge').length, 1);
 });
 
-test('首次连接仅读取云端且不触碰本机记录，重启直接恢复已确认缓存', async () => {
-  const h = await setup(); h.wx.setStorageSync('yidian.native.v1', 'original');
-  const status = await h.session.start();
-  assert.equal(status.connected, true); assert.equal(status.count, 1);
-  assert.deepEqual(h.requests, [{ action: 'pull' }]);
-  assert.equal(h.wx.getStorageSync('yidian.native.v1'), 'original');
-  const restarted = createCloudSession(h.wx, h.config, h.factory);
-  assert.equal(restarted.status().connected, true);
-  assert.equal(restarted.read().habits[0].id, 'read');
-  assert.equal(h.requests.length, 1);
-});
-
-test('相同账户的不同云环境缓存隔离', async () => {
-  const h = await setup(); await h.session.start(); injectQueue(h);
-  const other = createCloudSession(h.wx, { ...h.config, envId: 'other-env' }, h.factory);
-  assert.equal((await other.start()).pending, 0);
-  assert.equal(h.session.status().pending, 1);
-});
-
-test('重启读取不自动上传已有队列，只有retry提交', async () => {
-  const h = await setup(); await h.session.start(); injectQueue(h);
-  h.requests.length = 0;
-  const restarted = createCloudSession(h.wx, h.config, h.factory);
-  assert.equal(restarted.status().pending, 1);
-  await restarted.start(); assert.ok(h.requests.every(e => e.action === 'pull'));
-  assert.equal(restarted.status().conflict, null);
-  assert.equal((await restarted.retry()).pending, 0);
-  assert.equal(h.requests.filter(e => e.action === 'mutate').length, 1);
-});
-
-test('冲突需要确认；采用远端不改变本机store且备份包含待同步内容', async () => {
-  const h = await setup(); await h.session.start(); injectQueue(h);
-  h.wx.setStorageSync('yidian.native.v1', 'keep');
-  await h.f.mutate({ type: 'note', id: 'read', date: h.f.date, note: '远端修改' });
-  assert.ok((await h.session.refresh()).conflict);
-  await assert.rejects(h.session.useRemote(''), /明确确认/);
-  await h.session.useRemote('DISCARD_PENDING');
-  const backup = JSON.parse(h.session.backup());
-  assert.equal(backup.recovery.queue.length, 1); assert.equal(backup.current.queue.length, 0);
-  assert.equal(h.wx.getStorageSync('yidian.native.v1'), 'keep');
-});
-
-test('账户变化不会读取上一账户队列，读取失败保留最后确认快照', async () => {
-  const h = await setup(); await h.session.start(); injectQueue(h);
-  const previous = h.wx.getStorageSync(h.key);
-  h.f.identity.OPENID = 'another_user';
-  assert.equal((await h.session.start()).pending, 0);
-  assert.equal(h.wx.getStorageSync(h.key), previous);
-  h.f.identity.APPID = 'wrong-app';
-  const offline = await h.session.start();
-  assert.equal(offline.phase, 'offline'); assert.equal(offline.ready, true);
-});
-
-test('处理中拒绝重复启动，正式接口不提供断开连接', async () => {
-  const h = await setup(), started = deferred(), release = deferred();
-  const session = createCloudSession(h.wx, h.config, () => async e => { started.resolve(); await release.promise; return h.f.api(e); });
-  const connection = session.start(); await started.promise;
-  assert.equal(session.disconnect, undefined); await assert.rejects(session.start(), /稍候/);
-  release.resolve(); await connection;
-  assert.ok(h.wx.getStorageSync(h.key));
-  const unopened = createCloudSession(storageFixture(), h.config, h.factory);
-  await assert.rejects(unopened.retry(), /尚未读取/); assert.throws(() => unopened.backup(), /尚未读取/);
-});
-
-test('坏缓存与缓存保存失败不覆盖原记录，不标记连接成功', async () => {
-  const h = await setup(); h.wx.setStorageSync(h.key, '{broken');
-  await assert.rejects(h.session.start(), /损坏/);
-  assert.equal(h.session.status().connected, false); assert.equal(h.wx.getStorageSync(h.key), '{broken');
-  h.wx.values.delete(h.key); h.wx.failWrite = true;
-  await assert.rejects(h.session.start(), /保存失败/); assert.equal(h.session.status().connected, false);
-});
-
-function pageHarness(session) {
-  const modals = [], files = [], sends = [];
-  global.wx = { showModal: x => modals.push(x), env: { USER_DATA_PATH: '/files' },
-    getFileSystemManager: () => ({ writeFile: x => { files.push(x); x.success(); } }),
-    shareFileMessage: x => sends.push(x) };
-  global.getApp = () => ({ cloudSession: session });
-  let definition; global.Page = value => { definition = value; };
+test('actual sync page retries a failed cloud read without consent, file or backup actions', async () => {
+  let offline = true;
+  const h = await setup((event, f) => offline ? Promise.reject(Error('offline')) : f.api(event));
+  global.wx = forbiddenStorage(); global.wx.navigateTo = () => {};
+  global.getApp = () => ({ cloudSession: h.session });
+  let definition; global.Page = page => { definition = page; };
   const source = path.resolve(__dirname, '../miniprogram/pages/sync/index.js');
   delete require.cache[source]; require(source);
-  const page = { ...definition, data: JSON.parse(JSON.stringify(definition.data)),
-    setData(patch) { Object.assign(this.data, patch); } };
-  page.onShow(); return { page, modals, files, sends };
-}
-
-test('真实同步页控制器：无需同意按钮，读取失败可手动重试', async () => {
-  const h = await setup(), { page } = pageHarness(h.session);
-  assert.equal(h.requests.length, 0);
-  assert.equal(page.data.loading, true);
-  assert.equal(page.onConsentAndStart, undefined);
-  await page.onRefresh();
-  assert.equal(page.data.ready, true); assert.equal(page.data.busy, false); assert.equal(page.data.error, '');
-  assert.equal(page.onConnect, undefined);
-  assert.equal(page.onDisconnect, undefined);
-  assert.equal(page.onUseCloud, undefined);
-  assert.equal(page.onUseLocal, undefined);
-});
-
-test('真实同步页控制器：冲突取消不变，确认后备份可导出，发送失败不称成功', async () => {
-  const h = await setup(); await h.session.start(); injectQueue(h);
-  await h.f.mutate({ type: 'note', id: 'read', date: h.f.date, note: '远端' }); await h.session.refresh();
-  const { page, modals, files, sends } = pageHarness(h.session);
-  page.onUseRemote(); modals.pop().success({ confirm: false }); assert.equal(h.session.status().pending, 1);
-  page.onUseRemote(); modals.pop().success({ confirm: true });
-  await new Promise(resolve => setImmediate(resolve)); assert.equal(page.data.pending, 0);
-  page.onBackup(); assert.equal(JSON.parse(files[0].data).recovery.queue.length, 1);
-  assert.equal(sends[0].fileName, '渐成习惯打卡云同步备份.json');
-  sends[0].fail(); assert.match(page.data.error, /发送未完成/);
-  page.onResend(); assert.equal(sends[1].fileName, sends[0].fileName);
-});
-
-test('真实同步页控制器：请求异常恢复按钮，离开页面后不再setData', async () => {
-  const status = () => ({ configured: true, ready: false, phase: 'loading', busy: false });
-  const broken = { status, refresh: async () => { throw Error('网络失败'); } };
-  const { page } = pageHarness(broken); await page.onRefresh(); assert.equal(page.data.busy, false); assert.equal(page.data.error, '网络失败');
-  const release = deferred(); broken.refresh = () => release.promise;
-  const attempt = page.onRefresh(); page.onUnload(); page.setData = () => { throw Error('unloaded'); };
-  release.resolve(); await attempt;
+  const page = { ...definition, data: { ...definition.data }, setData(patch) { Object.assign(this.data, patch); } };
+  page.onShow();
+  await assert.rejects(h.session.start(), /offline/);
+  page.refresh(); assert.equal(page.data.dataUnavailable, true);
+  offline = false; await page.onRefresh();
+  assert.equal(page.data.ready, true);
+  for (const obsolete of ['onConsentAndStart', 'onBackup', 'onResend', 'onUseRemote']) assert.equal(page[obsolete], undefined);
+  page.onUnload();
 });

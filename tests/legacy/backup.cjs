@@ -1,5 +1,5 @@
-const domain = require('./habits');
-const dates = require('./date');
+const domain = require('../../miniprogram/core/habits');
+const dates = require('../../miniprogram/core/date');
 const MAX_BYTES = 1024 * 1024;
 
 // No Buffer/TextEncoder dependency: runs in the native mini-program JS runtime.

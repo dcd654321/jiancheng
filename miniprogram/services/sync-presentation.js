@@ -13,15 +13,14 @@ function syncPresentation(status) {
   const pending = status.pending || 0;
   const offline = status.networkOffline || status.phase === 'offline';
   let syncText = '', syncAttention = false;
-  if (status.deletionPending) { syncText = '删除尚未确认 · 请到数据管理重试'; syncAttention = true; }
-  else if (status.conflict) { syncText = '需要处理同步冲突'; syncAttention = true; }
+  if (status.deletionPending) { syncText = '云端删除尚未确认 · 请重试'; syncAttention = true; }
   else if (pending) {
-    syncText = (offline ? '当前离线 · ' : '') + pending + ' 条待同步';
+    syncText = '云端操作结果待确认';
     syncAttention = true;
-  } else if (offline) { syncText = '当前离线 · 显示上次同步记录'; syncAttention = true; }
-  else if (status.lastError) { syncText = '未能确认最新数据'; syncAttention = true; }
-  else if (status.busy) syncText = '正在同步';
-  else if (status.ready) syncText = '数据已同步';
+  } else if (offline) { syncText = '当前离线 · 无法读取云端'; syncAttention = true; }
+  else if (status.lastError) { syncText = '云端暂不可用'; syncAttention = true; }
+  else if (status.busy) syncText = '正在读取云端';
+  else if (status.ready) syncText = '云端数据已确认';
   return { syncText, syncAttention, lastSyncedLabel: formatSyncTime(status.lastSyncedAt) };
 }
 

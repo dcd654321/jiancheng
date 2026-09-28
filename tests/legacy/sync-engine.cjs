@@ -1,5 +1,5 @@
-const domain = require('../core/habits');
-const dates = require('../core/date');
+const domain = require('../../miniprogram/core/habits');
+const dates = require('../../miniprogram/core/date');
 const RECORD_TYPES = ['complete', 'completeMinimum', 'undo', 'simplify', 'restore', 'note'];
 const ONLINE_TYPES = ['create', 'edit', 'status', 'cancelFuture', 'settings'];
 const clone = value => JSON.parse(JSON.stringify(value));

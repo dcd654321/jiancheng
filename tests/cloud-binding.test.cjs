@@ -1,7 +1,7 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const { storageFixture } = require('./helpers/cloud-fixture.cjs');
-const { createCloudBinding } = require('../miniprogram/services/cloud-binding');
+const { createCloudBinding } = require('./legacy/cloud-binding.cjs');
 
 test('account binding persists without network and is isolated by environment', () => {
   const wx = storageFixture();

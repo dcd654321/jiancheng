@@ -7,23 +7,18 @@
   <view wx:elif="{{dataUnavailable}}" class="empty">
     <view class="section-title">暂时无法读取记录</view>
     <view class="sub">{{lastError || '请检查网络后重试，已有数据不会被清除。'}}</view>
-    <button class="primary spaced" disabled="{{busy}}" loading="{{busy}}" bindtap="onRefresh">重新读取</button>
+    <button class="primary spaced" disabled="{{busy}}" loading="{{busy}}" bindtap="onRefresh">{{deletionPending ? '继续确认删除' : pending ? '重试确认' : '重新读取'}}</button>
   </view>
   <block wx:elif="{{ready}}">
     <view class="section-title">{{syncText}}</view>
     <view class="sub">当前微信账号 · {{count}} 个习惯</view>
-    <view class="sub">{{pending ? pending + ' 条记录等待同步，完成前请勿清缓存' : '这台设备保留了最近同步的记录'}}</view>
-    <view wx:if="{{lastSyncedLabel}}" class="sub">最近同步：{{lastSyncedLabel}}</view>
+    <view class="sub">{{pending ? '有一项云端操作结果待确认，请重试确认' : '习惯与打卡直接保存在云端，不保留本机记录'}}</view>
+    <view wx:if="{{lastSyncedLabel}}" class="sub">最近确认：{{lastSyncedLabel}}</view>
     <view wx:if="{{lastError}}" class="error spaced">{{lastError}}</view>
-    <view wx:if="{{conflict}}" class="notice">另一台设备已经修改了数据。当前设备的待同步操作仍被保留，不会自动覆盖。请先导出备份，再决定是否采用云端版本。</view>
     <view class="actions">
       <button wx:if="{{deletionPending}}" class="primary" disabled="{{busy}}" bindtap="onData">前往数据管理，继续删除</button>
-      <button wx:if="{{pending && !conflict}}" class="primary" disabled="{{busy}}" loading="{{busy}}" bindtap="onRetry">继续同步（{{pending}}）</button>
+      <button wx:if="{{pending && !deletionPending}}" class="primary" disabled="{{busy}}" loading="{{busy}}" bindtap="onRetry">重试确认</button>
       <button wx:if="{{!deletionPending}}" class="secondary" disabled="{{busy}}" bindtap="onRefresh">读取最新记录</button>
-      <button class="secondary" disabled="{{busy}}" bindtap="onBackup">导出备份</button>
-      <button wx:if="{{conflict && conflict.snapshot}}" class="secondary danger" disabled="{{busy}}" bindtap="onUseRemote">舍弃待同步，采用云端</button>
     </view>
-    <view class="sub spaced">备份可能包含私人备注，请妥善保管。</view>
   </block>
-  <button wx:if="{{exportPath}}" class="text-button spaced" bindtap="onResend">重新发送备份文件</button>
 </view>

@@ -3,7 +3,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const ui = require('../miniprogram/services/ui');
-const { createStore, STORAGE_KEY } = require('../miniprogram/services/store');
+const { createStore, STORAGE_KEY } = require('./legacy/store.cjs');
 const { createCloudSession } = require('../miniprogram/services/cloud-session');
 const { createWorkspaceStore } = require('../miniprogram/services/workspace-store');
 const { fixture } = require('./helpers/cloud-fixture.cjs');
@@ -55,7 +55,7 @@ async function cloudHarness({ consent = false } = {}) {
   };
   const session = createCloudSession(wx, { enabled: true, envId: 'test-env' }, () => event => f.api(event));
   const legacy = createStore(wx);
-  const store = createWorkspaceStore(legacy, session);
+  const store = createWorkspaceStore(session);
   const app = { store, cloudSession: session, quoteSession: { current: () => '一点，也算向前。' } };
   global.wx = wx;
   global.getApp = () => app;
@@ -87,7 +87,6 @@ function deletionPage({ clearFails }) {
       calls += 1;
       assert.equal(confirmation, 'DELETE_MY_DATA');
       if (clearFails) throw Error('云端未确认删除');
-      delete storage[STORAGE_KEY];
       return { state };
     }
   };
@@ -123,15 +122,15 @@ test('cloud or acknowledgement failure never clears legacy data or exports', asy
   assert.match(h.mine.data.error, /未确认删除/);
 });
 
-test('confirmed cloud deletion cleans local exports only after acknowledgement', async () => {
+test('confirmed cloud deletion does not touch historical device files or keys', async () => {
   const h = deletionPage({ clearFails: false });
   h.mine.onDelete();
   h.modals.shift().success({ confirm: true });
   await h.modals.shift().success({ confirm: true });
   assert.equal(h.clearCalls(), 1);
-  assert.equal(h.storage[STORAGE_KEY], undefined);
-  assert.equal(h.files.has('/files/yidian-export.json'), false);
-  assert.equal(h.toasts.at(-1).title, '全部数据已清除');
+  assert.equal(h.storage[STORAGE_KEY], 'legacy-raw');
+  assert.equal(h.files.has('/files/yidian-export.json'), true);
+  assert.equal(h.toasts.at(-1).title, '云端数据已清除');
 });
 
 test('首次页面自动读取云端，且从不创建或上传旧本机记录', async () => {
@@ -164,7 +163,7 @@ test('真实页面控制器：模板创建不会自动打卡；今日勾选、�
   const task = today.data.pending[0];
   today.onComplete(event({ id: task.id, date: task.date, done: false }));
   assert.equal(today.data.completed.length, 1);
-  assert.equal(app.toasts.at(-1).title, '第一步已记下');
+  assert.equal(app.toasts.at(-1).title, '第一步已保存到云端');
   const progress = app.page('progress'); assert.equal(progress.data.stats.done, 1);
   today.onComplete(event({ id: task.id, date: task.date, done: true }));
   progress.refresh(); assert.equal(progress.data.stats.done, 0);
@@ -181,11 +180,11 @@ test('真实页面控制器：简化确认只是改目标，完成后单独统�
 test('首次行动反馈只在没有既有完成记录时出现', () => {
   const app = harness(), firstId = seed(app), today = app.page('today'), day = ui.date.today();
   today.onComplete(event({ id: firstId, date: day, done: false }));
-  assert.equal(app.toasts.at(-1).title, '第一步已记下');
+  assert.equal(app.toasts.at(-1).title, '第一步已保存到云端');
   app.store.dispatch({ type: 'create', id: 'later', startDate: day,
     plan: { title: '再做一件', target: 1, minimum: null, unit: '次', time: '', weekdays: [1, 2, 3, 4, 5, 6, 7] } });
   today.refresh(); today.onComplete(event({ id: 'later', date: day, done: false }));
-  assert.equal(app.toasts.at(-1).title, '已记录');
+  assert.equal(app.toasts.at(-1).title, '已保存到云端');
 });
 test('真实页面控制器：跨日后旧按钮报错，不写到新日期', () => {
   const app = harness(); seed(app); const today = app.page('today');
@@ -225,13 +224,13 @@ test('真实页面控制器：暂停要确认且保留今日安排，可撤销�
   assert.ok(detail.data.task); assert.equal(detail.data.future.status, 'paused');
   detail.onCancelFuture(); assert.equal(detail.data.future, null);
 });
-test('真实页面控制器：导出不默认带备注，文件发送和分享成功不混淆', () => {
-  const app = harness(), id = seed(app); app.store.dispatch({ type: 'note', id, date: ui.date.today(), note: '私人内容' });
-  const mine = app.page('mine'); mine.onExport(); app.modals.pop().success({ cancel: true, confirm: false });
-  assert.equal(app.exports.length, 2); assert.doesNotMatch(app.exports[0].data, /私人内容/);
-  assert.equal(app.exports[1].fileName, `渐成习惯打卡记录-${ui.date.today()}.csv`);
-  app.exports[1].fail(); assert.match(mine.data.error, /发送未完成/);
-  mine.onResend(); assert.equal(app.exports[2].fileName, app.exports[1].fileName);
+test('活动数据页没有设备文件导出入口', () => {
+  const app = harness(), mine = app.page('mine'), data = app.page('data');
+  assert.equal(mine.onExport, undefined);
+  assert.equal(data.onExport, undefined);
+  assert.equal(data.writeExport, undefined);
+  assert.equal(data.onBackupHub, undefined);
+  assert.equal(app.exports.length, 0);
 });
 test('真实页面控制器：两次确认后仅删本工程存储', async () => {
   const app = harness(); seed(app); app.storage.otherProject = 'keep'; const mine = app.page('mine');
@@ -240,54 +239,12 @@ test('真实页面控制器：两次确认后仅删本工程存储', async () =>
   mine.onDelete(); app.modals.pop().success({ confirm: true }); await app.modals.pop().success({ confirm: true });
   assert.equal(app.store.read().habits.length, 0); assert.equal(app.storage.otherProject, 'keep');
 });
-test('清除本机数据后才完成的旧导出不会在用户目录留下文件', async () => {
-  const app = harness(), id = seed(app), mine = app.page('mine');
-  const files = new Set(), pendingWrites = [];
-  app.wx.getFileSystemManager = () => ({
-    writeFile: value => pendingWrites.push({
-      filePath: value.filePath,
-      complete() { files.add(value.filePath); value.success(); }
-    }),
-    unlinkSync: filePath => {
-      if (files.delete(filePath)) return;
-      const error = Error('ENOENT: no such file'); error.code = 'ENOENT'; throw error;
-    },
-    renameSync: (oldPath, newPath) => {
-      if (!files.delete(oldPath)) { const error = Error('ENOENT: no such file'); error.code = 'ENOENT'; throw error; }
-      files.delete(newPath); files.add(newPath);
-    }
-  });
-  mine.writeExport(() => ui.store().rawBackup(), 'json'); assert.equal(pendingWrites.length, 1);
+test('删除流程不访问设备文件系统', async () => {
+  const app = harness(); seed(app); const mine = app.page('mine');
+  app.wx.getFileSystemManager = () => { throw Error('device file access forbidden'); };
   mine.onDelete(); app.modals.pop().success({ confirm: true }); await app.modals.pop().success({ confirm: true });
   assert.equal(app.store.read().habits.length, 0);
-  pendingWrites[0].complete();
-  assert.equal(files.has(pendingWrites[0].filePath), false);
-  assert.equal(app.exports.length, 0); assert.equal(mine.data.exportPath, '');
-});
-test('清除后重新导出时，旧写入完成不会删除新的导出文件', async () => {
-  const app = harness(), id = seed(app), mine = app.page('mine');
-  const files = new Set(), pendingWrites = [];
-  app.wx.getFileSystemManager = () => ({
-    writeFile: value => pendingWrites.push({
-      filePath: value.filePath,
-      complete() { files.add(value.filePath); value.success(); }
-    }),
-    unlinkSync: filePath => {
-      if (files.delete(filePath)) return;
-      const error = Error('ENOENT: no such file'); error.code = 'ENOENT'; throw error;
-    },
-    renameSync: (oldPath, newPath) => {
-      if (!files.delete(oldPath)) { const error = Error('ENOENT: no such file'); error.code = 'ENOENT'; throw error; }
-      files.delete(newPath); files.add(newPath);
-    }
-  });
-  mine.writeExport(() => ui.store().rawBackup(), 'json');
-  mine.onDelete(); app.modals.pop().success({ confirm: true }); await app.modals.pop().success({ confirm: true });
-  mine.writeExport(() => ui.store().rawBackup(), 'json'); assert.equal(pendingWrites.length, 2);
-  assert.notEqual(pendingWrites[0].filePath, pendingWrites[1].filePath);
-  pendingWrites[1].complete(); pendingWrites[0].complete();
-  assert.deepEqual([...files], [mine.data.exportPath]);
-  assert.match(mine.data.exportPath, /yidian-export\.json$/);
+  assert.equal(mine.data.deleting, false);
 });
 test('真实页面控制器：存储失败不会提示保存成功', () => {
   const app = harness(); seed(app); const today = app.page('today'); const task = today.data.pending[0];
@@ -306,7 +263,7 @@ test('品牌与实际AppID配置一致，旧存储可读且前缀测试云默认
   assert.equal(require('../project.config.json').appid, 'wx58e61dffcbfa4249');
   assert.deepEqual(require('../miniprogram/config/cloud'), { enabled: true, envId: 'cloud1-d4gq76oyt363f08a7', functionName: 'jiancheng_daka_api', storageNamespace: 'jiancheng_daka' });
   assert.equal(STORAGE_KEY, 'yidian.native.v1');
-  assert.equal(require('../miniprogram/services/sync-engine').PREFIX, 'yidian.sync.v1:');
+  assert.equal(require('./legacy/sync-engine.cjs').PREFIX, 'yidian.sync.v1:');
   assert.equal(require('../server/cloudbase-repository').COLLECTION, 'jiancheng_daka_accounts');
   const h = harness(); seed(h);
   const raw = h.storage[STORAGE_KEY];

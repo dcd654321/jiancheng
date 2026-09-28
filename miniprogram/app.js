@@ -1,4 +1,3 @@
-const { createStore } = require('./services/store');
 const { createCloudSession } = require('./services/cloud-session');
 const cloudConfig = require('./config/cloud');
 const { createWorkspaceStore } = require('./services/workspace-store');
@@ -11,7 +10,6 @@ const lifecycle = createAppLifecycle({
   wxApi: wx,
   cloudConfig,
   aiConfig,
-  createStore,
   createCloudSession,
   createWorkspaceStore,
   createPlanAssistant,

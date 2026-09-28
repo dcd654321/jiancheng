@@ -1,27 +1,34 @@
 'use strict';
 
+const domain = require('../core/habits');
+const dates = require('../core/date');
 const { createCloudTransport } = require('./cloud-transport');
 const { apiFunction } = require('../config/cloud-resources');
-const { createCloudBinding, cloudStorageScope } = require('./cloud-binding');
-const { createSyncEngine, PREFIX } = require('./sync-engine');
-const dates = require('../core/date');
+
+const clone = value => JSON.parse(JSON.stringify(value));
+const ACCOUNT = /^[a-f0-9]{64}$/;
+const EPOCH = /^[a-zA-Z0-9_-]{1,100}$/;
 const RECORD_TYPES = ['complete', 'completeMinimum', 'undo', 'simplify', 'restore', 'note'];
 
+/** Only confirmed cloud snapshots live in memory. No device storage or offline queue. */
 function createCloudSession(wxApi, config, transportFactory = createCloudTransport, options = {}) {
-  let engine = null;
+  let snapshot = null;
+  let pendingEvent = null;
+  let phase = 'loading';
   let busy = false;
-  let background = null;
+  let activeWork = null;
   let foreground = null;
   let recovery = null;
-  let activeWork = null;
   let networkOffline = false;
-  const listeners = new Set();
-  let notificationQueued = false;
-  let accountId = '';
-  let transport = null;
-  let phase = 'loading';
-  let lastAttemptAt = 0;
   let lastError = '';
+  let lastSyncedAt = '';
+  let lastAttemptAt = 0;
+  let transport = null;
+  let notificationQueued = false;
+  const listeners = new Set();
+  const now = typeof options.now === 'function' ? options.now : Date.now;
+  const newId = typeof options.newId === 'function' ? options.newId
+    : () => 'op_' + now().toString(36) + '_' + Math.random().toString(36).slice(2, 12);
   const envValid = typeof config.envId === 'string' && /^[a-zA-Z0-9_-]{1,100}$/.test(config.envId)
     && !config.envId.startsWith('YOUR_');
   const sharedValid = config.mode !== 'shared' || (
@@ -31,43 +38,20 @@ function createCloudSession(wxApi, config, transportFactory = createCloudTranspo
   );
   const configured = config.enabled === true && envValid && sharedValid
     && (config.mode === undefined || config.mode === 'default' || config.mode === 'shared');
-  const now = typeof options.now === 'function' ? options.now : Date.now;
-  const scope = cloudStorageScope(envValid ? config.envId : '__invalid__', config.storageNamespace);
-  const storage = {
-    getStorageSync: key => wxApi.getStorageSync(scope + key),
-    setStorageSync: (key, value) => wxApi.setStorageSync(scope + key, value),
-    removeStorageSync: key => wxApi.removeStorageSync(scope + key)
-  };
-  const binding = envValid ? createCloudBinding(wxApi, config.envId, config.storageNamespace) : {
-    accountId: () => '',
-    bind() { throw Error('云环境尚未配置，本机记录不受影响'); }
-  };
 
   function invoke(event) {
     if (!transport) transport = transportFactory(wxApi, config);
     return transport(event);
   }
 
-  function status() {
-    const current = engine ? engine.read() : null;
-    return {
-      configured,
-      connected: !!engine,
-      ready: !!engine,
-      phase,
-      busy,
-      networkOffline,
-      accountId,
-      epoch: current ? current.epoch : '',
-      accountLabel: accountId ? accountId.slice(-6) : '',
-      pending: current ? current.pending : 0,
-      deletionPending: current ? current.deletionPending : false,
-      count: current ? current.state.habits.length : 0,
-      conflict: current ? current.conflict : null,
-      lastError: current && current.lastError ? current.lastError : lastError,
-      lastSyncedAt: current ? current.lastSyncedAt : '',
-      lastAttemptAt
-    };
+  function validate(value) {
+    if (!value || value.ok !== true || !ACCOUNT.test(value.accountId || '') ||
+      !EPOCH.test(value.epoch || '') || !Number.isSafeInteger(value.revision) || value.revision < 0) {
+      throw Error('云端账户响应无效，未更新页面');
+    }
+    dates.assertDate(value.serverDate);
+    domain.validateState(value.state);
+    return value;
   }
 
   function notify() {
@@ -76,9 +60,30 @@ function createCloudSession(wxApi, config, transportFactory = createCloudTranspo
     Promise.resolve().then(() => {
       notificationQueued = false;
       listeners.forEach(listener => {
-        try { listener(); } catch (_) { /* A view must not interrupt durable writes. */ }
+        try { listener(); } catch (_) { /* Views cannot interrupt cloud work. */ }
       });
     });
+  }
+
+  function status() {
+    return {
+      configured,
+      connected: !!snapshot,
+      ready: !!snapshot && phase === 'ready',
+      phase,
+      busy,
+      networkOffline,
+      accountId: snapshot ? snapshot.accountId : '',
+      epoch: snapshot ? snapshot.epoch : '',
+      accountLabel: snapshot ? snapshot.accountId.slice(-6) : '',
+      pending: pendingEvent ? 1 : 0,
+      deletionPending: (!!pendingEvent && pendingEvent.action === 'purge') || phase === 'deleting',
+      count: snapshot ? snapshot.state.habits.length : 0,
+      conflict: null,
+      lastError,
+      lastSyncedAt,
+      lastAttemptAt
+    };
   }
 
   async function exclusive(action) {
@@ -87,142 +92,144 @@ function createCloudSession(wxApi, config, transportFactory = createCloudTranspo
     let release;
     activeWork = new Promise(resolve => { release = resolve; });
     notify();
-    try {
-      await action();
-    } finally {
+    try { return await action(); }
+    finally {
       busy = false;
       activeWork = null;
       release();
       notify();
     }
-    return status();
   }
 
-  function connected() {
-    if (!engine) throw Error('云端记录尚未读取，请稍后重试');
-  }
-
-  function restoreCachedEngine() {
-    if (!configured) return;
-    try {
-      const savedAccount = binding.accountId();
-      if (!savedAccount) {
-        phase = 'loading';
-        return;
-      }
-      const candidate = createSyncEngine({ storage, call: invoke, accountId: savedAccount });
-      candidate.read();
-      engine = candidate;
-      accountId = savedAccount;
-      phase = 'ready';
-    } catch (error) {
-      engine = null;
-      accountId = '';
-      phase = 'loading';
-      lastError = error.message || '本机同步缓存损坏，已停止写入';
-    }
-  }
-
-  async function loadRemote() {
-    const snapshot = await invoke({ action: 'pull' });
-    if (!snapshot || !snapshot.ok) throw Error(snapshot && snapshot.message || '读取云端失败');
-    if (!engine || accountId !== snapshot.accountId) {
-      const candidate = createSyncEngine({ storage, call: invoke, accountId: snapshot.accountId });
-      if (storage.getStorageSync(PREFIX + snapshot.accountId)) candidate.observeRemote(snapshot);
-      else candidate.attach(snapshot);
-      candidate.read();
-      binding.bind(snapshot.accountId);
-      engine = candidate;
-      accountId = snapshot.accountId;
-    } else {
-      engine.observeRemote(snapshot);
-    }
+  function acceptSnapshot(value) {
+    validate(value);
+    snapshot = clone(value);
     phase = 'ready';
     lastError = '';
+    lastSyncedAt = new Date(now()).toISOString();
+    notify();
+  }
+
+  function ensureReadable() {
+    if (!snapshot || phase !== 'ready') throw Error(lastError || '云端记录尚未读取，请联网重试');
+  }
+
+  async function pull() {
+    lastAttemptAt = now();
+    try {
+      const result = await invoke({ action: 'pull' });
+      if (!result || result.ok !== true) {
+        const error = Error(result && result.message || '云端记录暂不可用，请重试');
+        error.code = result && result.code;
+        throw error;
+      }
+      acceptSnapshot(result);
+      return status();
+    } catch (error) {
+      phase = error.code === 'DELETE_PENDING' ? 'deleting' : 'offline';
+      lastError = error.message || '云端记录暂不可用，请重试';
+      notify();
+      throw error;
+    }
+  }
+
+  function validateReceipt(result, event) {
+    validate(result);
+    if (!snapshot || result.accountId !== snapshot.accountId || result.operationId !== event.operationId ||
+      result.appliedRevision !== event.expectedRevision + 1 || result.revision < result.appliedRevision ||
+      (event.action === 'mutate' && result.epoch !== event.epoch) ||
+      (event.action === 'purge' && result.epoch === event.epoch)) {
+      throw Error('云端确认与本次操作不匹配，结果未确认');
+    }
+  }
+
+  async function sendPending() {
+    const event = pendingEvent;
+    if (!event) return pull();
+    lastAttemptAt = now();
+    let result;
+    try { result = await invoke(event); }
+    catch (_) {
+      phase = 'uncertain';
+      lastError = '云端结果未确认，请联网重试确认；不要重复提交新操作';
+      notify();
+      throw Error(lastError);
+    }
+    if (!result || typeof result.ok !== 'boolean') {
+      phase = 'uncertain';
+      lastError = '云端响应无效，请重试确认';
+      notify();
+      throw Error(lastError);
+    }
+    if (!result.ok) {
+      if (result.code === 'SERVICE_UNAVAILABLE' || result.code === 'DELETE_PENDING') {
+        phase = result.code === 'DELETE_PENDING' ? 'deleting' : 'uncertain';
+        lastError = result.message || '云端结果未确认，请重试';
+      } else {
+        pendingEvent = null;
+        if (result.snapshot) {
+          try { acceptSnapshot({ ok: true, ...result.snapshot }); }
+          catch (_) { phase = 'offline'; }
+        } else phase = snapshot ? 'ready' : 'offline';
+        lastError = result.message || '云端未接受本次操作，请刷新后重试';
+      }
+      notify();
+      throw Error(lastError);
+    }
+    try { validateReceipt(result, event); }
+    catch (error) {
+      phase = 'uncertain';
+      lastError = error.message;
+      notify();
+      throw error;
+    }
+    pendingEvent = null;
+    acceptSnapshot(result);
+    return event.action === 'purge' ? { state: clone(snapshot.state) } : clone(snapshot.state);
+  }
+
+  function makeEvent(action, command, confirmation) {
+    ensureReadable();
+    if (busy || pendingEvent) throw Error('上一操作尚未确认，请先重试确认');
+    if (networkOffline) throw Error('当前无网络，云端保存不可用');
+    const operationDate = dates.today(now());
+    if (command) {
+      if (RECORD_TYPES.includes(command.type) && command.date !== operationDate) throw Error('只能记录今天的打卡');
+      domain.reduce(snapshot.state, command, operationDate);
+    }
+    const operationId = newId();
+    if (!EPOCH.test(operationId)) throw Error('操作标识无效');
+    return { action, operationId, epoch: snapshot.epoch, expectedRevision: snapshot.revision,
+      operationDate, ...(command ? { command: clone(command) } : { confirmation }) };
   }
 
   async function start() {
     if (!configured) {
-      phase = 'loading';
+      phase = 'offline';
       lastError = '云环境尚未配置';
       notify();
       return status();
     }
-    if (!engine) phase = 'loading';
-    return exclusive(async () => {
-      lastAttemptAt = now();
-      try {
-        await loadRemote();
-      } catch (error) {
-        lastError = error.message || '读取云端失败';
-        if (engine) {
-          phase = 'offline';
-          return;
-        }
-        phase = 'loading';
-        throw error;
-      }
-    });
+    if (pendingEvent) return retry();
+    if (!snapshot) { phase = 'loading'; notify(); }
+    return exclusive(pull);
   }
 
   function retry() {
-    return exclusive(async () => {
-      connected();
-      if (engine.read().conflict) return;
-      lastAttemptAt = now();
-      const result = await engine.flush();
-      lastError = result.lastError || '';
-      phase = result.conflict ? 'conflict' : lastError ? 'offline' : 'ready';
-    });
+    if (!pendingEvent) return refresh();
+    return exclusive(async () => { await sendPending(); return status(); });
   }
 
   function refresh() {
-    if (!engine) return start();
-    return exclusive(async () => {
-      connected();
-      lastAttemptAt = now();
-      try {
-        const snapshot = await invoke({ action: 'pull' });
-        if (!snapshot || !snapshot.ok) throw Error(snapshot && snapshot.message || '读取失败，已保留缓存');
-        engine.observeRemote(snapshot);
-        phase = 'ready';
-        lastError = '';
-      } catch (error) {
-        phase = 'offline';
-        lastError = error.message || '读取失败，已保留缓存';
-        throw error;
-      }
-    });
+    if (pendingEvent) return retry();
+    if (!configured) return start();
+    return exclusive(pull);
   }
 
-  function scheduleFlush() {
-    if (!background) {
-      background = Promise.resolve().then(async () => {
-        if (activeWork) await activeWork;
-        return retry();
-      })
-        .catch(error => {
-          lastError = error.message || '同步失败';
-          phase = engine ? 'offline' : 'loading';
-          return status();
-        })
-        .finally(() => { background = null; notify(); });
-    }
-    return background;
-  }
-
-  async function foregroundWork(force = false) {
-    if (!engine) return start();
-    if (background) await background;
+  async function foregroundWork(force) {
     if (activeWork) await activeWork;
-    let current = engine.read();
-    if (current.conflict) return status();
-    if (current.pending) {
-      await retry();
-      return status();
-    }
-    if (!force && now() - lastAttemptAt < 30000) return status();
-    await refresh();
+    if (pendingEvent) return retry();
+    if (!snapshot || phase !== 'ready' || force || now() - lastAttemptAt >= 30000) return refresh();
     return status();
   }
 
@@ -233,94 +240,46 @@ function createCloudSession(wxApi, config, transportFactory = createCloudTranspo
 
   function recoverConnection() {
     if (!recovery) recovery = Promise.resolve().then(async () => {
-      // Never race a manual pull, foreground read or queue flush. Queue ids stay intact.
-      while (foreground || background || activeWork) {
-        await Promise.all([foreground, background, activeWork].filter(Boolean).map(work => work.catch(() => {})));
-      }
+      while (foreground || activeWork) await Promise.all([foreground, activeWork].filter(Boolean).map(work => work.catch(() => {})));
       return onForeground(true);
     }).finally(() => { recovery = null; });
     return recovery;
   }
 
-  async function purge(confirmation) {
-    let result;
-    await exclusive(async () => {
-      connected();
-      result = await engine.purge(confirmation);
-      phase = 'ready';
-      lastError = '';
-      lastAttemptAt = now();
-    });
-    return result;
+  function dispatch(command) {
+    command = clone(command);
+    if (command.type === 'simplify') command.target = Number(command.target);
+    const event = makeEvent('mutate', command);
+    pendingEvent = event;
+    return exclusive(sendPending);
   }
 
-  restoreCachedEngine();
+  async function purge(confirmation) {
+    if (confirmation !== 'DELETE_MY_DATA') throw Error('删除数据需要明确确认');
+    const event = makeEvent('purge', null, confirmation);
+    pendingEvent = event;
+    return exclusive(sendPending);
+  }
 
   return {
     status,
     start,
+    refresh,
+    retry,
     onForeground,
     recoverConnection,
     setNetworkAvailable(available) {
       networkOffline = available === false;
-      // A restored link is not proof that the last cloud request succeeded.
-      if (networkOffline && engine) phase = 'offline';
+      if (networkOffline) {
+        phase = pendingEvent ? 'uncertain' : 'offline';
+        lastError = pendingEvent ? '云端结果未确认，联网后重试' : '当前无网络，云端记录不可用';
+      }
       notify();
     },
-    subscribe(listener) {
-      listeners.add(listener);
-      return () => listeners.delete(listener);
-    },
-    read() {
-      connected();
-      return engine.read().state;
-    },
-    dispatch(command) {
-      connected();
-      command = JSON.parse(JSON.stringify(command));
-      if (command.type === 'simplify') command.target = Number(command.target);
-      if (RECORD_TYPES.includes(command.type)) {
-        engine.enqueue(command);
-        const projected = engine.read().state;
-        notify();
-        scheduleFlush();
-        return projected;
-      }
-      if (busy) throw Error('同步请求处理中，请稍候');
-      return exclusive(async () => {
-        const before = engine.read();
-        const operationDate = dates.today();
-        if (before.pending || before.conflict) throw Error('请先在云同步页处理待同步操作，再修改计划');
-        const remote = await invoke({ action: 'pull' });
-        if (!remote || !remote.ok) throw Error('在线确认失败，未提交计划修改');
-        engine.observeRemote(remote);
-        if (dates.today() !== operationDate) throw Error('日期已变化，请重新确认计划修改');
-        engine.enqueue(command, true);
-        const result = await engine.flush();
-        if (result.pending || result.conflict) throw Error('修改尚未确认，请到云同步页重试或处理冲突，勿重复提交');
-        phase = 'ready';
-        lastError = '';
-      }).then(() => engine.read().state);
-    },
-    refresh,
-    retry,
-    purge,
-    useRemote(confirmation) {
-      return exclusive(async () => {
-        connected();
-        engine.useRemote(confirmation);
-        phase = 'ready';
-        lastError = '';
-      });
-    },
-    backup() {
-      connected();
-      return JSON.stringify({
-        format: 'yidian-cloud-backup-v1',
-        current: JSON.parse(engine.exportPending()),
-        recovery: engine.exportRecovery() ? JSON.parse(engine.exportRecovery()) : null
-      });
-    }
+    subscribe(listener) { listeners.add(listener); return () => listeners.delete(listener); },
+    read() { ensureReadable(); return clone(snapshot.state); },
+    dispatch,
+    purge
   };
 }
 

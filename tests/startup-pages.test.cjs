@@ -6,7 +6,7 @@ const { fixture, storageFixture, dates } = require('./helpers/cloud-fixture.cjs'
 const { createAppLifecycle } = require('../miniprogram/services/app-lifecycle');
 const { createCloudSession } = require('../miniprogram/services/cloud-session');
 const { createWorkspaceStore } = require('../miniprogram/services/workspace-store');
-const { createStore } = require('../miniprogram/services/store');
+const { createStore } = require('./legacy/store.cjs');
 
 async function boot({ fail = false } = {}) {
   const f = fixture(); f.date = dates.today(); await f.seed();
@@ -42,7 +42,7 @@ async function boot({ fail = false } = {}) {
 }
 
 test('cloud-first entry points do not render a separate cloud-storage consent step', () => {
-  for (const name of ['today', 'sync', 'progress', 'mine', 'edit', 'detail', 'data', 'restore', 'manage']) {
+  for (const name of ['today', 'sync', 'progress', 'mine', 'edit', 'detail', 'data', 'manage']) {
     const source = fs.readFileSync(path.resolve(__dirname, '../miniprogram/pages/' + name + '/index.wxml'), 'utf8');
     assert.doesNotMatch(source, /needsConsent|同意并开始使用|了解数据说明并开始/);
   }
@@ -90,8 +90,8 @@ test('a previous show callback cannot refresh a newer visible lifecycle', async 
   p.onHide(); p.onShow();
   assert.equal(refreshes, 1);
   await h.finish();
-  // One cloud-state notification plus the current show's readiness callback.
+  // Cloud loading, acknowledgement and the current show's callback may refresh;
   // The previous show must still contribute no refresh.
-  assert.equal(refreshes, 3);
+  assert.equal(refreshes, 4);
   assert.equal(p.data.dataReady, true);
 });

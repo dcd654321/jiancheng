@@ -29,9 +29,8 @@ test('launch creates services once and foreground waits for bootstrap', async ()
     wxApi: {},
     cloudConfig: {},
     aiConfig: {},
-    createStore: () => ({ kind: 'legacy' }),
     createCloudSession: () => session,
-    createWorkspaceStore: (legacy, current) => ({ legacy, current }),
+    createWorkspaceStore: (current, drafts) => ({ current, drafts }),
     createPlanAssistant: () => ({ kind: 'assistant' }),
     createQuoteSession: () => ({ kind: 'quotes' })
   });

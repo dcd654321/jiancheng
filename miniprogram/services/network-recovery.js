@@ -21,7 +21,7 @@ function createNetworkRecovery(wxApi, session, options = {}) {
       if (!allowed()) return;
       pending = false; running = true; lastRun = now();
       try { await session.recoverConnection(); }
-      catch (_) { /* Session retains the error and durable queue for explicit retry. */ }
+      catch (_) { /* Session retains the error and the current in-memory operation for explicit retry. */ }
       finally { running = false; schedule(); }
     }, Math.max(300, 1500 - (now() - lastRun)));
   }

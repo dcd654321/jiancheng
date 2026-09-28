@@ -1,7 +1,7 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const { fixture, storageFixture, copy } = require('./helpers/cloud-fixture.cjs');
-const { createSyncEngine, PREFIX } = require('../miniprogram/services/sync-engine');
+const { createSyncEngine, PREFIX } = require('./legacy/sync-engine.cjs');
 const record = (type = 'complete', extra = {}) => ({ type, id: 'read', date: '2026-09-10', ...extra });
 const deferred = () => { let resolve; const promise = new Promise(r => { resolve = r; }); return { promise, resolve }; };
 async function setup(callOverride) {

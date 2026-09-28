@@ -3,7 +3,7 @@ const assert = require('node:assert/strict');
 const path = require('node:path');
 const { createPlanAssistant } = require('../miniprogram/services/plan-assistant');
 const { DIRECTIONS, validateInput, ruleSuggestion } = require('../miniprogram/core/plan-assistant');
-const { createStore } = require('../miniprogram/services/store');
+const { createStore } = require('./legacy/store.cjs');
 const { createWorkspaceStore } = require('../miniprogram/services/workspace-store');
 const input = extra => ({ direction: 'read', minutes: 5, weekdays: [1, 2, 3, 4, 5], time: '12:30', ...extra });
 const cloudConfig = { enabled: true, envId: 'local-test', functionName:'jiancheng_daka_api' }, aiConfig = { enabled: true, functionName: 'jiancheng_daka_plan', timeoutMs: 1000 };
@@ -80,9 +80,6 @@ function pageFixture(override) {
   const wx = { ...f.wx, getStorageSync: k => memory[k], setStorageSync: (k, v) => { memory[k] = v; }, removeStorageSync: k => { delete memory[k]; },
     setNavigationBarTitle() {}, navigateTo: o => navigation.push(o), navigateBack() {}, switchTab: o => navigation.push(o), showToast: o => toasts.push(o) };
   const active = createStore(wx);
-  const legacyMemory = {};
-  const legacy = createStore({ getStorageSync: key => legacyMemory[key],
-    setStorageSync: (key, value) => { legacyMemory[key] = value; }, removeStorageSync: key => { delete legacyMemory[key]; } });
   let accountId = 'a'.repeat(64);
   const session = {
     status: () => ({ busy: false, ready: true, phase: 'ready', accountId, pending: 0 }),
@@ -90,7 +87,7 @@ function pageFixture(override) {
     dispatch: command => active.dispatch(command),
     backup: () => JSON.stringify({ format: 'test', state: active.read() })
   };
-  const store = createWorkspaceStore(legacy, session);
+  const store = createWorkspaceStore(session);
   global.wx = wx; global.getApp = () => ({ store, planAssistant: f.service });
   const page = (name, options = {}) => { let def; global.Page = x => { def = x; };
     const file = path.resolve(__dirname, '../miniprogram/pages/' + name + '/index.js'); delete require.cache[file]; require(file);

@@ -1,6 +1,6 @@
 // Active personal TEST deployment. Its prefixed account was verified against a
-// complete backup before switching. The namespace keeps old consent, binding,
-// and pending queues intact instead of replaying them into the new collection.
+// complete backup before switching. Cloud is the only active data source;
+// previously written device keys are not read, replayed, or silently deleted.
 // Shared product remains separately gated by cloud.product.js.
 module.exports = {
   enabled: true,

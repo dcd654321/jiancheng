@@ -3,8 +3,8 @@ const assert = require('node:assert/strict');
 const path = require('node:path');
 const domain = require('../miniprogram/core/habits');
 const dates = require('../miniprogram/core/date');
-const { parseBackup, byteLength, MAX_BYTES } = require('../miniprogram/core/backup');
-const { createStore, STORAGE_KEY, RECOVERY_KEY } = require('../miniprogram/services/store');
+const { parseBackup, byteLength, MAX_BYTES } = require('./legacy/backup.cjs');
+const { createStore, STORAGE_KEY, RECOVERY_KEY } = require('./legacy/store.cjs');
 const { createWorkspaceStore } = require('../miniprogram/services/workspace-store');
 const day = dates.today();
 function sample() {
@@ -100,56 +100,13 @@ test('删除本机记录会清除恢复副本，其他存储保留', () => {
   f.store.clear(); assert.equal(f.data.other, 'keep'); assert.equal(f.data[STORAGE_KEY], undefined);
   assert.throws(() => f.store.recoveryBackup(), /没有/);
 });
-test('cloud workspace exposes old local data only as an unchanged raw export', () => {
-  const f = fixture();
-  f.store.restoreBackup(f.store.previewBackup(raw()), 'RESTORE_LOCAL');
-  const before = f.store.rawBackup();
-  const session = {
-    status: () => ({ ready: true, phase: 'ready', accountId: 'a'.repeat(64), pending: 0 }),
-    read: () => sample(),
-    backup: () => '{"format":"yidian-cloud-backup-v1"}'
-  };
-  const workspace = createWorkspaceStore(f.store, session);
-  assert.equal(workspace.legacyBackup(), before);
-  assert.equal(workspace.hasLegacyData(), true);
-  assert.equal(workspace.previewBackup, undefined);
-  assert.equal(workspace.restoreBackup, undefined);
-  assert.equal(workspace.recoveryBackup, undefined);
-  assert.equal(f.store.rawBackup(), before);
-});
-
-test('backup hub exports cloud and legacy snapshots without importing either one', () => {
-  const writes = [], sends = [];
-  const store = {
-    read: () => domain.emptyState(),
-    contextKey: () => 'cloud:test:0',
-    info: () => ({ source: 'cloud', ready: true, phase: 'ready', pending: 0, syncText: '数据已同步' }),
-    rawBackup: () => '{"kind":"cloud"}',
-    legacyBackup: () => '{"kind":"legacy"}',
-    hasLegacyData: () => true
-  };
-  global.getApp = () => ({ store });
-  global.wx = {
-    env: { USER_DATA_PATH: '/files' },
-    getFileSystemManager: () => ({ writeFile: value => { writes.push(value); value.success(); } }),
-    shareFileMessage: value => sends.push(value)
-  };
-  let definition;
-  global.Page = value => { definition = value; };
-  const source = path.resolve(__dirname, '../miniprogram/pages/restore/index.js');
-  delete require.cache[source]; require(source);
-  const page = { ...definition, data: JSON.parse(JSON.stringify(definition.data)),
-    setData(patch) { Object.assign(this.data, patch); } };
-  page.refresh();
-  assert.equal(page.data.dataReady, true);
-  assert.equal(page.data.hasLegacyData, true);
-  page.onCloudBackup();
-  page.onLegacyBackup();
-  assert.equal(writes[0].data, '{"kind":"cloud"}');
-  assert.equal(writes[0].filePath, '/files/yidian-cloud-sync-backup.json');
-  assert.equal(writes[1].data, '{"kind":"legacy"}');
-  assert.equal(writes[1].filePath, '/files/yidian-legacy-backup.json');
-  assert.equal(sends.length, 2);
-  assert.equal(page.onChoose, undefined);
-  assert.equal(page.onRestore, undefined);
+test('active cloud workspace has no legacy backup or device export API', () => {
+  const session = { status: () => ({ ready: true, phase: 'ready', accountId: 'a'.repeat(64), pending: 0 }), read: sample };
+  const workspace = createWorkspaceStore(session);
+  assert.equal(workspace.read().habits.length, sample().habits.length);
+  for (const removed of ['legacyBackup', 'rawBackup', 'exportCsv', 'previewBackup', 'restoreBackup']) {
+    assert.equal(workspace[removed], undefined);
+  }
+  const app = JSON.parse(require('node:fs').readFileSync(path.resolve(__dirname, '../miniprogram/app.json'), 'utf8'));
+  assert.equal(app.pages.includes('pages/restore/index'), false);
 });

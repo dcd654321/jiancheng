@@ -2,7 +2,7 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const path = require('node:path');
 const fs = require('node:fs');
-const { createStore, STORAGE_KEY } = require('../miniprogram/services/store');
+const { createStore, STORAGE_KEY } = require('./legacy/store.cjs');
 const { createPlanAssistant } = require('../miniprogram/services/plan-assistant');
 const { fields } = require('../miniprogram/services/plan-form');
 const domain = require('../miniprogram/core/habits');
@@ -217,9 +217,9 @@ test('first habit scheduled tomorrow gives a true next date and no today task', 
   assert.match(today.data.firstHabitGuide,/今天不用打卡/);
   today.onDismissGuide(); assert.equal(today.data.firstHabitGuide,'');
 });
-test('my page routes to real data hub; export and double-confirm deletion still work there', async t => {
+test('my page routes to cloud data hub; double-confirm deletion still works there', async t => {
   const h=harness(t); h.seed(); const mine=h.page('mine'); mine.onData(); assert.equal(h.nav.at(-1),'/pages/data/index');
-  const p=h.page('data'); p.onExport(); h.modals.pop().success({confirm:false,cancel:true}); assert.equal(h.writes.length,1); assert.equal(h.sends.length,1);
+  const p=h.page('data'); assert.equal(p.onExport,undefined); assert.equal(h.writes.length,0); assert.equal(h.sends.length,0);
   p.onDelete(); p.onDelete(); assert.equal(h.modals.length,1); h.modals.pop().success({confirm:true}); assert.equal(h.modals.length,1);
   h.modals.pop().success({confirm:false}); assert.equal(p.data.deleting,false); assert.equal(h.store.read().habits.length,1);
   p.onDelete(); h.modals.pop().success({confirm:true}); await h.modals.pop().success({confirm:true}); assert.equal(h.store.read().habits.length,0); assert.equal(p.data.deleting,false);
@@ -230,11 +230,11 @@ test('assistant advanced schedule stays in preview and adoption never creates au
   assert.match(p.data.inputSchedule,/20:15/); p.onAdopt(); const token=h.nav.at(-1).split('draft=')[1];
   const edit=h.page('edit',{draft:token}); assert.equal(edit.data.time,'20:15'); assert.match(edit.data.moreSummary,/20:15/); assert.equal(h.store.read().habits.length,0);
 });
-test('acknowledged deletion releases the control even when file cleanup fails, without hiding the warning', async t => {
+test('acknowledged deletion does not access device files and releases the control', async t => {
   const h=harness(t); h.seed(); const p=h.page('data');
   h.wx.getFileSystemManager=()=>{throw Error('file access denied');};
   p.onDelete(); h.modals.pop().success({confirm:true}); await h.modals.pop().success({confirm:true});
-  assert.equal(p.data.deleting,false); assert.match(p.data.error,/云端数据已清除.*未能删除/); assert.equal(h.store.read().habits.length,0);
+  assert.equal(p.data.deleting,false); assert.equal(p.data.error,''); assert.equal(h.store.read().habits.length,0);
 });
 test('delete response after unload cleans scoped files without updating an abandoned page', async t => {
   const h=harness(t); h.seed(); const p=h.page('data'); let resolve;
@@ -242,9 +242,9 @@ test('delete response after unload cleans scoped files without updating an aband
   p.onDelete(); h.modals.pop().success({confirm:true}); const work=h.modals.pop().success({confirm:true});
   p.onUnload(); p.setData=()=>{throw Error('must not update old page');}; resolve(); await work; assert.equal(p._deleting,false);
 });
-test('management and backup routes show unavailable state instead of a false empty account', t => {
+test('management and data routes show unavailable state instead of a false empty account', t => {
   const h=harness(t); h.app.store={read(){const err=Error('offline');err.code='DATA_UNAVAILABLE';throw err;},info:()=>({}),hasLegacyData:()=>false};
-  for(const name of ['manage','restore','data']) { const p=h.page(name); assert.equal(p.data.dataReady,false); assert.equal(p.data.dataUnavailable,true); }
+  for(const name of ['manage','data']) { const p=h.page(name); assert.equal(p.data.dataReady,false); assert.equal(p.data.dataUnavailable,true); }
 });
 test('registered pages, touchable weekday selectors, truthful copy and data-menu placement are wired', () => {
   const read=f=>fs.readFileSync(path.resolve(__dirname,'../miniprogram',f),'utf8');
@@ -252,7 +252,7 @@ test('registered pages, touchable weekday selectors, truthful copy and data-menu
   assert.match(read('app.wxss'),/\.week-options\s*\{[^}]*repeat\(4, minmax\(0, 1fr\)\)/);
   for(const name of ['edit','assistant']) assert.match(read('pages/'+name+'/index.wxml'),/class="week-options"/);
   const mine=read('pages/mine/index.wxml'); assert.doesNotMatch(mine,/bindtap="onDelete"|bindtap="onExport"/); assert.match(mine,/open-type="feedback"/);
-  assert.match(read('pages/data/index.wxml'),/bindtap="onDelete"/); assert.match(read('pages/restore/index.wxml'),/暂不支持从文件导入恢复/);
+  assert.match(read('pages/data/index.wxml'),/bindtap="onDelete"/); assert.doesNotMatch(read('pages/data/index.wxml'),/onExport|onBackupHub/);
   assert.doesNotMatch(read('pages/assistant/index.wxml'),/AI服务尚未接入|不消耗模型费用/);
   assert.match(read('templates/task.wxml'),/>撤销打卡</);
 });

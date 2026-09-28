@@ -15,6 +15,21 @@ function visit(dir) {
 visit(root);
 const config = JSON.parse(fs.readFileSync(path.join(root, 'project.config.json'), 'utf8'));
 const mini = path.join(root, config.miniprogramRoot);
+// The active package must remain cloud-only. Historical migration fixtures live
+// under tests/legacy and are deliberately outside this check and the package.
+function assertNoDevicePersistence(dir) {
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    const file = path.join(dir, entry.name);
+    if (entry.isDirectory()) { assertNoDevicePersistence(file); continue; }
+    if (!/\.(js|wxml)$/.test(entry.name)) continue;
+    const source = fs.readFileSync(file, 'utf8');
+    if (/\b(?:getStorage(?:Sync)?|setStorage(?:Sync)?|removeStorage(?:Sync)?|getFileSystemManager)\s*\(|USER_DATA_PATH/.test(source)) {
+      throw Error('Active mini-program must not access device persistence: ' + file);
+    }
+    checks += 1;
+  }
+}
+assertNoDevicePersistence(mini);
 const app = JSON.parse(fs.readFileSync(path.join(mini, 'app.json'), 'utf8'));
 if (app.lazyCodeLoading === 'requiredComponents' && config.setting.ignoreDevUnusedFiles !== false) {
   throw Error('Required component lazy loading needs ignoreDevUnusedFiles=false in project.config.json; otherwise page service modules may be omitted in DevTools.');

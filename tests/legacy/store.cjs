@@ -1,6 +1,7 @@
-const domain = require('../core/habits');
-const dates = require('../core/date');
-const backup = require('../core/backup');
+const domain = require('../../miniprogram/core/habits');
+const dates = require('../../miniprogram/core/date');
+const backup = require('./backup.cjs');
+const { exportCsv } = require('./csv.cjs');
 const STORAGE_KEY = 'yidian.native.v1';
 const RECOVERY_KEY = 'yidian.native.restore-recovery.v1';
 
@@ -36,7 +37,7 @@ function createStore(storage, clock = dates.today) {
 
   return {
     read, dispatch,
-    exportCsv: includeNotes => domain.exportCsv(read(), clock(), includeNotes),
+    exportCsv: includeNotes => exportCsv(read(), clock(), includeNotes),
     rawBackup, recoveryBackup,
     previewBackup(raw) {
       const state = backup.parseBackup(raw, clock());

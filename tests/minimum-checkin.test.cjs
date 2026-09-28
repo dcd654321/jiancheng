@@ -1,7 +1,7 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const { fixture, plan, domain, dates, storageFixture } = require('./helpers/cloud-fixture.cjs');
-const { createSyncEngine } = require('../miniprogram/services/sync-engine');
+const { createSyncEngine } = require('./legacy/sync-engine.cjs');
 
 const day = '2026-09-10';
 const command = (type = 'completeMinimum', id = 'read', date = day) => ({ type, id, date });

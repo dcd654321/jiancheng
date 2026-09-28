@@ -1,4 +1,5 @@
 'use strict';
+// Historical test fixture only: never bundled with the active mini-program.
 
 const BINDING_SUFFIX = 'yidian.cloud.binding.v1';
 const ACCOUNT = /^[a-f0-9]{64}$/;

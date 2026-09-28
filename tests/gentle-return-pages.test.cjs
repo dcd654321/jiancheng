@@ -4,7 +4,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const dates = require('../miniprogram/core/date');
 const domain = require('../miniprogram/core/habits');
-const { createStore, STORAGE_KEY } = require('../miniprogram/services/store');
+const { createStore, STORAGE_KEY } = require('./legacy/store.cjs');
 
 const event = (id, date) => ({ currentTarget: { dataset: { id, date, done: false } } });
 const allDays = [1, 2, 3, 4, 5, 6, 7];
@@ -79,7 +79,7 @@ test('today without an arranged task does not display a return prompt', t => {
   assert.equal(h.page.data.returnGuide, null);
 });
 
-test('completion removes prompt, uses gentle feedback, and pending sync remains truthful', t => {
+test('completion removes prompt after cloud acknowledgement; failure never claims success', async t => {
   const h = harness(t, [['read', {}]]);
   const doneDay = dates.shift(h.today, -4);
   const state = domain.reduce(h.store.read(), { type: 'complete', id: 'read', date: doneDay }, doneDay);
@@ -89,20 +89,17 @@ test('completion removes prompt, uses gentle feedback, and pending sync remains 
   h.page.onComplete(event('read', h.today));
   assert.equal(h.page.data.returnGuide, null);
   assert.equal(h.page.data.done, 1);
-  assert.equal(h.toasts.at(-1).title, '今天继续了');
+  assert.equal(h.toasts.at(-1).title, '今天继续了，已保存到云端');
 
   const pending = harness(t, [['read', {}]]);
   pending.storage[STORAGE_KEY] = JSON.stringify(domain.reduce(pending.store.read(),
     { type: 'complete', id: 'read', date: dates.shift(pending.today, -4) }, dates.shift(pending.today, -4)));
-  let syncPending = false;
-  pending.store.info = () => ({ pending: syncPending ? 1 : 0, syncAttention: syncPending, syncText: '等待同步' });
-  const dispatch = pending.store.dispatch;
-  pending.store.dispatch = command => { const result = dispatch(command); syncPending = true; return result; };
+  pending.store.dispatch = () => Promise.reject(Error('云端操作结果未确认'));
   pending.page.refresh();
-  pending.page.onComplete(event('read', pending.today));
-  assert.equal(pending.page.data.returnGuide, null);
-  assert.equal(pending.page.data.syncAttention, true);
-  assert.equal(pending.toasts.at(-1).title, '今天继续了，待同步');
+  await pending.page.onComplete(event('read', pending.today));
+  assert.equal(pending.page.data.returnGuide.id, 'read');
+  assert.equal(pending.toasts.length, 0);
+  assert.match(pending.page.data.error, /未确认/);
 });
 
 test('sync warning, conflict, unreadable data and account replacement never leave stale return prompt', t => {

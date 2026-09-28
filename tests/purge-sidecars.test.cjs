@@ -3,7 +3,7 @@ const assert=require('node:assert/strict');
 const { featuresFixture }=require('./helpers/features-fixture.cjs');
 const { domain,dates,storageFixture,copy,plan }=require('./helpers/cloud-fixture.cjs');
 const { createApi }=require('../server/handler');
-const { createSyncEngine }=require('../miniprogram/services/sync-engine');
+const { createSyncEngine }=require('./legacy/sync-engine.cjs');
 const { syncPresentation }=require('../miniprogram/services/sync-presentation');
 
 async function setup() {
@@ -34,6 +34,18 @@ test('same purge receipt retries cleanup across midnight; success is only acknow
   const done=await h.call(h.request);assert.equal(done.ok,true);assert.equal(done.epoch,newEpoch);assert.equal(done.state.habits.length,0);
   assert.equal(h.f.shares.size,0);assert.equal(h.f.prefs.size,0);assert.equal(h.calls,2);
   const again=await h.call(h.request);assert.equal(again.ok,true);assert.equal(h.calls,2);
+});
+test('fresh client can finish a cloud-persisted deletion by pulling without the original request id',async()=>{
+  const h=await setup();
+  const first=await h.call(h.request);
+  assert.equal(first.code,'DELETE_PENDING');
+  h.finish();
+  const recovered=await h.call({action:'pull'});
+  assert.equal(recovered.ok,true);
+  assert.equal(recovered.state.habits.length,0);
+  assert.equal(h.f.shares.size,0);
+  assert.equal(h.f.prefs.size,0);
+  assert.equal(h.calls,2);
 });
 test('client saves delete operation before request and resumes it after restart without replacing original data',async()=>{
   const h=await setup(),storage=storageFixture(),sent=[];

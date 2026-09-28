@@ -2,7 +2,8 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const d = require('../miniprogram/core/date');
 const h = require('../miniprogram/core/habits');
-const { createStore, STORAGE_KEY } = require('../miniprogram/services/store');
+const { createStore, STORAGE_KEY } = require('./legacy/store.cjs');
+const { exportCsv } = require('./legacy/csv.cjs');
 const { validateDraft } = require('../miniprogram/core/ai-contract');
 const DAY = '2026-09-10';
 const plan = overrides => ({ title: '读一会儿', target: 10, minimum: 2, unit: '分钟', weekdays: [1,2,3,4,5,6,7], time: '21:30', ...overrides });
@@ -124,9 +125,9 @@ test('未打开日期照常计入计划，全部习惯都进入区间统计', ()
 test('CSV保护公式注入，正确转义引号、换行和可选备注', () => {
   let state = create(undefined, { title: '=1+1' });
   state = record(state, 'note', { note: '这是"私人"\n备注' });
-  assert.match(h.exportCsv(state, DAY), /'=1\+1/);
-  assert.doesNotMatch(h.exportCsv(state, DAY), /私人/);
-  assert.match(h.exportCsv(state, DAY, true), /""私人""/);
+  assert.match(exportCsv(state, DAY), /'=1\+1/);
+  assert.doesNotMatch(exportCsv(state, DAY), /私人/);
+  assert.match(exportCsv(state, DAY, true), /""私人""/);
 });
 test('备注长度有边界', () => {
   assert.throws(() => record(create(), 'note', { note: '字'.repeat(141) }));

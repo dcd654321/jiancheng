@@ -9,7 +9,7 @@ function contextKey() { return store().contextKey ? store().contextKey() : 'clou
 function assertContext(page) {
   if (page._context && page._context !== contextKey()) throw Error('数据状态已变化，请返回后重新打开此页面');
 }
-function storageInfo() { return store().info ? store().info() : { source: 'local', sourceName: '本机', ready: true, phase: 'ready', syncText: '' }; }
+function storageInfo() { return store().info ? store().info() : { source: 'cloud', ready: false, phase: 'offline', syncText: '云端不可用' }; }
 function error(page, err) {
   page.setData({ error: err.message || '操作失败，请重试' });
 }
@@ -40,14 +40,12 @@ function mutate(page, command, message, options = {}) {
     if (page._gone || mutationContext !== contextKey()) return true;
     if (page.onRecorded && page._visible !== false) page.onRecorded(command, previousOrder);
     page.refresh();
-    const info = storageInfo();
     const completion = ['complete', 'completeMinimum'].includes(command.type);
     const notice = options.firstCompletion && completion
-      ? (info.pending ? '首次打卡待同步' : '第一步已记下')
+      ? '第一步已保存到云端'
       : options.returnCompletion && completion
-      ? (info.pending ? '今天继续了，待同步' : '今天继续了')
-      : ['complete', 'completeMinimum', 'undo', 'simplify', 'restore', 'note'].includes(command.type)
-      ? (info.pending ? '已记录，待同步' : '已记录') : '已保存';
+      ? '今天继续了，已保存到云端'
+      : '已保存到云端';
     if (notice) wx.showToast({ title: notice, icon: 'none' });
     return true;
   };

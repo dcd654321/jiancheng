@@ -175,35 +175,8 @@ function firstExecution(plan, start) {
   throw Error('至少选择一个执行星期');
 }
 
-// CSV formula injection protection is applied before RFC4180 quoting.
-function csvCell(value) {
-  let text = String(value == null ? '' : value);
-  if (/^[\s]*[=+@-]|^[\t\r\n]/.test(text)) text = "'" + text;
-  return `"${text.replace(/"/g, '""')}"`;
-}
-
-function exportCsv(state, end, includeNotes = false) {
-  dates.assertDate(end);
-  const head = ['习惯', '计划日期', '原目标', '今日目标', '单位', '状态'];
-  if (includeNotes) head.push('备注');
-  const rows = [head];
-  state.habits.forEach(h => {
-    let date = h.versions[0].effectiveDate;
-    while (date <= end) {
-      const task = taskAt(state, h, date);
-      if (task) {
-        const row = [task.title, date, task.originalTarget, task.target, task.unit, task.statusText];
-        if (includeNotes) row.push(task.note);
-        rows.push(row);
-      }
-      date = dates.shift(date, 1);
-    }
-  });
-  return '\ufeff' + rows.map(row => row.map(csvCell).join(',')).join('\r\n');
-}
-
 function validateState(state) {
-  if (!state || state.schemaVersion !== SCHEMA_VERSION || !Number.isInteger(state.revision) || state.revision < 0 || !Array.isArray(state.habits) || !state.records || typeof state.records !== 'object' || Array.isArray(state.records) || !state.settings || typeof state.settings.hideQuote !== 'boolean') throw Error('本机数据格式无效，已停止写入以保护记录');
+  if (!state || state.schemaVersion !== SCHEMA_VERSION || !Number.isInteger(state.revision) || state.revision < 0 || !Array.isArray(state.habits) || !state.records || typeof state.records !== 'object' || Array.isArray(state.records) || !state.settings || typeof state.settings.hideQuote !== 'boolean') throw Error('记录格式无效，已停止操作以保护数据');
   const ids = new Set();
   state.habits.forEach(h => {
     if (!h || !safeId(h.id) || ids.has(h.id) || !Number.isInteger(h.revision) || h.revision < 1 || !Array.isArray(h.versions) || !h.versions.length) throw Error('习惯数据无效');
@@ -226,4 +199,4 @@ function validateState(state) {
   return state;
 }
 
-module.exports = { emptyState, validateState, validatePlan, reduce, versionAt, taskAt, tasksOn, summary, weekdayText, firstExecution, exportCsv, findHabit };
+module.exports = { emptyState, validateState, validatePlan, reduce, versionAt, taskAt, tasksOn, summary, weekdayText, firstExecution, findHabit };

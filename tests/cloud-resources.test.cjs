@@ -3,7 +3,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const { storageFixture, fixture } = require('./helpers/cloud-fixture.cjs');
-const { createCloudBinding, cloudStorageScope } = require('../miniprogram/services/cloud-binding');
+const { createCloudBinding, cloudStorageScope } = require('./legacy/cloud-binding.cjs');
 const { createCloudSession } = require('../miniprogram/services/cloud-session');
 const { createCloudTransport } = require('../miniprogram/services/cloud-transport');
 
@@ -196,27 +196,20 @@ test('同环境不同数据命名空间不共享账户绑定，旧键不搬迁�
   assert.throws(() => createCloudBinding(wx, 'same-env', 'a:b'), /命名空间/);
 });
 
-test('正式会话不读取或上传同环境旧集合的确认缓存与待同步队列', async () => {
+test('正式会话不会读取同设备上的旧绑定或待同步键', async () => {
   const wx = storageFixture(), f = fixture();
   f.date = require('../miniprogram/core/date').today();
   await f.seed();
-  let calls = 0, offline = false;
-  const transportFactory = () => async event => { calls++; if (offline) throw Error('OFFLINE'); return f.api(event); };
-  const old = createCloudSession(wx, { enabled: true, envId: 'same-env' }, transportFactory);
-  await old.start();
-  assert.equal(old.read().habits.length, 1);
-  offline = true;
-  old.dispatch({ type: 'note', id: 'read', date: f.date, note: 'legacy pending note' });
-  await old.onForeground();
-  assert.equal(old.status().pending, 1);
+  wx.setStorageSync('yidian.cloud.binding.v1', 'old-account');
+  wx.setStorageSync('yidian.sync.v1:old-account', 'old-queue');
   const before = Array.from(wx.values);
-  const next = createCloudSession(wx, { enabled: true, envId: 'same-env', functionName: 'jiancheng_daka_api', storageNamespace: 'jiancheng_daka' }, transportFactory);
-  const callsBefore = calls;
-  assert.equal(next.status().ready, false);
-  await assert.rejects(next.start(), /OFFLINE/);
-  assert.ok(calls > callsBefore);
+  wx.getStorageSync = () => { throw Error('old device data read'); };
+  wx.setStorageSync = () => { throw Error('old device data write'); };
+  wx.removeStorageSync = () => { throw Error('old device data delete'); };
+  const session = createCloudSession(wx, { enabled: true, envId: 'same-env', functionName: 'jiancheng_daka_api', storageNamespace: 'jiancheng_daka' }, () => event => f.api(event));
+  await session.start();
+  assert.equal(session.read().habits.length, 1);
   assert.deepEqual(Array.from(wx.values), before);
-  assert.throws(() => next.read(), /尚未读取/);
 });
 
 test('product虽有资源标识但保持关闭，启动不会联系任何环境或迁移数据', async () => {
@@ -239,43 +232,26 @@ test('共享会话配置不完整时不进入可编辑空账户，也不联网',
   assert.equal(session.status().ready, false);
   assert.equal((await session.start()).lastError, '云环境尚未配置');
   assert.equal(session.status().ready, false);
-  assert.throws(() => session.read(), /尚未读取/);
+  assert.throws(() => session.read(), /云环境尚未配置/);
   assert.equal(calls, 0);
 });
 
-test('旧测试待同步操作留在旧范围，正式首次离线后恢复不重放旧操作', async () => {
-  const wx = storageFixture();
-  const oldCloud = fixture(), formalCloud = fixture();
+test('正式会话启动只读正式云，不重放旧运行会话的未确认请求', async () => {
+  const wx = storageFixture(), oldCloud = fixture(), formalCloud = fixture();
   oldCloud.date = formalCloud.date = require('../miniprogram/core/date').today();
   await oldCloud.seed();
   let oldOffline = false, formalOffline = true;
   const old = createCloudSession(wx, require('../miniprogram/config/cloud'),
-    () => async event => { if (oldOffline) throw Error('OLD_OFFLINE'); return oldCloud.api(event); });
-  await old.start();
-  oldOffline = true;
-  old.dispatch({ type: 'note', id: 'read', date: oldCloud.date, note: '旧队列' });
-  await old.onForeground();
+    () => event => oldOffline ? Promise.reject(Error('OLD_OFFLINE')) : oldCloud.api(event));
+  await old.start(); oldOffline = true;
+  await assert.rejects(old.dispatch({ type: 'note', id: 'read', date: oldCloud.date, note: '未确认' }));
   assert.equal(old.status().pending, 1);
-
-  const formalConfig = { ...require('../miniprogram/config/cloud.product'), enabled: true };
   const formalCalls = [];
-  const formal = createCloudSession(wx, formalConfig, () => async event => {
-    formalCalls.push(event);
-    if (formalOffline) throw Error('FORMAL_OFFLINE');
-    return formalCloud.api(event);
-  });
+  const formal = createCloudSession(wx, { ...require('../miniprogram/config/cloud.product'), enabled: true },
+    () => event => { formalCalls.push(event); return formalOffline ? Promise.reject(Error('FORMAL_OFFLINE')) : formalCloud.api(event); });
   await assert.rejects(formal.start(), /FORMAL_OFFLINE/);
-  assert.equal(formal.status().ready, false);
-  formalOffline = false;
-  await formal.start();
-  assert.equal(formal.status().ready, true);
+  formalOffline = false; await formal.start();
   assert.equal(formal.status().pending, 0);
   assert.equal(formal.read().habits.length, 0);
   assert.ok(formalCalls.every(event => event.action === 'pull'));
-  assert.equal(old.status().pending, 1);
-  const oldScope = cloudStorageScope(require('../miniprogram/config/cloud').envId);
-  const formalScope = cloudStorageScope(formalConfig.envId, formalConfig.storageNamespace);
-  assert.notEqual(oldScope, formalScope);
-  assert.ok(Array.from(wx.values.keys()).some(key => key.startsWith(oldScope)));
-  assert.ok(Array.from(wx.values.keys()).some(key => key.startsWith(formalScope)));
 });

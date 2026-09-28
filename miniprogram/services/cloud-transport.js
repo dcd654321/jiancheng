@@ -36,7 +36,7 @@ function createCloudTransport(wxApi, { enabled, envId, functionName = apiFunctio
     return async event => {
       const instance = await ready();
       const response = await instance.callFunction({ name: functionName, data: event });
-      if (!response || !response.result || typeof response.result.ok !== 'boolean') throw Error('云端响应格式错误，待同步操作已保留');
+      if (!response || !response.result || typeof response.result.ok !== 'boolean') throw Error('云端响应格式错误，操作结果未确认，请重试');
       return response.result;
     };
   }
@@ -48,7 +48,7 @@ function createCloudTransport(wxApi, { enabled, envId, functionName = apiFunctio
       initialized = true;
     }
     const response = await wxApi.cloud.callFunction({ name: functionName, data: event, config: { env: envId } });
-    if (!response || !response.result || typeof response.result.ok !== 'boolean') throw Error('云端响应格式错误，待同步操作已保留');
+    if (!response || !response.result || typeof response.result.ok !== 'boolean') throw Error('云端响应格式错误，操作结果未确认，请重试');
     return response.result;
   };
 }
