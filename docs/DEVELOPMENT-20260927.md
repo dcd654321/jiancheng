@@ -127,3 +127,10 @@
 - 在现有 OpenSpec 范围补充返回码处理，修改传输层并新增两项测试：失败立即阻断、并发共用一次初始化、清除失败缓存后可重试、不回退测试环境、不透传原始授权内容。未猜测 FROM_* 或改共用认证。
 - 自动验证：298 测试、232 静态检查、61 云文件一致、9 项规范严格通过。原始 403 有真实 Page 调用证据；修复后的原生复测遇到诊断模块未打包/工具运行时异常，未记为通过。详见 DEPLOYMENT-STAGING-20260927.md。
 - 下一阶段停在共享授权边界；如需改共用 cloudbase_auth 必须另行授权并先备份。代码可单独 revert；远端新增函数保持关闭，撤销本地提交不删除云资源。不合并 main，不发布。
+
+## 检查点 M：2026-09-28 代码质量组件按需注入
+
+- 用户截图显示微信开发者工具“代码包 → 组件 → 启用组件按需注入”未通过。检查当前 `miniprogram/app.json`，此前没有顶层 `lazyCodeLoading`；项目无全局或页面自定义组件声明，也没有跨页面源码导入。
+- 仅在 `miniprogram/app.json` 顶层加入 `"lazyCodeLoading": "requiredComponents"`，未改云配置、业务数据或服务端。微信小程序官方示例也使用该配置：[miniprogram-demo](https://github.com/wechat-miniprogram/miniprogram-demo/blob/master/miniprogram/app.json)。
+- `npm test` 301/301、`npm run check` 236 项、`npm run check:cloud` 61 项均通过；开发者工具刷新后，2026-09-28 10:18 手动点“重新扫描”，界面显示“小程序表现良好，未发现代码质量问题”，展开“代码包”确认组件项已通过。这是开发者工具当前工程的扫描证据，不等于真机全页面回归、正式共享云联调或上线审核通过。
+- 回滚仅需撤销本次 `app.json` 单项配置和本条记录；没有云端写入、上传体验版、合并 main 或发布。
