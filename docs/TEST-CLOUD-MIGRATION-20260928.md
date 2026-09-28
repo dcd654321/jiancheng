@@ -24,6 +24,7 @@
 - 插入前再次从云端读取旧集合唯一文档，与本机备份逐字段序列化结果完全一致；新集合为 0 条，插入文件也与备份文档一致。仅向测试环境新集合插入这 1 条副本的任务 `confirmation_cloud_db_write_doc_2f35a799-e34c-4ff3-9ec7-cd49e5a8bdc8` 经平台确认后，原任务内层结果 `insertedCount=1`。新集合读回 1 条，与备份逐字段序列化结果完全一致；旧集合重新读回 1 条，仍与备份一致。
 - 带真实记录复验小程序端直读和对不存在 ID 的直接更新均返回 `-502003 DATABASE_PERMISSION_DENIED`；云函数 `pull` 成功返回 revision 4、1 个习惯和 1 条记录。未在日志中输出账户原始内容。
 - 活动测试配置已切换到同环境 `jiancheng_daka_api`，本地同意、账户绑定和待同步队列改用 `jiancheng_daka` 命名空间。旧范围会话切换前 pending=0、conflict=false、deletionPending=false。模拟器刷新后新范围显示 `needsConsent`，旧授权未自动沿用；须由用户在界面重新同意后验证页面。切换后本地测试 301/301，通过结构检查 239 项、云文件一致性 61 项和 OpenSpec strict 10/10。
+- 用户在模拟器「数据同步」页明确点击「同意并开始使用」后，实际会话显示 consented=true、ready=true、count=1、pending=0、conflict=false、lastError 为空。返回「今日」页可见原有习惯及当天待打卡任务；重新编译刷新后仍为 ready=true、count=1，无需再次同意。此处是单账号模拟器联调证据，不等于新函数的写入、双账号或真机验收。
 
 ## 后续门禁
 
