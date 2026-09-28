@@ -26,6 +26,14 @@ if (app.lazyCodeLoading === 'requiredComponents' && fs.existsSync(privateConfigP
     throw Error('Set setting.ignoreDevUnusedFiles=false in project.private.config.json; the private value overrides the shared project setting and can blank the simulator.');
   }
 }
+const packagedIgnores = new Set((config.packOptions?.ignore || [])
+  .filter(rule => rule.type === 'file').map(rule => rule.value));
+for (const buildOnlyFile of ['core/ai-catalog.js', 'config/cloud.product.js']) {
+  if (!packagedIgnores.has(buildOnlyFile)) {
+    throw Error(`Build-only file must be excluded from the miniprogram package: ${buildOnlyFile}`);
+  }
+  checks += 1;
+}
 for (const page of app.pages) {
   for (const ext of ['js', 'json', 'wxml']) {
     if (!fs.existsSync(path.join(mini, page + '.' + ext))) throw Error('Missing page file: ' + page + '.' + ext);
