@@ -134,3 +134,12 @@
 - 仅在 `miniprogram/app.json` 顶层加入 `"lazyCodeLoading": "requiredComponents"`，未改云配置、业务数据或服务端。微信小程序官方示例也使用该配置：[miniprogram-demo](https://github.com/wechat-miniprogram/miniprogram-demo/blob/master/miniprogram/app.json)。
 - `npm test` 301/301、`npm run check` 236 项、`npm run check:cloud` 61 项均通过；开发者工具刷新后，2026-09-28 10:18 手动点“重新扫描”，界面显示“小程序表现良好，未发现代码质量问题”，展开“代码包”确认组件项已通过。这是开发者工具当前工程的扫描证据，不等于真机全页面回归、正式共享云联调或上线审核通过。
 - 回滚仅需撤销本次 `app.json` 单项配置和本条记录；没有云端写入、上传体验版、合并 main 或发布。
+
+## 检查点 N：按需注入后的开发工具白屏修复
+
+- 合并后的开发者工具模拟器出现 `module 'services/gentle-return.js' is not defined`，首页白屏。源码文件存在、Git 已跟踪且 `pages/today/index.js` 的相对引用正确；故障不是云函数返回或该模块缺失于仓库。
+- 本机私有配置原为 `ignoreDevUnusedFiles: true`。仅将此项改为 `false` 并刷新模拟器后，首页重新渲染；再次查询控制台未见 `gentle-return` 缺模块错误。这个对照实验支持开发期文件过滤与按需注入组合导致漏包，不证明所有工具版本都会复现。
+- 在共享 `project.config.json` 明确设置 `setting.ignoreDevUnusedFiles: false`，保留 `app.json` 的组件按需注入；`scripts/check.cjs` 增加组合配置检查。被 Git 忽略的本机 `project.private.config.json` 同项也已改为 `false`，因为私有配置会覆盖共享值；其他开发机器如已有私有 `true`，须同步改成 `false`。
+- 验证：`npm test` 301/301、`npm run check` 237 项、OpenSpec 9 项严格校验通过；`npm run check:cloud` 首次因 Windows 检出行尾与生成文件字节不一致失败，执行本地 `npm run build:cloud` 后 61 文件一致，无语义差异、未上传云端。重新编译后模拟器“今日”“进度”“我的”三页均有实际渲染截图；再次查询缺模块错误为空，随后恢复“今日”页。此项不代表全部业务路径或真机通过。
+- 本次未修改业务逻辑、云函数或云端数据。模拟器恢复不等于真机、全部页面或正式环境验收；提交仅到 dev，main 不随此次修复自动更新。
+- 回滚：若要撤销按需注入方案，须同时移除 `app.json` 的 `lazyCodeLoading` 与共享配置/本机私有配置的这项组合约束，再复测首页。单独恢复本机 `ignoreDevUnusedFiles: true` 会重现本次白屏，不能作为安全回滚。

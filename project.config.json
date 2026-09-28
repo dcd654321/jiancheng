@@ -19,6 +19,7 @@
     "minifyWXSS": true,
     "minifyWXML": true,
     "localPlugins": false,
+    "ignoreDevUnusedFiles": false,
     "disableUseStrict": false,
     "useCompilerPlugins": false,
     "condition": false,

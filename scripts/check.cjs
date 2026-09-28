@@ -16,6 +16,16 @@ visit(root);
 const config = JSON.parse(fs.readFileSync(path.join(root, 'project.config.json'), 'utf8'));
 const mini = path.join(root, config.miniprogramRoot);
 const app = JSON.parse(fs.readFileSync(path.join(mini, 'app.json'), 'utf8'));
+if (app.lazyCodeLoading === 'requiredComponents' && config.setting.ignoreDevUnusedFiles !== false) {
+  throw Error('Required component lazy loading needs ignoreDevUnusedFiles=false in project.config.json; otherwise page service modules may be omitted in DevTools.');
+}
+const privateConfigPath = path.join(root, 'project.private.config.json');
+if (app.lazyCodeLoading === 'requiredComponents' && fs.existsSync(privateConfigPath)) {
+  const privateConfig = JSON.parse(fs.readFileSync(privateConfigPath, 'utf8'));
+  if (privateConfig.setting?.ignoreDevUnusedFiles === true) {
+    throw Error('Set setting.ignoreDevUnusedFiles=false in project.private.config.json; the private value overrides the shared project setting and can blank the simulator.');
+  }
+}
 for (const page of app.pages) {
   for (const ext of ['js', 'json', 'wxml']) {
     if (!fs.existsSync(path.join(mini, page + '.' + ext))) throw Error('Missing page file: ' + page + '.' + ext);
