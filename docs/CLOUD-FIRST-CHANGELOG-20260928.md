@@ -14,6 +14,6 @@
 
 ## 验证与回滚
 
-自动化、原生编译器检查结果见 `openspec/changes/default-cloud-workspace/verification.md`。模拟器、真机、双账号和弱网场景仍需另行验收。
+自动化、原生编译器及已有账号模拟器画面检查见 `openspec/changes/default-cloud-workspace/verification.md`。无缓存首次启动的模拟器检查、真机、双账号和弱网场景仍需另行验收。
 
 回滚时恢复本变更涉及的客户端会话、页面及测试文件即可；云端资源与数据格式未变。回滚会重新出现旧的应用自定义同意关卡，不需要执行数据库回滚。不得用清缓存作为回滚手段，未同步队列可能丢失。
