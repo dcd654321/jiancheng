@@ -26,7 +26,7 @@ async function setup(override, { consent = true } = {}) {
   const store = createWorkspaceStore(local, session);
   local.dispatch({ type: 'create', id: 'local-only', startDate: f.date,
     plan: plan({ title: '仅在本机' }) });
-  if (consent) await session.acceptConsent(true);
+  if (consent) await session.start();
   return { f, wx, calls, session, local, store };
 }
 
@@ -56,10 +56,8 @@ test('workspace clears legacy data only after cloud purge acknowledgement', asyn
   assert.equal(h.local.read().habits.length, 0);
 });
 
-test('workspace exposes consent, loading and unavailable states without a fake empty state', () => {
+test('workspace exposes loading and unavailable states without a fake empty state', () => {
   const legacy = { read() { throw Error('must not read legacy'); }, rawBackup() { return '{}'; } };
-  const needsConsent = createWorkspaceStore(legacy, { status: () => ({ ready: false, phase: 'needsConsent' }) });
-  assert.throws(() => needsConsent.read(), error => error.code === 'NEEDS_CONSENT');
   const loading = createWorkspaceStore(legacy, { status: () => ({ ready: false, phase: 'loading', lastError: '' }) });
   assert.throws(() => loading.read(), error => error.code === 'DATA_LOADING');
   const unavailable = createWorkspaceStore(legacy, { status: () => ({ ready: false, phase: 'loading', lastError: 'offline' }) });
@@ -256,6 +254,6 @@ test('placeholder environment never reaches transport even when enabled', async 
   let called = false;
   const session = createCloudSession(storageFixture(), { enabled: true, envId: 'YOUR_CLOUD_ENV_ID' },
     () => () => { called = true; });
-  await assert.rejects(session.acceptConsent(true), /尚未配置/);
+  assert.equal((await session.start()).lastError, '云环境尚未配置');
   assert.equal(called, false);
 });

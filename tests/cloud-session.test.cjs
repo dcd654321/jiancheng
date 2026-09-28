@@ -25,7 +25,7 @@ async function setup({ route, now } = {}) {
 }
 async function readySetup(options = {}) {
   const h = await setup(options);
-  await h.session.acceptConsent(true);
+  await h.session.start();
   h.requests.length = 0;
   h.stats.maxConcurrent = 0;
   h.stats.mutationIds.length = 0;
@@ -39,11 +39,10 @@ function injectQueue(h) {
   h.wx.setStorageSync(h.key, JSON.stringify(cache));
 }
 
-test('start does not connect before consent; acceptance pulls and persists a resumable cache', async () => {
+test('configured session starts with a cloud pull without an app consent flag', async () => {
   const h = await setup();
-  assert.equal((await h.session.start()).phase, 'needsConsent');
   assert.equal(h.requests.length, 0);
-  const ready = await h.session.acceptConsent(true);
+  const ready = await h.session.start();
   assert.equal(ready.phase, 'ready');
   assert.deepEqual(h.requests, [{ action: 'pull' }]);
   const resumed = createCloudSession(h.wx, h.config, h.factory);
@@ -59,7 +58,7 @@ test('failed first pull has no editable state; failed refresh with cache stays o
     if (offline) throw Error('offline');
     return h.f.api(event);
   });
-  await assert.rejects(session.acceptConsent(true), /offline/);
+  await assert.rejects(session.start(), /offline/);
   assert.equal(session.status().ready, false);
   offline = false;
   await session.start();
@@ -124,16 +123,15 @@ test('session purge is cloud-confirmed before the local snapshot becomes empty',
   assert.equal(h.requests.filter(event => event.action === 'purge').length, 1);
 });
 
-test('云会话构造及状态读取不联网，默认关闭且必须显式同意', async () => {
+test('云会话构造及状态读取不联网，未配置时不访问云端', async () => {
   const h = await setup(); assert.equal(h.session.status().connected, false); assert.equal(h.requests.length, 0);
-  await assert.rejects(h.session.acceptConsent(false), /同意/); assert.equal(h.requests.length, 0);
   const disabled = createCloudSession(h.wx, { enabled: false, envId: '' }, h.factory);
-  await assert.rejects(disabled.acceptConsent(true), /尚未配置/); assert.equal(h.requests.length, 0);
+  assert.equal((await disabled.start()).lastError, '云环境尚未配置'); assert.equal(h.requests.length, 0);
 });
 
 test('首次连接仅读取云端且不触碰本机记录，重启直接恢复已确认缓存', async () => {
   const h = await setup(); h.wx.setStorageSync('yidian.native.v1', 'original');
-  const status = await h.session.acceptConsent(true);
+  const status = await h.session.start();
   assert.equal(status.connected, true); assert.equal(status.count, 1);
   assert.deepEqual(h.requests, [{ action: 'pull' }]);
   assert.equal(h.wx.getStorageSync('yidian.native.v1'), 'original');
@@ -144,14 +142,14 @@ test('首次连接仅读取云端且不触碰本机记录，重启直接恢复�
 });
 
 test('相同账户的不同云环境缓存隔离', async () => {
-  const h = await setup(); await h.session.acceptConsent(true); injectQueue(h);
+  const h = await setup(); await h.session.start(); injectQueue(h);
   const other = createCloudSession(h.wx, { ...h.config, envId: 'other-env' }, h.factory);
-  assert.equal((await other.acceptConsent(true)).pending, 0);
+  assert.equal((await other.start()).pending, 0);
   assert.equal(h.session.status().pending, 1);
 });
 
 test('重启读取不自动上传已有队列，只有retry提交', async () => {
-  const h = await setup(); await h.session.acceptConsent(true); injectQueue(h);
+  const h = await setup(); await h.session.start(); injectQueue(h);
   h.requests.length = 0;
   const restarted = createCloudSession(h.wx, h.config, h.factory);
   assert.equal(restarted.status().pending, 1);
@@ -162,7 +160,7 @@ test('重启读取不自动上传已有队列，只有retry提交', async () => 
 });
 
 test('冲突需要确认；采用远端不改变本机store且备份包含待同步内容', async () => {
-  const h = await setup(); await h.session.acceptConsent(true); injectQueue(h);
+  const h = await setup(); await h.session.start(); injectQueue(h);
   h.wx.setStorageSync('yidian.native.v1', 'keep');
   await h.f.mutate({ type: 'note', id: 'read', date: h.f.date, note: '远端修改' });
   assert.ok((await h.session.refresh()).conflict);
@@ -174,7 +172,7 @@ test('冲突需要确认；采用远端不改变本机store且备份包含待同
 });
 
 test('账户变化不会读取上一账户队列，读取失败保留最后确认快照', async () => {
-  const h = await setup(); await h.session.acceptConsent(true); injectQueue(h);
+  const h = await setup(); await h.session.start(); injectQueue(h);
   const previous = h.wx.getStorageSync(h.key);
   h.f.identity.OPENID = 'another_user';
   assert.equal((await h.session.start()).pending, 0);
@@ -187,20 +185,20 @@ test('账户变化不会读取上一账户队列，读取失败保留最后确�
 test('处理中拒绝重复启动，正式接口不提供断开连接', async () => {
   const h = await setup(), started = deferred(), release = deferred();
   const session = createCloudSession(h.wx, h.config, () => async e => { started.resolve(); await release.promise; return h.f.api(e); });
-  const connection = session.acceptConsent(true); await started.promise;
+  const connection = session.start(); await started.promise;
   assert.equal(session.disconnect, undefined); await assert.rejects(session.start(), /稍候/);
   release.resolve(); await connection;
   assert.ok(h.wx.getStorageSync(h.key));
   const unopened = createCloudSession(storageFixture(), h.config, h.factory);
-  await assert.rejects(unopened.retry(), /先阅读/); assert.throws(() => unopened.backup(), /先阅读/);
+  await assert.rejects(unopened.retry(), /尚未读取/); assert.throws(() => unopened.backup(), /尚未读取/);
 });
 
 test('坏缓存与缓存保存失败不覆盖原记录，不标记连接成功', async () => {
   const h = await setup(); h.wx.setStorageSync(h.key, '{broken');
-  await assert.rejects(h.session.acceptConsent(true), /损坏/);
+  await assert.rejects(h.session.start(), /损坏/);
   assert.equal(h.session.status().connected, false); assert.equal(h.wx.getStorageSync(h.key), '{broken');
   h.wx.values.delete(h.key); h.wx.failWrite = true;
-  await assert.rejects(h.session.acceptConsent(true), /保存失败/); assert.equal(h.session.status().connected, false);
+  await assert.rejects(h.session.start(), /保存失败/); assert.equal(h.session.status().connected, false);
 });
 
 function pageHarness(session) {
@@ -217,11 +215,12 @@ function pageHarness(session) {
   page.onShow(); return { page, modals, files, sends };
 }
 
-test('真实同步页控制器：打开不联网，一次同意后开始读取且没有数据源开关', async () => {
+test('真实同步页控制器：无需同意按钮，读取失败可手动重试', async () => {
   const h = await setup(), { page } = pageHarness(h.session);
   assert.equal(h.requests.length, 0);
-  assert.equal(page.data.needsConsent, true);
-  await page.onConsentAndStart();
+  assert.equal(page.data.loading, true);
+  assert.equal(page.onConsentAndStart, undefined);
+  await page.onRefresh();
   assert.equal(page.data.ready, true); assert.equal(page.data.busy, false); assert.equal(page.data.error, '');
   assert.equal(page.onConnect, undefined);
   assert.equal(page.onDisconnect, undefined);
@@ -230,7 +229,7 @@ test('真实同步页控制器：打开不联网，一次同意后开始读取�
 });
 
 test('真实同步页控制器：冲突取消不变，确认后备份可导出，发送失败不称成功', async () => {
-  const h = await setup(); await h.session.acceptConsent(true); injectQueue(h);
+  const h = await setup(); await h.session.start(); injectQueue(h);
   await h.f.mutate({ type: 'note', id: 'read', date: h.f.date, note: '远端' }); await h.session.refresh();
   const { page, modals, files, sends } = pageHarness(h.session);
   page.onUseRemote(); modals.pop().success({ confirm: false }); assert.equal(h.session.status().pending, 1);
@@ -243,10 +242,10 @@ test('真实同步页控制器：冲突取消不变，确认后备份可导出�
 });
 
 test('真实同步页控制器：请求异常恢复按钮，离开页面后不再setData', async () => {
-  const status = () => ({ configured: true, consented: false, ready: false, phase: 'needsConsent', busy: false });
-  const broken = { status, acceptConsent: async () => { throw Error('网络失败'); } };
-  const { page } = pageHarness(broken); await page.onConsentAndStart(); assert.equal(page.data.busy, false); assert.equal(page.data.error, '网络失败');
-  const release = deferred(); broken.acceptConsent = () => release.promise;
-  const attempt = page.onConsentAndStart(); page.onUnload(); page.setData = () => { throw Error('unloaded'); };
+  const status = () => ({ configured: true, ready: false, phase: 'loading', busy: false });
+  const broken = { status, refresh: async () => { throw Error('网络失败'); } };
+  const { page } = pageHarness(broken); await page.onRefresh(); assert.equal(page.data.busy, false); assert.equal(page.data.error, '网络失败');
+  const release = deferred(); broken.refresh = () => release.promise;
+  const attempt = page.onRefresh(); page.onUnload(); page.setData = () => { throw Error('unloaded'); };
   release.resolve(); await attempt;
 });

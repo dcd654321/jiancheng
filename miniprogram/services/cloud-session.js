@@ -19,7 +19,7 @@ function createCloudSession(wxApi, config, transportFactory = createCloudTranspo
   let notificationQueued = false;
   let accountId = '';
   let transport = null;
-  let phase = 'needsConsent';
+  let phase = 'loading';
   let lastAttemptAt = 0;
   let lastError = '';
   const envValid = typeof config.envId === 'string' && /^[a-zA-Z0-9_-]{1,100}$/.test(config.envId)
@@ -39,14 +39,12 @@ function createCloudSession(wxApi, config, transportFactory = createCloudTranspo
     removeStorageSync: key => wxApi.removeStorageSync(scope + key)
   };
   const binding = envValid ? createCloudBinding(wxApi, config.envId, config.storageNamespace) : {
-    consented: () => false,
-    accept() { throw Error('云环境尚未配置，本机记录不受影响'); },
     accountId: () => '',
     bind() { throw Error('云环境尚未配置，本机记录不受影响'); }
   };
 
   function invoke(event) {
-    if (!transport) transport = transportFactory(wxApi, { ...config, consent: true });
+    if (!transport) transport = transportFactory(wxApi, config);
     return transport(event);
   }
 
@@ -54,7 +52,6 @@ function createCloudSession(wxApi, config, transportFactory = createCloudTranspo
     const current = engine ? engine.read() : null;
     return {
       configured,
-      consented: binding.consented(),
       connected: !!engine,
       ready: !!engine,
       phase,
@@ -102,18 +99,18 @@ function createCloudSession(wxApi, config, transportFactory = createCloudTranspo
   }
 
   function connected() {
-    if (!engine) throw Error('请先阅读说明并同意连接');
+    if (!engine) throw Error('云端记录尚未读取，请稍后重试');
   }
 
   function restoreCachedEngine() {
-    if (!configured || !binding.consented()) return;
+    if (!configured) return;
     try {
       const savedAccount = binding.accountId();
       if (!savedAccount) {
         phase = 'loading';
         return;
       }
-      const candidate = createSyncEngine({ storage, call: invoke, accountId: savedAccount, consent: true });
+      const candidate = createSyncEngine({ storage, call: invoke, accountId: savedAccount });
       candidate.read();
       engine = candidate;
       accountId = savedAccount;
@@ -130,7 +127,7 @@ function createCloudSession(wxApi, config, transportFactory = createCloudTranspo
     const snapshot = await invoke({ action: 'pull' });
     if (!snapshot || !snapshot.ok) throw Error(snapshot && snapshot.message || '读取云端失败');
     if (!engine || accountId !== snapshot.accountId) {
-      const candidate = createSyncEngine({ storage, call: invoke, accountId: snapshot.accountId, consent: true });
+      const candidate = createSyncEngine({ storage, call: invoke, accountId: snapshot.accountId });
       if (storage.getStorageSync(PREFIX + snapshot.accountId)) candidate.observeRemote(snapshot);
       else candidate.attach(snapshot);
       candidate.read();
@@ -145,17 +142,11 @@ function createCloudSession(wxApi, config, transportFactory = createCloudTranspo
   }
 
   async function start() {
-    if (!binding.consented()) {
-      phase = 'needsConsent';
-      lastError = '';
-      notify();
-      return status();
-    }
     if (!configured) {
       phase = 'loading';
       lastError = '云环境尚未配置';
       notify();
-      throw Error(lastError);
+      return status();
     }
     if (!engine) phase = 'loading';
     return exclusive(async () => {
@@ -172,13 +163,6 @@ function createCloudSession(wxApi, config, transportFactory = createCloudTranspo
         throw error;
       }
     });
-  }
-
-  async function acceptConsent(consent) {
-    if (consent !== true) throw Error('请先阅读并同意数据说明');
-    if (!configured) throw Error('云环境尚未配置，本机记录不受影响');
-    binding.accept();
-    return start();
   }
 
   function retry() {
@@ -228,10 +212,6 @@ function createCloudSession(wxApi, config, transportFactory = createCloudTranspo
   }
 
   async function foregroundWork(force = false) {
-    if (!binding.consented()) {
-      phase = 'needsConsent';
-      return status();
-    }
     if (!engine) return start();
     if (background) await background;
     if (activeWork) await activeWork;
@@ -279,7 +259,6 @@ function createCloudSession(wxApi, config, transportFactory = createCloudTranspo
   return {
     status,
     start,
-    acceptConsent,
     onForeground,
     recoverConnection,
     setNetworkAvailable(available) {

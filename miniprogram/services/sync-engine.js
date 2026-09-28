@@ -6,8 +6,8 @@ const clone = value => JSON.parse(JSON.stringify(value));
 const PREFIX = 'yidian.sync.v1:';
 
 /** Offline records plus durable receipts for explicitly initiated online management requests. */
-function createSyncEngine({ storage, call, accountId, consent, clock = dates.today, newId = () => 'op_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2) }) {
-  if (consent !== true || !/^[a-f0-9]{64}$/.test(accountId || '') || typeof call !== 'function') throw Error('同步需要明确授权和已验证的账户绑定');
+function createSyncEngine({ storage, call, accountId, clock = dates.today, newId = () => 'op_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2) }) {
+  if (!/^[a-f0-9]{64}$/.test(accountId || '') || typeof call !== 'function') throw Error('同步需要有效的云账户绑定和接口');
   const key = PREFIX + accountId;
   let running = null, purging = false;
 

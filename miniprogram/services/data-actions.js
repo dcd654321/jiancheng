@@ -9,7 +9,7 @@ function removeFile(fs, filePath) {
 }
 
 module.exports = {
-  data: { error: '', needsConsent: false, loading: true, dataUnavailable: false, dataReady: false,
+  data: { error: '', loading: true, dataUnavailable: false, dataReady: false,
     count: 0, hideQuote: false, syncText: '', exportPath: '', exportName: '', deleting: false },
   refresh() { ui.read(this, state => { this.setData({ count: state.habits.length, hideQuote: state.settings.hideQuote }); }); },
   onManage() { wx.navigateTo({ url: '/pages/manage/index' }); },

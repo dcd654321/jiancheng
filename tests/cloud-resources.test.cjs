@@ -57,7 +57,7 @@ test('共享云先等独立实例初始化，合并并发请求且绝不回退�
       async callFunction(options) { calls.push(options); return { result: { ok: true } }; }
     }
   } };
-  const config = { ...require('../miniprogram/config/cloud.product'), enabled: true, consent: true };
+  const config = { ...require('../miniprogram/config/cloud.product'), enabled: true };
   const invoke = createCloudTransport(wx, config);
   assert.equal(instances.length, 0);
   const first = invoke({ action: 'pull' });
@@ -74,16 +74,16 @@ test('共享云先等独立实例初始化，合并并发请求且绝不回退�
   ]);
 });
 
-test('共享云配置、同意和目标错误在任何业务调用前拒绝', async () => {
+test('共享云配置和目标错误在任何业务调用前拒绝', async () => {
   let instances = 0, calls = 0;
   const wx = { cloud: { Cloud: class {
     constructor() { instances++; }
     async init() {}
     async callFunction() { calls++; return { result: { ok: true } }; }
   } } };
-  const good = { ...require('../miniprogram/config/cloud.product'), enabled: true, consent: true };
+  const good = { ...require('../miniprogram/config/cloud.product'), enabled: true };
   for (const config of [
-    { ...good, consent: false }, { ...good, enabled: false },
+    { ...good, enabled: false },
     { ...good, envId: '' }, { ...good, resourceAppid: '' },
     { ...good, resourceAppid: 'wx-bad' }, { ...good, functionName: 'habitApi' },
     { ...good, mode: 'typo' }
@@ -103,7 +103,7 @@ test('共享云初始化失败可再次尝试，不回退旧环境也不伪造�
       async callFunction() { calls++; return { result: { ok: true } }; }
     }
   } };
-  const invoke = createCloudTransport(wx, { ...require('../miniprogram/config/cloud.product'), enabled: true, consent: true });
+  const invoke = createCloudTransport(wx, { ...require('../miniprogram/config/cloud.product'), enabled: true });
   await assert.rejects(invoke({ action: 'pull' }), /SHARED_INIT_OFFLINE/);
   assert.equal(calls, 0);
   assert.deepEqual(await invoke({ action: 'pull' }), { ok: true });
@@ -122,7 +122,7 @@ test('共享初始化 resolve 403 时并发共同失败，不调用业务且不�
       async callFunction() { calls++; return { result: { ok: true } }; }
     }
   } };
-  const invoke = createCloudTransport(wx, { ...require('../miniprogram/config/cloud.product'), enabled: true, consent: true });
+  const invoke = createCloudTransport(wx, { ...require('../miniprogram/config/cloud.product'), enabled: true });
   const outcomes = Promise.allSettled([invoke({ action: 'pull' }), invoke({ action: 'pull' })]);
   await Promise.resolve();
   assert.equal(attempts, 1);
@@ -146,7 +146,7 @@ test('共享初始化显式错误码必须为数值零，异常码不透传且�
       async init() { return { errCode, errMsg: 'PRIVATE_RAW_DETAIL' }; }
       async callFunction() { calls++; return { result: { ok: true } }; }
     } } };
-    const invoke = createCloudTransport(wx, { ...require('../miniprogram/config/cloud.product'), enabled: true, consent: true });
+    const invoke = createCloudTransport(wx, { ...require('../miniprogram/config/cloud.product'), enabled: true });
     await assert.rejects(invoke({ action: 'pull' }), error => {
       assert.equal(error.code, 'SHARED_CLOUD_INIT_FAILED');
       assert.equal(error.message, '云服务初始化失败，请稍后重试');
@@ -162,7 +162,7 @@ test('正式云调用使用前缀函数和明确环境，不自动回退到旧�
   const wx = { cloud: { init: options => init.push(options), callFunction: async options => {
     calls.push(options); throw Error('FUNCTION_NOT_FOUND');
   } } };
-  const invoke = createCloudTransport(wx, { enabled: true, envId: 'product-test-id', consent: true });
+  const invoke = createCloudTransport(wx, { enabled: true, envId: 'product-test-id' });
   await assert.rejects(invoke({ action: 'pull' }), /FUNCTION_NOT_FOUND/);
   assert.equal(calls.length, 1);
   assert.equal(calls[0].name, 'jiancheng_daka_api');
@@ -173,25 +173,24 @@ test('正式云调用使用前缀函数和明确环境，不自动回退到旧�
 test('旧环境兼容调用需明确配置，非法函数名在联网前拒绝', async () => {
   const calls = [];
   const wx = { cloud: { init() {}, callFunction: async options => { calls.push(options); return { result: { ok: true } }; } } };
-  await createCloudTransport(wx, { enabled: true, envId: 'test-id', consent: true, functionName: 'habitApi' })({ action: 'pull' });
+  await createCloudTransport(wx, { enabled: true, envId: 'test-id', functionName: 'habitApi' })({ action: 'pull' });
   assert.equal(calls[0].name, 'habitApi');
   for (const name of ['', '../habitApi', 'bad/name', 1]) {
-    assert.throws(() => createCloudTransport(wx, { enabled: true, envId: 'test-id', consent: true, functionName: name }), /函数名称/);
+    assert.throws(() => createCloudTransport(wx, { enabled: true, envId: 'test-id', functionName: name }), /函数名称/);
   }
   assert.equal(calls.length, 1);
 });
 
-test('同环境不同数据命名空间不共享授权或账户绑定，旧键不搬迁不删除', () => {
+test('同环境不同数据命名空间不共享账户绑定，旧键不搬迁不删除', () => {
   const wx = storageFixture();
   const old = createCloudBinding(wx, 'same-env');
-  old.accept(); old.bind('a'.repeat(64));
+  old.bind('a'.repeat(64));
   const before = Array.from(wx.values);
   const next = createCloudBinding(wx, 'same-env', 'jiancheng_daka');
-  assert.equal(next.consented(), false);
   assert.equal(next.accountId(), '');
-  assert.notEqual(next.keys.consent, old.keys.consent);
+  assert.notEqual(next.keys.binding, old.keys.binding);
   assert.deepEqual(Array.from(wx.values), before);
-  next.accept(); next.bind('b'.repeat(64));
+  next.bind('b'.repeat(64));
   assert.equal(old.accountId(), 'a'.repeat(64));
   assert.equal(next.accountId(), 'b'.repeat(64));
   assert.throws(() => createCloudBinding(wx, 'same-env', 'a:b'), /命名空间/);
@@ -204,7 +203,7 @@ test('正式会话不读取或上传同环境旧集合的确认缓存与待同�
   let calls = 0, offline = false;
   const transportFactory = () => async event => { calls++; if (offline) throw Error('OFFLINE'); return f.api(event); };
   const old = createCloudSession(wx, { enabled: true, envId: 'same-env' }, transportFactory);
-  await old.acceptConsent(true);
+  await old.start();
   assert.equal(old.read().habits.length, 1);
   offline = true;
   old.dispatch({ type: 'note', id: 'read', date: f.date, note: 'legacy pending note' });
@@ -214,11 +213,10 @@ test('正式会话不读取或上传同环境旧集合的确认缓存与待同�
   const next = createCloudSession(wx, { enabled: true, envId: 'same-env', functionName: 'jiancheng_daka_api', storageNamespace: 'jiancheng_daka' }, transportFactory);
   const callsBefore = calls;
   assert.equal(next.status().ready, false);
-  assert.equal(next.status().consented, false);
-  await next.start();
-  assert.equal(calls, callsBefore);
+  await assert.rejects(next.start(), /OFFLINE/);
+  assert.ok(calls > callsBefore);
   assert.deepEqual(Array.from(wx.values), before);
-  assert.throws(() => next.read(), /同意/);
+  assert.throws(() => next.read(), /尚未读取/);
 });
 
 test('product虽有资源标识但保持关闭，启动不会联系任何环境或迁移数据', async () => {
@@ -227,7 +225,7 @@ test('product虽有资源标识但保持关闭，启动不会联系任何环境�
   const session = createCloudSession(wx, require('../miniprogram/config/cloud.product'), () => async () => { calls++; });
   assert.equal(session.status().configured, false);
   await session.start();
-  await assert.rejects(session.acceptConsent(true), /尚未配置/);
+  assert.equal((await session.start()).lastError, '云环境尚未配置');
   assert.equal(calls, 0);
   assert.equal(wx.values.size, 0);
 });
@@ -239,9 +237,9 @@ test('共享会话配置不完整时不进入可编辑空账户，也不联网',
   const session = createCloudSession(wx, invalid, () => async () => { calls++; });
   assert.equal(session.status().configured, false);
   assert.equal(session.status().ready, false);
-  await assert.rejects(session.acceptConsent(true), /尚未配置/);
+  assert.equal((await session.start()).lastError, '云环境尚未配置');
   assert.equal(session.status().ready, false);
-  assert.throws(() => session.read(), /同意/);
+  assert.throws(() => session.read(), /尚未读取/);
   assert.equal(calls, 0);
 });
 
@@ -253,7 +251,7 @@ test('旧测试待同步操作留在旧范围，正式首次离线后恢复不�
   let oldOffline = false, formalOffline = true;
   const old = createCloudSession(wx, require('../miniprogram/config/cloud'),
     () => async event => { if (oldOffline) throw Error('OLD_OFFLINE'); return oldCloud.api(event); });
-  await old.acceptConsent(true);
+  await old.start();
   oldOffline = true;
   old.dispatch({ type: 'note', id: 'read', date: oldCloud.date, note: '旧队列' });
   await old.onForeground();
@@ -266,8 +264,7 @@ test('旧测试待同步操作留在旧范围，正式首次离线后恢复不�
     if (formalOffline) throw Error('FORMAL_OFFLINE');
     return formalCloud.api(event);
   });
-  assert.equal(formal.status().consented, false);
-  await assert.rejects(formal.acceptConsent(true), /FORMAL_OFFLINE/);
+  await assert.rejects(formal.start(), /FORMAL_OFFLINE/);
   assert.equal(formal.status().ready, false);
   formalOffline = false;
   await formal.start();

@@ -58,7 +58,7 @@ test('offline busy-goal check-in projects immediately, keeps queue until server 
   const f = fixture(), snapshot = await f.seed(), storage = storageFixture();
   let online = false;
   const engine = createSyncEngine({ storage, call: event => online ? f.api(event) : Promise.reject(Error('offline')),
-    accountId: snapshot.accountId, consent: true, clock: () => f.date, newId: () => 'busy-op' });
+    accountId: snapshot.accountId, clock: () => f.date, newId: () => 'busy-op' });
   engine.attach(snapshot);
   engine.enqueue(command());
   assert.equal(engine.read().pending, 1);
@@ -73,7 +73,7 @@ test('offline busy-goal check-in projects immediately, keeps queue until server 
 test('another device advancing the account keeps the pending busy-goal check-in visible as a conflict', async () => {
   const f = fixture(), snapshot = await f.seed(), storage = storageFixture();
   const engine = createSyncEngine({ storage, call: event => f.api(event),
-    accountId: snapshot.accountId, consent: true, clock: () => f.date, newId: () => 'busy-conflict' });
+    accountId: snapshot.accountId, clock: () => f.date, newId: () => 'busy-conflict' });
   engine.attach(snapshot);
   engine.enqueue(command());
   await f.mutate({type:'note',id:'read',date:day,note:'来自另一设备'});

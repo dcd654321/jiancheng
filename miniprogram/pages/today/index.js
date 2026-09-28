@@ -5,7 +5,7 @@ const flow = require('../../services/today-flow');
 const { features } = require('../../services/features-client');
 
 Page(ui.withLifecycle({
-  data: { error: '', needsConsent: false, loading: true, dataUnavailable: false, dataReady: false,
+  data: { error: '', loading: true, dataUnavailable: false, dataReady: false,
     date: '', dateLabel: '', pending: [], completed: [], total: 0, done: 0, minimum: 0, rate: 0,
     hasHabits: false, hideQuote: false, quote: QUOTES[0], showCompleted: false,
     quickMinimumEnabled: ui.quickMinimumEnabled,
@@ -98,7 +98,6 @@ Page(ui.withLifecycle({
     }
     return ui.taskActions.onSimplify.call(this, event);
   },
-  onDataStart() { wx.navigateTo({ url: '/pages/sync/index' }); },
   async onDataRetry() {
     if (this._retrying) return;
     this._retrying = true;

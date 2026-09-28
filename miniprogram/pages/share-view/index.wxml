@@ -7,7 +7,7 @@
     <view class="sub spaced">内容固定于创建时，有效期至 {{expires}}。打卡为用户自行记录。</view>
     <button wx:if="{{shareEnabled}}" class="primary spaced" open-type="share">分享给微信好友</button>
     <button wx:if="{{view.canCopy}}" class="secondary spaced" bindtap="onCopy">创建自己的同款计划</button>
-    <view wx:if="{{view.canCopy}}" class="sub">进入小程序并开始使用后，可以修改目标与日期，再确认创建。</view>
+    <view wx:if="{{view.canCopy}}" class="sub">进入小程序后，可以修改目标与日期，再确认创建。</view>
     <view wx:if="{{mine}}" class="actions spaced"><button wx:if="{{active}}" class="text-button" disabled="{{busy}}" data-action="revoke" bindtap="onManage">撤回公开分享</button><button class="text-button danger" disabled="{{busy}}" data-action="remove" bindtap="onManage">删除这份分享</button></view>
   </block>
   <button wx:if="{{!loading && !view}}" class="secondary spaced" bindtap="onRetry">重新读取</button>

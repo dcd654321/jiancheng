@@ -1,6 +1,5 @@
 'use strict';
 
-const CONSENT_SUFFIX = 'yidian.cloud.consent.v1';
 const BINDING_SUFFIX = 'yidian.cloud.binding.v1';
 const ACCOUNT = /^[a-f0-9]{64}$/;
 
@@ -17,7 +16,7 @@ function cloudStorageScope(envId, namespace = '') {
 
 function createCloudBinding(wxApi, envId, namespace = '') {
   const scope = cloudStorageScope(envId, namespace);
-  const keys = { consent: scope + CONSENT_SUFFIX, binding: scope + BINDING_SUFFIX };
+  const keys = { binding: scope + BINDING_SUFFIX };
 
   function write(key, value) {
     try {
@@ -29,10 +28,6 @@ function createCloudBinding(wxApi, envId, namespace = '') {
 
   return {
     keys,
-    consented: () => wxApi.getStorageSync(keys.consent) === true,
-    accept() {
-      write(keys.consent, true);
-    },
     accountId() {
       const value = wxApi.getStorageSync(keys.binding);
       if (value == null || value === '') return '';
@@ -46,4 +41,4 @@ function createCloudBinding(wxApi, envId, namespace = '') {
   };
 }
 
-module.exports = { createCloudBinding, cloudStorageScope, CONSENT_SUFFIX, BINDING_SUFFIX };
+module.exports = { createCloudBinding, cloudStorageScope, BINDING_SUFFIX };

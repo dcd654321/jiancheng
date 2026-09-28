@@ -28,7 +28,7 @@ async function run() {
   const session = createCloudSession(wx, { enabled: true, envId: 'audit-memory' }, () => event => {
     calls++; if (offline) throw Error('audit offline'); return f.api(event);
   });
-  await session.acceptConsent(true).catch(() => {});
+  await session.start().catch(() => {});
   const sync = page('sync', { cloudSession: session }); sync.onShow();
   assert.equal(sync.data.dataUnavailable, true);
   const before = calls; offline = false;

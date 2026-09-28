@@ -9,7 +9,7 @@ function drafts() {
 }
 
 Page(ui.withLifecycle({
-  data: { error: '', needsConsent: false, loading: true, dataUnavailable: false, dataReady: false,
+  data: { error: '', loading: true, dataUnavailable: false, dataReady: false,
     title: '', schedule: '', current: null, future: null, task: null, history: [], note: '',
     noteDirty: false, noteExpired: false, noteDate: '', date: '', statusText: '',
     noteOpen: false, moreOpen: false, showHistory: false, visibleHistory: [],

@@ -8,7 +8,7 @@ const templates = {
 };
 
 Page(ui.withLifecycle({
-  data: { error: '', needsConsent: false, loading: true, dataUnavailable: false, dataReady: false,
+  data: { error: '', loading: true, dataUnavailable: false, dataReady: false,
     editing: false, saving: false, title: '', target: '5', minimum: '', unit: '分钟', units: ['分钟', '页', '次'],
     time: '', weekdays: [1, 2, 3, 4, 5, 6, 7], days: [], startOffset: 0, firstLabel: '', effectiveLabel: '', source: '',
     moreOpen: false, fieldErrors: {}, titleCount: 0, targetHint: '', frequencyLabel: '', moreSummary: '' },

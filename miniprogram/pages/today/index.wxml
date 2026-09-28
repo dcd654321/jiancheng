@@ -1,13 +1,7 @@
 <import src="../../templates/task.wxml" />
 <view class="page">
-  <view wx:if="{{needsConsent}}" class="empty">
-    <view class="heading">再忙，也能做一点。</view>
-    <view class="sub">选一件小事，设好平时目标和忙时的小目标。做完就打卡，回头能看到自己做了几次。</view>
-    <view class="sub">习惯和打卡保存到云端，同一微信账号可找回已同步记录。</view>
-    <button class="primary spaced" bindtap="onDataStart">开始使用</button>
-  </view>
-  <view wx:elif="{{loading}}" class="empty"><view class="section-title">正在读取记录</view><view class="sub">请稍候，不会创建重复数据。</view></view>
-  <view wx:elif="{{dataUnavailable}}" class="empty"><view class="section-title">暂时无法读取记录</view><view class="sub">{{error || '请检查网络后重试，已有数据不会被清除。'}}</view><button class="primary spaced" bindtap="onDataRetry">重新读取</button></view>
+  <view wx:if="{{loading}}" class="empty"><view class="section-title">正在读取云端记录</view><view class="sub">请稍候，不会创建重复数据。</view></view>
+  <view wx:elif="{{dataUnavailable}}" class="empty"><view class="section-title">暂时无法读取云端记录</view><view class="sub">{{error || '请检查网络后重试，已有数据不会被清除。'}}</view><button class="primary spaced" bindtap="onDataRetry">重新读取</button></view>
   <block wx:elif="{{dataReady}}">
     <view wx:if="{{error}}" class="error">{{error}}</view>
     <view class="page-header"><view><view class="heading">今日</view><view class="sub">{{dateLabel}}</view></view><button class="add-button" bindtap="onCreate">添加习惯</button></view>

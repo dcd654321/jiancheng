@@ -4,7 +4,7 @@ const { present } = require('../../core/share-presentation');
 const pageWork = require('../../services/feature-page');
 const dates = require('../../core/date');
 Page(ui.withLifecycle({
-  data: { error: '', needsConsent: false, loading: true, dataUnavailable: false, dataReady: false,
+  data: { error: '', loading: true, dataUnavailable: false, dataReady: false,
     enabled: false, busy: false, loaded: false, items: [], nextCursor: null },
   refresh() {
     pageWork.resetOnContext(this, () => this.setData({ items: [], nextCursor: null, loaded: false }));
@@ -24,5 +24,4 @@ Page(ui.withLifecycle({
   onMore() { if (this.data.nextCursor) return this.load(true); },
   onOpen(event) { wx.navigateTo({ url: '/pages/share-view/index?id=' + event.currentTarget.dataset.id + '&mine=1' }); },
   onCreate() { wx.navigateTo({ url: '/pages/share-create/index' }); },
-  onStart() { wx.navigateTo({ url: '/pages/sync/index' }); }
 }));

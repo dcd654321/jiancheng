@@ -22,7 +22,7 @@ function createPlanAssistant(wxApi, cloudConfig, aiConfig, options = {}) {
       const session=options.session;
       const context=()=>{
         const s=session && session.status();
-        if(!s||!s.consented||!s.ready||!s.accountId||!s.epoch)throw Error('请先到今日页开始使用，再申请AI建议');
+        if(!s||!s.ready||!s.accountId||!s.epoch)throw Error('云端记录尚未读取，请稍后再申请AI建议');
         if(s.deletionPending||s.conflict||s.pending||s.networkOffline||s.phase==='offline')throw Error('请先完成数据同步，再申请AI建议');
         return {key:s.accountId+':'+s.epoch,epoch:s.epoch};
       };
@@ -30,7 +30,7 @@ function createPlanAssistant(wxApi, cloudConfig, aiConfig, options = {}) {
       busy = true;
       let timer;
       try {
-        if (!transport) transport = (options.transportFactory || createCloudTransport)(wxApi, {...cloudConfig,functionName:planFunction,consent:true});
+        if (!transport) transport = (options.transportFactory || createCloudTransport)(wxApi, {...cloudConfig,functionName:planFunction});
         const day=dates.today(clock());
         let intent=requests.get(requestKey);
         if(!intent || intent.operationDate!==day){

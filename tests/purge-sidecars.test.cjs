@@ -37,7 +37,7 @@ test('same purge receipt retries cleanup across midnight; success is only acknow
 });
 test('client saves delete operation before request and resumes it after restart without replacing original data',async()=>{
   const h=await setup(),storage=storageFixture(),sent=[];
-  const config={storage,accountId:h.snapshot.accountId,consent:true,clock:()=>h.f.date,newId:()=> 'durable-delete',call:e=>{sent.push(copy(e));return h.call(e);}};
+  const config={storage,accountId:h.snapshot.accountId,clock:()=>h.f.date,newId:()=> 'durable-delete',call:e=>{sent.push(copy(e));return h.call(e);}};
   const client=createSyncEngine(config);client.attach(h.snapshot);
   await assert.rejects(client.purge('DELETE_MY_DATA'),/删除处理中/);
   assert.equal(client.read().deletionPending,true);assert.equal(client.read().state.habits.length,1);
@@ -52,7 +52,7 @@ test('client saves delete operation before request and resumes it after restart 
 });
 test('lost successful deletion acknowledgement cannot be replaced by a background pull, same receipt recovers it',async()=>{
   const h=await setup();h.finish();const storage=storageFixture();let lose=true;
-  const client=createSyncEngine({storage,accountId:h.snapshot.accountId,consent:true,clock:()=>h.f.date,newId:()=> 'lost-delete',call:async e=>{const r=await h.call(e);if(lose){lose=false;throw Error('lost');}return r;}});
+  const client=createSyncEngine({storage,accountId:h.snapshot.accountId,clock:()=>h.f.date,newId:()=> 'lost-delete',call:async e=>{const r=await h.call(e);if(lose){lose=false;throw Error('lost');}return r;}});
   client.attach(h.snapshot);await assert.rejects(client.purge('DELETE_MY_DATA'),/lost/);
   const remote=await h.call({action:'pull'});assert.equal(remote.state.habits.length,0);
   assert.throws(()=>client.observeRemote(remote),/删除尚未确认/);assert.equal(client.read().state.habits.length,1);
@@ -60,13 +60,13 @@ test('lost successful deletion acknowledgement cannot be replaced by a backgroun
 });
 test('failure to persist delete intent makes no network request, explicit stale-date rejection unlocks confirmation',async()=>{
   const h=await setup(),storage=storageFixture();let calls=0;
-  const client=createSyncEngine({storage,accountId:h.snapshot.accountId,consent:true,clock:()=>h.f.date,newId:()=> 'never-sent',call:async()=>{calls++;return {ok:false,code:'RECONFIRM_REQUIRED',message:'重新确认'};}});
+  const client=createSyncEngine({storage,accountId:h.snapshot.accountId,clock:()=>h.f.date,newId:()=> 'never-sent',call:async()=>{calls++;return {ok:false,code:'RECONFIRM_REQUIRED',message:'重新确认'};}});
   client.attach(h.snapshot);storage.failWrite=true;await assert.rejects(client.purge('DELETE_MY_DATA'),/保存失败/);assert.equal(calls,0);
   storage.failWrite=false;await assert.rejects(client.purge('DELETE_MY_DATA'),/重新确认/);assert.equal(client.read().deletionPending,false);
 });
 test('new data after a lost purge acknowledgement requires explicit conflict handling instead of re-deletion',async()=>{
   const h=await setup();h.finish();const storage=storageFixture();let lose=true;
-  const client=createSyncEngine({storage,accountId:h.snapshot.accountId,consent:true,clock:()=>h.f.date,newId:()=> 'lost-and-advanced',call:async e=>{const r=await h.call(e);if(lose){lose=false;throw Error('lost');}return r;}});
+  const client=createSyncEngine({storage,accountId:h.snapshot.accountId,clock:()=>h.f.date,newId:()=> 'lost-and-advanced',call:async e=>{const r=await h.call(e);if(lose){lose=false;throw Error('lost');}return r;}});
   client.attach(h.snapshot);await assert.rejects(client.purge('DELETE_MY_DATA'));
   const newBase=await h.call({action:'pull'});
   await h.call(h.f.request(newBase,{type:'create',id:'new-plan',startDate:h.f.date,plan:plan()}));

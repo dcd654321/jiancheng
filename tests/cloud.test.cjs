@@ -157,11 +157,11 @@ test('数据库适配器兼容事务返回包装，失败不写空文档', async
   mode = 'valid'; await repository.transact('owner', async previous => ({ account: previous, result: { ok: true } })); assert.equal(sets, 1);
   mode = 'denied'; await assert.rejects(() => repository.transact('owner', async () => ({ account: {}, result: { ok: true } }))); assert.equal(sets, 1);
 });
-test('云传输必须明确启用且同意；构造时不联网', async () => {
+test('云传输必须明确启用和配置环境；构造时不联网', async () => {
   let initializations = 0, calls = 0;
   const wx = { cloud: { init: () => initializations++, callFunction: async options => { calls++; assert.equal(options.name, 'jiancheng_daka_api'); return { result: { ok: true } }; } } };
-  assert.throws(() => createCloudTransport(wx, { enabled: true, envId: 'test-env', consent: false }));
-  const transport = createCloudTransport(wx, { enabled: true, envId: 'test-env', consent: true });
+  assert.throws(() => createCloudTransport(wx, { enabled: false, envId: 'test-env' }));
+  const transport = createCloudTransport(wx, { enabled: true, envId: 'test-env' });
   assert.equal(calls, 0); assert.equal(initializations, 0);
   await transport({ action: 'pull' }); await transport({ action: 'pull' });
   assert.equal(initializations, 1); assert.equal(calls, 2);

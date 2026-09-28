@@ -10,7 +10,7 @@ function createNetworkRecovery(wxApi, session, options = {}) {
   function allowed() {
     try {
       const s = session.status();
-      return visible && !disposed && connected === true && s.configured && s.consented && !s.conflict;
+      return visible && !disposed && connected === true && s.configured && !s.conflict;
     } catch (_) { return false; }
   }
   function cancel() { if (timer !== null) clearTimer(timer); timer = null; }

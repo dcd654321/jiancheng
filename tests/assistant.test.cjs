@@ -11,7 +11,7 @@ function fixture(reply, config = aiConfig, cloud = cloudConfig) {
   const calls = [], inits = [];
   const wx = { cloud: { init: o => inits.push(o), callFunction: o => { calls.push(o); return reply ? reply(o) : Promise.resolve({ result: {
     ok: true, source: 'ai', moderated: true, safetyMode:'allowlist-v1', operationId: o.data.operationId, draft: ruleSuggestion(o.data.input).draft } }); } } };
-  const session={status:()=>({consented:true,ready:true,accountId:'a'.repeat(64),epoch:'epoch-fixture',pending:0})};
+  const session={status:()=>({ready:true,accountId:'a'.repeat(64),epoch:'epoch-fixture',pending:0})};
   const service = createPlanAssistant(wx, cloud, config, {session}); return { service, calls, inits, wx };
 }
 const deferred = () => { let resolve, reject; const promise = new Promise((a, b) => { resolve = a; reject = b; }); return { promise, resolve, reject }; };

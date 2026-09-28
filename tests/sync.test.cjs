@@ -7,13 +7,13 @@ const deferred = () => { let resolve; const promise = new Promise(r => { resolve
 async function setup(callOverride) {
   const f = fixture(), snapshot = await f.seed(), storage = storageFixture(); let serial = 0;
   const engine = createSyncEngine({ storage, call: callOverride ? e => callOverride(e, f) : f.api,
-    accountId: snapshot.accountId, consent: true, clock: () => f.date, newId: () => 'offline-' + (++serial) });
+    accountId: snapshot.accountId, clock: () => f.date, newId: () => 'offline-' + (++serial) });
   engine.attach(snapshot);
   return { f, snapshot, storage, engine, key: PREFIX + snapshot.accountId };
 }
 
 test('同步须明确授权和账户绑定，不覆盖原有本机存储或已有缓存', async () => {
-  assert.throws(() => createSyncEngine({ consent: false }), /授权/);
+  assert.throws(() => createSyncEngine({}), /云账户绑定/);
   const { engine, storage, snapshot } = await setup();
   storage.values.set('yidian.local.v1', 'original');
   assert.throws(() => engine.attach(snapshot), /已有/);
@@ -27,7 +27,7 @@ test('purge requires explicit confirmation and saves only the returned empty gen
   const storage = storageFixture();
   const key = PREFIX + snapshot.accountId;
   const engine = createSyncEngine({ storage, call: event => f.api(event),
-    accountId: snapshot.accountId, consent: true, clock: () => f.date,
+    accountId: snapshot.accountId, clock: () => f.date,
     newId: () => 'purge-client-op' });
   engine.attach(snapshot);
   storage.setStorageSync(key + ':recovery', 'old-recovery');

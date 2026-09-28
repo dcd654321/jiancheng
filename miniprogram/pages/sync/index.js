@@ -3,16 +3,15 @@ const ui = require('../../services/ui');
 const { syncPresentation } = require('../../services/sync-presentation');
 
 Page(ui.withLifecycle({
-  data: { configured: false, consented: false, needsConsent: true, loading: false, dataUnavailable: false,
+  data: { configured: false, loading: true, dataUnavailable: false,
     ready: false, busy: false, pending: 0, count: 0, conflict: null, lastError: '', error: '',
     lastSyncedAt: '', lastSyncedLabel: '', syncText: '', syncAttention: false, exportPath: '' },
   refresh() {
     try {
       const status = getApp().cloudSession.status();
       this.setData({ ...status, ...syncPresentation(status), busy: status.busy || !!this._running,
-        needsConsent: !status.consented,
-        loading: status.consented && !status.ready && !status.lastError,
-        dataUnavailable: status.consented && !status.ready && !!status.lastError });
+        loading: !status.ready && !status.lastError,
+        dataUnavailable: !status.ready && !!status.lastError });
     } catch (err) { this.setData({ error: err.message || '暂时无法读取同步状态' }); }
   },
   async run(action) {
@@ -23,7 +22,6 @@ Page(ui.withLifecycle({
     catch (err) { if (!this._gone) this.setData({ error: err.message || '操作失败，已有数据不会被清除' }); }
     finally { this._running = false; if (!this._gone && this._visible) this.refresh(); }
   },
-  onConsentAndStart() { return this.run(() => getApp().cloudSession.acceptConsent(true)); },
   onRefresh() { return this.run(() => getApp().cloudSession.refresh()); },
   onRetry() { return this.run(() => getApp().cloudSession.retry()); },
   onData() { wx.navigateTo({ url: '/pages/data/index' }); },

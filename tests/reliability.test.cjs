@@ -20,7 +20,7 @@ async function harness({ consent = true } = {}) {
   app.store = createWorkspaceStore(createStore(wx), session);
   h.app = app; h.session = session;
   global.wx = wx; global.getApp = () => app;
-  if (consent) await session.acceptConsent(true);
+  if (consent) await session.start();
   h.page = (name, options = {}) => {
     let def; global.Page = value => { def = value; };
     const source = path.resolve(__dirname, '../miniprogram/pages/' + name + '/index.js');
@@ -34,7 +34,7 @@ async function harness({ consent = true } = {}) {
 
 test('first failed read is recovered by the actual sync-page retry without renewed consent', async t => {
   const h = await harness({ consent: false }); h.offline = true;
-  await assert.rejects(h.session.acceptConsent(true));
+  await assert.rejects(h.session.start());
   const p = h.page('sync'); t.after(() => p.onUnload());
   const before = h.calls.length; h.offline = false;
   await p.onRefresh(); await tick();
@@ -112,14 +112,14 @@ test('recovery waits for an in-flight request and replays one durable operation 
   assert.equal(new Set(ids).size, 1);
 });
 
-test('network recovery is debounced, bounded, gated by visibility/consent and unregisters', async () => {
+test('network recovery is debounced, bounded, gated by visibility/configuration and unregisters', async () => {
   const { createNetworkRecovery } = require('../miniprogram/services/network-recovery');
-  let listener, registrations = 0, removed = 0, runs = 0, clock = 10000, consented = false;
+  let listener, registrations = 0, removed = 0, runs = 0, clock = 10000;
   const timers = new Map(); let serial = 0;
   const wx = { onNetworkStatusChange(fn) { listener = fn; registrations++; },
     offNetworkStatusChange(fn) { assert.equal(fn, listener); removed++; } };
-  const status = { configured: true, ready: true, pending: 1, conflict: null, phase: 'offline' };
-  const session = { status: () => ({ ...status, consented }), setNetworkAvailable() {},
+  const status = { configured: false, ready: true, pending: 1, conflict: null, phase: 'offline' };
+  const session = { status: () => ({ ...status }), setNetworkAvailable() {},
     async recoverConnection() { runs++; } };
   const r = createNetworkRecovery(wx, session, { now: () => clock,
     setTimer(fn, ms) { const id = ++serial; timers.set(id, {fn, ms}); return id; },
@@ -127,7 +127,7 @@ test('network recovery is debounced, bounded, gated by visibility/consent and un
   assert.equal(registrations, 1);
   const fire = async () => { const queued = [...timers.values()]; timers.clear(); for (const timer of queued) { clock += timer.ms; await timer.fn(); } await tick(); };
   r.onShow(); listener({ isConnected: true }); await fire(); assert.equal(runs, 0);
-  consented = true;
+  status.configured = true;
   for (let i = 0; i < 30; i++) listener({ isConnected: true });
   assert.equal(timers.size, 1); await fire(); assert.equal(runs, 1);
   assert.equal(timers.size, 0, 'no background retry loop');
@@ -214,7 +214,7 @@ test('repeated network events during an in-flight failure schedule one bounded f
   let listener, runs = 0, release;
   const timers = new Map(); let serial = 0, clock = 1000;
   const gate = new Promise(resolve => { release = resolve; });
-  const s = { status: () => ({ configured: true, consented: true }), setNetworkAvailable() {},
+  const s = { status: () => ({ configured: true }), setNetworkAvailable() {},
     async recoverConnection() { runs++; if (runs === 1) await gate; throw Error('offline'); } };
   const r = createNetworkRecovery({ onNetworkStatusChange(fn) { listener = fn; } }, s,
     { now: () => clock, setTimer(fn, ms) { const id = ++serial; timers.set(id, { fn, ms }); return id; }, clearTimer(id) { timers.delete(id); } });

@@ -9,7 +9,7 @@ const dates=require('../miniprogram/core/date');
 const e=(dataset={},value)=>({currentTarget:{dataset},detail:{value}});
 async function setup(t) {
   const f=featuresFixture();f.date=dates.today();const a=await f.seed(),nav=[],modals=[],pages=[],menus=[];
-  const status={consented:true,ready:true,accountId:a.accountId,epoch:a.epoch,pending:0,phase:'ready'},listeners=new Set();
+  const status={ready:true,accountId:a.accountId,epoch:a.epoch,pending:0,phase:'ready'},listeners=new Set();
   const session={status:()=>({...status}),subscribe(fn){listeners.add(fn);return()=>listeners.delete(fn);}};
   const wx={navigateTo:o=>nav.push(o.url),switchTab:o=>nav.push(o.url),showToast(){},setNavigationBarTitle(){},
     showModal:o=>modals.push(o),showShareMenu:o=>menus.push(o.menus),hideShareMenu:()=>menus.push([])};

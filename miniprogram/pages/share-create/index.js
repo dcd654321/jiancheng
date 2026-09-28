@@ -3,7 +3,7 @@ const { features } = require('../../services/features-client');
 const { present } = require('../../core/share-presentation');
 const pageWork = require('../../services/feature-page');
 Page(ui.withLifecycle({
-  data: { error: '', needsConsent: false, loading: true, dataUnavailable: false, dataReady: false,
+  data: { error: '', loading: true, dataUnavailable: false, dataReady: false,
     enabled: false, busy: false, kind: 'invite', plans: [], planIndex: 0, categories: ['阅读','步行','复习','整理'],
     categoryIndex: 0, includeWeekdays: false, captions: ['每天一小步，也在向前。','不必完美，今天继续。','忙时少做一点，也值得记录。'],
     captionIndex: 0, preview: null },
@@ -48,5 +48,4 @@ Page(ui.withLifecycle({
       wx.navigateTo({ url: '/pages/share-view/index?id=' + share.shareId + '&mine=1' });
     });
   },
-  onStart() { wx.navigateTo({ url: '/pages/sync/index' }); }
 }));

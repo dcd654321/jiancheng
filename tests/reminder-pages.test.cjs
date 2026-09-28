@@ -6,7 +6,7 @@ const {reminderFixture}=require('./helpers/reminder-fixture.cjs');
 const {createFeaturesClient}=require('../miniprogram/services/features-client');
 const names=require('../miniprogram/config/cloud-resources');
 async function setup(t){
-  const f=reminderFixture(),a=await f.seed(),status={consented:true,ready:true,accountId:a.accountId,epoch:a.epoch,pending:0};
+  const f=reminderFixture(),a=await f.seed(),status={ready:true,accountId:a.accountId,epoch:a.epoch,pending:0};
   const listeners=new Set(),session={status:()=>({...status}),subscribe(fn){listeners.add(fn);return()=>listeners.delete(fn);}};
   const requests=[],wx={requestSubscribeMessage:options=>requests.push(options),navigateTo(){},showToast(){}},app={cloudSession:session};
   const h={f,a,status,requests,wx,app,listeners,lose:false};

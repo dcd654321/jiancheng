@@ -5,7 +5,7 @@ const {createFeaturesClient}=require('../miniprogram/services/features-client');
 const names=require('../miniprogram/config/cloud-resources');
 async function setup() {
   const f=featuresFixture(),a=await f.seed(),calls=[];
-  const status={consented:true,ready:true,accountId:a.accountId,epoch:a.epoch,pending:0,conflict:null,phase:'ready'};
+  const status={ready:true,accountId:a.accountId,epoch:a.epoch,pending:0,conflict:null,phase:'ready'};
   const session={status:()=>({...status})};
   const cloud={enabled:true,envId:'fixture',functionName:names.apiFunction},config={enabled:true,publicShares:true,timeline:true};
   const h={f,status,session,cloud,config,calls,lose:false,fail:false};

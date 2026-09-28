@@ -1,7 +1,6 @@
 <view class="page">
   <view class="heading">我的分享</view><view class="sub">记录创建过的内容，不记录发给了谁。</view>
   <view wx:if="{{!enabled}}" class="notice spaced">分享功能尚未开放。</view>
-  <view wx:elif="{{needsConsent}}" class="empty"><button class="primary" bindtap="onStart">了解数据说明并开始</button></view>
   <view wx:elif="{{loading}}" class="sub spaced">正在读取…</view>
   <view wx:elif="{{dataUnavailable}}" class="error spaced">暂时无法读取，请先恢复数据同步。</view>
   <block wx:elif="{{dataReady}}">

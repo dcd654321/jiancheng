@@ -1,7 +1,7 @@
 const ui = require('../../services/ui');
 
 Page(ui.withLifecycle({
-  data: { error: '', needsConsent: false, loading: true, dataUnavailable: false, dataReady: false,
+  data: { error: '', loading: true, dataUnavailable: false, dataReady: false,
     days: 7, stats: null, selectedDate: '', selected: null, showHabits: false },
   refresh() {
     ui.read(this, (state, date) => {

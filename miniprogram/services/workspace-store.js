@@ -6,10 +6,8 @@ const { syncPresentation } = require('./sync-presentation');
 
 function stateError(status) {
   const waiting = status.phase === 'loading' && !status.lastError;
-  const error = Error(status.phase === 'needsConsent' ? '请先阅读数据说明并开始使用'
-    : waiting ? '正在读取记录' : status.lastError || '暂时无法读取记录');
-  error.code = status.phase === 'needsConsent' ? 'NEEDS_CONSENT'
-    : waiting ? 'DATA_LOADING' : 'DATA_UNAVAILABLE';
+  const error = Error(waiting ? '正在读取记录' : status.lastError || '暂时无法读取记录');
+  error.code = waiting ? 'DATA_LOADING' : 'DATA_UNAVAILABLE';
   return error;
 }
 

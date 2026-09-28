@@ -69,7 +69,7 @@ async function cloudHarness({ consent = false } = {}) {
     if (result.refresh) result.refresh();
     return result;
   }
-  if (consent) await session.acceptConsent(true);
+  if (consent) await session.start();
   return { f, wx, storage, navigation, session, legacy, store, page };
 }
 
@@ -134,16 +134,13 @@ test('confirmed cloud deletion cleans local exports only after acknowledgement',
   assert.equal(h.toasts.at(-1).title, '全部数据已清除');
 });
 
-test('首次页面只在同意后读取云端，且从不创建或上传旧本机记录', async () => {
+test('首次页面自动读取云端，且从不创建或上传旧本机记录', async () => {
   const h = await cloudHarness();
   const legacyRaw = h.legacy.rawBackup();
   const today = h.page('today');
-  assert.equal(today.data.needsConsent, true);
+  assert.equal(today.data.loading, true);
   assert.equal(today.data.dataReady, false);
-  today.onDataStart();
-  assert.equal(h.navigation.at(-1), '/pages/sync/index');
-  const sync = h.page('sync');
-  await sync.onConsentAndStart();
+  await h.session.start();
   today.refresh();
   assert.equal(today.data.dataReady, true);
   assert.equal(h.store.read().habits[0].id, 'read');

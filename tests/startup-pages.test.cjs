@@ -1,10 +1,10 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
+const fs = require('node:fs');
 const path = require('node:path');
 const { fixture, storageFixture, dates } = require('./helpers/cloud-fixture.cjs');
 const { createAppLifecycle } = require('../miniprogram/services/app-lifecycle');
 const { createCloudSession } = require('../miniprogram/services/cloud-session');
-const { createCloudBinding } = require('../miniprogram/services/cloud-binding');
 const { createWorkspaceStore } = require('../miniprogram/services/workspace-store');
 const { createStore } = require('../miniprogram/services/store');
 
@@ -12,7 +12,6 @@ async function boot({ fail = false } = {}) {
   const f = fixture(); f.date = dates.today(); await f.seed();
   const wxApi = storageFixture();
   const config = require('../miniprogram/config/cloud');
-  createCloudBinding(wxApi, config.envId, config.storageNamespace).accept();
   let release;
   const gate = new Promise(resolve => { release = resolve; });
   const lifecycle = createAppLifecycle({
@@ -41,6 +40,13 @@ async function boot({ fail = false } = {}) {
     cleanup() { for (const p of pages) p.onUnload(); }
   };
 }
+
+test('cloud-first entry points do not render a separate cloud-storage consent step', () => {
+  for (const name of ['today', 'sync', 'progress', 'mine', 'edit', 'detail', 'data', 'restore', 'manage']) {
+    const source = fs.readFileSync(path.resolve(__dirname, '../miniprogram/pages/' + name + '/index.wxml'), 'utf8');
+    assert.doesNotMatch(source, /needsConsent|同意并开始使用|了解数据说明并开始/);
+  }
+});
 
 for (const name of ['today', 'progress', 'mine', 'sync']) {
   test(name + ': actual enabled config and delayed cold start refresh without manual intervention', async t => {

@@ -12,7 +12,7 @@ function createFeaturesClient(wxApi, cloudConfig, config, session, options = {})
   const publicConfigured = () => configured() && config.publicShares === true;
   function context() {
     const s = session && session.status();
-    if (!s || !s.consented || !s.ready || !s.accountId || !s.epoch) throw Error('请先到今日页开始使用，再回来操作');
+    if (!s || !s.ready || !s.accountId || !s.epoch) throw Error('云端记录尚未读取，请稍后重试');
     return { status: s, key: s.accountId + ':' + s.epoch };
   }
   async function timeout(work) {
@@ -28,7 +28,7 @@ function createFeaturesClient(wxApi, cloudConfig, config, session, options = {})
     if (before.status.deletionPending) throw Error('删除尚未确认，请先到数据管理完成删除');
     if (before.status.networkOffline || before.status.phase === 'offline') throw Error('此操作需要联网，当前习惯记录不受影响');
     if (before.status.pending || before.status.conflict) throw Error('请先完成数据同步，再使用分享或置顶');
-    if (!privateTransport) privateTransport = factory(wxApi, { ...cloudConfig, functionName: resources.featuresFunction, consent: true });
+    if (!privateTransport) privateTransport = factory(wxApi, { ...cloudConfig, functionName: resources.featuresFunction });
     const result = await timeout(privateTransport({ ...payload, epoch: before.status.epoch }));
     if (context().key !== before.key) throw Error('账户数据已变化，已忽略旧页面的结果');
     if (!result || result.ok !== true) {
@@ -128,7 +128,7 @@ function createFeaturesClient(wxApi, cloudConfig, config, session, options = {})
     async publicShare(shareId) {
       if (!publicConfigured()) throw Error('公开分享暂未开放');
       if (!hex(shareId)) throw Error('这份分享暂不可用或已失效');
-      if (!publicTransport) publicTransport = factory(wxApi, { ...cloudConfig, functionName: resources.publicShareFunction, consent: true });
+      if (!publicTransport) publicTransport = factory(wxApi, { ...cloudConfig, functionName: resources.publicShareFunction });
       // This is only a read of the selected public snapshot. No personal account pull/consent write.
       const result = await timeout(publicTransport({ action: 'getPublicShare', shareId }));
       if (!result || result.ok !== true) throw Error('这份分享暂不可用或已失效');

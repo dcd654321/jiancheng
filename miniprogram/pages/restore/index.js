@@ -2,7 +2,7 @@ const ui = require('../../services/ui');
 const { APP_NAME } = require('../../config/brand');
 
 Page(ui.withLifecycle({
-  data: { error: '', needsConsent: false, loading: true, dataUnavailable: false, dataReady: false,
+  data: { error: '', loading: true, dataUnavailable: false, dataReady: false,
     busy: false, hasLegacyData: false, exportPath: '', exportName: '' },
   refresh() {
     try { this.setData({ hasLegacyData: ui.store().hasLegacyData() }); }

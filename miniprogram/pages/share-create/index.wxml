@@ -2,7 +2,6 @@
 <view class="page">
   <view class="heading">分享一点进步</view>
   <view wx:if="{{!enabled}}" class="notice spaced">分享功能尚未开放，现有打卡不受影响。</view>
-  <view wx:elif="{{needsConsent}}" class="empty"><view class="sub">创建自己的分享前，请先了解数据说明。</view><button class="primary spaced" bindtap="onStart">开始使用</button></view>
   <view wx:elif="{{loading}}" class="sub spaced">正在读取习惯…</view>
   <view wx:elif="{{dataUnavailable}}" class="error spaced">暂时无法读取习惯，请先恢复数据同步。</view>
   <block wx:elif="{{dataReady}}">

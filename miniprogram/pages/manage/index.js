@@ -1,6 +1,6 @@
 const ui = require('../../services/ui');
 Page(ui.withLifecycle({
-  data: { error: '', needsConsent: false, loading: true, dataUnavailable: false, dataReady: false, habits: [] },
+  data: { error: '', loading: true, dataUnavailable: false, dataReady: false, habits: [] },
   refresh() {
     ui.read(this, (state, date) => {
       this.setData({ habits: state.habits.map(h => {

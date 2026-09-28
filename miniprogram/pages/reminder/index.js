@@ -3,7 +3,7 @@ const {features}=require('../../services/features-client');
 const work=require('../../services/feature-page');
 const LABELS={pending:'已申请，等待发送',claimed:'正在处理，不能撤回在途消息',sent:'平台已接受发送请求',cancelled:'已取消／不再需要发送',failed:'未发送',unknown:'发送未确认，不会自动重发'};
 Page(ui.withLifecycle({
-  data:{enabled:false,loading:true,needsConsent:false,dataReady:false,dataUnavailable:false,error:'',busy:false,slots:['08:00','12:30','20:30'],slotIndex:2,preview:null,items:[],retrySchedule:false},
+  data:{enabled:false,loading:true,dataReady:false,dataUnavailable:false,error:'',busy:false,slots:['08:00','12:30','20:30'],slotIndex:2,preview:null,items:[],retrySchedule:false},
   refresh(){
     work.resetOnContext(this,()=>{this._preview=null;this._authorized=null;this.setData({preview:null,items:[],retrySchedule:false});});
     this.setData({enabled:features().status().reminders,busy:!!this._featureBusy});ui.read(this,()=>{});
@@ -57,5 +57,4 @@ Page(ui.withLifecycle({
     const item=this.data.items.find(i=>i.businessDate===event.currentTarget.dataset.date);if(!item||this._featureBusy)return;
     return work.run(this,s=>s.cancelReminder(item),result=>this.showItems(this.data.items.map(i=>i.businessDate===result.businessDate?result:i)));
   },
-  onStart(){wx.navigateTo({url:'/pages/sync/index'});}
 }));

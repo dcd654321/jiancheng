@@ -19,15 +19,13 @@ function read(page, callback) {
     page._context = contextKey();
     callback(state, date.today());
     const info = storageInfo();
-    page.setData({ needsConsent: false, loading: false, dataUnavailable: false, dataReady: true,
+    page.setData({ loading: false, dataUnavailable: false, dataReady: true,
       dataSource: info.source, syncText: info.syncText, syncAttention: !!info.syncAttention,
       error: page._syncRefreshing && page.data.dataReady ? page.data.error : '' });
   } catch (err) {
-    if (err.code === 'NEEDS_CONSENT') page.setData({ needsConsent: true, loading: false,
+    if (err.code === 'DATA_LOADING') page.setData({ loading: true,
       dataUnavailable: false, dataReady: false, error: '' });
-    else if (err.code === 'DATA_LOADING') page.setData({ needsConsent: false, loading: true,
-      dataUnavailable: false, dataReady: false, error: '' });
-    else if (err.code === 'DATA_UNAVAILABLE') page.setData({ needsConsent: false, loading: false,
+    else if (err.code === 'DATA_UNAVAILABLE') page.setData({ loading: false,
       dataUnavailable: true, dataReady: false, error: err.message || '暂时无法读取记录' });
     else error(page, err);
   }
