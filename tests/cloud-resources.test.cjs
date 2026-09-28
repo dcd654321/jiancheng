@@ -30,9 +30,9 @@ test('渐成打卡所有新云资源使用同一专属前缀，构建目录与�
   assert.equal(require('../miniprogram/config/ai').enabled, false);
 });
 
-test('已核实正式资源标识但保持关闭，旧测试调用与缓存保持不变', () => {
+test('测试云切到前缀函数及独立缓存范围，正式共享环境仍保持关闭', () => {
   const current = require('../miniprogram/config/cloud');
-  assert.deepEqual(current, { enabled: true, envId: 'cloud1-d4gq76oyt363f08a7', functionName: 'habitApi' });
+  assert.deepEqual(current, { enabled: true, envId: 'cloud1-d4gq76oyt363f08a7', functionName: 'jiancheng_daka_api', storageNamespace: 'jiancheng_daka' });
   const product = require('../miniprogram/config/cloud.product');
   assert.equal(product.enabled, false);
   assert.equal(product.mode, 'shared');
@@ -40,7 +40,8 @@ test('已核实正式资源标识但保持关闭，旧测试调用与缓存保�
   assert.equal(product.resourceAppid, 'wx7ad85943fe81e095');
   assert.equal(product.functionName, 'jiancheng_daka_api');
   assert.equal(product.storageNamespace, 'jiancheng_daka');
-  assert.equal(cloudStorageScope(current.envId), 'yidian.cloud.env:' + current.envId + ':');
+  assert.equal(cloudStorageScope(current.envId, current.storageNamespace), 'yidian.cloud.env:' + current.envId + ':app:jiancheng_daka:');
+  assert.notEqual(cloudStorageScope(current.envId, current.storageNamespace), cloudStorageScope(current.envId));
 });
 
 test('共享云先等独立实例初始化，合并并发请求且绝不回退默认云', async () => {

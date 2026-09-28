@@ -12,7 +12,7 @@ async function boot({ fail = false } = {}) {
   const f = fixture(); f.date = dates.today(); await f.seed();
   const wxApi = storageFixture();
   const config = require('../miniprogram/config/cloud');
-  createCloudBinding(wxApi, config.envId).accept();
+  createCloudBinding(wxApi, config.envId, config.storageNamespace).accept();
   let release;
   const gate = new Promise(resolve => { release = resolve; });
   const lifecycle = createAppLifecycle({

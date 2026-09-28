@@ -300,14 +300,14 @@ test('真实页面控制器：存储失败不会提示保存成功', () => {
   assert.match(today.data.error, /保存失败/); assert.equal(app.toasts.length, toastCount); assert.equal(today.data.done, 0);
 });
 
-test('品牌与实际AppID配置一致，旧存储可读且测试云默认启用', () => {
+test('品牌与实际AppID配置一致，旧存储可读且前缀测试云默认启用', () => {
   const { APP_NAME } = require('../miniprogram/config/brand');
   assert.equal(APP_NAME, '渐成习惯打卡');
   assert.equal(require('../miniprogram/app.json').window.navigationBarTitleText, APP_NAME);
   assert.equal(require('../miniprogram/pages/today/index.json').navigationBarTitleText, APP_NAME);
   assert.equal(require('../project.config.json').projectname, APP_NAME);
   assert.equal(require('../project.config.json').appid, 'wx58e61dffcbfa4249');
-  assert.deepEqual(require('../miniprogram/config/cloud'), { enabled: true, envId: 'cloud1-d4gq76oyt363f08a7', functionName: 'habitApi' });
+  assert.deepEqual(require('../miniprogram/config/cloud'), { enabled: true, envId: 'cloud1-d4gq76oyt363f08a7', functionName: 'jiancheng_daka_api', storageNamespace: 'jiancheng_daka' });
   assert.equal(STORAGE_KEY, 'yidian.native.v1');
   assert.equal(require('../miniprogram/services/sync-engine').PREFIX, 'yidian.sync.v1:');
   assert.equal(require('../server/cloudbase-repository').COLLECTION, 'jiancheng_daka_accounts');

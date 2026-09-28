@@ -1,6 +1,10 @@
-// Active legacy TEST deployment. Keep working until the separate product target is verified.
-// New deployable code/resources use jiancheng_daka_ (see cloud-resources.js / cloud.product.js).
-// Never silently redirect the old test account/queue to a different collection. No secrets here.
-// habitApi has not been upgraded for completeMinimum. Keep the shortcut hidden
-// until a verified compatible API is deployed and this gate is explicitly enabled.
-module.exports = { enabled: true, envId: 'cloud1-d4gq76oyt363f08a7', functionName: 'habitApi' };
+// Active personal TEST deployment. Its prefixed account was verified against a
+// complete backup before switching. The namespace keeps old consent, binding,
+// and pending queues intact instead of replaying them into the new collection.
+// Shared product remains separately gated by cloud.product.js.
+module.exports = {
+  enabled: true,
+  envId: 'cloud1-d4gq76oyt363f08a7',
+  functionName: 'jiancheng_daka_api',
+  storageNamespace: 'jiancheng_daka'
+};
