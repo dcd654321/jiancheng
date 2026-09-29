@@ -1,15 +1,16 @@
 # 云端主数据与离线同步
 
-更新：2026-09-21。B021新部署包使用`jiancheng_daka_`前缀，正式`product`实际环境ID尚未确认、未部署或切换。当前客户端明确保持旧测试环境`habitApi`，原基础流程验收保留。新旧资源对应、部署边界和回滚见[资源命名记录](CLOUD-NAMESPACE-20260921.md)，此前基础真实云证据见[启动修复记录](STARTUP-FIX-20260920.md)。完整发布验收仍未完成。
+更新：2026-09-28。B021新部署包使用`jiancheng_daka_`前缀；正式`product`共享环境的5个函数已部署且 Active，但客户端活动配置仍指向旧测试环境`habitApi`，正式目标`cloud.product.js`保持关闭。新旧资源对应、部署边界和回滚见[资源命名记录](CLOUD-NAMESPACE-20260921.md)与[云函数设计](DESIGN-CLOUD.md)，此前基础真实云证据见[启动修复记录](STARTUP-FIX-20260920.md)。完整发布验收仍未完成。
 
 ## 共享环境资源范围
 
-- 新业务云函数：`jiancheng_daka_api`；新账户集合：`jiancheng_daka_accounts`；后续AI函数预留`jiancheng_daka_plan`，目前AI关闭且没有部署包。
+- 新业务云函数：`jiancheng_daka_api`（主数据同步）；另有 `jiancheng_daka_features`（偏好/分享/提醒）、`jiancheng_daka_public_share`（公开只读）、`jiancheng_daka_plan`（AI，关闭）、`jiancheng_daka_reminder_tick`（定时，关闭）——后四个均默认关闭，动作与门禁见[云函数设计](DESIGN-CLOUD.md)。
+- 集合：`jiancheng_daka_accounts` 及旁路集合 `jiancheng_daka_preferences`、`jiancheng_daka_shares`、`jiancheng_daka_limits`、`jiancheng_daka_reminders`、`jiancheng_daka_ai_requests`、`jiancheng_daka_ai_budget`（均已建立、为空）。
 - `cloud.product.js`保存独立、默认关闭的正式目标；名称`product`不是已验证的环境ID。当前`cloud.js`保留旧测试调用地址；新代码不回退读取`yidian_accounts`，新函数请求失败不自动改调`habitApi`。
 - 每用户习惯、记录、设置和幂等回执仍是同一账户文档中的payload，不为改名拆分集合或改变事务模型。账户摘要仍按APPID和OPENID生成；`HABIT_APP_ID`等环境变量是函数级配置，不需要改共享环境中其他应用的变量。
 - 正式配置有`storageNamespace: 'jiancheng_daka'`，云同意、账户绑定、确认缓存和待同步队列同时按环境及命名空间隔离。旧测试键不修改/删除，不自动上传到新集合。
 - 命名前缀不是安全边界；新集合须拒绝客户端直接读写，新函数继续只允许本小程序可信身份。资源共享若由另一小程序提供，还需核对资源方AppID、共享授权和真实调用上下文后接入，不猜测或放宽身份白名单。
-- 只部署`cloudfunctions/jiancheng_daka_api`，只创建/配置该应用集合；不批量部署cloudfunctions根目录，不改共享认证函数、其他小程序函数、集合或环境级权限。
+- 现阶段已部署本项目 5 个专属函数（见上），后续新增/变更仍逐个部署 `cloudfunctions/jiancheng_daka_*`、逐项创建本项目集合；不批量部署 cloudfunctions 根目录，不改共享认证函数、其他小程序函数、集合或环境级权限。正式共享环境实测 `Cloud.init()` 仍返回 `errCode:403`，运行时鉴权未通过前不切换活动配置。
 
 ## 数据权威与用户入口
 
@@ -33,6 +34,7 @@
 - `miniprogram/services/workspace-store.js`：业务页面唯一工作区；旧本机存储只提供导出并在云端删除成功后清理。
 - `miniprogram/pages/sync`：数据说明、同步状态、重试、刷新、备份和冲突处理。
 - `scripts/build-cloud.cjs`：生成云函数共享代码并检查与服务端源码一致；生成目录不手工修改。
+- 其余 4 个函数（`features` / `public_share` / `plan` / `reminder_tick`）的模块划分、动作与门禁见[云函数设计](DESIGN-CLOUD.md)。
 
 ## 协议
 
@@ -90,7 +92,7 @@ B019补充：无确认缓存时，手动`refresh()`复用`start()`重新初始�
 | 本机待同步操作 | 200个 |
 | 单次请求JSON | 4096字节 |
 
-这些只是应用保护阈值，不代表云平台配额或完整费用控制。当前仍缺少服务端每用户/全局限流、预算熔断和正式归档策略，不能直接面向公众开放。
+这些只是应用保护阈值，不代表云平台配额或完整费用控制。服务端每用户/全局限流（`jiancheng_daka_limits`）与 AI 日/月预留预算（`jiancheng_daka_ai_budget`）已在代码实现，但平台配额、账单告警、停服验证与正式归档策略仍待配置验收，不能直接面向公众开放。
 
 ## 启用门禁
 
@@ -98,7 +100,7 @@ B019补充：无确认缓存时，手动`refresh()`复用`start()`重新初始�
 
 1. 项目AppID已配置；先取得product实际环境ID和资源所属AppID（如为跨小程序共享），确认访问授权与真实身份语义。AppSecret不进入工程或前端包。
 2. 本地通过 `npm test`、`scripts/check.cjs`、`scripts/build-cloud.cjs --check`、原生编译和Node 16兼容检查。
-3. 只部署`jiancheng_daka_api`，核对Active/运行时/云包完整；只创建`jiancheng_daka_accounts`并核对索引，先检查同名资源是否已有数据或属于其他用途，禁止覆盖。
+3. 逐个部署本项目 5 个专属函数，核对 Active/运行时/云包完整；逐一创建 7 个集合并核对索引，先检查同名资源是否已有数据或属于其他用途，禁止覆盖。新函数默认关闭，验收前不配置启用变量。
 4. 确认集合规则为客户端不可直接读写，并用真实小程序入口复核 APPID、OPENID、SOURCE；仅允许 `wx_client` 和 `wx_devtools`。
 5. 评估 `wx-server-sdk 4.0.2` 依赖告警；未知SDK错误必须停止服务，不能写入假空账户。
 6. 仅在`jiancheng_daka_api`配置`HABIT_APP_ID=wx58e61dffcbfa4249`、`HABIT_MINIPROGRAM_ONLY=true`；集合及权限验证后再启用`HABIT_API_ENABLED=true`，不改其他函数变量或共享认证配置。

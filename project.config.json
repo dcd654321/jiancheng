@@ -31,8 +31,7 @@
   },
   "packOptions": {
     "ignore": [
-      { "type": "file", "value": "core/ai-catalog.js" },
-      { "type": "file", "value": "config/cloud.product.js" }
+      { "type": "file", "value": "core/ai-catalog.js" }
     ],
     "include": []
   },

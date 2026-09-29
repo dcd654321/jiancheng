@@ -30,7 +30,7 @@
     "seedBusinessData": false,
     "createTimerBeforeAcceptance": false,
     "enableFeaturesBeforeAcceptance": false,
-    "switchActiveClientBeforeAcceptance": false,
+    "switchActiveClientBeforeAcceptance": true,
     "manageOtherApps": false,
     "sharedAuthFunction": "cloudbase_auth",
     "sharedAuthManagedHere": false

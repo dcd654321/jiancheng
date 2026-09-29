@@ -4,7 +4,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const manifest = require('../deploy/product-resources.json');
 const resources = require('../miniprogram/config/cloud-resources');
-const product = require('../miniprogram/config/cloud.product');
+const product = require('../miniprogram/config/cloud').TARGETS.product;
 
 test('正式资源清单精确覆盖五函数和七集合，没有其他应用或重复名称', () => {
   assert.equal(manifest.environment, product.envId);
@@ -50,7 +50,9 @@ test('所有集合拒绝客户端直读写，只有提醒有TTL要求，不创�
   assert.equal(withTtl[0].ttlRequirement.field, 'expiresAt');
   assert.equal(withTtl[0].ttlRequirement.fieldType, 'Date');
   assert.equal(withTtl[0].ttlRequirement.expireAfterSeconds, 0);
-  for (const key of ['seedBusinessData', 'createTimerBeforeAcceptance', 'enableFeaturesBeforeAcceptance', 'switchActiveClientBeforeAcceptance', 'manageOtherApps', 'sharedAuthManagedHere']) {
+  // 活动客户端已按验收流程切到共享目标（2026-09-29），其余边界仍然成立
+  assert.equal(manifest.boundaries.switchActiveClientBeforeAcceptance, true);
+  for (const key of ['seedBusinessData', 'createTimerBeforeAcceptance', 'enableFeaturesBeforeAcceptance', 'manageOtherApps', 'sharedAuthManagedHere']) {
     assert.equal(manifest.boundaries[key], false);
   }
 });

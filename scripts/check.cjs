@@ -43,7 +43,7 @@ if (app.lazyCodeLoading === 'requiredComponents' && fs.existsSync(privateConfigP
 }
 const packagedIgnores = new Set((config.packOptions?.ignore || [])
   .filter(rule => rule.type === 'file').map(rule => rule.value));
-for (const buildOnlyFile of ['core/ai-catalog.js', 'config/cloud.product.js']) {
+for (const buildOnlyFile of ['core/ai-catalog.js']) {
   if (!packagedIgnores.has(buildOnlyFile)) {
     throw Error(`Build-only file must be excluded from the miniprogram package: ${buildOnlyFile}`);
   }

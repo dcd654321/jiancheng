@@ -8,6 +8,7 @@
     "check": "node scripts/check.cjs",
     "build:cloud": "node scripts/build-cloud.cjs",
     "check:cloud": "node scripts/build-cloud.cjs --check",
+    "deploy:cloud": "node scripts/deploy-cloud.cjs",
     "openspec": "node scripts/openspec.cjs"
   },
   "engines": {

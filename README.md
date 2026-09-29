@@ -14,7 +14,7 @@
 
 命名配置位于`miniprogram/config/cloud-resources.js`，构建/SDK测试路径同步调整。前缀用于辨识资源，访问控制仍依赖可信小程序身份和数据库权限，不能以命名代替隔离。
 
-**正式环境尚未接入**：已核实共享正式环境 `product`，其中 `jiancheng_daka_api` 已部署、`jiancheng_daka_accounts` 已存在，正式环境创建失败的旧 `habitApi` 已按确认删除。共享环境调用、身份校验与权限仍需独立验收，`cloud.product.js` 预备配置保持关闭。当前 `cloud.js` 只调用本小程序的测试环境 `jiancheng_daka_api`；仓库上传不等于正式云接入或上线。
+**环境按版本解析（2026-09-29 起）**：`miniprogram/config/cloud.js` 按运行版本选目标——开发版/体验版连共享测试环境 `cloud1-d8gopnalv908bb47a`，正式版连共享正式环境 `product-d2g59zty74d7d1ec1`（资源方均为 `wx7ad85943fe81e095`）。函数部署走 `npm run deploy:cloud -- --env test|product`，脚本先核对云函数产物与 `server/` 源码一致再上传。共享初始化已在正式环境验证通过；测试环境的函数、集合与函数环境变量需按 `deploy/product-resources.json` 同一清单部署后方可用于日常开发。仓库上传不等于验收完成或上线。
 
 ## 获取源码
 
