@@ -1,6 +1,6 @@
 # 发布准备验证记录
 
-更新日期：2026-09-21。产品：渐成习惯打卡。工程：`D:\codex\coding\yidian-miniprogram`。
+更新日期：2026-09-21。产品：渐成习惯打卡。工程：`D:\codex\coding\jiancheng-miniprogram`。
 
 结论：旧测试云及基础云业务可用；B019可靠性、B020页面整改和B021本地资源专属命名均已实现。当前194项测试、116项结构检查、云包一致性、Node 16及原生编译通过。新的product尚未识别实际ID、部署或切换；完整业务、双账户、真机、安全隐私和平台审核尚未完成，不能宣称正式上线就绪。最新证据及回滚见[CLOUD-NAMESPACE-20260921.md](CLOUD-NAMESPACE-20260921.md)，页面见[UX-FIX-20260920.md](UX-FIX-20260920.md)，可靠性见[RELIABILITY-FIX-20260920.md](RELIABILITY-FIX-20260920.md)，旧基础云流程见[STARTUP-FIX-20260920.md](STARTUP-FIX-20260920.md)。
 
@@ -104,7 +104,7 @@
 
 拟从模拟器调用不存在的`deployment_probe`动作以验证服务端身份入口；源码中未知动作在`validateEvent`处拒绝，早于事务仓库，故该探针本身不写数据库。但微信开发者工具将`automation_evaluate`置为`Waiting for user authorization`，轮询仍为`pending`；调用未执行，不能据此声称SOURCE/APPID已通过或被拒绝。没有改用真实`pull`，因为首次`pull`可能创建空账户文档。客户端仍是`enabled:false`。此前2026-09-16本地测试结果未在本次重跑。
 
-回退服务端开关需在测试环境 `habitApi` 的配置中将 `HABIT_API_ENABLED` 改为 `false` 并重新打开核对；文件检查点不回退云端配置。文档检查点为`D:\codex\coding\yidian-recovery\20260919-B016-T8-server-flags\project`。
+回退服务端开关需在测试环境 `habitApi` 的配置中将 `HABIT_API_ENABLED` 改为 `false` 并重新打开核对；文件检查点不回退云端配置。文档检查点为`D:\codex\coding\jiancheng-recovery\20260919-B016-T8-server-flags\project`。
 
 ## 尚未完成
 

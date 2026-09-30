@@ -22,93 +22,93 @@
 
 | 步骤 | 页面/状态 | 评价 |
 | --- | --- | --- |
-| 01 今日：已完成状态 | [原始截图](D:/codex/coding/yidian-miniprogram/docs/audits/20260920-ux/01-today.png) | 基本可用，层级待优化 |
-| 02 创建习惯：上半屏 | [原始截图](D:/codex/coding/yidian-miniprogram/docs/audits/20260920-ux/02-create-top.png) | 需优先优化 |
-| 03 创建习惯：下半屏 | [原始截图](D:/codex/coding/yidian-miniprogram/docs/audits/20260920-ux/03-create-bottom.png) | 基本可用，步骤偏长 |
-| 04 习惯详情 | [原始截图](D:/codex/coding/yidian-miniprogram/docs/audits/20260920-ux/04-detail.png) | 基本可用，有草稿风险 |
-| 05 进度统计 | [原始截图](D:/codex/coding/yidian-miniprogram/docs/audits/20260920-ux/05-progress.png) | 可用，指标表达待优化 |
-| 06 我的 | [原始截图](D:/codex/coding/yidian-miniprogram/docs/audits/20260920-ux/06-mine.png) | 可用，分组不清 |
-| 07 数据同步 | [原始截图](D:/codex/coding/yidian-miniprogram/docs/audits/20260920-ux/07-sync.png) | 正常状态可用，失败恢复有缺陷 |
-| 08 备份与恢复 | [原始截图](D:/codex/coding/yidian-miniprogram/docs/audits/20260920-ux/08-backup.png) | 名称与实际操作不匹配 |
-| 09 计划助手：输入 | [原始截图](D:/codex/coding/yidian-miniprogram/docs/audits/20260920-ux/09-assistant.png) | 需精简 |
-| 10 计划助手：生成动作 | [原始截图](D:/codex/coding/yidian-miniprogram/docs/audits/20260920-ux/10-assistant-action.png) | 可用，产品文案不足 |
-| 11 计划预览 | [原始截图](D:/codex/coding/yidian-miniprogram/docs/audits/20260920-ux/11-plan-preview.png) | 可用，确认路径偏绕 |
+| 01 今日：已完成状态 | [原始截图](D:/codex/coding/jiancheng-miniprogram/docs/audits/20260920-ux/01-today.png) | 基本可用，层级待优化 |
+| 02 创建习惯：上半屏 | [原始截图](D:/codex/coding/jiancheng-miniprogram/docs/audits/20260920-ux/02-create-top.png) | 需优先优化 |
+| 03 创建习惯：下半屏 | [原始截图](D:/codex/coding/jiancheng-miniprogram/docs/audits/20260920-ux/03-create-bottom.png) | 基本可用，步骤偏长 |
+| 04 习惯详情 | [原始截图](D:/codex/coding/jiancheng-miniprogram/docs/audits/20260920-ux/04-detail.png) | 基本可用，有草稿风险 |
+| 05 进度统计 | [原始截图](D:/codex/coding/jiancheng-miniprogram/docs/audits/20260920-ux/05-progress.png) | 可用，指标表达待优化 |
+| 06 我的 | [原始截图](D:/codex/coding/jiancheng-miniprogram/docs/audits/20260920-ux/06-mine.png) | 可用，分组不清 |
+| 07 数据同步 | [原始截图](D:/codex/coding/jiancheng-miniprogram/docs/audits/20260920-ux/07-sync.png) | 正常状态可用，失败恢复有缺陷 |
+| 08 备份与恢复 | [原始截图](D:/codex/coding/jiancheng-miniprogram/docs/audits/20260920-ux/08-backup.png) | 名称与实际操作不匹配 |
+| 09 计划助手：输入 | [原始截图](D:/codex/coding/jiancheng-miniprogram/docs/audits/20260920-ux/09-assistant.png) | 需精简 |
+| 10 计划助手：生成动作 | [原始截图](D:/codex/coding/jiancheng-miniprogram/docs/audits/20260920-ux/10-assistant-action.png) | 可用，产品文案不足 |
+| 11 计划预览 | [原始截图](D:/codex/coding/jiancheng-miniprogram/docs/audits/20260920-ux/11-plan-preview.png) | 可用，确认路径偏绕 |
 
 ### 01 今日：已完成状态
 
 基本可用，层级待优化。白底深绿统一，进度明确。在本次1项已完成状态中，口号、日期、短句、进度和完成提示占据上半屏，添加与已完成列表分离；主要状态按钮显示“撤销”，而不是“已完成”。建议压缩顶部，让任务列表承担主视觉；撤销保留为次级动作。未通过修改真实记录来拍未完成状态。
 
-![01 今日：已完成状态](D:/codex/coding/yidian-miniprogram/docs/audits/20260920-ux/01-today.png)
+![01 今日：已完成状态](D:/codex/coding/jiancheng-miniprogram/docs/audits/20260920-ux/01-today.png)
 
 ### 02 创建习惯：上半屏
 
 需优先优化。363px模拟器中周一到周六占一行，周日单独换行；固定的星期选择结构不稳定。输入边界明确，但单位选择缺下拉提示；只有名称、目标、频率属于常用初始输入，选填项可以收起。
 
-![02 创建习惯：上半屏](D:/codex/coding/yidian-miniprogram/docs/audits/20260920-ux/02-create-top.png)
+![02 创建习惯：上半屏](D:/codex/coding/jiancheng-miniprogram/docs/audits/20260920-ux/02-create-top.png)
 
 ### 03 创建习惯：下半屏
 
 基本可用，步骤偏长。滚动后才看到保存。计划时间、忙时简化目标、今天/明天开始及多处说明都在首次创建中展开。建议保留明确保存按钮，采用紧凑表单与更多设置；若固定底部按钮，必须补键盘和安全区避让。初次创建没有保存，本轮未新增习惯。
 
-![03 创建习惯：下半屏](D:/codex/coding/yidian-miniprogram/docs/audits/20260920-ux/03-create-bottom.png)
+![03 创建习惯：下半屏](D:/codex/coding/jiancheng-miniprogram/docs/audits/20260920-ux/03-create-bottom.png)
 
 ### 04 习惯详情
 
 基本可用，有草稿风险。目标和状态清楚；备注大输入框常驻，修改/暂停/归档及历史列表同屏堆叠。建议备注默认一行入口、已有备注摘要；状态管理收进更多操作；创建前的27个“休息/未开始”不必逐行铺开。另有未保存备注被刷新覆盖的本地复现，见健壮性章节。
 
-![04 习惯详情](D:/codex/coding/yidian-miniprogram/docs/audits/20260920-ux/04-detail.png)
+![04 习惯详情](D:/codex/coding/jiancheng-miniprogram/docs/audits/20260920-ux/04-detail.png)
 
 ### 05 进度统计
 
 可用，指标表达待优化。7/28天与日期可点选；当前100%由1/1次计划计算，计算本身正确，不能读成“坚持了一周”。优先展示“近7天完成1次／计划1次”，比率为辅助。每日明细与期间习惯汇总重复占位，可区分层级或折叠。图例缺少代码中存在的未完成灰色状态。
 
-![05 进度统计](D:/codex/coding/yidian-miniprogram/docs/audits/20260920-ux/05-progress.png)
+![05 进度统计](D:/codex/coding/jiancheng-miniprogram/docs/audits/20260920-ux/05-progress.png)
 
 ### 06 我的
 
 可用，分组不清。行高与开关足够明显；我的习惯、数据同步、备份、CSV导出、偏好、隐私及删除同层展示。建议分成习惯管理、偏好、数据与隐私；删除放二级危险操作区并保留确认。当前代码已有两次删除确认，不能把这张截图理解成点击即删。
 
-![06 我的](D:/codex/coding/yidian-miniprogram/docs/audits/20260920-ux/06-mine.png)
+![06 我的](D:/codex/coding/jiancheng-miniprogram/docs/audits/20260920-ux/06-mine.png)
 
 ### 07 数据同步
 
 正常状态可用，失败恢复有缺陷。确认快照、导出同步备份是开发者术语；最近同步显示原始UTC时间串。应显示“已保存到云端”“上次保存：今天14:32”等本地时间，以及离线/待同步/失败的区别。正常页面截图不证明异常路径正确。
 
-![07 数据同步](D:/codex/coding/yidian-miniprogram/docs/audits/20260920-ux/07-sync.png)
+![07 数据同步](D:/codex/coding/jiancheng-miniprogram/docs/audits/20260920-ux/07-sync.png)
 
 ### 08 备份与恢复
 
 名称与实际操作不匹配。页面提供导出当前备份、导出旧版本机记录，没有备份文件导入；云恢复是同账户自动读取。建议改为数据管理中的“导出与找回记录”，说明备份用途，不为了配合标题贸然增加覆盖式导入。旧版入口放迁移子项，且仅检测到旧数据时显示。
 
-![08 备份与恢复](D:/codex/coding/yidian-miniprogram/docs/audits/20260920-ux/08-backup.png)
+![08 备份与恢复](D:/codex/coding/jiancheng-miniprogram/docs/audits/20260920-ux/08-backup.png)
 
 ### 09 计划助手：输入
 
 需精简。方向和可用分钟容易理解，但再次要求星期与时间，和创建页重复。周日同样换行，首屏看不到生成按钮。建议先问做什么、最多几分钟，再给建议，频率等使用默认值并允许修改。
 
-![09 计划助手：输入](D:/codex/coding/yidian-miniprogram/docs/audits/20260920-ux/09-assistant.png)
+![09 计划助手：输入](D:/codex/coding/jiancheng-miniprogram/docs/audits/20260920-ux/09-assistant.png)
 
 ### 10 计划助手：生成动作
 
 可用，产品文案不足。“AI尚未接入”“本机规则”“不消耗模型费用”占据显著位置。当前确实没有AI，不能改成AI生成；可命名“给我一个小目标”，在说明中写“根据填写的信息提供基础建议”，未来再提供可选AI细化。
 
-![10 计划助手：生成动作](D:/codex/coding/yidian-miniprogram/docs/audits/20260920-ux/10-assistant-action.png)
+![10 计划助手：生成动作](D:/codex/coding/jiancheng-miniprogram/docs/audits/20260920-ux/10-assistant-action.png)
 
 ### 11 计划预览
 
 可用，确认路径偏绕。本地规则生成了具体目标和动作，预览不保存这一点正确；反复技术说明稀释主结果。“带入创建表单”建议改为“使用这个计划”，下一步仍明确确认后保存；将已填写内容预填，避免重复决策。本轮未采用或保存建议。
 
-![11 计划预览](D:/codex/coding/yidian-miniprogram/docs/audits/20260920-ux/11-plan-preview.png)
+![11 计划预览](D:/codex/coding/jiancheng-miniprogram/docs/audits/20260920-ux/11-plan-preview.png)
 
 ## 需要先修的健壮性问题
 
-以下为当前代码的独立审查结果，没有通过修改真实云数据制造故障。可复现脚本：[robustness-probes.cjs](D:/codex/coding/yidian-miniprogram/docs/audits/20260920-ux/robustness-probes.cjs)，只使用内存账户、存储和传输。
+以下为当前代码的独立审查结果，没有通过修改真实云数据制造故障。可复现脚本：[robustness-probes.cjs](D:/codex/coding/jiancheng-miniprogram/docs/audits/20260920-ux/robustness-probes.cjs)，只使用内存账户、存储和传输。
 
 ### R1 / 高：首次读取失败后，同步页重试无法恢复
 
 无缓存、已同意、首次读取失败后，同步页显示“重新读取”；按钮调用 session.refresh，而该方法先要求已有engine。网络恢复后点击，实际未发起新请求，仍提示“请先阅读说明并同意连接”。内存复现确认重试的网络调用增量为0；改用已有start路径能成功。
 
-- 代码：[同步页入口](D:/codex/coding/yidian-miniprogram/miniprogram/pages/sync/index.js:25)、[会话refresh](D:/codex/coding/yidian-miniprogram/miniprogram/services/cloud-session.js:160)。
+- 代码：[同步页入口](D:/codex/coding/jiancheng-miniprogram/miniprogram/pages/sync/index.js:25)、[会话refresh](D:/codex/coding/jiancheng-miniprogram/miniprogram/services/cloud-session.js:160)。
 - 改法：统一ensureReady/reload入口，无engine调用start，有engine保留缓存再refresh；按钮处理用户任务，不暴露会话初始化细节。
 - 验收：首次请求失败，网络恢复后只点一次重试，不需回首页、清缓存或重复同意；保留已输入草稿。
 
@@ -116,7 +116,7 @@
 
 详情onNote只修改页面data；refresh无条件用已保存的task.note覆盖它。内存加载实际详情控制器后，输入未保存文字，再执行onHide/onShow，文字变为空。应用回前台或延迟数据刷新也应检查这一风险。
 
-- 代码：[详情刷新](D:/codex/coding/yidian-miniprogram/miniprogram/pages/detail/index.js:22)、[备注输入](D:/codex/coding/yidian-miniprogram/miniprogram/pages/detail/index.js:28)。
+- 代码：[详情刷新](D:/codex/coding/jiancheng-miniprogram/miniprogram/pages/detail/index.js:22)、[备注输入](D:/codex/coding/jiancheng-miniprogram/miniprogram/pages/detail/index.js:28)。
 - 改法：区分已保存值与dirty草稿；刷新只更新未编辑字段。暂离保留本页草稿，离开详情时提示放弃或保存；保存确认后再清dirty。无需立即新增复杂云草稿系统。
 - 验收：输入→切后台/返回/云请求完成，未保存文字仍在；取消放弃不丢文字；保存失败不能假称成功。
 
@@ -126,7 +126,7 @@
 
 首页取得syncText但模板未展示。当天打卡先本地入队、再后台提交；短暂toast消失后，如果上传失败，主任务列表缺持续可见的风险说明。正常状态无需常驻大告警，异常时必须可见。
 
-- 代码：[同步标题](D:/codex/coding/yidian-miniprogram/miniprogram/pages/sync/index.wxml:19)、[首页模板](D:/codex/coding/yidian-miniprogram/miniprogram/pages/today/index.wxml:17)。
+- 代码：[同步标题](D:/codex/coding/jiancheng-miniprogram/miniprogram/pages/sync/index.wxml:19)、[首页模板](D:/codex/coding/jiancheng-miniprogram/miniprogram/pages/today/index.wxml:17)。
 - 改法：统一状态模型与通知，区分“已保存到云端／正在同步／离线，显示上次记录／有N条待同步／需要处理冲突”。异常时首页显示窄提示，可进入处理页；不要重新放回“本机模式”或让用户选择数据来源。
 - 验收：成功、失败、重试、冲突后所有可见页面状态一致；云端未确认的操作不能暗示已经安全备份。
 
@@ -134,7 +134,7 @@
 
 当前session有入队后的提交和onForeground重试，未见onNetworkStatusChange监听或受控的联网恢复调度。内存复现：离线打卡留下1条队列，网络恢复但不触发前台事件时仍为1；调用onForeground后归零。不能把“重回小程序会重试”等同于“停留页面恢复网络就会自动同步”。
 
-- 代码：[提交调度](D:/codex/coding/yidian-miniprogram/miniprogram/services/cloud-session.js:178)、[前台处理](D:/codex/coding/yidian-miniprogram/miniprogram/services/cloud-session.js:191)。
+- 代码：[提交调度](D:/codex/coding/jiancheng-miniprogram/miniprogram/services/cloud-session.js:178)、[前台处理](D:/codex/coding/jiancheng-miniprogram/miniprogram/services/cloud-session.js:191)。
 - 改法：注册一次网络恢复监听，合并重复触发，复用单飞提交；冲突和终止性拒绝不自动重试。需要退避和次数上限，不采用高频轮询。
 - 验收：断网打卡→不离开页面→恢复网络，队列自动提交且UI同步更新；反复网络抖动不重复记录、不产生请求风暴。
 

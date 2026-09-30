@@ -4,7 +4,7 @@
 
 用户授权：先在测试环境验收；验收通过后，将同一版 `jiancheng_daka_api` 云函数同步到 `product`。用户进一步确认 **只部署云函数，客户端默认环境暂不切换**。`main` 不合并，不操作共用环境其他函数、集合、权限或环境变量。
 
-候选代码：`dev` 提交 `b7b3a90`。完整目录 `D:\codex\coding\yidian-miniprogram\cloudfunctions\jiancheng_daka_api`。测试目标 AppID `wx58e61dffcbfa4249`，环境 `cloud1-d4gq76oyt363f08a7`；正式目标资源方 AppID `wx7ad85943fe81e095`，环境 `product-d2g59zty74d7d1ec1`。两者只更新同名函数。
+候选代码：`dev` 提交 `b7b3a90`。完整目录 `D:\codex\coding\jiancheng-miniprogram\cloudfunctions\jiancheng_daka_api`。测试目标 AppID `wx58e61dffcbfa4249`，环境 `cloud1-d4gq76oyt363f08a7`；正式目标资源方 AppID `wx7ad85943fe81e095`，环境 `product-d2g59zty74d7d1ec1`。两者只更新同名函数。
 
 ## 部署前证据
 

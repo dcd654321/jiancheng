@@ -30,8 +30,8 @@
 
 ## 回滚
 
-修复前6个原文件的校验副本在`D:\codex\coding\yidian-recovery\20260919-B017-before-entry-metadata\project`。恢复其中的入口文件并另行部署可回退云端代码；新增测试文件可单独移走，其他源码未改。
+修复前6个原文件的校验副本在`D:\codex\coding\jiancheng-recovery\20260919-B017-before-entry-metadata\project`。恢复其中的入口文件并另行部署可回退云端代码；新增测试文件可单独移走，其他源码未改。
 
 本地文件恢复不会撤销云端部署。需要停用测试函数时，将该环境的`HABIT_API_ENABLED`设置为`false`。已有`20260919-B016-T8-server-flags`检查点保留配置与文档历史。该记录不保存AppSecret、OPENID、原始身份元数据或习惯备注。
 
-最终本地待部署检查点：`D:\codex\coding\yidian-recovery\20260920-B017-entry-final-local\project`，保存入口、回归测试及6份相关文档，共8个文件；复制后逐一核对SHA-256。当前微信工具已显示“MCP 客户端授权”弹窗，等待本次`habitApi`增量更新确认；未自动处理该授权窗口。
+最终本地待部署检查点：`D:\codex\coding\jiancheng-recovery\20260920-B017-entry-final-local\project`，保存入口、回归测试及6份相关文档，共8个文件；复制后逐一核对SHA-256。当前微信工具已显示“MCP 客户端授权”弹窗，等待本次`habitApi`增量更新确认；未自动处理该授权窗口。

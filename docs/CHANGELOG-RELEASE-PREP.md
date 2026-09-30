@@ -8,8 +8,8 @@
 
 ### B000 完整基线备份（代码修改前）
 
-- 原工程：`D:\codex\coding\yidian-miniprogram`
-- 备份：`D:\codex\coding\yidian-recovery\20260914-222139-before-release-work\project`
+- 原工程：`D:\codex\coding\jiancheng-miniprogram`
+- 备份：`D:\codex\coding\jiancheng-recovery\20260914-222139-before-release-work\project`
 - 68个文件逐一核对SHA-256，通过。包含当前 project.private.config.json 以及用户打开开发者工具后新增的项目配置；未重置这些修改。
 - 当前目录不是可用Git仓库，采用目录快照与逐批文件清单，不执行git reset或清理操作。
 - 回滚方法：先关闭该工程、备份回滚时的当前目录；从基线目录复制待回滚文件到相同相对路径。新增文件按各批清单移到旁路归档，不递归删除工程。全量回退时可直接将开发者工具导入目录切换到备份中的project（不要在唯一基线副本上长期开发）。
@@ -45,7 +45,7 @@
 - 本机存储新增 yidian.native.restore-recovery.v1，只保存最近一次恢复前副本；删除本机数据时一并清除。无网络或云端写入。
 - 回滚：上述修改文件从B000同路径恢复；新增文件移动到旁路归档。存储恢复副本不随代码回滚消失，旧版本不会读取；切勿直接清空模拟器缓存。
 - 新增16项备份/页面测试，全套109项通过；80项语法/配置/路由检查通过，微信wcc编译9份WXML通过。真机选择/发送文件未验收。
-- B002完整检查点（含SDK 3.0.1依赖）：`D:\codex\coding\yidian-recovery\20260915-B002-before-sdk-upgrade\project`，2162文件逐一SHA256一致。
+- B002完整检查点（含SDK 3.0.1依赖）：`D:\codex\coding\jiancheng-recovery\20260915-B002-before-sdk-upgrade\project`，2162文件逐一SHA256一致。
 
 ### B003 SDK安全升级与检查完善（已完成本地验证，安全告警未清零）
 
@@ -60,7 +60,7 @@
 
 ### B004 开发者工具原生页面验收（进行中）
 
-- 仅操作 yidian-miniprogram 窗口，不操作 weddingTodo。通过返回的窗口相对坐标点击成功；截图ID坐标此前出现偏移，未继续盲点。
+- 仅操作 jiancheng-miniprogram 窗口，不操作 weddingTodo。通过返回的窗口相对坐标点击成功；截图ID坐标此前出现偏移，未继续盲点。
 - 已实际观察首页空状态、阅读模板到创建表单的原生导航；表单展示模板、目标、星期、时间，并明确不调用AI。
 - 后续原生写入仅使用“验收用阅读”标记的本机测试习惯，计划验证创建/完成/撤销/统计；若产生记录将保留并注明，不自动清空用户缓存。
 - 观察到未聚焦的原生input文字靠下，补app.wxss中input专用纵向padding为0，不影响textarea。该文件回滚可直接用B002检查点；后续重新编译与表单复看。
@@ -78,7 +78,7 @@
 
 ### B005 计划助手流程（本机流程完成，真实AI未接入）
 
-- 修改前完整检查点：`D:\codex\coding\yidian-recovery\20260915-B004-before-ai-flow\project`，5892个文件逐一SHA256核对一致，含4.0.2本地依赖及已完成恢复功能。
+- 修改前完整检查点：`D:\codex\coding\jiancheng-recovery\20260915-B004-before-ai-flow\project`，5892个文件逐一SHA256核对一致，含4.0.2本地依赖及已完成恢复功能。
 - 原生复测：“添加习惯”成功打开空创建表单；未观察到对应业务报错。未聚焦名称占位文字和目标数字现在居中，确认input样式调整有效。不据此前一次延迟观测擅改导航业务。
 - 计划新增本机规则模板/AI输入合同、计划助手原生页、会话内草稿交接和关闭状态的AI传输门控；预览不保存，带入表单后用户再次确认创建。
 - AI未配置不联网、不产生费用，不宣称已AI接入。模板单独标为本机规则建议，不推断固定天数一定养成；只保留必要的方向、可用时长、哪几天做和时间。
@@ -91,7 +91,7 @@
 
 ### B006 本机启动短句（已完成本地与模拟器验证）
 
-- 修改前局部检查点：`D:\codex\coding\yidian-recovery\20260915-B005-before-local-quotes\project`。备份app.js、今日页js/wxml、README、BACKLOG、VERIFICATION及本日志，共7个文件逐一SHA256一致；这不是包含依赖的完整工程备份。
+- 修改前局部检查点：`D:\codex\coding\jiancheng-recovery\20260915-B005-before-local-quotes\project`。备份app.js、今日页js/wxml、README、BACKLOG、VERIFICATION及本日志，共7个文件逐一SHA256一致；这不是包含依赖的完整工程备份。
 - 新增services/quotes.js、tests/quotes.test.cjs；首页首次显示固定“一点，也算向前。”，后续冷启动随机且避免相邻重复；同次启动打卡、刷新和切换Tab不换句。隐藏短句时不消耗首次展示。
 - 随包自编10句，不联网、不调用AI、不增加启动页等待。只新增本机非个人索引键yidian.native.quote-index.v1，不读取/上传习惯内容；习惯删除不影响此非个人展示索引，清理小程序全部缓存后重置。存储失败只失去跨启动去重能力。
 - 顺便将首页休息日说明的“执行星期”改为“安排在哪几天”，保持用户已确认的易懂表述。
@@ -107,7 +107,7 @@
 
 ### B008 测试云部署与本地环境绑定（已完成）
 
-- 修改前回滚点：`D:\codex\coding\yidian-recovery\20260915-B008-after-cloud-deploy\project`，7个拟修改文件逐一SHA256核验。
+- 修改前回滚点：`D:\codex\coding\jiancheng-recovery\20260915-B008-after-cloud-deploy\project`，7个拟修改文件逐一SHA256核验。
 - 先在微信开发者工具将云函数根目录绑定到 `cloud1`，再使用“云端安装依赖”部署 `habitApi`。首次部署因未绑定环境被拒绝；绑定后部署完成。官方 `wechatide` CLI 只读核验返回：环境列表仅含 `cloud1-d4gq76oyt363f08a7`；函数列表含 `habitApi`；函数状态 `Active`，运行时 `Nodejs16.13`；数据库含 `yidian_accounts`，记录数0、索引2。
 - 本地 `miniprogram/config/cloud.js` 仅写入已核验的测试环境ID，`enabled` 仍为false；服务端 `HABIT_API_ENABLED`、`HABIT_MINIPROGRAM_ONLY`、`HABIT_APP_ID`尚未配置，因此不会联网、不会上传本机记录。未写入AppSecret或其他凭据。
 - 未修改数据库权限、未写入/删除集合文档、未购买套餐、未提交审核或发布。此前用户已将权限修正为“所有用户不可读写”，但本次未重复点按保存；需后续用CLI/两个真实账户验证客户端拒绝访问。
@@ -116,13 +116,13 @@
 
 ### B009 导出与清除竞态保护（初步修复，已由B010补强）
 
-- 修改前回滚点：`D:\codex\coding\yidian-recovery\20260915-B009-export-race-fix\project`，6个文件逐一SHA256核验。
+- 修改前回滚点：`D:\codex\coding\jiancheng-recovery\20260915-B009-export-race-fix\project`，6个文件逐一SHA256核验。
 - `我的`页面导出任务增加代际令牌：写入尚未完成时进行本机清除，会使在途回调失效；写入失败、页面离开或数据来源切换也不会继续发送旧文件。新增1项回归测试。
 - 后续审查发现该测试只模拟回调，没有模拟“成功回调触发前文件已实际落盘”；固定文件名也使事后清理可能碰到新的导出。B009不再作为物理文件竞态已完全解决的依据，修复见B010。
 
 ### B010 导出物理文件竞态补强（已完成本地验证）
 
-- 修改前局部回滚点：`D:\codex\coding\yidian-recovery\20260915-B010-before-export-physical-race\project`，保存`我的`页控制器、页面测试和本日志并逐个计算SHA-256；不是完整工程快照。
+- 修改前局部回滚点：`D:\codex\coding\jiancheng-recovery\20260915-B010-before-export-physical-race\project`，保存`我的`页控制器、页面测试和本日志并逐个计算SHA-256；不是完整工程快照。
 - 新测试先让异步写入真实表现为“文件已落盘，再触发success”。原实现下两个用例均失败：清除后的旧文件仍存在；清除前后两个导出使用相同路径。
 - 导出改为每次写入唯一临时文件；只有仍有效的任务才以同步重命名替换正式CSV/JSON。清除、页面离开或来源切换后的晚到回调只删除自己的临时文件；清除后新导出使用不同临时路径，不会被旧回调误删。
 - 两项竞态测试由失败转为通过。加入来源校验前全套133项测试、92项检查、10份WXML（97945字节）、3份WXSS及5个云共享模块一致性检查通过。`renameSync`和文件发送仍需真机验收。
@@ -133,7 +133,7 @@
 - `server/handler.js`已重新构建到云函数包。本轮调用微信官方CLI完整部署并生成一项人工确认任务；后续用户已确认，但部署产物的运行时核验发现嵌套模块缺失，详见B013。不能把任务显示成功等同于云函数可调用。
 - 使用Node 16.13.2完成6个云包文件语法检查，并实际加载`wx-server-sdk 4.0.2`和`crypto.randomUUID`。npm官方注册表重查仍为low 1、moderate 14、high 11、critical 0；4.0.2仍是latest，未执行audit fix或使用beta。
 - 当前全套134项测试通过；92项检查、10份WXML（97945字节）、3份WXSS、5个云共享模块一致性及Node 16检查通过。服务端三个环境变量和前端云开关仍未启用，集合未写入数据。
-- 本地安全修复后检查点：`D:\codex\coding\yidian-recovery\20260915-B011-after-local-safety-fixes\project`，保存14个本轮相关代码、测试和文档文件，逐一SHA-256一致；这是局部快照，不包含node_modules或云端状态。
+- 本地安全修复后检查点：`D:\codex\coding\jiancheng-recovery\20260915-B011-after-local-safety-fixes\project`，保存14个本轮相关代码、测试和文档文件，逐一SHA-256一致；这是局部快照，不包含node_modules或云端状态。
 - 来源限制代码如需回滚，可从完整B008检查点恢复`server/handler.js`、云函数`index.js`/`lib/handler.js`及对应测试；B010保留导出竞态修复。云端部署一旦人工确认，文件回滚不会自动回滚云端，需另行部署已归档版本。
 
 ### B012 九页390px原生复看与同步页文案修正
@@ -143,7 +143,7 @@
 - 云连接页原写“云环境尚未配置”，但测试环境ID已经写入，只是安全门槛和开关未开放。仅将禁用态文案修正为“云功能尚未开放”，并明确权限、依赖和真实账户验证完成前不会联网；没有改变`enabled:false`或任何网络逻辑。修正后WXML总编译产物98002字节。
 - 控制台只有一条`wx.getSystemInfoSync`废弃告警；全工程搜索无该API，告警由本轮`automation_runtime_info --action systemInfo`自动化读取触发，不修改业务源码。错误和失败关键词为空。
 - 页面底部Tab仍只有文字，没有图标；保留为发布体验优化项。截图可回滚为移至旁路归档；同步页WXML旧文案可从完整B008检查点恢复。
-- 本批完成态检查点：`D:\codex\coding\yidian-recovery\20260915-B012-nine-page-390-evidence\project`，包含同步页WXML、3份本批文档和10张模拟器截图，共14个文件；逐一SHA-256一致。
+- 本批完成态检查点：`D:\codex\coding\jiancheng-recovery\20260915-B012-nine-page-390-evidence\project`，包含同步页WXML、3份本批文档和10张模拟器截图，共14个文件；逐一SHA-256一致。
 
 ### B013 云函数CLI部署缺包与恢复（已完成）
 
@@ -153,7 +153,7 @@
 - computer-use连接在重置后仍无法枚举本机窗口，因此没有继续操作界面。改由微信CLI为同一函数增量补齐`lib`目录；用户确认后任务尾号`78b4`返回成功，报告3个文件、4.9 KiB。没有修改云函数环境变量、数据库权限或集合内容。
 - 增量部署后再次显式初始化测试环境并调用不存在的`deployment_probe`动作，云函数成功加载全部入口依赖并在业务逻辑前返回`NOT_ENABLED`。这也证明既有`shared`模块可加载，无需再次上传。随后只读查询`yidian_accounts`返回`data: []`、`total: 0`；`habitApi`仍为Active、Nodejs16.13。
 - 前端`enabled:false`未改变；服务端`HABIT_APP_ID`、`HABIT_MINIPROGRAM_ONLY`、`HABIT_API_ENABLED`仍未设置。默认本机主流程不联网，也不会自动上传已有习惯。来源限制因默认开关更早返回，云端真实入口验证仍未完成。
-- 修改文档前检查点：`D:\codex\coding\yidian-recovery\20260915-B013-before-cloud-deploy-recovery\project`，保存README及4份发布/云同步文档并计算SHA-256。恢复完成态检查点：`D:\codex\coding\yidian-recovery\20260915-B013-after-cloud-deploy-recovery\project`，保存相同5份文件并逐一核验SHA-256。文件回滚不能恢复云端产物；若需回退云端，必须另行部署归档版本。
+- 修改文档前检查点：`D:\codex\coding\jiancheng-recovery\20260915-B013-before-cloud-deploy-recovery\project`，保存README及4份发布/云同步文档并计算SHA-256。恢复完成态检查点：`D:\codex\coding\jiancheng-recovery\20260915-B013-after-cloud-deploy-recovery\project`，保存相同5份文件并逐一核验SHA-256。文件回滚不能恢复云端产物；若需回退云端，必须另行部署归档版本。
 - 恢复后本机134项测试全通过；92项语法/配置/页面检查、5个云共享模块一致性、10份WXML（98002字节）和3份WXSS（5885/312/185字节）均通过。
 
 ### B014 原生底部导航图标（已完成本地与模拟器验证）
@@ -164,36 +164,36 @@
 - 首次仅刷新模拟器时，顶部`app.json`未被开发者工具重新载入，截图仍为文字Tab；控制台无资源或配置错误。关闭并重开当前工程窗口后六张图正常加载，证明是工具刷新边界，不是资源路径或PNG问题。
 - 微信模拟器iPhone 12/13 Pro、390px、字体16下逐个切换今日、进度、我的；三种选中态均为深绿，其他两项为灰绿。视觉复核的五点为：图义与文字一致、5px圆线视觉重量一致、颜色与品牌令牌一致、图标和文字间距一致、底部安全区无冲突。没有新增可见文案，也未改变页面布局和交互。
 - 截图证据：`docs/evidence-tabbar-icons-390-20260915.png`、`docs/evidence-tabbar-progress-selected-390-20260915.png`、`docs/evidence-tabbar-mine-selected-390-20260915.png`。原生小程序无法使用Browser/IAB渲染，本次以微信开发者工具真实WXML模拟器替代；320/375/430、大字号、Android和真机仍另行验收。
-- 改动前回滚点：`D:\codex\coding\yidian-recovery\20260915-B014-before-tab-icons\project`，保存无图标版`app.json`和新增测试前的`pages.test.cjs`。回滚时恢复这两个文件，并将生成脚本、资产说明、6张PNG和3张B014截图移至旁路归档；不涉及本机习惯、云数据、网络配置或云函数。
-- 完成态检查点：`D:\codex\coding\yidian-recovery\20260915-B014-after-tab-icons\project`，保存本批配置、生成源、测试、说明、6张PNG、3张模拟器截图及4份发布文档，逐一SHA-256核验一致。
+- 改动前回滚点：`D:\codex\coding\jiancheng-recovery\20260915-B014-before-tab-icons\project`，保存无图标版`app.json`和新增测试前的`pages.test.cjs`。回滚时恢复这两个文件，并将生成脚本、资产说明、6张PNG和3张B014截图移至旁路归档；不涉及本机习惯、云数据、网络配置或云函数。
+- 完成态检查点：`D:\codex\coding\jiancheng-recovery\20260915-B014-after-tab-icons\project`，保存本批配置、生成源、测试、说明、6张PNG、3张模拟器截图及4份发布文档，逐一SHA-256核验一致。
 
 ### B015 云端主数据架构设计（用户已确认，未实施）
 
 - 用户明确指出正式习惯工具不能把可清理的本机缓存作为唯一存储，并确认改为云数据库默认。将改动定级为架构级，本阶段没有修改运行代码。
 - 设计选择云端主数据＋本机确认快照＋持久离线队列；否决纯在线和本机/云端双模式。正式用户不选择数据源，使用微信云函数上下文身份自动读取账户。
 - 新增`docs/superpowers/specs/2026-09-15-cloud-first-data-design.md`，明确首次说明、启动状态、自动同步、冲突、旧开发数据、页面收口、云端删除、成本门槛、测试和回滚。
-- 设计已由用户确认；`config/cloud.js`仍为`enabled:false`，服务端开关未改，数据库未写入，旧本机记录未迁移或删除。仓库不是Git工程，无法提交commit；以B014完成态检查点作为设计前文件回滚基线。设计态副本保存于`D:\codex\coding\yidian-recovery\20260915-B015-cloud-first-design\project`。
+- 设计已由用户确认；`config/cloud.js`仍为`enabled:false`，服务端开关未改，数据库未写入，旧本机记录未迁移或删除。仓库不是Git工程，无法提交commit；以B014完成态检查点作为设计前文件回滚基线。设计态副本保存于`D:\codex\coding\jiancheng-recovery\20260915-B015-cloud-first-design\project`。
 
 ### B016 云端主数据实施计划（已完成，执行中）
 
 - 新增`docs/superpowers/plans/2026-09-15-cloud-first-data.md`，将确认后的设计拆成9个可验收任务：授权与绑定、自动启动、云端唯一工作区、离线自动同步、正式页面、云端确认删除、本地门禁、真实测试云闭环和最终上线门禁。
 - 计划按TDD顺序给出目标接口、失败测试、最小实现、回归命令及逐任务SHA-256检查点；补充可测试的`app-lifecycle.js`，避免在测试中伪造`app.js`内部状态。
 - 自检补齐无缓存读取失败的重试页、30秒前台同步门槛、同一时刻单网络任务、删除后保留防回传元数据、旧开发数据只导出不自动上传等设计要求；移除测试辅助函数和WXML占位内容。
-- 计划于2026-09-16开始执行；客户端云开关、云函数环境变量和数据库暂未改变。计划最终态回滚点为`D:\codex\coding\yidian-recovery\20260915-B016-cloud-first-plan-final\project`；不完整自检版本保留在原`20260915-B016-cloud-first-plan`目录，仅作审计记录，不作为执行输入。
+- 计划于2026-09-16开始执行；客户端云开关、云函数环境变量和数据库暂未改变。计划最终态回滚点为`D:\codex\coding\jiancheng-recovery\20260915-B016-cloud-first-plan-final\project`；不完整自检版本保留在原`20260915-B016-cloud-first-plan`目录，仅作审计记录，不作为执行输入。
 
 ### B016-T1 云授权与账户绑定持久化（已完成）
 
 - 新增`miniprogram/services/cloud-binding.js`，按云环境隔离保存一次性数据说明同意状态和已由云端确认的64位账户摘要；损坏绑定和本机写入失败均停止使用，不伪造成功。
 - TDD先运行`tests/cloud-binding.test.cjs`，按预期因模块不存在失败；实现后定向2项及全套137项测试通过、0失败。
 - SHA-256：`cloud-binding.js`为`485981BBE7DB789907F63CCF0438FDCD8978AC96D8281C7889B7A914277EE11E`；`cloud-binding.test.cjs`为`DBA633FCE64BDBA50A1283294CDBC312BDC35C0819112B4E227DC3DCAD1E8678`。
-- 回滚点：`D:\codex\coding\yidian-recovery\20260916-B016-T1-cloud-binding\project`。本任务未初始化云、未修改云环境变量、未写数据库。
+- 回滚点：`D:\codex\coding\jiancheng-recovery\20260916-B016-T1-cloud-binding\project`。本任务未初始化云、未修改云环境变量、未写数据库。
 
 ### B016-T2 云缓存恢复与应用生命周期（已完成）
 
 - `cloud-session`新增`start()`、`acceptConsent(true)`及自动缓存恢复：未同意时不联网；首次读取失败不生成可编辑空数据；已有确认缓存但联网失败时进入离线状态并继续可读。
 - 新增`app-lifecycle.js`，将`onLaunch`和`onShow`串到同一个已捕获的`dataReady`承诺，避免启动期间重复前台同步和未处理Promise拒绝；`app.js`仅负责装配依赖。
 - TDD新增云会话和生命周期用例，按预期分别因缺少方法、缺少模块失败；实现后定向16项及全套140项测试通过、0失败。旧手动连接接口暂作兼容，计划在正式同步页完成后移除。
-- 回滚点：`D:\codex\coding\yidian-recovery\20260916-B016-T2-cloud-bootstrap\project`。客户端云开关仍关闭，未调用真实云环境。
+- 回滚点：`D:\codex\coding\jiancheng-recovery\20260916-B016-T2-cloud-bootstrap\project`。客户端云开关仍关闭，未调用真实云环境。
 
 ### B016-T3 云端唯一工作区（已完成）
 
@@ -201,7 +201,7 @@
 - 正式业务读写不再提供本机/云端来源切换、恢复覆盖或清空本机主数据接口。旧开发期本机记录仅允许原样导出，绝不自动合并或上传；云端确认快照仍由同步引擎作为离线读写基础。
 - 首页、进度、详情、编辑及计划助手的数据适配层已能识别云端未就绪状态；编辑成功统一提示“已保存”，上下文变化不再使用“数据来源切换”的开发期说法。
 - TDD先加入云端唯一权威、未就绪不伪造空状态和旧数据只导出的失败用例；实现后相关52项测试及全套135项测试通过、0失败。测试总数减少是删除了已废弃的公开本机恢复/来源切换页面用例，底层本机备份解析测试仍保留。
-- 回滚点：`D:\codex\coding\yidian-recovery\20260916-B016-T3-cloud-workspace\project`。客户端云开关仍关闭，未调用真实云环境，未迁移、上传或删除旧本机记录。
+- 回滚点：`D:\codex\coding\jiancheng-recovery\20260916-B016-T3-cloud-workspace\project`。客户端云开关仍关闭，未调用真实云环境，未迁移、上传或删除旧本机记录。
 
 ### B016-T4 离线记录自动同步与前台刷新门槛（已完成）
 
@@ -209,7 +209,7 @@
 - 后台提交期间仍可追加后续今日记录，网络并发保持为1。应用回到前台会先等待/重试待同步队列；距离上次网络尝试不足30秒不轮询，超过30秒才拉取一次。
 - 一旦检测到版本冲突，自动前台任务停止继续请求，保留本机待同步意图并交由用户在同步状态页明确处理。应用生命周期继续统一捕获网络失败，不产生未处理的Promise拒绝。
 - TDD先验证旧实现不会后台提交且每次前台都会拉取；实现后增加冲突停止回归。自动同步、同步引擎、工作区及生命周期相关48项测试通过，全套138项测试通过、0失败。
-- 回滚点：`D:\codex\coding\yidian-recovery\20260916-B016-T4-auto-sync\project`。客户端云开关仍关闭，全部验证使用内存云端夹具，未调用真实云环境。
+- 回滚点：`D:\codex\coding\jiancheng-recovery\20260916-B016-T4-auto-sync\project`。客户端云开关仍关闭，全部验证使用内存云端夹具，未调用真实云环境。
 
 ### B016-T5 正式云端界面与首次使用状态（已完成）
 
@@ -220,7 +220,7 @@
 - 微信开发者工具官方CLI在实际363×785模拟器中打开并截取今日、进度、我的、数据同步、备份与恢复、创建习惯和习惯详情七页。首次状态均无假空数据，页面只有一个清晰主动作，Tab栏保持完整；控制台`error`、`warn`、`fail`及网络记录均为空。证据为`docs/evidence-release-*-363-20260916.png`；文件名按工具返回的真实宽度记录，没有冒充390px验收。
 - 视觉对照继续采用`D:\codex\coding\habit-miniapp-redesign\design-core.png`和`docs/DESIGN.md`：白底、深绿主色、26/18/16/14px层级、20px页边距、开放列表、无阴影卡片堆叠、线性Tab图标七点一致。云端首次说明属于已确认的数据架构新增状态，不恢复旧原型的积分、演示数据或营销横幅。
 - Windows通用控制通道连续重连失败，原生验收改用微信开发者工具自带`simulator_open_page`与`simulator_screenshot`；WXML无法由Browser/IAB原生渲染，因此未用网页截图替代小程序证据。客户端云开关仍关闭，本阶段未调用真实云环境。
-- 回滚点：`D:\codex\coding\yidian-recovery\20260916-B016-T5-release-ui\project`。
+- 回滚点：`D:\codex\coding\jiancheng-recovery\20260916-B016-T5-release-ui\project`。
 
 ### B016-T6 云端确认删除与防旧设备复活（已完成）
 
@@ -228,7 +228,7 @@
 - 会话与工作区按云端确认→清理旧本机记录→切换工作区代际的顺序执行。网络失败、拒绝或伪造确认均保留原确认快照、恢复副本、旧本机记录和导出文件。
 - “我的”清除操作改为两次明确确认并异步等待云端；只有确认返回后才使在途导出失效并清理CSV、JSON、云同步备份和旧版备份。失败统一显示“云端未确认删除，所有数据均已保留”。
 - TDD先验证客户端无删除接口；实现后补充网络失败、无效确认、页面失败全保留和成功后再清理测试。删除/同步/工作区/页面相关69项及全套147项测试通过、0失败；既有服务端测试仍证明旧代际设备不能把已删除习惯重新上传。
-- 回滚点：`D:\codex\coding\yidian-recovery\20260916-B016-T6-cloud-delete\project`。全部测试使用内存仓库，客户端云开关仍关闭，未对真实云数据库执行删除。
+- 回滚点：`D:\codex\coding\jiancheng-recovery\20260916-B016-T6-cloud-delete\project`。全部测试使用内存仓库，客户端云开关仍关闭，未对真实云数据库执行删除。
 
 ### B016-T7 本地发布门禁、正式状态截图与文档收口（已完成）
 
@@ -238,7 +238,7 @@
 - 视觉复核确认加载状态不生成空数据、无缓存断网状态说明已有数据不会被清除、正常任务状态无开发模式或数据来源文案。此前七个正式页面截图完成时，控制台`error`、`warn`、`fail`和网络记录均为空；本轮没有启用云开关或写入真实云数据。
 - 重写`README.md`、`BACKLOG.md`、`CLOUD-SYNC.md`和`VERIFICATION.md`，删除过时的默认本机、手动连接/断开、来源切换、本机JSON恢复和云端删除未实现等描述；统一为云端唯一权威、本机确认快照与持久队列、旧开发数据只导出、云端确认后删除的当前实现。
 - `miniprogram/config/cloud.js`继续保持`enabled:false`。本地完成不等于可上线；真实云账户闭环、服务端环境变量、客户端启用、双账户/双设备、真机、隐私和平台审核仍列为阻塞项。
-- 完整本地检查点：`D:\codex\coding\yidian-recovery\20260916-B016-local-complete\project`。包含133个工程文件，排除`node_modules`、`.git`、临时QA裁剪和私人导出记录；按相对路径逐一复制并以SHA-256核验，不代表云端状态快照。
+- 完整本地检查点：`D:\codex\coding\jiancheng-recovery\20260916-B016-local-complete\project`。包含133个工程文件，排除`node_modules`、`.git`、临时QA裁剪和私人导出记录；按相对路径逐一复制并以SHA-256核验，不代表云端状态快照。
 
 ### B016-T8-STEP1 真实测试云只读目标复核（已完成，未启用）
 
@@ -246,7 +246,7 @@
 - `habitApi`首次查询状态为`Updating`，未据此继续；第二次只读查询稳定为`Active`，运行时Nodejs16.13、超时3秒。
 - `yidian_accounts`集合为0条、0字节、2个索引；索引为`_id_`和`_openid_1`，访问计数均为0。
 - 本步骤没有读取集合文档、调用业务动作、修改数据库权限、函数环境变量或客户端开关，也没有写入/删除云数据。下一步停在服务端三个环境变量的操作时确认点。
-- 文档变更可由B016-T7完整检查点恢复；本步骤另保存4份文档的只读证据检查点`D:\codex\coding\yidian-recovery\20260916-B016-T8-readonly\project`，逐文件SHA-256核验。
+- 文档变更可由B016-T7完整检查点恢复；本步骤另保存4份文档的只读证据检查点`D:\codex\coding\jiancheng-recovery\20260916-B016-T8-readonly\project`，逐文件SHA-256核验。
 
 ### B016-T8-STEP2 测试云服务端变量（已保存，运行时探针待授权）
 
@@ -254,19 +254,19 @@
 - 官方只读接口复查 `habitApi` 为Active、Nodejs16.13、超时3秒；`yidian_accounts`的`_id_`与`_openid_1`两个索引仍在，文档查询为`total: 0`、返回0条。未读取或写入个人习惯内容，未执行`pull`、`mutate`或`purge`。
 - 计划中的无写入验证使用未知`deployment_probe`动作；源码在身份检查之后、事务之前拒绝未知动作。微信开发者工具要求额外工具授权，任务`auth_580efbf2f0311d72b85f37757a62e3d996e0605b87c2589a`轮询仍为`pending`，因此运行时调用尚未发生；SOURCE/APPID真实入口结果未知。没有用可能首次建档的`pull`替代探针。
 - 客户端`miniprogram/config/cloud.js`保持`enabled:false`；服务端已启用不等于客户端上线，也不能把本地开关视为服务端防护。下一步先完成工具授权和无写入探针；实际建档、写入及删除按计划另行确认。
-- 云端回退：在该测试环境的`habitApi`配置中将`HABIT_API_ENABLED`改为`false`并重新打开配置页核对。文件回滚不会回退云端变量。文档检查点：`D:\codex\coding\yidian-recovery\20260919-B016-T8-server-flags\project`，保存本次6份更新文档，按SHA-256校验；不包含AppSecret、OPENID或业务数据。
+- 云端回退：在该测试环境的`habitApi`配置中将`HABIT_API_ENABLED`改为`false`并重新打开配置页核对。文件回滚不会回退云端变量。文档检查点：`D:\codex\coding\jiancheng-recovery\20260919-B016-T8-server-flags\project`，保存本次6份更新文档，按SHA-256校验；不包含AppSecret、OPENID或业务数据。
 
 ### B017 云函数入口平台元数据兼容（最终云部署已成功，历史过程如下）
 
 - 2026-09-19至20日继续真实联调：工具授权已生效。云控制台测试返回`UNAUTHORIZED`，实际小程序请求通过身份检查后因额外字段被拒绝。
 - 入口只移除`userInfo`后仍失败；经临时只返回字段名的云端诊断确认还有`tcbContext`。最终入口剔除这两项元数据，保持其他字段白名单和可信上下文身份校验，且从本地代码移除临时诊断。
 - 新增5项实际入口回归测试；含`tcbContext`的旧实现3项失败，修复后152项测试、99项结构检查、云包一致性和Node 16检查全部通过。尚未把本地通过当作真实账户业务闭环。
-- 修改前6份原文件已保存并核对SHA-256：`D:\codex\coding\yidian-recovery\20260919-B017-before-entry-metadata\project`。部署任务、实际错误和回滚方式见`docs/CLOUD-ENTRY-VERIFICATION-20260920.md`。
-- 2026-09-20最终本地8文件检查点：`D:\codex\coding\yidian-recovery\20260920-B017-entry-final-local\project`。当前云更新确认框已定位，数据库只读复核仍为0条；云端诊断移除和正式响应需在最终部署成功后复测。
+- 修改前6份原文件已保存并核对SHA-256：`D:\codex\coding\jiancheng-recovery\20260919-B017-before-entry-metadata\project`。部署任务、实际错误和回滚方式见`docs/CLOUD-ENTRY-VERIFICATION-20260920.md`。
+- 2026-09-20最终本地8文件检查点：`D:\codex\coding\jiancheng-recovery\20260920-B017-entry-final-local\project`。当前云更新确认框已定位，数据库只读复核仍为0条；云端诊断移除和正式响应需在最终部署成功后复测。
 
 ### B018 测试云启用与冷启动页面刷新（基础真实云流程已通过）
 
-- 用户要求处理无法正常运行问题。修改前保存10个文件并逐一核对SHA-256，检查点：`D:\codex\coding\yidian-recovery\20260920-B018-before-startup-fix\project`。
+- 用户要求处理无法正常运行问题。修改前保存10个文件并逐一核对SHA-256，检查点：`D:\codex\coding\jiancheng-recovery\20260920-B018-before-startup-fix\project`。
 - 复核B017最终部署已成功（1文件、950 B），实际未知动作返回“不支持的请求”，无临时诊断。无需再次部署云函数或重复请求同一授权。
 - 前端启用测试云；共享页面生命周期等待启动/前台请求结束后刷新，并防止隐藏、卸载和旧显示周期的异步更新。同步页复用该能力但不增加跨日定时器。
 - 更新实际配置断言，新增7项冷启动回归。修复前相关8项失败；修复后159项测试、100项结构检查、5个共享云模块检查、10个WXML及全部WXSS编译通过。
@@ -283,7 +283,7 @@
 - 增加网络状态协调器：单次注册、可见/同意/配置/冲突门控、300ms去抖、自动恢复间隔至少1.5秒、等待在途任务、复用持久操作ID、无周期重试。顺带修复慢读取期间入队的后台提交被请求锁抢占问题。
 - TDD初始8项失败后修复，扩展到15项可靠性回归。两项旧测试仅调整异步时序：记录自动提交先完成再统计管理请求，页面增加合法实时通知但旧显示周期仍不刷新。全套174项、105项结构检查、5个云模块一致与原生编译通过。
 - 真实模拟器确认云启动、备注草稿重开保留；4张新截图已查看。离线状态为受控注入，不能替代真机断网；恢复后真实云读取成功。业务state前后完全一致，未新增或删除云端记录，未部署云函数、改配置、改权限或提交审核。
-- 原件检查点：`D:\codex\coding\yidian-recovery\20260920-B019-before-reliability\project`；修复后检查点：`D:\codex\coding\yidian-recovery\20260920-B019-reliability-verified\project`。详细文件清单、验证边界与安全回滚方式见`docs/RELIABILITY-FIX-20260920.md`。
+- 原件检查点：`D:\codex\coding\jiancheng-recovery\20260920-B019-before-reliability\project`；修复后检查点：`D:\codex\coding\jiancheng-recovery\20260920-B019-reliability-verified\project`。详细文件清单、验证边界与安全回滚方式见`docs/RELIABILITY-FIX-20260920.md`。
 
 ### B020 剩余页面评审整改（2026-09-20至21）
 
@@ -294,7 +294,7 @@
 - 新增13项UX回归；187项测试、113项结构检查、5个云共享模块一致、11个WXML输入（122203字节）和全部WXSS通过。云源码不变，本轮不重复Node 16专用检查。
 - 16张实际363×785模拟器截图均已查看（08/09为重复同页滚动记录）。原生测量星期七个同排48px、默认创建保存首屏可见；21个emoji输入限制为20；实际规则预览采用到表单但未保存。结束时业务state与测试前一致、ready=true、pending=0、仍1个原有测试习惯，回到今日；临时内存探针已移除。
 - DevTools退出后重开遇工具自身User Data/.cli写入EPERM，对官方项目打开命令取得一次权限后恢复既有automation授权；未改项目配置、云环境、权限、模型或AppID，未关安全校验、未清业务缓存，未增删改或导出真实业务数据，未部署/提交审核。
-- 原件检查点：`D:\codex\coding\yidian-recovery\20260920-B020-before-ux\project`；修复后：`D:\codex\coding\yidian-recovery\20260921-B020-ux-verified\project`。逐文件前后哈希、新文件标记、截图、对照和安全回滚说明见`docs/UX-FIX-20260920.md`及检查点父目录清单。
+- 原件检查点：`D:\codex\coding\jiancheng-recovery\20260920-B020-before-ux\project`；修复后：`D:\codex\coding\jiancheng-recovery\20260921-B020-ux-verified\project`。逐文件前后哈希、新文件标记、截图、对照和安全回滚说明见`docs/UX-FIX-20260920.md`及检查点父目录清单。
 - 代码整改完成与正式发布分开：其他尺寸、大字号/键盘、安全区、真机弱网/双设备、真实导出删除闭环与隐私安全/费用/平台审核仍未验收；不把当前模拟器通过称为全面上线就绪。
 
 ### B021 共享正式环境资源专属前缀（2026-09-21，本地完成，未部署）
@@ -306,4 +306,4 @@
 - 新增7项回归，194项测试、116项结构检查、5个云共享模块一致、Node16.13.2兼容、11个WXML和全部WXSS通过。原生只读运行状态为今日页ready=true/pending=0/原有1个习惯。
 - 两次官方CLI环境列表仅返回旧已知ID`cloud1-d4gq76oyt363f08a7`，不能对应product实际目标；浏览器控制通道不可用，未改用读取认证文件等方式。缺少实际环境ID，若为跨小程序共享还需资源方AppID及实际上下文验证。
 - 未部署、创建/重命名/删除云集合或云函数、迁移记录、修改数据库规则/共享授权/服务端变量、启用正式环境或提交审核。本地检查不能视为新正式环境可用。
-- 检查点：`D:\codex\coding\yidian-recovery\20260921-B021-before-resource-namespace\project`与`D:\codex\coding\yidian-recovery\20260921-B021-resource-namespace-verified\project`。具体名称、待确认项、分步部署与安全回滚见`docs/CLOUD-NAMESPACE-20260921.md`。
+- 检查点：`D:\codex\coding\jiancheng-recovery\20260921-B021-before-resource-namespace\project`与`D:\codex\coding\jiancheng-recovery\20260921-B021-resource-namespace-verified\project`。具体名称、待确认项、分步部署与安全回滚见`docs/CLOUD-NAMESPACE-20260921.md`。

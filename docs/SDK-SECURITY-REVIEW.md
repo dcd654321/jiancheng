@@ -38,4 +38,4 @@
 
 ## 回滚
 
-旧版SDK及锁文件：`D:\codex\coding\yidian-recovery\20260915-B002-before-sdk-upgrade\project\cloudfunctions\habitApi`。回滚前先归档当前函数目录；按批恢复package.json、package-lock.json和node_modules。不要将旧版依赖回滚误认为安全修复。
+旧版SDK及锁文件：`D:\codex\coding\jiancheng-recovery\20260915-B002-before-sdk-upgrade\project\cloudfunctions\habitApi`。回滚前先归档当前函数目录；按批恢复package.json、package-lock.json和node_modules。不要将旧版依赖回滚误认为安全修复。

@@ -23,7 +23,7 @@
 - Any cloud write, environment-variable change or purge requires an action-time confirmation and an exact environment check.
 - Do not store or reproduce the previously disclosed AppSecret; it must be regenerated before public release.
 - Preserve the existing limits: 5 active habits, 100 retained habits, 200 queued client operations, 256 recent server receipts and a 700 KiB account document ceiling.
-- Repository has no Git metadata. Replace each commit step with the named SHA-256 checkpoint under `D:\codex\coding\yidian-recovery`; never overwrite an earlier checkpoint.
+- Repository has no Git metadata. Replace each commit step with the named SHA-256 checkpoint under `D:\codex\coding\jiancheng-recovery`; never overwrite an earlier checkpoint.
 - At the start of every task's PowerShell session set `$nodeExe='C:\Users\dcd\.cache\codex-runtimes\codex-primary-runtime\dependencies\node\bin\node.exe'`; this is the verified Node 24.19.0 test runner.
 
 ## File Map and Interfaces
@@ -176,7 +176,7 @@ Expected: both commands PASS; existing count remains 135 plus the new tests.
 
 - [ ] **Step 5: Create checkpoint B016-T1**
 
-Copy `cloud-binding.js`, its test and current changelog to `D:\codex\coding\yidian-recovery\20260915-B016-T1-cloud-binding\project`, then compare every source/backup SHA-256. Append the file list and hashes to `docs/CHANGELOG-RELEASE-PREP.md`.
+Copy `cloud-binding.js`, its test and current changelog to `D:\codex\coding\jiancheng-recovery\20260915-B016-T1-cloud-binding\project`, then compare every source/backup SHA-256. Append the file list and hashes to `docs/CHANGELOG-RELEASE-PREP.md`.
 
 ---
 
@@ -868,7 +868,7 @@ Do not import a local JSON file into the active cloud account.
 & $nodeExe --test tests/pages.test.cjs tests/cloud-session.test.cjs tests/backup.test.cjs
 & $nodeExe scripts/check.cjs
 & $nodeExe scripts/check-native.cjs 'E:\weixinDevTool\微信web开发者工具'
-& 'E:\weixinDevTool\微信web开发者工具\wechatide.cmd' -c default simulator_refresh --project 'D:\codex\coding\yidian-miniprogram'
+& 'E:\weixinDevTool\微信web开发者工具\wechatide.cmd' -c default simulator_refresh --project 'D:\codex\coding\jiancheng-miniprogram'
 ```
 
 Open today, progress, mine, data sync, backup, edit and detail in the native simulator. Capture 390px screenshots and verify: no false empty state, no developer terms, one clear primary action, status text does not wrap into controls, and tab bar remains intact.
@@ -1198,7 +1198,7 @@ Create a full local checkpoint plus a redacted cloud-state record containing env
 - [ ] **Step 1: Refresh dependency evidence without automatic fixes**
 
 ```powershell
-Set-Location 'D:\codex\coding\yidian-miniprogram\cloudfunctions\habitApi'
+Set-Location 'D:\codex\coding\jiancheng-miniprogram\cloudfunctions\habitApi'
 npm audit --omit=dev --json
 npm view wx-server-sdk version
 ```

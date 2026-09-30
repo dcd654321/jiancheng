@@ -50,7 +50,7 @@ cloud1-d4gq76oyt363f08a7
 
 1. 核实product完整环境ID、资源方AppID/共享授权。只读列出函数和集合，检查新名称没有被其他用途占用；若已有同名资源，先核对归属和现有数据，禁止覆盖。
 2. 创建或核实`jiancheng_daka_accounts`，设置客户端不可直接读写；只调整这个集合，不改变其他应用权限。账户按摘要_id定位，继续核验实际索引及权限拒绝结果。
-3. 构建并只部署`D:/codex/coding/yidian-miniprogram/cloudfunctions/jiancheng_daka_api`。官方CLI以目录名作为函数名；部署目标必须填已核实ID，不填显示名，不上传cloudfunctions根目录，不覆盖旧habitApi。
+3. 构建并只部署`D:/codex/coding/jiancheng-miniprogram/cloudfunctions/jiancheng_daka_api`。官方CLI以目录名作为函数名；部署目标必须填已核实ID，不填显示名，不上传cloudfunctions根目录，不覆盖旧habitApi。
 4. 新函数独立配置`HABIT_APP_ID=wx58e61dffcbfa4249`、`HABIT_MINIPROGRAM_ONLY=true`；身份/集合/权限准备好后再启用`HABIT_API_ENABLED=true`。这些变量只属于本函数，不改其他应用或环境级共享配置。
 5. 只读核验函数Active、完整云包、运行时、集合/索引与客户端权限；先用不写库的未知动作验证实际入口身份，不能拿控制台测试代替小程序身份。
 6. 保存独立检查点，填写并验证cloud.product.js，再切换cloud.js引用正式配置；保留storageNamespace，更新明确针对旧活动配置的测试断言。不把测试数据或在途队列搬进正式库，若后续确实要迁移须另定范围和可回退方案。
@@ -76,9 +76,9 @@ cloud1-d4gq76oyt363f08a7
 
 ## 记录与回滚
 
-修改前检查点：`D:/codex/coding/yidian-recovery/20260921-B021-before-resource-namespace/project`，43份原文件已按SHA-256核验，父目录manifest.json列出原路径/哈希。源云函数8份文件已备份，node_modules没有重复备份；依赖版本由保留的锁文件确定，目录移动未安装或升级SDK。
+修改前检查点：`D:/codex/coding/jiancheng-recovery/20260921-B021-before-resource-namespace/project`，43份原文件已按SHA-256核验，父目录manifest.json列出原路径/哈希。源云函数8份文件已备份，node_modules没有重复备份；依赖版本由保留的锁文件确定，目录移动未安装或升级SDK。
 
-修改后检查点：`D:/codex/coding/yidian-recovery/20260921-B021-resource-namespace-verified/project`。父目录manifest.json逐文件记录旧路径、新路径、前后SHA-256及新增状态；不包含其他小程序文件、凭据或数据库导出。
+修改后检查点：`D:/codex/coding/jiancheng-recovery/20260921-B021-resource-namespace-verified/project`。父目录manifest.json逐文件记录旧路径、新路径、前后SHA-256及新增状态；不包含其他小程序文件、凭据或数据库导出。
 
 安全回滚步骤：
 

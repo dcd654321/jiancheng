@@ -1,6 +1,6 @@
 # B019：评审问题修复与验证
 
-日期：2026-09-20。工程：`D:\codex\coding\yidian-miniprogram`。
+日期：2026-09-20。工程：`D:\codex\coding\jiancheng-miniprogram`。
 
 ## 已修复的范围
 
@@ -41,7 +41,7 @@
 
 原件检查点（18个文件，修改前逐一SHA-256验证）：
 
-`D:\codex\coding\yidian-recovery\20260920-B019-before-reliability\project`
+`D:\codex\coding\jiancheng-recovery\20260920-B019-before-reliability\project`
 
 修改的原文件：
 
@@ -57,7 +57,7 @@
 
 修复后检查点（27个文件，逐一SHA-256核验）：
 
-`D:\codex\coding\yidian-recovery\20260920-B019-reliability-verified\project`
+`D:\codex\coding\jiancheng-recovery\20260920-B019-reliability-verified\project`
 
 检查点父目录的`manifest.json`记录每个文件相对路径、修改前哈希（新增为null）、修复后哈希及字节数。回滚只处理此清单，先确认当前文件哈希仍匹配修复后版本；如已有后续修改，另存后再人工合并，不覆盖用户新工作。
 

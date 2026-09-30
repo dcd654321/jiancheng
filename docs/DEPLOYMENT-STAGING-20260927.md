@@ -44,7 +44,7 @@
 - clientName：`codex`
 - appid：`wx7ad85943fe81e095`
 - env：`product-d2g59zty74d7d1ec1`
-- path：`D:\codex\coding\yidian-miniprogram\cloudfunctions\jiancheng_daka_features`
+- path：`D:\codex\coding\jiancheng-miniprogram\cloudfunctions\jiancheng_daka_features`
 - remote-npm-install：true
 - 最后状态：pending；未主动轮询，未重发。
 
@@ -85,7 +85,7 @@
   - taskId：`confirmation_cloud_fn_deploy_c74ad372-54a1-4fcb-9a43-2233ccab0904`
   - tool/client：`cloud_fn_deploy` / `codex`
   - appid/env：`wx7ad85943fe81e095` / `product-d2g59zty74d7d1ec1`
-  - path：`D:\codex\coding\yidian-miniprogram\cloudfunctions\jiancheng_daka_public_share`
+  - path：`D:\codex\coding\jiancheng-miniprogram\cloudfunctions\jiancheng_daka_public_share`
   - remote-npm-install：true
   - 最后任务状态：pending。
 - 本项目截图出现明确部署 public_share 的确认框。针对主窗口截图中的“允许”操作后，确认框被主窗口遮住；查询原任务一次仍 pending，云清单仍无新增函数，因此该点击未获得实际确认成功证据。
@@ -115,7 +115,7 @@
 - taskId：`confirmation_cloud_fn_deploy_77e095df-53d5-45a4-b4df-ac39e432e28e`
 - tool/client：`cloud_fn_deploy` / `codex`
 - appid/env：`wx7ad85943fe81e095` / `product-d2g59zty74d7d1ec1`
-- path：`D:\codex\coding\yidian-miniprogram\cloudfunctions\jiancheng_daka_plan`
+- path：`D:\codex\coding\jiancheng-miniprogram\cloudfunctions\jiancheng_daka_plan`
 - remote-npm-install：true；最后状态 pending；已请用户确认，未轮询或重发。
 - AI 所有启用变量、供应商密钥及客户端开关均未设置/启用，不调用模型。reminder_tick 尚未发起；features 丢失任务仍未重发。
 
@@ -150,7 +150,7 @@
   - taskId：`confirmation_cloud_fn_deploy_643b8c20-c4ef-4910-b6e8-0e0730a8b008`
   - tool/client：`cloud_fn_deploy` / `codex`
   - appid/env：`wx7ad85943fe81e095` / `product-d2g59zty74d7d1ec1`
-  - path：`D:\codex\coding\yidian-miniprogram\cloudfunctions\jiancheng_daka_reminder_tick`
+  - path：`D:\codex\coding\jiancheng-miniprogram\cloudfunctions\jiancheng_daka_reminder_tick`
   - remote-npm-install：true；最后状态 pending；已通知用户确认，没有主动轮询或重发。
 - 恢复顺序：用户确认后先查上述 reminder_tick 原任务并检查内层结果。若首次创建发生明确的 Creating 代码更新失败，先查资源状态再决定是否只补传失败代码；不得删除重建、重复提交 pending 任务或将外层 success 当成部署成功。
 - 当前已验证代码上传的是 public_share 和 plan；features 仅确认资源 Active，reminder_tick 待确认。正式共享调用、数据库规则/索引/TTL、真实消息和 AI 等验收仍未完成，活动客户端配置保持不变。

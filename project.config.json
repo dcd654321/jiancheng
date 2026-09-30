@@ -31,7 +31,10 @@
   },
   "packOptions": {
     "ignore": [
-      { "type": "file", "value": "core/ai-catalog.js" }
+      {
+        "value": "core/ai-catalog.js",
+        "type": "file"
+      }
     ],
     "include": []
   },

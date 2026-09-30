@@ -2,7 +2,9 @@
 
 这是一个面向个人用户的轻量习惯养成工具，使用原生微信小程序实现。2026-09-29 的开发版改为云端唯一持久存储：页面只显示已确认的云端数据，断网不可读写。新客户端及云函数改动尚未部署和真机验收，因此**还不能提交正式上线**。
 
-工程目录为 `D:\codex\coding\yidian-miniprogram`。产品名称已经统一为“渐成习惯打卡”。测试云当前使用 `jiancheng_daka_` 专属前缀；旧测试集合和旧设备键暂不自动删除、迁移或重放，以便审计与回滚。微信公众平台上的名称、头像、类目、备案与审核结果需在后台单独确认。
+工程目录为 `D:\codex\coding\jiancheng-miniprogram`。产品名称已经统一为“渐成习惯打卡”。测试云当前使用 `jiancheng_daka_` 专属前缀；旧测试集合和旧设备键暂不自动删除、迁移或重放，以便审计与回滚。微信公众平台上的名称、头像、类目、备案与审核结果需在后台单独确认。
+
+本地检查点统一存放在 `D:\codex\coding\jiancheng-recovery`。目录于 2026-09-30 完成改名；微信开发者工具从上述新工程目录导入，路径映射与验证记录见 [工程目录命名](docs/PROJECT-RENAME-20260930.md)。
 
 ## 共享正式环境资源命名（B021）
 
@@ -71,7 +73,7 @@ AppSecret没有写入工程，也不应写入前端包。当前身份方案直�
 
 ## 导入微信开发者工具
 
-1. 在微信开发者工具中导入 `D:\codex\coding\yidian-miniprogram`，不要选择其中的 `miniprogram` 子目录。
+1. 在微信开发者工具中导入 `D:\codex\coding\jiancheng-miniprogram`，不要选择其中的 `miniprogram` 子目录。
 2. 使用该小程序管理员或已授权开发者微信登录。
 3. 前端没有 npm 运行依赖，无需“构建 npm”，也无需关闭域名校验或其他安全检查。
 4. 测试云默认启用；启动即读取当前微信账号的云端记录。不能把模拟器状态注入当成真实云联调。
@@ -102,7 +104,7 @@ AppSecret没有写入工程，也不应写入前端包。当前身份方案直�
 当前开发工具链需要 Node.js 20.19.0 或更高；云函数目标运行时另用 Node.js 16.13.2检查。2026-09-16的本地发布门禁结果：147项测试、97项结构检查、5个云共享模块一致性检查全部通过；10个WXML输入编译为99902字节，全部WXSS通过；Node 16检查6个云包文件、SDK加载及 `crypto.randomUUID` 均通过。
 
 ```powershell
-Set-Location 'D:\codex\coding\yidian-miniprogram'
+Set-Location 'D:\codex\coding\jiancheng-miniprogram'
 & 'C:\Users\dcd\.cache\codex-runtimes\codex-primary-runtime\dependencies\node\bin\node.exe' --test 'tests/*.test.cjs'
 & 'C:\Users\dcd\.cache\codex-runtimes\codex-primary-runtime\dependencies\node\bin\node.exe' scripts/check.cjs
 & 'C:\Users\dcd\.cache\codex-runtimes\codex-primary-runtime\dependencies\node\bin\node.exe' scripts/build-cloud.cjs --check

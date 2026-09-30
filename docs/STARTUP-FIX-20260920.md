@@ -42,13 +42,13 @@
 
 ## 变更范围与回滚
 
-修改前检查点：`D:\codex\coding\yidian-recovery\20260920-B018-before-startup-fix\project`，10个原文件复制后逐一核对SHA-256。
+修改前检查点：`D:\codex\coding\jiancheng-recovery\20260920-B018-before-startup-fix\project`，10个原文件复制后逐一核对SHA-256。
 
 原文件：`miniprogram/config/cloud.js`、`miniprogram/services/ui.js`、`miniprogram/pages/sync/index.js`、`tests/pages.test.cjs`、README及BACKLOG/CLOUD-SYNC/VERIFICATION/CHANGELOG-RELEASE-PREP/CLOUD-ENTRY-VERIFICATION-20260920六份文档。
 
 新增：本记录、`tests/startup-pages.test.cjs`。需要回退时恢复检查点中的上述文件，单独移走这两个新增文件，并重新编译。不要覆盖其他后续改动；回退旧配置会再次关闭前端测试云连接。
 
-完成后检查点：`D:\codex\coding\yidian-recovery\20260920-B018-startup-cloud-verified\project`，包含上述12个文件，逐一核对SHA-256；可用于恢复本轮已验证版本。
+完成后检查点：`D:\codex\coding\jiancheng-recovery\20260920-B018-startup-cloud-verified\project`，包含上述12个文件，逐一核对SHA-256；可用于恢复本轮已验证版本。
 
 文件回滚不会删除已创建的合成云数据，不会回退服务端变量；本次没有修改服务端变量、云权限或部署代码。无需为了回滚执行“清除全部数据”，以免影响原有本机记录。记录不保存AppSecret、OPENID、账户摘要值或私人备注。
 
