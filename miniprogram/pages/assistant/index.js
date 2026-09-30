@@ -2,7 +2,7 @@ const ui = require('../../services/ui');
 const { DIRECTIONS, validateInput } = require('../../core/plan-assistant');
 Page(ui.withLifecycle({
   data: { directions: DIRECTIONS, direction: 'read', minutes: '5', weekdays: [1, 2, 3, 4, 5], days: [], time: '',
-    error: '', busy: false, configured: false, consent: false, preview: null, schedule: '', moreOpen: false, inputSchedule: '' },
+    error: '', busy: false, configured: false, consent: false, preview: null, schedule: '', moreOpen: false, whyOpen: false, focusField: '', inputSchedule: '' },
   onLoad() { this._request = 0; this._context = ui.contextKey(); },
   onHide() { this._request++; this.setData({ busy: false, consent: false }); },
   refresh() {
@@ -25,6 +25,9 @@ Page(ui.withLifecycle({
   onTime(e) { this.change({ time: e.detail.value }); },
   onClearTime() { this.change({ time: '' }); },
   onMore() { if (!this.data.busy) this.setData({ moreOpen: !this.data.moreOpen }); },
+  onWhy() { this.setData({ whyOpen: !this.data.whyOpen }); },
+  onFieldFocus(event) { const field = event.currentTarget.dataset.field; if (field) this.setData({ focusField: field }); },
+  onFieldBlur() { this.setData({ focusField: '' }); },
   onConsent(e) { if (!this.data.busy) this.setData({ consent: e.detail.value.includes('agree') }); },
   showSuggestion(result) {
     const request = this._request, context = ui.contextKey();

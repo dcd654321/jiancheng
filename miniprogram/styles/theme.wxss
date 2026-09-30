@@ -1,0 +1,32 @@
+/* 由 scripts/build-themes.cjs 从 miniprogram/config/theme-tokens.js 生成，请勿手改。 */
+/* 页面根节点使用 theme-mist / theme-paper 作用域；未加载主题时回退薄雾绿缺省值。 */
+.theme-mist {
+  --color-page: #F7F8F5;
+  --color-surface: #FFFFFF;
+  --color-ink: #303A34;
+  --color-secondary: #647067;
+  --color-primary: #486557;
+  --color-on-primary: #FFFFFF;
+  --color-busy-bg: #EDF1E2;
+  --color-busy-text: #536343;
+  --color-soft: #F1F4EF;
+  --color-line: #E2E7DF;
+  --color-control-border: #819086;
+  --color-error: #A33D2A;
+  --color-error-bg: #FFF1EB;
+}
+.theme-paper {
+  --color-page: #FAF8F3;
+  --color-surface: #FFFEFA;
+  --color-ink: #39352F;
+  --color-secondary: #70695F;
+  --color-primary: #79604F;
+  --color-on-primary: #FFFFFF;
+  --color-busy-bg: #F0F1E7;
+  --color-busy-text: #606449;
+  --color-soft: #F3F0EA;
+  --color-line: #E6E0D6;
+  --color-control-border: #998A7D;
+  --color-error: #A33D2A;
+  --color-error-bg: #FFF1EB;
+}

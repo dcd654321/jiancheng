@@ -24,15 +24,30 @@ function tomorrowSummary(state, day) {
     remaining: Math.max(0, tasks.length - 3) };
 }
 
-function pendingRows(pending, completed, recent, day, context, now) {
+// 本次可见访问内原位保留刚完成的记录：用习惯ID+日期去重，数量上限5，只保留最后5条。
+const MAX_RETAINED = 5;
+function retainCompletion(list, item) {
+  const next = (list || []).filter(entry => !(entry.id === item.id && entry.date === item.date));
+  next.push(item);
+  return next.slice(-MAX_RETAINED);
+}
+
+// 与权威状态相比仍然有效的保留项（被其他设备撤销的行不再原位展示）。
+function effectiveRetained(retained, completed, day, context) {
+  return (retained || []).filter(item => item && item.date === day && item.context === context &&
+    completed.some(task => task.id === item.id));
+}
+
+function pendingRows(pending, completed, retained, day, context) {
   const rows = pending.map(task => ({ id: task.id, task, undo: false }));
-  if (!recent || recent.date !== day || recent.context !== context || recent.until <= now) return rows;
-  const task = completed.find(t => t.id === recent.id);
-  if (!task) return rows;
-  // Preserve the completed item's position relative to the remaining visible tasks.
-  const index = rows.findIndex(row => recent.order.indexOf(row.id) > recent.order.indexOf(recent.id));
-  rows.splice(index < 0 ? rows.length : index, 0, { id: task.id, task, undo: true });
+  for (const item of effectiveRetained(retained, completed, day, context)) {
+    const task = completed.find(t => t.id === item.id);
+    const order = item.order || [];
+    // Preserve the completed item's position relative to the remaining visible tasks.
+    const index = rows.findIndex(row => order.indexOf(row.id) > order.indexOf(item.id));
+    rows.splice(index < 0 ? rows.length : index, 0, { id: task.id, task, undo: true });
+  }
   return rows;
 }
 
-module.exports = { creationAvailability, tomorrowSummary, pendingRows };
+module.exports = { creationAvailability, tomorrowSummary, pendingRows, retainCompletion, effectiveRetained, MAX_RETAINED };

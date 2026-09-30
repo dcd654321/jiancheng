@@ -1,11 +1,11 @@
-<view class="page">
+<view class="page theme-{{theme}}">
   <view class="heading">云端状态</view>
   <view wx:if="{{error}}" class="error spaced">{{error}}</view>
   <view wx:if="{{loading}}" class="empty">
     <view class="section-title">正在读取记录</view><view class="sub">请稍候，不会创建重复数据。</view>
   </view>
   <view wx:elif="{{dataUnavailable}}" class="empty">
-    <view class="heading">暂时读不到云端记录</view>
+    <view class="heading">暂时没能读取记录</view>
     <view class="sub">{{lastError || '数据没有丢失。检查网络后重试。'}}</view>
     <button class="primary spaced" disabled="{{busy}}" loading="{{busy}}" bindtap="onRefresh">{{deletionPending ? '继续确认删除' : pending ? '重试确认' : '重新读取'}}</button>
   </view>

@@ -2,6 +2,7 @@ const date = require('../core/date');
 const domain = require('../core/habits');
 const cloudConfig = require('../config/cloud');
 const { apiFunction } = require('../config/cloud-resources');
+const { themeSnapshot, appearanceController } = require('./appearance');
 const quickMinimumEnabled = cloudConfig.enabled === true && cloudConfig.functionName === apiFunction && cloudConfig.completeMinimumEnabled === true;
 
 function store() { return getApp().store; }
@@ -13,61 +14,112 @@ function storageInfo() { return store().info ? store().info() : { source: 'cloud
 function error(page, err) {
   page.setData({ error: err.message || '操作失败，请重试' });
 }
+// 读取分三态：就绪、首次读取中、不可用。会话里已有本账户已确认数据时
+// （刷新失败但内存快照仍可信）保留可读内容并标为只读，不再清空页面。
 function read(page, callback) {
   try {
     const state = store().read();
     page._context = contextKey();
     callback(state, date.today());
     const info = storageInfo();
-    page.setData({ loading: false, dataUnavailable: false, dataReady: true,
+    page.setData({ loading: false, dataUnavailable: false, dataReady: true, dataReadOnly: false, pendingConfirm: false,
       dataSource: info.source, syncText: info.syncText, syncAttention: !!info.syncAttention,
       error: page._syncRefreshing && page.data.dataReady ? page.data.error : '' });
   } catch (err) {
     if (err.code === 'DATA_LOADING') page.setData({ loading: true,
       dataUnavailable: false, dataReady: false, error: '' });
-    else if (err.code === 'DATA_UNAVAILABLE') page.setData({ loading: false,
-      dataUnavailable: true, dataReady: false, error: err.message || '暂时无法读取记录' });
+    else if (err.code === 'DATA_UNAVAILABLE') {
+      const info = storageInfo();
+      const stale = store().stale ? store().stale() : null;
+      if (stale) {
+        page._context = contextKey();
+        callback(stale, date.today());
+        page.setData({ loading: false, dataUnavailable: false, dataReady: true, dataReadOnly: true, pendingConfirm: false,
+          dataSource: info.source, syncText: info.syncText, syncAttention: true,
+          error: '暂时无法更新，请连接网络后重试' });
+      } else {
+        const pending = info.pending > 0;
+        page.setData({ loading: false, dataUnavailable: true, dataReady: false, dataReadOnly: false,
+          pendingConfirm: pending, recoveryLabel: pending ? '重新核对' : '重新读取',
+          error: pending ? '正在核对这次记录：' + (err.message || '结果未确认') : (err.message || '暂时无法读取记录') });
+      }
+    }
     else error(page, err);
   }
 }
 function taskStatusLabel(task) { return task.status === 'minimum' ? '忙时完成' : task.statusText; }
+// 写操作前置：云会话明确给出不可写状态时先给出原因，而不是让按钮看起来可用。
+// 没有云信息接口的旧测试夹具不做此判断，写结果仍由 dispatch 与其自身校验负责。
+function assertWritable() {
+  const s = store();
+  if (!s || typeof s.info !== 'function') return;
+  const info = s.info();
+  if (info && info.ready === false) throw Error('暂时无法更新，请连接网络后重试');
+}
 function mutate(page, command, message, options = {}) {
   if (page._mutating) return false;
   const mutationContext = contextKey();
   const previousOrder = (page.data.pending || []).map(task => task.id);
+  const clearRecording = () => { if (!page._gone && typeof page.setData === 'function') page.setData({ recordingId: '' }); };
   const finish = () => {
     page._mutating = false;
     if (page._gone || mutationContext !== contextKey()) return true;
+    clearRecording();
     if (page.onRecorded && page._visible !== false) page.onRecorded(command, previousOrder);
     page.refresh();
     const completion = ['complete', 'completeMinimum'].includes(command.type);
-    const notice = options.firstCompletion && completion
-      ? '第一次，记下了 · 已同步'
-      : options.returnCompletion && completion
-      ? '接上了 · 已同步'
-      : '记下了 · 已同步';
+    const notice = command.type === 'undo' ? '已撤销这次记录'
+      : options.firstCompletion && completion ? '第一次，记下了 · 已同步'
+      : options.returnCompletion && completion ? '接上了 · 已同步'
+      : completion ? '记下了 · 已同步'
+      : message || '';
     if (notice) wx.showToast({ title: notice, icon: 'none' });
     return true;
   };
-  const failed = err => { page._mutating = false; if (!page._gone) error(page, err); return false; };
+  const failed = err => { page._mutating = false; if (!page._gone) { clearRecording(); error(page, err); } return false; };
   try {
-    assertContext(page); page._mutating = true;
+    assertContext(page); assertWritable(); page._mutating = true;
+    // 进行中的按钮显示“正在记录…”，串行锁禁重复写，页面其余内容仍可阅读。
+    if (typeof page.setData === 'function') page.setData({ recordingId: command.id });
     const result = store().dispatch(command);
     return result && typeof result.then === 'function' ? result.then(finish).catch(failed) : finish();
   } catch (err) { return failed(err); }
 }
+function primaryColor() { return themeSnapshot().primary; }
 function id() { return 'h_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 10); }
+
+// 各私有页共用的读取恢复：单次请求、进行中防连点、成功原地恢复、失败保留重试入口。
+const recoveryActions = {
+  async onDataRetry() {
+    if (this._retrying || this._gone) return;
+    const context = contextKey();
+    const session = getApp().cloudSession;
+    this._retrying = true;
+    this.setData({ loading: true, dataUnavailable: false, error: '' });
+    try {
+      if (session && typeof session.start === 'function') await session.start();
+      if (!this._gone && contextKey() === context && this._visible !== false) { this._retrying = false; this.refresh(); return; }
+    } catch (err) {
+      if (!this._gone && contextKey() === context && this._visible !== false) {
+        error(this, err);
+        this.setData({ loading: false, dataUnavailable: true, dataReady: false });
+      }
+    }
+    this._retrying = false;
+  }
+};
 
 function withLifecycle(definition, { watchDate = true } = {}) {
   const onShow = definition.onShow;
   const onHide = definition.onHide;
   const onUnload = definition.onUnload;
-  return Object.assign({}, definition, {
+  return Object.assign({}, recoveryActions, definition, {
     onShow() {
       this._gone = false;
       this._visible = true;
       const showVersion = this._showVersion = (this._showVersion || 0) + 1;
       this._day = date.today();
+      this.bindTheme();
       if (this.refresh) this.refresh();
       if (onShow) onShow.call(this);
       if (this._unsubscribeSync) this._unsubscribeSync();
@@ -100,16 +152,31 @@ function withLifecycle(definition, { watchDate = true } = {}) {
         return Promise.resolve(ready).then(refreshReady, refreshReady);
       }
     },
+    // 主题只更新根节点作用域和状态文案，不触发数据刷新；账户变化由控制器清空旧值。
+    bindTheme() {
+      const controller = appearanceController();
+      if (controller && !this._unsubscribeTheme) {
+        this._unsubscribeTheme = controller.subscribe(() => {
+          if (this._gone || !this._visible) return;
+          this.setData(themeSnapshot());
+        });
+      }
+      this.setData(themeSnapshot());
+    },
     onHide() {
       this._visible = false; clearInterval(this._dayTimer);
       if (this._unsubscribeSync) this._unsubscribeSync();
       this._unsubscribeSync = null;
+      if (this._unsubscribeTheme) this._unsubscribeTheme();
+      this._unsubscribeTheme = null;
       if (onHide) onHide.call(this);
     },
     onUnload() {
       this._gone = true; this._visible = false; clearInterval(this._dayTimer);
       if (this._unsubscribeSync) this._unsubscribeSync();
       this._unsubscribeSync = null;
+      if (this._unsubscribeTheme) this._unsubscribeTheme();
+      this._unsubscribeTheme = null;
       if (onUnload) onUnload.call(this);
     }
   });
@@ -128,7 +195,10 @@ const taskActions = {
   recordCompletion(id, taskDate, type) {
     let firstCompletion = false;
     if (type !== 'undo') {
-      try { firstCompletion = !Object.values(store().read().records).some(record => record.status !== 'pending'); }
+      try {
+        assertWritable();
+        firstCompletion = !Object.values(store().read().records).some(record => record.status !== 'pending');
+      }
       catch (err) { error(this, err); return false; }
     }
     const guide = this.data.returnGuide;
@@ -141,12 +211,13 @@ const taskActions = {
       const state = store().read();
       const task = domain.taskAt(state, domain.findHabit(state, id), taskDate);
       if (!task || task.done) throw Error('请先撤销今天的记录，再调整目标');
+      if (task.originalTarget <= 1) throw Error('这个目标已经是最小的了，改小请编辑计划');
       if (taskDate !== date.today()) throw Error('日期已变化，请刷新');
       wx.showModal({
         title: '今天少做一点',
         content: task.minimum ? String(task.minimum) : '', editable: true,
         placeholderText: `原目标${task.originalTarget}${task.unit}，输入更小的整数`,
-        confirmText: '只改今天', confirmColor: '#245c44',
+        confirmText: '只改今天', confirmColor: primaryColor(),
         success: result => { if (result.confirm) mutate(this, { type: 'simplify', id, date: taskDate, target: result.content }, '今天目标已调小'); }
       });
     } catch (err) { error(this, err); }
@@ -157,4 +228,4 @@ const taskActions = {
   }
 };
 
-module.exports = { date, domain, store, read, mutate, error, id, contextKey, assertContext, storageInfo, taskStatusLabel, quickMinimumEnabled, withLifecycle, taskActions };
+module.exports = { date, domain, store, read, mutate, error, id, contextKey, assertContext, assertWritable, storageInfo, primaryColor, taskStatusLabel, quickMinimumEnabled, withLifecycle, taskActions, recoveryActions };

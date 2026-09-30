@@ -3,8 +3,36 @@ const assert=require('node:assert/strict');
 const { featuresFixture }=require('./helpers/features-fixture.cjs');
 const { domain,dates,storageFixture,copy,plan }=require('./helpers/cloud-fixture.cjs');
 const { createApi }=require('../server/handler');
+const { createSidecarCleanup }=require('../server/sidecar-cleanup');
+const { PREFERENCES }=require('../server/features-repository');
 const { createSyncEngine }=require('./legacy/sync-engine.cjs');
 const { syncPresentation }=require('../miniprogram/services/sync-presentation');
+
+// 最小文档库夹具：只实现侧表清理使用的读/删路径，用于验证旧 epoch 偏好被清除而新 epoch 保留。
+function docDb(initial) {
+  const rows = new Map(initial);
+  const ref = id => ({
+    async get() { const row = rows.get(id); return { data: row ? [row] : [] }; },
+    async remove() { rows.delete(id); }
+  });
+  return {
+    rows,
+    collection() { return { where: () => ({ limit: () => ({ async get() { return { data: [] }; } }) }), doc: ref }; },
+    async runTransaction(work) { return work({ collection: () => ({ doc: ref }) }); }
+  };
+}
+test('sidecar cleanup removes only the old-epoch preference and leaves the new epoch untouched', async () => {
+  const owner = 'a'.repeat(64);
+  const oldEpoch = 'epoch-old', newEpoch = 'epoch-new';
+  const db = docDb([[owner, { owner, ownerEpoch: oldEpoch, revision: 3 }]]);
+  await createSidecarCleanup(db)(owner, oldEpoch);
+  assert.equal(db.rows.has(owner), false, '旧 epoch 偏好被清除');
+  db.rows.set(owner, { owner, ownerEpoch: newEpoch, revision: 1 });
+  await createSidecarCleanup(db)(owner, oldEpoch);
+  assert.equal(db.rows.get(owner).ownerEpoch, newEpoch, '清理不复活也不删除新 epoch 偏好');
+  db.rows.set(owner, { owner: 'b'.repeat(64), ownerEpoch: oldEpoch });
+  await assert.rejects(createSidecarCleanup(db)(owner, oldEpoch), /INVALID_PREFERENCE_OWNER/);
+});
 
 async function setup() {
   const f=featuresFixture(),snapshot=await f.seed();

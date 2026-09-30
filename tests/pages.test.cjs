@@ -296,3 +296,15 @@ test('三个底部导航均提供成对的81像素透明PNG图标', () => {
     }
   }
 });
+
+test('暖纸白主题的选中态图标与mist版同规格', () => {
+  const miniRoot = path.resolve(__dirname, '../miniprogram/assets/tabbar');
+  for (const name of ['today', 'progress', 'mine']) {
+    const png = fs.readFileSync(path.join(miniRoot, `${name}-selected-paper.png`));
+    assert.deepEqual([...png.subarray(0, 8)], [137, 80, 78, 71, 13, 10, 26, 10], `${name}-selected-paper不是PNG`);
+    assert.equal(png.readUInt32BE(16), 81, `${name}-selected-paper宽度应为81像素`);
+    assert.equal(png.readUInt32BE(20), 81, `${name}-selected-paper高度应为81像素`);
+    assert.equal(png[25], 6, `${name}-selected-paper必须使用带Alpha通道的RGBA格式`);
+    assert.ok(png.length <= 40 * 1024, `${name}-selected-paper超过40 KiB`);
+  }
+});

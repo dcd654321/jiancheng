@@ -70,6 +70,8 @@ function createCloudSession(wxApi, config, transportFactory = createCloudTranspo
       configured,
       connected: !!snapshot,
       ready: !!snapshot && phase === 'ready',
+      // 已有本账户已确认快照但当前阶段不可写（离线/待核对）：页面可只读呈现，不创建本机快照。
+      stale: !!snapshot && phase !== 'ready',
       phase,
       busy,
       networkOffline,
@@ -278,6 +280,9 @@ function createCloudSession(wxApi, config, transportFactory = createCloudTranspo
     },
     subscribe(listener) { listeners.add(listener); return () => listeners.delete(listener); },
     read() { ensureReadable(); return clone(snapshot.state); },
+    // 只读回退：仅在网络失败（非写入待核对、非删除中）时返回确认过的快照，
+    // 用于刷新失败后的只读呈现；不落磁盘、不构成离线写队列。
+    staleRead() { return snapshot && phase === 'offline' ? clone(snapshot.state) : null; },
     dispatch,
     purge
   };

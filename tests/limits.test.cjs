@@ -22,6 +22,15 @@ test('limit configuration rejects zero, missing, decimals, coercion and unbounde
   for(const raw of [undefined,'0','1.5','1e6','1000001','-1',[],3])assert.throws(()=>configuration({...env,X_DAY:raw},'X'));
   assert.deepEqual(configuration({X_MINUTE:'10',X_DAY:'100'},'X',false),{minute:10,day:100});
 });
+test('documented default limits apply when variables are absent; explicit values win and typos still fail',()=>{
+  const defaults={minute:60,day:2000,userMinute:30,userDay:300};
+  assert.deepEqual(configuration({},'HABIT_FEATURES_LIMIT',true,defaults),defaults);
+  assert.deepEqual(configuration({HABIT_FEATURES_LIMIT_MINUTE:''},'HABIT_FEATURES_LIMIT',true,defaults),defaults);
+  assert.deepEqual(configuration({HABIT_FEATURES_LIMIT_MINUTE:'5',HABIT_FEATURES_LIMIT_USER_DAY:'9'},'HABIT_FEATURES_LIMIT',true,defaults),
+    {minute:5,day:2000,userMinute:30,userDay:9});
+  for(const raw of ['0','1.5','1000001','abc'])assert.throws(()=>configuration({HABIT_FEATURES_LIMIT_DAY:raw},'HABIT_FEATURES_LIMIT',true,defaults),/LIMIT_CONFIG_REQUIRED/);
+  assert.throws(()=>configuration({},'HABIT_REMINDERS_LIMIT'),/LIMIT_CONFIG_REQUIRED/,'其他作用域保持必填');
+});
 test('multi-instance limits atomically enforce user/global windows; denied calls do not consume global quota',async()=>{
   const f=fixture(),one=f.limit(),two=f.limit();
   const results=await Promise.allSettled(Array.from({length:12},(_,i)=>(i%2?one:two)('a','e')));

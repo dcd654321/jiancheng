@@ -1,0 +1,16 @@
+/* 两张固定内容的预览卡：缩略图固定使用各自主题的颜色，不随页面预览变色。 */
+.theme-options { display: flex; flex-direction: column; gap: 12px; margin: 24px 0 0; }
+.theme-card { display: block; width: 100%; text-align: left; background: var(--color-surface, #FFFFFF); border: 1px solid var(--color-control-border, #819086); border-radius: 16px; padding: 16px; }
+.theme-card.selected { border-width: 2px; padding: 15px; }
+.theme-card-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.theme-name { font-size: 18px; font-weight: 600; }
+.theme-badge { font-size: 14px; color: var(--color-secondary, #647067); }
+.theme-card.selected .theme-badge { color: var(--color-primary, #486557); font-weight: 600; }
+.theme-desc { margin-top: 4px; }
+.theme-thumb { margin-top: 12px; border: 1px solid var(--color-line, #E2E7DF); border-radius: 12px; background: var(--color-page, #F7F8F5); padding: 12px; }
+.thumb-title { font-size: 16px; font-weight: 600; color: var(--color-ink, #303A34); }
+.thumb-goal { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
+.thumb-main { font-size: 14px; font-weight: 600; color: var(--color-ink, #303A34); }
+.thumb-btn { margin-top: 8px; min-height: 32px; line-height: 32px; padding: 0 12px; border-radius: 12px; border: 1px solid var(--color-control-border, #819086); color: var(--color-ink, #303A34); background: var(--color-surface, #FFFFFF); font-size: 14px; text-align: center; }
+.thumb-btn.soft { background: var(--color-soft, #F1F4EF); }
+.theme-status { margin-top: 16px; }

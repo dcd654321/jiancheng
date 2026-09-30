@@ -1,9 +1,9 @@
-<view class="page">
+<view class="page theme-{{theme}}">
   <view class="heading">给下一次，留个提醒</view>
   <view class="sub">仅提醒下一次，不会每天自动发送。计划时间仍只用于排序。</view>
   <view wx:if="{{!enabled}}" class="notice spaced">提醒尚未开放，习惯打卡不受影响。</view>
   <view wx:elif="{{loading}}" class="sub spaced">正在读取安排…</view>
-  <view wx:elif="{{dataUnavailable}}" class="error spaced">请先恢复云端同步，再申请提醒。</view>
+  <view wx:elif="{{dataUnavailable}}" class="empty"><view class="heading">暂时没能读取记录</view><view class="sub">{{error || '请先恢复云端同步，再申请提醒。'}}</view><button class="primary spaced" bindtap="onDataRetry">{{recoveryLabel || '重新读取'}}</button></view>
   <block wx:elif="{{dataReady}}">
     <picker range="{{slots}}" value="{{slotIndex}}" disabled="{{busy || retrySchedule}}" bindchange="onSlot"><view class="setting-row">提醒时段（北京时间）<text class="grow" />{{slots[slotIndex]}}<view class="chevron" /></view></picker>
     <button class="secondary spaced" disabled="{{busy || retrySchedule}}" bindtap="onPreview">{{preview ? '重新预览日期' : '看看下一次安排'}}</button>

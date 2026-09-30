@@ -21,5 +21,6 @@ Page(ui.withLifecycle({
   onDate(event) { this.setData({ selectedDate: event.currentTarget.dataset.date }); this.refresh(); },
   onToggleHabits() { this.setData({ showHabits: !this.data.showHabits }); },
   onCreate() { wx.navigateTo({ url: '/pages/edit/index' }); },
+  onToday() { wx.switchTab({ url: '/pages/today/index' }); },
   onOpen: ui.taskActions.onOpen
 }));

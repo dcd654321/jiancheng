@@ -1,0 +1,4 @@
+# npm run openspec -- validate --all --strict 2026-09-30T17:06:16+08:00
+✓ change/remove-local-persistence
+✓ change/streamline-multi-habit-checkins
+Totals: 14 passed, 0 failed (14 items)

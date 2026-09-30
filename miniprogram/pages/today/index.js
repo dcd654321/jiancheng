@@ -4,16 +4,37 @@ const { firstReturnTask } = require('../../services/gentle-return');
 const flow = require('../../services/today-flow');
 const { features } = require('../../services/features-client');
 
+// 冷启动等待时的问候与轻松说明：随包发布的静态文案，不读取账户数据、不写任何状态。
+const LOADING_NOTES = ['正在把今天的安排取回来。', '一点一点来，今天就很好。', '忙的时候，做小一点也算数。', '记录保存在云端，换手机也在。'];
+function greeting(now = new Date()) {
+  const hour = now.getHours();
+  if (hour < 5) return '夜深了';
+  if (hour < 11) return '早上好';
+  if (hour < 13) return '中午好';
+  if (hour < 18) return '下午好';
+  return '晚上好';
+}
+function loadingNote(now = new Date()) {
+  const day = Math.floor((now.getTime() - now.getTimezoneOffset() * 60000) / 86400000);
+  return LOADING_NOTES[Math.abs(day) % LOADING_NOTES.length];
+}
+
 Page(ui.withLifecycle({
-  data: { error: '', loading: true, dataUnavailable: false, dataReady: false,
-    date: '', dateLabel: '', pending: [], completed: [], total: 0, done: 0, minimum: 0, rate: 0,
-    hasHabits: false, hideQuote: false, quote: QUOTES[0], showCompleted: false,
+  onLoad() { this.setData({ loadingGreeting: greeting(), loadingNote: loadingNote() }); },
+  data: { error: '', loading: true, dataUnavailable: false, dataReady: false, dataReadOnly: false,
+    loadingGreeting: '今天好', loadingNote: LOADING_NOTES[0],
+    pendingConfirm: false, recoveryLabel: '重新读取',
+    date: '', dateLabel: '', pending: [], completed: [], completedGroup: [], total: 0, done: 0, minimum: 0, rate: 0,
+    hasHabits: false, hideQuote: false, quote: QUOTES[0], showCompleted: false, chooserOpen: false,
     quickMinimumEnabled: ui.quickMinimumEnabled,
     firstHabitGuide: '', returnGuide: null, pendingRows: [], tomorrow: null, canCreateToday: true, canCreateTomorrow: true },
   refresh() {
     ui.read(this, (state, date) => {
       if (this._pinContext !== ui.contextKey()) this._visitPinnedId = null;
       this._pinContext = ui.contextKey();
+      const context = ui.contextKey();
+      // 本次可见访问的完成行只在同一账户、同一业务日期内有意义；跨天或换账户立即丢弃。
+      if (this._retained && this._retained.some(item => item.context !== context || item.date !== date)) this._retained = null;
       const cached = features().cachedPreferences();
       const pinnedId = this._visitPinnedId || (cached && cached.pinnedHabitId);
       const tasks = ui.domain.tasksOn(state, date).map(task => ({ ...task, pinned: task.id === pinnedId }));
@@ -27,9 +48,9 @@ Page(ui.withLifecycle({
       if (guide && state.habits.some(habit => habit.id === guide.id)) {
         const task = pending.find(item => item.id === guide.id);
         if (task) {
-          firstHabitGuide = `已创建「${guide.title}」。做完今天的目标，再点“打卡”记下第一次。`;
+          firstHabitGuide = `已创建「${guide.title}」。做完后，在这里记下。`;
         } else if (guide.firstDate >= date) {
-          firstHabitGuide = `已创建「${guide.title}」。首次安排：${ui.date.label(guide.firstDate)}；今天不用打卡。`;
+          firstHabitGuide = `已创建「${guide.title}」。明天会出现在这里。`;
         } else firstHabitGuide = `已创建「${guide.title}」。今天没有这项安排，可到“我的习惯”查看。`;
         this._firstGuideId = guide.id;
         app.firstHabitGuide = null;
@@ -39,14 +60,15 @@ Page(ui.withLifecycle({
         const task = pending.find(item => item.id === this._firstGuideId);
         if (task) { pending.splice(pending.indexOf(task), 1); pending.unshift(task); }
       }
-      // 今天已经留下任何记录后，"接上"就不再出现：欢迎回来只做一次破冰，不逐条催。
+      // 今天已经留下任何记录后，回归提示不再出现；有同步异常时优先恢复，不叠加提示。
       const returnGuide = (ui.storageInfo().syncAttention || completed.length) ? null : firstReturnTask(state, date, pending);
-      const context = ui.contextKey();
-      if (this._recentDone && (this._recentDone.context !== context || this._recentDone.date !== date ||
-        this._recentDone.until <= Date.now() || !completed.some(t => t.id === this._recentDone.id))) this.clearRecent();
+      // 原位保留的行用习惯ID去重，不再进入“今日已完成”分组；统计仍只来自权威状态。
+      const retained = flow.effectiveRetained(this._retained, completed, date, context);
+      const retainedIds = new Set(retained.map(item => item.id));
+      const completedGroup = completed.filter(t => !retainedIds.has(t.id));
       const capacity = flow.creationAvailability(state, date);
-      this.setData({ date, dateLabel: ui.date.label(date), pending, completed, firstHabitGuide, returnGuide,
-        pendingRows: flow.pendingRows(pending, completed, this._recentDone, date, context, Date.now()),
+      this.setData({ date, dateLabel: ui.date.label(date), pending, completed, completedGroup, firstHabitGuide, returnGuide,
+        pendingRows: flow.pendingRows(pending, completed, this._retained, date, context),
         tomorrow: flow.tomorrowSummary(state, date), canCreateToday: capacity.today, canCreateTomorrow: capacity.tomorrow,
         total: tasks.length, done: completed.length, minimum: completed.filter(t => t.status === 'minimum').length,
         rate: tasks.length ? completed.length / tasks.length * 100 : 0,
@@ -54,7 +76,6 @@ Page(ui.withLifecycle({
         quote: state.settings.hideQuote ? '' : (getApp().quoteSession ? getApp().quoteSession.current() : QUOTES[0]) });
     });
   },
-  clearRecent() { clearTimeout(this._undoTimer); this._undoTimer = null; this._recentDone = null; },
   async onShow() {
     const service = features();
     if (!service.status().enabled) return;
@@ -67,60 +88,29 @@ Page(ui.withLifecycle({
     } catch (_) { /* Keep the stable time/ID order when preferences are unavailable. */ }
   },
   onRecorded(command, order) {
-    if (command.type === 'undo') { this.clearRecent(); return; }
+    if (command.type === 'undo') {
+      this._retained = (this._retained || []).filter(item => !(item.id === command.id && item.date === command.date));
+      return;
+    }
     if (!['complete', 'completeMinimum'].includes(command.type) || command.date !== ui.date.today()) return;
-    this.clearRecent();
-    this._recentDone = { id: command.id, date: command.date, context: ui.contextKey(), until: Date.now() + 6000, order };
-    this._undoTimer = setTimeout(() => { this.clearRecent(); if (!this._gone && this._visible) this.refresh(); }, 6000);
+    this._retained = flow.retainCompletion(this._retained, { id: command.id, date: command.date, context: ui.contextKey(), order });
   },
   onQuickUndo(event) {
-    const recent = this._recentDone;
-    if (!recent || recent.id !== event.currentTarget.dataset.id || recent.date !== ui.date.today() ||
-      recent.context !== ui.contextKey() || recent.until <= Date.now() || !this._visible) {
-      this.clearRecent(); if (!this._gone) this.refresh(); return false;
+    const id = event.currentTarget.dataset.id, day = ui.date.today();
+    const item = (this._retained || []).find(entry => entry.id === id && entry.date === day && entry.context === ui.contextKey());
+    if (!item || this._gone || !this._visible || this.data.dataReadOnly) {
+      if (!this._gone && this._visible) this.refresh();
+      return false;
     }
-    return this.recordCompletion(recent.id, recent.date, 'undo');
+    return this.recordCompletion(id, day, 'undo');
   },
-  onHide() { this.clearRecent(); this._visitPinnedId = null; this.setData({ firstHabitGuide: '', returnGuide: null, pendingRows: [] }); this._firstGuideId = null; },
-  onUnload() { this.clearRecent(); },
+  onHide() {
+    this._retained = null; this._visitPinnedId = null; this.setData({ firstHabitGuide: '', returnGuide: null, pendingRows: [], chooserOpen: false, showCompleted: false });
+    this._firstGuideId = null;
+  },
+  onUnload() { this._retained = null; },
   onDismissGuide() { this.setData({ firstHabitGuide: '' }); this._firstGuideId = null; },
-  onReturnOriginal(event) {
-    const guide = this.data.returnGuide;
-    if (!guide || guide.id !== event.currentTarget.dataset.id || this.data.date !== ui.date.today()) {
-      this.refresh(); return;
-    }
-    if (guide.simplified) return ui.taskActions.onRestore.call(this, event);
-    return this.recordCompletion(guide.id, this.data.date, 'complete');
-  },
-  onReturnMinimum(event) {
-    const guide = this.data.returnGuide;
-    if (!guide || guide.id !== event.currentTarget.dataset.id || this.data.date !== ui.date.today()) {
-      this.refresh(); return;
-    }
-    if (!guide.minimum || guide.simplified || !ui.quickMinimumEnabled) return this.onReturnSmall(event);
-    return this.recordCompletion(guide.id, this.data.date, 'completeMinimum');
-  },
-  onReturnSmall(event) {
-    const guide = this.data.returnGuide;
-    if (!guide || guide.id !== event.currentTarget.dataset.id || guide.originalTarget <= 1 || this.data.date !== ui.date.today()) {
-      this.refresh(); return;
-    }
-    return ui.taskActions.onSimplify.call(this, event);
-  },
-  async onDataRetry() {
-    if (this._retrying) return;
-    this._retrying = true;
-    this.setData({ loading: true, dataUnavailable: false, error: '' });
-    try {
-      await getApp().cloudSession.start();
-      if (!this._gone) this.refresh();
-    } catch (err) {
-      if (!this._gone) {
-        ui.error(this, err);
-        this.setData({ loading: false, dataUnavailable: true, dataReady: false });
-      }
-    } finally { this._retrying = false; }
-  },
+  onToggleChooser() { this.setData({ chooserOpen: !this.data.chooserOpen }); },
   onCreate(event) {
     try {
       ui.assertContext(this);
@@ -134,6 +124,7 @@ Page(ui.withLifecycle({
       }
       const template = event.currentTarget.dataset.template;
       const params = [template ? 'template=' + encodeURIComponent(template) : '', !capacity.today ? 'start=tomorrow' : ''].filter(Boolean);
+      this.setData({ chooserOpen: false });
       wx.navigateTo({ url: '/pages/edit/index' + (params.length ? '?' + params.join('&') : '') });
     } catch (err) { ui.error(this, err); }
   },

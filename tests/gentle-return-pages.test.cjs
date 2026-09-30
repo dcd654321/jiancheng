@@ -34,12 +34,12 @@ function harness(t, plans) {
   return { page, store, app, storage, modals, toasts, navigation, today };
 }
 
-test('return card completes today in place without touching missed days', t => {
+test('return prompt completes today through the task row without touching missed days', t => {
   const h = harness(t, [['read', {}], ['walk', {}]]);
   const before = h.store.read().records;
   assert.equal(h.page.data.returnGuide.id, h.page.data.pending[0].id);
   const id = h.page.data.returnGuide.id;
-  h.page.onReturnOriginal(event(id, h.today));
+  h.page.onComplete(event(id, h.today));
   assert.equal(h.page.data.done, 1);
   const record = h.store.read().records[id + '@' + h.today];
   assert.equal(record.status, 'standard');
@@ -49,13 +49,13 @@ test('return card completes today in place without touching missed days', t => {
   assert.equal(h.toasts.at(-1).title, '第一次，记下了 · 已同步');
 });
 
-test('busy-goal return completes as minimum without a modal', t => {
+test('busy-goal return completes as minimum through the task row without a modal', t => {
   const h = harness(t, [['read', {}]]);
   const past = dates.shift(h.today, -4);
   h.storage[STORAGE_KEY] = JSON.stringify(domain.reduce(h.store.read(), { type: 'complete', id: 'read', date: past }, past));
   h.page.refresh();
   const id = h.page.data.returnGuide.id;
-  h.page.onReturnMinimum(event(id, h.today));
+  h.page.onCompleteMinimum(event(id, h.today));
   assert.equal(h.page.data.done, 1);
   const record = h.store.read().records[id + '@' + h.today];
   assert.equal(record.status, 'minimum');
@@ -68,7 +68,7 @@ test('busy-goal return completes as minimum without a modal', t => {
 test('smaller target reuses confirmation and does not complete or fill missed days; original restores today', t => {
   const h = harness(t, [['read', { minimum: null }]]);
   const beforeRecords = h.store.read().records;
-  h.page.onReturnSmall(event('read', h.today));
+  h.page.onSimplify(event('read', h.today));
   assert.equal(h.modals.at(-1).content, '');
   h.modals.pop().success({ confirm: true, content: '2' });
   assert.equal(h.page.data.pending[0].target, 2);
@@ -76,7 +76,7 @@ test('smaller target reuses confirmation and does not complete or fill missed da
   assert.equal(h.page.data.returnGuide.simplified, true);
   assert.deepEqual(Object.keys(h.store.read().records), [`read@${h.today}`]);
   assert.deepEqual(beforeRecords, {});
-  h.page.onReturnOriginal(event('read', h.today));
+  h.page.onRestore(event('read', h.today));
   assert.equal(h.page.data.pending[0].target, 5);
   assert.equal(h.page.data.done, 0);
   assert.deepEqual(Object.keys(h.store.read().records), [`read@${h.today}`]);
@@ -85,9 +85,12 @@ test('smaller target reuses confirmation and does not complete or fill missed da
 test('a target of one offers only the original action', t => {
   const h = harness(t, [['water', { target: 1, minimum: null, unit: '次' }]]);
   assert.equal(h.page.data.returnGuide.originalTarget, 1);
-  h.page.onReturnSmall(event('water', h.today));
-  assert.equal(h.modals.length, 0);
-  h.page.onReturnOriginal(event('water', h.today));
+  h.page.onSimplify(event('water', h.today));
+  assert.equal(h.modals.length, 0, '目标为1时不开“少做一点”确认');
+  assert.match(h.page.data.error, /最小/);
+  const template = fs.readFileSync(path.resolve(__dirname, '../miniprogram/templates/task.wxml'), 'utf8');
+  assert.match(template, /wx:if="\{\{task\.originalTarget > 1\}\}"[^>]*bindtap="onSimplify"/);
+  h.page.onComplete(event('water', h.today));
   assert.equal(h.page.data.done, 1);
   assert.equal(h.store.read().records['water@' + h.today].status, 'standard');
   assert.deepEqual(h.navigation, []);
@@ -154,14 +157,14 @@ test('failed completion does not report success or remove the return state', t =
   assert.match(h.page.data.error, /保存失败/);
 });
 
-test('native markup provides one conditional prompt and hides invalid smaller action', () => {
+test('native markup shows one prompt line next to the task without duplicating actions', () => {
   const root = path.resolve(__dirname, '../miniprogram');
   const markup = fs.readFileSync(path.join(root, 'pages/today/index.wxml'), 'utf8');
-  assert.match(markup, /wx:if="\{\{returnGuide\}\}"/);
-  assert.match(markup, /returnGuide\.originalTarget > 1/);
-  assert.match(markup, /bindtap="onReturnOriginal"/);
-  assert.match(markup, /bindtap="onReturnMinimum"/);
-  assert.match(markup, /bindtap="onReturnSmall"/);
-  assert.match(markup, /过去不用补打卡/);
+  assert.match(markup, /wx:if="\{\{returnGuide && item\.id === returnGuide\.id\}\}"/);
+  assert.match(markup, /回来就从今天的一点开始。/);
   assert.match(markup, /wx:if="\{\{!hideQuote && !returnGuide && total\}\}" class="sub quote"/);
+  const template = fs.readFileSync(path.join(root, 'templates/task.wxml'), 'utf8');
+  assert.doesNotMatch(markup, /onReturnOriginal|onReturnMinimum|onReturnSmall|return-actions/);
+  assert.match(template, /bindtap="onComplete"/);
+  assert.match(template, /bindtap="onCompleteMinimum"/);
 });

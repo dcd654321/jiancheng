@@ -1,8 +1,8 @@
-<view class="page">
+<view class="page theme-{{theme}}">
   <view class="heading">我的分享</view><view class="sub">记录创建过的内容，不记录发给了谁。</view>
   <view wx:if="{{!enabled}}" class="notice spaced">分享功能尚未开放。</view>
   <view wx:elif="{{loading}}" class="sub spaced">正在读取…</view>
-  <view wx:elif="{{dataUnavailable}}" class="error spaced">暂时无法读取，请先恢复云端同步。</view>
+  <view wx:elif="{{dataUnavailable}}" class="empty"><view class="heading">暂时没能读取记录</view><view class="sub">{{error || '分享列表需要先恢复云端同步，不影响打卡。'}}</view><button class="primary spaced" bindtap="onDataRetry">{{recoveryLabel || '重新读取'}}</button></view>
   <block wx:elif="{{dataReady}}">
     <view wx:if="{{error}}" class="error spaced">{{error}}</view>
     <button class="primary spaced" bindtap="onCreate">创建一份分享</button>

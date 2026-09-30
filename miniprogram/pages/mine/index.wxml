@@ -1,11 +1,16 @@
-<view class="page">
+<view class="page theme-{{theme}}">
   <view wx:if="{{loading}}" class="empty"><view class="section-title">正在读取记录</view><view class="sub">请稍候。</view></view>
-  <view wx:elif="{{dataUnavailable}}" class="empty"><view class="heading">暂时读不到云端记录</view><view class="sub">{{error}}</view></view>
+  <view wx:elif="{{dataUnavailable}}" class="empty"><view class="heading">暂时没能读取记录</view><view class="sub">{{error}}</view><button class="primary spaced" bindtap="onDataRetry">{{recoveryLabel || '重新读取'}}</button></view>
   <block wx:elif="{{dataReady}}">
     <view class="heading heading-xl">我的</view><view class="sub">记录跟随当前微信账号</view>
     <view wx:if="{{error}}" class="error spaced">{{error}}</view>
     <view class="group"><view class="group-label">习惯管理</view><button class="setting-row" bindtap="onManage"><text class="grow">我的习惯</text><text class="sub">{{count}} 个</text><view class="chevron" /></button></view>
-    <view class="group"><view class="group-label">偏好设置</view><view class="setting-row"><text class="grow">显示首页短句</text><switch checked="{{!hideQuote}}" color="#245c44" bindchange="onQuote" aria-label="显示首页短句" /></view><button wx:if="{{remindersEnabled}}" class="setting-row" bindtap="onReminders"><view class="grow">下一次提醒<view class="sub">主动申请，一次聚合提醒</view></view><view class="chevron" /></button></view>
+    <view class="group">
+      <view class="group-label">偏好设置</view>
+      <view class="setting-row"><text class="grow">显示首页短句</text><switch checked="{{!hideQuote}}" color="{{primary}}" bindchange="onQuote" aria-label="显示首页短句" /></view>
+      <button wx:if="{{appearanceEnabled}}" class="setting-row" bindtap="onAppearance"><view class="grow">外观主题<view wx:if="{{appearancePending}}" class="sub">保存结果待核对，打开后可继续核对</view></view><text class="sub">{{appearanceLabel}}</text><view class="chevron" /></button>
+      <button wx:if="{{remindersEnabled}}" class="setting-row" bindtap="onReminders"><view class="grow">下一次提醒<view class="sub">主动申请，一次聚合提醒</view></view><view class="chevron" /></button>
+    </view>
     <view class="group"><view class="group-label">一起进步</view><button class="setting-row" open-type="share"><text class="grow">分享小程序</text><view class="chevron" /></button><button wx:if="{{sharingEnabled}}" class="setting-row" bindtap="onShares"><view class="grow">我的分享<view class="sub">创建、回看与撤回公开内容</view></view><view class="chevron" /></button></view>
     <view class="group"><view class="group-label">数据与支持</view><button class="setting-row" bindtap="onData"><view class="grow">数据与隐私<view class="sub">云端状态与清除</view></view><view class="chevron" /></button><button class="setting-row" bindtap="onHelp"><text class="grow">使用帮助</text><view class="chevron" /></button><button class="setting-row" open-type="feedback"><text class="grow">意见与问题反馈</text><view class="chevron" /></button></view>
   </block>

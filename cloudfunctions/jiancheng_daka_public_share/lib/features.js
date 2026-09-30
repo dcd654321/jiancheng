@@ -10,6 +10,7 @@ const hex = value => typeof value === 'string' && HEX.test(value);
 const CATEGORIES = ['read', 'walk', 'study', 'tidy'];
 const SLOTS = ['08:00', '12:30', '20:30'];
 const CAPTIONS = ['small-steps', 'keep-going', 'busy-still-counts'];
+const THEMES = ['mist', 'paper'];
 const PUBLIC_UNAVAILABLE = { ok: false, code: 'SHARE_UNAVAILABLE', message: '这份分享暂不可用或已失效' };
 function object(value, allowed) {
   if (!value || typeof value !== 'object' || Array.isArray(value) || ![Object.prototype, null].includes(Object.getPrototypeOf(value)) ||
@@ -21,6 +22,7 @@ function size(value, maximum = 4096) {
 }
 const FIELDS = {
   getPreferences: [], setPreferences: ['operationId', 'expectedRevision', 'patch'],
+  getAppearance: [], setAppearance: ['operationId', 'expectedRevision', 'theme'],
   previewShare: ['kind', 'sourceHabitId', 'categoryKey', 'includeWeekdays', 'captionKey'],
   createShare: ['kind', 'sourceHabitId', 'categoryKey', 'includeWeekdays', 'captionKey', 'requestId', 'requestDate', 'sourceRevision'],
   listMyShares: ['cursor'], getMyShare: ['shareId'], revokeShare: ['shareId'], deleteShare: ['shareId']
@@ -35,6 +37,10 @@ function validateRequest(event, dates) {
     object(event.patch, ['pinnedHabitId', 'reminderSlot']);
     if (!Object.keys(event.patch).length || (own(event.patch, 'pinnedHabitId') && event.patch.pinnedHabitId !== null && !token(event.patch.pinnedHabitId)) ||
       (own(event.patch, 'reminderSlot') && event.patch.reminderSlot !== null && !SLOTS.includes(event.patch.reminderSlot))) fail('INVALID_REQUEST', '偏好字段无效');
+  }
+  if (event.action === 'setAppearance') {
+    if (!token(event.operationId) || !Number.isSafeInteger(event.expectedRevision) || event.expectedRevision < 0) fail('INVALID_REQUEST', '偏好版本无效');
+    if (!THEMES.includes(event.theme)) fail('INVALID_REQUEST', '外观主题无效');
   }
   if (['previewShare', 'createShare'].includes(event.action)) {
     if (!['invite', 'plan', 'weekly'].includes(event.kind)) fail('INVALID_REQUEST', '分享类型无效');
@@ -61,6 +67,7 @@ function readPreferences(saved, owner, epoch, now) {
     !Array.isArray(saved.shareIndex) || saved.shareIndex.length > 200 || !Array.isArray(saved.preferenceReceipts) || saved.preferenceReceipts.length > 64 ||
     !saved.dailyCreates || typeof saved.dailyCreates.date !== 'string' || !Array.isArray(saved.dailyCreates.requests) || saved.dailyCreates.requests.length > 10 ||
     (saved.pinnedHabitId !== null && !token(saved.pinnedHabitId)) || (saved.reminderSlot !== null && !SLOTS.includes(saved.reminderSlot))) throw Error('PREFERENCES_CORRUPT');
+  if (saved.theme !== undefined && !THEMES.includes(saved.theme)) throw Object.assign(Error('PREFERENCES_CORRUPT'), { code: 'PREFERENCES_CORRUPT' });
   const unique = new Set();
   for (const row of saved.shareIndex) {
     if (!hex(row.id) || unique.has(row.id) || !['active', 'revoked'].includes(row.status) ||
@@ -71,6 +78,9 @@ function readPreferences(saved, owner, epoch, now) {
 }
 function preferenceView(p) {
   return { revision: p.revision, pinnedHabitId: p.pinnedHabitId, reminderSlot: p.reminderSlot };
+}
+function appearanceView(p) {
+  return { revision: p.revision, theme: p.theme === undefined ? 'mist' : p.theme };
 }
 function snapshotFor(event, account, day, domain, dates) {
   if (event.kind === 'invite') return { kind: 'invite', coverKey: 'default', templateKeys: ['read', 'walk', 'study'] };
@@ -131,6 +141,7 @@ function createFeaturesApi({ repository, domain, dates, allowedAppId, allowedSou
         const p = readPreferences(await tx.preferences(), owner, account.epoch, now.toISOString());
         const persist = async () => { p.updatedAt = now.toISOString(); await tx.putPreferences(p); };
         if (event.action === 'getPreferences') return { ok: true, preferences: preferenceView(p) };
+        if (event.action === 'getAppearance') return { ok: true, appearance: appearanceView(p) };
         if (event.action === 'setPreferences') {
           const fingerprint = hash(canonical(event));
           const receipt = p.preferenceReceipts.find(r => r.id === event.operationId);
@@ -148,6 +159,19 @@ function createFeaturesApi({ repository, domain, dates, allowedAppId, allowedSou
           p.preferenceReceipts.push({ id: event.operationId, fingerprint });
           p.preferenceReceipts = p.preferenceReceipts.slice(-64);
           await persist(); return { ok: true, preferences: preferenceView(p), replayed: false };
+        }
+        if (event.action === 'setAppearance') {
+          const fingerprint = hash(canonical(event));
+          const receipt = p.preferenceReceipts.find(r => r.id === event.operationId);
+          if (receipt) {
+            if (receipt.fingerprint !== fingerprint) fail('IDEMPOTENCY_MISMATCH', '请勿复用请求标识');
+            return { ok: true, appearance: appearanceView(p), replayed: true };
+          }
+          if (p.revision !== event.expectedRevision) fail('CONFLICT', '其他设备已修改偏好，请刷新后重试');
+          p.theme = event.theme; p.revision++;
+          p.preferenceReceipts.push({ id: event.operationId, fingerprint });
+          p.preferenceReceipts = p.preferenceReceipts.slice(-64);
+          await persist(); return { ok: true, appearance: appearanceView(p), replayed: false };
         }
         if (event.action === 'previewShare') {
           return { ok: true, publicSnapshot: safeSnapshot(snapshotFor(event, account, day, domain, dates), domain, dates),
@@ -203,8 +227,13 @@ function createFeaturesApi({ repository, domain, dates, allowedAppId, allowedSou
         return { ok: true };
       });
     } catch (err) {
-      return err instanceof ApiError ? { ok: false, code: err.code, message: err.message }
-        : { ok: false, code: 'SERVICE_UNAVAILABLE', message: '服务暂不可用，请保留当前页面后重试' };
+      if (err instanceof ApiError) return { ok: false, code: err.code, message: err.message };
+      // Corrupt stored theme is reported only to appearance actions; legacy
+      // actions keep the generic service error mapping.
+      if (err && err.code === 'PREFERENCES_CORRUPT' && event && ['getAppearance', 'setAppearance'].includes(event.action)) {
+        return { ok: false, code: 'PREFERENCES_CORRUPT', message: '偏好数据损坏，未自动修复' };
+      }
+      return { ok: false, code: 'SERVICE_UNAVAILABLE', message: '服务暂不可用，请保留当前页面后重试' };
     }
   };
 }

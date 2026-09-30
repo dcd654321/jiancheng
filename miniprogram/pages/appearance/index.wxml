@@ -1,0 +1,27 @@
+<view class="page theme-{{theme}}">
+  <view class="heading">外观主题</view>
+  <view class="sub">选一个看起来舒服的颜色，布局和记录方式不变。</view>
+  <view wx:if="{{!enabled}}" class="empty">
+    <view class="section-title">外观主题暂未开放</view>
+    <view class="sub">这个功能还没有启用，习惯记录不受影响。</view>
+    <button class="secondary" bindtap="onBack">返回</button>
+  </view>
+  <block wx:else>
+    <view class="theme-options">
+      <button wx:for="{{options}}" wx:key="key" class="theme-card {{item.selected ? 'selected' : ''}}" data-theme="{{item.key}}" bindtap="onPick" aria-pressed="{{item.selected}}" aria-label="{{item.name}}{{item.badge ? '，' + item.badge : ''}}">
+        <view class="theme-card-head"><text class="theme-name">{{item.name}}</text><text wx:if="{{item.badge}}" class="theme-badge">{{item.badge}}</text></view>
+        <view class="sub theme-desc">{{item.desc}}</view>
+        <view class="theme-thumb theme-{{item.key}}">
+          <view class="thumb-title">读一会儿</view>
+          <view class="thumb-goal"><text class="thumb-main">平时 5 分钟</text><text class="chip-lime">忙时 2 分钟</text></view>
+          <view class="thumb-btn">按 5 分钟记下</view>
+          <view class="thumb-btn soft">忙时按 2 分钟记下</view>
+        </view>
+      </button>
+    </view>
+    <view wx:if="{{statusNote}}" class="sub theme-status">{{statusNote}}</view>
+    <button wx:if="{{!hasRevision}}" class="text-button" bindtap="onReload">重新读取主题</button>
+    <view wx:if="{{saveError}}" class="error spaced">{{saveError}}</view>
+    <button class="primary spaced" loading="{{saving}}" disabled="{{primaryDisabled}}" bindtap="onApply">{{primaryLabel}}</button>
+  </block>
+</view>

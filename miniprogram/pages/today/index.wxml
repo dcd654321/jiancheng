@@ -1,60 +1,64 @@
 <import src="../../templates/task.wxml" />
-<view class="page">
+<view class="page theme-{{theme}}">
   <view wx:if="{{loading}}" class="skeleton-wrap">
-    <view class="skeleton skeleton-title" />
-    <view class="skeleton skeleton-sub" />
+    <view class="loading-hero">
+      <view class="loading-greet">{{loadingGreeting}}</view>
+      <view class="sub loading-note">{{loadingNote}}</view>
+      <view class="loading-bars" aria-hidden="true"><view class="bar bar1" /><view class="bar bar2" /><view class="bar bar3" /></view>
+      <view class="sub loading-progress">正在读取云端记录，需要一点时间。</view>
+    </view>
     <view class="skeleton skeleton-card" />
     <view class="skeleton skeleton-card" />
-    <view class="sub skeleton-note">正在读取云端记录，请稍候。</view>
   </view>
   <view wx:elif="{{dataUnavailable}}" class="empty">
-    <view class="heading">暂时读不到云端记录</view>
+    <view class="heading">暂时没能读取记录</view>
     <view class="sub">{{error || '数据没有丢失。检查网络后重试。'}}</view>
-    <button class="primary spaced" bindtap="onDataRetry">重新读取</button>
+    <button class="primary spaced" disabled="{{loading}}" bindtap="onDataRetry">{{recoveryLabel || '重新读取'}}</button>
   </view>
   <block wx:elif="{{dataReady}}">
     <view wx:if="{{error}}" class="error">{{error}}</view>
     <view class="page-header">
       <view><view class="heading heading-xl">今日</view><view class="sub">{{dateLabel}}</view></view>
-      <button wx:if="{{hasHabits}}" class="add-button" bindtap="onCreate">添加习惯</button>
+      <button wx:if="{{hasHabits}}" class="add-button" bindtap="onToggleChooser" aria-expanded="{{chooserOpen}}">{{chooserOpen ? '收起' : '添加习惯'}}</button>
     </view>
     <button wx:if="{{syncAttention}}" class="notice text-button" bindtap="onSync">{{syncText}} · 查看</button>
     <view wx:if="{{firstHabitGuide}}" class="notice first-guide"><text class="grow">{{firstHabitGuide}}</text><button class="text-button" bindtap="onDismissGuide">知道了</button></view>
-    <view wx:if="{{returnGuide}}" class="card return-card">
-      <view class="return-heading">从今天接上就好</view>
-      <view class="sub return-body">「{{returnGuide.title}}」隔了几次也没关系，过去不用补打卡。完成今天的目标就接上了。</view>
-      <view class="return-actions">
-        <button wx:if="{{returnGuide.simplified}}" class="secondary" data-id="{{returnGuide.id}}" data-date="{{date}}" bindtap="onReturnOriginal">恢复原目标</button>
-        <block wx:else>
-          <button class="secondary" data-id="{{returnGuide.id}}" data-date="{{date}}" bindtap="onReturnOriginal">按原目标打卡 · {{returnGuide.target}}{{returnGuide.unit}}</button>
-          <button wx:if="{{returnGuide.minimum}}" class="primary" data-id="{{returnGuide.id}}" data-date="{{date}}" bindtap="onReturnMinimum">用忙时目标打卡 · {{returnGuide.minimum}}{{returnGuide.unit}}</button>
-          <button wx:if="{{!returnGuide.minimum && returnGuide.originalTarget > 1}}" class="text-button" data-id="{{returnGuide.id}}" data-date="{{date}}" bindtap="onReturnSmall">今天少做一点</button>
-        </block>
+    <block wx:if="{{hasHabits && chooserOpen}}">
+      <view class="tpl-grid">
+        <button class="tpl-card" data-template="read" bindtap="onCreate"><text class="tpl-name">读一会儿</text><text class="tpl-line">平时 5 分钟 · 忙时 2 分钟</text></button>
+        <button class="tpl-card" data-template="walk" bindtap="onCreate"><text class="tpl-name">走路一会儿</text><text class="tpl-line">平时 10 分钟 · 忙时 3 分钟</text></button>
+        <button class="tpl-card" data-template="study" bindtap="onCreate"><text class="tpl-name">复习一小段</text><text class="tpl-line">平时 5 分钟 · 忙时 2 分钟</text></button>
+        <button class="tpl-card" data-template="tidy" bindtap="onCreate"><text class="tpl-name">整理桌面</text><text class="tpl-line">平时 3 分钟 · 忙时 1 分钟</text></button>
       </view>
-    </view>
+      <button class="secondary" data-template="" bindtap="onCreate">自己设一个</button>
+      <view class="helper-row"><button class="link-button" bindtap="onAssistant">帮我定个起点 ›</button></view>
+    </block>
     <block wx:if="{{total}}">
       <view class="card progress-card">
-        <view class="progress-row"><text class="progress-title">今天的进度</text><text class="progress-value">{{done}} / {{total}}</text></view>
+        <view class="progress-row"><text class="progress-title">今天已记录</text><text class="progress-value">{{done}} / {{total}}</text></view>
         <view class="meter"><view class="meter-fill" style="width: {{rate}}%"></view></view>
         <view wx:if="{{minimum}}" class="progress-note">其中 {{minimum}} 项按忙时目标完成</view>
       </view>
       <view wx:if="{{pending.length}}" class="section-title"><text>待做</text><text class="section-count">{{pending.length}} 项</text></view>
+      <view wx:if="{{pending.length}}" class="sub task-explain">做完再记下，不会自动计时。</view>
       <block wx:for="{{pendingRows}}" wx:key="id">
-        <view wx:if="{{item.undo}}" class="task undo-row" aria-live="polite">
+        <view wx:if="{{item.undo}}" class="task retained">
           <view class="task-top">
             <view class="task-open">
               <view class="task-title">{{item.task.title}}</view>
-              <view class="task-goal"><text class="goal-main">今天 {{item.task.target}}{{item.task.unit}}</text><text class="sub">已记录{{syncAttention ? ' · 请留意同步状态' : ''}}</text></view>
+              <view class="done-line"><view class="stamp-in"><icon type="success" size="20" color="{{primary}}" /></view><text>{{item.task.status === 'minimum' ? '已按忙时目标完成 · ' + item.task.target + item.task.unit : '已按原目标完成 · ' + item.task.target + item.task.unit}}</text></view>
             </view>
-            <view class="done-tag"><view class="stamp-in"><icon type="success" size="20" color="#245c44" /></view><text>{{item.task.status === 'minimum' ? '忙时完成' : '原目标完成'}}</text></view>
           </view>
-          <view class="task-options"><button class="text-button undo" data-id="{{item.id}}" bindtap="onQuickUndo" aria-label="撤销{{item.task.title}}刚刚的打卡">撤销</button></view>
+          <view class="task-options"><button class="text-button undo" disabled="{{dataReadOnly || recordingId === item.id}}" data-id="{{item.id}}" bindtap="onQuickUndo" aria-label="撤销{{item.task.title}}这次记录">{{recordingId === item.id ? '正在撤销…' : '撤销这次记录'}}</button></view>
         </view>
-        <template wx:else is="task" data="{{task: item.task, quickMinimumEnabled: quickMinimumEnabled}}" />
+        <block wx:else>
+          <view wx:if="{{returnGuide && item.id === returnGuide.id}}" class="notice return-line">回来就从今天的一点开始。</view>
+          <template is="task" data="{{task: item.task, readOnly: dataReadOnly, taskIconColor: primary, recordingId: recordingId, quickMinimumEnabled: quickMinimumEnabled}}" />
+        </block>
       </block>
-      <view wx:if="{{!pending.length}}" class="sub spaced">今天的安排，都记下了。</view>
-      <button wx:if="{{completed.length}}" class="disclosure spaced" bindtap="onToggleCompleted" aria-expanded="{{showCompleted}}"><text class="grow">已完成 · {{completed.length}}</text><text class="sub">{{showCompleted ? '收起' : '查看'}}</text><view class="chevron {{showCompleted ? 'up' : 'down'}}" /></button>
-      <block wx:if="{{showCompleted}}"><block wx:for="{{completed}}" wx:key="id"><template is="task" data="{{task: item, quickMinimumEnabled: quickMinimumEnabled}}" /></block></block>
+      <view wx:if="{{!pending.length}}" class="sub spaced">今天安排的都记下了。</view>
+      <button wx:if="{{completedGroup.length}}" class="disclosure spaced" bindtap="onToggleCompleted" aria-expanded="{{showCompleted}}"><text class="grow">今日已完成（{{completedGroup.length}}）</text><text class="sub">{{showCompleted ? '收起' : '查看'}}</text><view class="chevron {{showCompleted ? 'up' : 'down'}}" /></button>
+      <block wx:if="{{showCompleted}}"><block wx:for="{{completedGroup}}" wx:key="id"><template is="task" data="{{task: item, readOnly: dataReadOnly, taskIconColor: primary, quickMinimumEnabled: quickMinimumEnabled}}" /></block></block>
     </block>
     <view wx:else class="empty">
       <block wx:if="{{hasHabits}}">
@@ -63,16 +67,16 @@
         <button class="secondary" bindtap="onManage">查看习惯安排</button>
       </block>
       <block wx:else>
-        <view class="hero-title">再忙，也能做一点</view>
-        <view class="hero-sub">先选一个现成的小目标，创建前都能改。忙的那天，做小一点也算完成。</view>
+        <view class="hero-title">忙的时候，也能做一点</view>
+        <view class="hero-sub">给习惯准备平时和忙时两个目标，做完再记下。</view>
         <view class="tpl-grid">
-          <button class="tpl-card" data-template="read" bindtap="onCreate"><text class="tpl-name">读一会儿</text><text class="tpl-line">平时 5 分钟</text><text class="tpl-chip">忙时 2 分钟</text></button>
-          <button class="tpl-card" data-template="walk" bindtap="onCreate"><text class="tpl-name">走路一会儿</text><text class="tpl-line">平时 10 分钟</text><text class="tpl-chip">忙时 3 分钟</text></button>
-          <button class="tpl-card" data-template="study" bindtap="onCreate"><text class="tpl-name">复习一小段</text><text class="tpl-line">平时 5 分钟</text><text class="tpl-chip">忙时 2 分钟</text></button>
-          <button class="tpl-card" data-template="tidy" bindtap="onCreate"><text class="tpl-name">整理桌面</text><text class="tpl-line">平时 3 分钟</text><text class="tpl-chip">忙时 1 分钟</text></button>
+          <button class="tpl-card" data-template="read" bindtap="onCreate"><text class="tpl-name">读一会儿</text><text class="tpl-line">平时 5 分钟 · 忙时 2 分钟</text></button>
+          <button class="tpl-card" data-template="walk" bindtap="onCreate"><text class="tpl-name">走路一会儿</text><text class="tpl-line">平时 10 分钟 · 忙时 3 分钟</text></button>
+          <button class="tpl-card" data-template="study" bindtap="onCreate"><text class="tpl-name">复习一小段</text><text class="tpl-line">平时 5 分钟 · 忙时 2 分钟</text></button>
+          <button class="tpl-card" data-template="tidy" bindtap="onCreate"><text class="tpl-name">整理桌面</text><text class="tpl-line">平时 3 分钟 · 忙时 1 分钟</text></button>
         </view>
-        <button class="secondary" data-template="" bindtap="onCreate">自己填写</button>
-        <view class="helper-row"><text class="sub">不知道定多大？</text><button class="text-button" bindtap="onAssistant">帮我定个小目标 ›</button></view>
+        <button class="secondary" data-template="" bindtap="onCreate">自己设一个</button>
+        <view class="helper-row"><button class="link-button" bindtap="onAssistant">帮我定个起点 ›</button></view>
       </block>
     </view>
     <view wx:if="{{hasHabits && !pending.length && tomorrow}}" class="tomorrow spaced">
@@ -81,7 +85,6 @@
       <view wx:for="{{tomorrow.tasks}}" wx:key="id" class="tomorrow-task"><text class="grow">{{item.title}}</text><text class="sub">{{item.time || '时间自定'}} · {{item.target}}{{item.unit}}</text></view>
       <button class="text-button" bindtap="onManage">{{tomorrow.remaining ? '还有 ' + tomorrow.remaining + ' 项 · 查看安排' : '管理习惯安排'}}</button>
     </view>
-    <button wx:if="{{hasHabits && (canCreateToday || canCreateTomorrow)}}" class="disclosure spaced" bindtap="onAssistant"><view class="grow"><view>帮我定个小目标</view><view class="sub">填写可用时间，获取一个基础建议</view></view><view class="chevron" /></button>
     <view wx:if="{{!hideQuote && !returnGuide && total}}" class="sub quote">{{quote}}</view>
   </block>
 </view>

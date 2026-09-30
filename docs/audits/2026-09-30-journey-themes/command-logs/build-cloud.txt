@@ -1,0 +1,3 @@
+# npm run build:cloud 2026-09-30T17:01:13+08:00
+> node scripts/build-cloud.cjs
+PASS 61 cloud files assembled locally. No install, deployment or network requests.

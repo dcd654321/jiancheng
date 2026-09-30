@@ -1,13 +1,18 @@
 <import src="../../templates/task.wxml" />
-<view class="page">
+<view class="page theme-{{theme}}">
   <view wx:if="{{loading}}" class="empty"><view class="section-title">正在读取习惯</view><view class="sub">请稍候。</view></view>
-  <view wx:elif="{{dataUnavailable}}" class="empty"><view class="heading">暂时读不到云端记录</view><view class="sub">{{error}}</view></view>
+  <view wx:elif="{{dataUnavailable}}" class="empty"><view class="heading">暂时没能读取记录</view><view class="sub">{{error}}</view><button class="primary spaced" bindtap="onDataRetry">{{recoveryLabel || '重新读取'}}</button></view>
+  <view wx:elif="{{invalid}}" class="empty">
+    <view class="heading">没有找到这个习惯</view>
+    <view class="sub">{{error || '它可能已被删除，或链接不完整。'}}</view>
+    <button class="secondary spaced" bindtap="onToday">去今日</button>
+  </view>
   <block wx:elif="{{dataReady}}">
     <view wx:if="{{error}}" class="error">{{error}}</view>
     <view class="heading">{{title}}</view><view class="sub">{{statusText}} · {{schedule}}</view>
     <block wx:if="{{featuresEnabled && current.status === 'active'}}"><button class="text-button" disabled="{{pinning}}" loading="{{pinning}}" bindtap="onPin">{{pinned ? '取消置顶' : '置顶这个习惯'}}</button><view class="sub">最多置顶一个；今天有安排时优先显示。</view><view wx:if="{{pinError}}" class="error">{{pinError}}</view></block>
     <view wx:if="{{future}}" class="notice">{{future.effectiveDate}} 生效：{{future.title}} · {{future.target}} {{future.unit}} · {{nextStatusText}}<button wx:if="{{current}}" class="text-button" bindtap="onCancelFuture">撤销这次修改</button></view>
-    <view wx:if="{{task}}"><view class="section-title">今天</view><template is="task" data="{{task: task, detail: true, quickMinimumEnabled: quickMinimumEnabled}}" /></view>
+    <view wx:if="{{task}}"><view class="section-title">今天</view><template is="task" data="{{task: task, detail: true, readOnly: dataReadOnly, taskIconColor: primary, recordingId: recordingId, quickMinimumEnabled: quickMinimumEnabled}}" /></view>
     <view wx:else class="notice">今天没有安排，不计入未记录。</view>
     <view wx:if="{{task || noteDirty}}">
       <button class="disclosure" bindtap="onToggleNote" aria-expanded="{{noteOpen || noteDirty}}"><text class="grow">{{noteDirty ? '备注草稿 · 尚未保存' : note ? '今天的备注' : '留一句话（选填）'}}</text><text class="sub">{{noteDirty ? '编辑中' : noteOpen ? '收起' : '编辑'}}</text><view class="chevron {{noteOpen || noteDirty ? 'up' : 'down'}}" /></button>
@@ -15,7 +20,7 @@
       <view wx:if="{{noteOpen || noteDirty}}" class="form-field">
         <label class="field-label" for="note">今天的备注</label>
         <view wx:if="{{noteDirty}}" class="sub">{{noteExpired ? noteDate + ' 的草稿未提交，不能保存到今天。请先复制保留。' : '尚未保存 · 暂存于本次打开，退出小程序前请保存。'}}</view>
-        <textarea id="note" class="input" maxlength="140" value="{{note}}" bindinput="onNote" placeholder="只留给自己，不用于AI或分享" />
+        <textarea id="note" class="input {{focusNote ? 'focused' : ''}}" maxlength="140" value="{{note}}" bindinput="onNote" bindfocus="onNoteFocus" bindblur="onNoteBlur" placeholder="只留给自己，不用于AI或分享" />
         <view class="row"><button class="text-button" disabled="{{noteExpired}}" bindtap="onSaveNote">保存备注</button><button wx:if="{{noteDirty}}" class="text-button" bindtap="onDiscardNote">放弃草稿</button></view>
       </view>
     </view>

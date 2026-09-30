@@ -18,6 +18,8 @@ function createWorkspaceStore(session, noteDrafts) {
   }
   return {
     read() { ready(); return session.read(); },
+    // 刷新失败但会话仍持有本账户已确认快照时的只读内容；无快照或写入待核对时返回 null。
+    stale() { return typeof session.staleRead === 'function' ? session.staleRead() : null; },
     dispatch(command) { ready(); return session.dispatch(command); },
     contextKey() {
       const status = session.status();

@@ -7,10 +7,15 @@ const SCOPES = ['features', 'public', 'reminders', 'ai', 'reminder-send'];
 const PRIVATE_SCOPES = ['features', 'reminders', 'ai'];
 const denied = () => fail('RATE_LIMITED', '访问次数已达上限，请稍后再试');
 const valid = n => Number.isSafeInteger(n) && n > 0 && n <= 1000000;
-function configuration(env, prefix, user = true) {
+function configuration(env, prefix, user = true, defaults = null) {
   const result = {};
   for (const key of ['minute', 'day', ...(user ? ['userMinute','userDay'] : [])]) {
     const raw = env[prefix + '_' + key.replace(/[A-Z]/g, c => '_' + c).toUpperCase()];
+    if (raw == null || raw === '') {
+      // 代码内置默认值：未配置时使用，部署不必逐个填数字；显式配置优先，非法值仍拒绝。
+      if (defaults && valid(defaults[key])) { result[key] = defaults[key]; continue; }
+      throw Error('LIMIT_CONFIG_REQUIRED');
+    }
     if (typeof raw !== 'string' || !/^[1-9]\d{0,6}$/.test(raw) || !valid(Number(raw))) throw Error('LIMIT_CONFIG_REQUIRED');
     result[key] = Number(raw);
   }

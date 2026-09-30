@@ -1,12 +1,21 @@
 const { features } = require('../../services/features-client');
 const { present } = require('../../core/share-presentation');
 const { APP_NAME } = require('../../config/brand');
+const { themeSnapshot, appearanceController } = require('../../services/appearance');
 const dates = require('../../core/date');
 Page({
-  data: { loading: true, error: '', view: null, mine: false, active: false, busy: false, statusLabel: '', expires: '', shareEnabled: false },
+  data: { loading: true, error: '', view: null, mine: false, active: false, busy: false, statusLabel: '', expires: '', shareEnabled: false, theme: 'mist' },
   onLoad(options = {}) { this._id = options.id || ''; this.setData({ mine: options.mine === '1' }); },
+  bindTheme() {
+    const controller = appearanceController();
+    if (controller && !this._themeUnsubscribe) this._themeUnsubscribe = controller.subscribe(() => {
+      if (this._visible) this.setData(themeSnapshot());
+    });
+    this.setData(themeSnapshot());
+  },
   onShow() {
     this._visible = true; this._gone = false;
+    this.bindTheme();
     const session = getApp().cloudSession;
     if (this._unsubscribe) this._unsubscribe();
     if (this.data.mine && session && session.subscribe) this._unsubscribe = session.subscribe(() => {
@@ -20,8 +29,8 @@ Page({
     });
     return this.load();
   },
-  onHide() { this._visible = false; this._version = (this._version || 0) + 1; if (this._unsubscribe) this._unsubscribe(); this._unsubscribe = null; this._snapshot = null; this.setData({ view: null, active: false, shareEnabled: false }); },
-  onUnload() { this._visible = false; this._gone = true; this._version = (this._version || 0) + 1; if (this._unsubscribe) this._unsubscribe(); this._unsubscribe = null; this._snapshot = null; },
+  onHide() { this._visible = false; this._version = (this._version || 0) + 1; if (this._unsubscribe) this._unsubscribe(); this._unsubscribe = null; if (this._themeUnsubscribe) this._themeUnsubscribe(); this._themeUnsubscribe = null; this._snapshot = null; this.setData({ view: null, active: false, shareEnabled: false }); },
+  onUnload() { this._visible = false; this._gone = true; this._version = (this._version || 0) + 1; if (this._unsubscribe) this._unsubscribe(); this._unsubscribe = null; if (this._themeUnsubscribe) this._themeUnsubscribe(); this._themeUnsubscribe = null; this._snapshot = null; },
   async load() {
     const version = this._version = (this._version || 0) + 1;
     this.setData({ loading: true, error: '', view: null, active: false, shareEnabled: false });

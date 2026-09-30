@@ -1,6 +1,6 @@
-<view class="page">
+<view class="page theme-{{theme}}">
   <view wx:if="{{loading}}" class="empty"><view class="section-title">正在读取习惯</view></view>
-  <view wx:elif="{{dataUnavailable}}" class="empty"><view class="heading">暂时读不到云端记录</view><view class="sub">{{error}}</view></view>
+  <view wx:elif="{{dataUnavailable}}" class="empty"><view class="heading">暂时没能读取记录</view><view class="sub">{{error}}</view><button class="primary spaced" bindtap="onDataRetry">{{recoveryLabel || '重新读取'}}</button></view>
   <block wx:elif="{{dataReady}}">
     <view wx:if="{{error}}" class="error">{{error}}</view>
     <view class="heading">我的习惯</view><view class="sub">暂停、归档和目标调整不会抹去过去。</view>

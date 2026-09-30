@@ -56,4 +56,10 @@ for (const page of app.pages) {
   }
 }
 for (const tab of app.tabBar.list) if (!app.pages.includes(tab.pagePath)) throw Error('Unknown tab: ' + tab.pagePath);
+// 主题作用域由 token 源生成；生成物漂移必须在提交前暴露。
+const themes = require('./build-themes.cjs');
+if (!fs.existsSync(themes.destination) || fs.readFileSync(themes.destination, 'utf8') !== themes.render()) {
+  throw Error('Stale theme scope: miniprogram/styles/theme.wxss. Run npm run build:themes.');
+}
+checks += 1;
 console.log(`PASS ${checks} syntax/config/page checks. WXML compilation and native rendering require WeChat DevTools.`);

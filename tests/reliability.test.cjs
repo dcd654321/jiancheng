@@ -37,14 +37,32 @@ test('cloud status never says saved while offline or an operation is uncertain',
   assert.equal(formatSyncTime('2026-09-20T06:32:14.930Z'), '2026-09-20 14:32（北京时间）');
 });
 
-test('a failed refresh blocks editing until cloud is readable again', async t => {
+test('a failed refresh keeps confirmed content read-only until cloud is readable again', async t => {
   const h = await harness(); t.after(() => h.close());
   h.setOffline(true); await assert.rejects(h.session.refresh(), /offline/);
   const today = h.page('today');
-  assert.equal(today.data.dataUnavailable, true);
+  assert.equal(today.data.dataUnavailable, false, '本会话已确认内容保留展示，而不是清空成错误页');
+  assert.equal(today.data.dataReady, true);
+  assert.equal(today.data.dataReadOnly, true);
+  assert.match(today.data.error, /暂时无法更新/);
+  assert.equal(today.data.pending.length, 1);
   assert.throws(() => h.app.store.read(), error => error.code === 'DATA_UNAVAILABLE');
   h.setOffline(false); await h.session.refresh(); await tick();
   assert.equal(today.data.dataReady, true);
+  assert.equal(today.data.dataReadOnly, false);
+  assert.equal(today.data.dataUnavailable, false);
+});
+
+test('read-only fallback refuses writes with a reason and never queues an offline write', async t => {
+  const h = await harness(); t.after(() => h.close());
+  const today = h.page('today');
+  h.setOffline(true); await assert.rejects(h.session.refresh(), /offline/);
+  today.refresh();
+  const result = today.onComplete({ currentTarget: { dataset: { id: 'read', date: h.f.date, done: false } } });
+  assert.equal(result, false);
+  assert.match(today.data.error, /暂时无法更新|联网/);
+  assert.equal(today.data.done, 0);
+  assert.equal(Object.keys((await h.f.pull()).state.records).length, 0, '断网时没有写入云端');
 });
 
 test('a note draft stays in RAM but failed save does not claim cloud persistence', async t => {
@@ -98,6 +116,6 @@ test('verified account switch hides the prior account\'s visible draft', async t
   h.f.identity.OPENID = 'different-account';
   await h.session.refresh(); await tick();
   assert.equal(detail.data.note, '');
-  assert.equal(detail.data.dataReady, false);
+  assert.equal(detail.data.invalid, true);
   assert.equal(h.app.noteDrafts.read(h.app.store.contextKey(), 'read'), null);
 });

@@ -1,6 +1,6 @@
-<view class="page">
+<view class="page theme-{{theme}}">
   <view wx:if="{{loading}}" class="empty"><view class="section-title">正在读取记录</view><view class="sub">请稍候。</view></view>
-  <view wx:elif="{{dataUnavailable}}" class="empty"><view class="heading">暂时读不到云端记录</view><view class="sub">{{error}}</view></view>
+  <view wx:elif="{{dataUnavailable}}" class="empty"><view class="heading">暂时没能读取记录</view><view class="sub">{{error}}</view><button class="primary spaced" bindtap="onDataRetry">{{recoveryLabel || '重新读取'}}</button></view>
   <block wx:elif="{{dataReady}}">
     <view class="heading">数据与隐私</view><view class="sub">记录跟随当前微信账号。</view>
     <view wx:if="{{error}}" class="error spaced">{{error}}</view>

@@ -1,15 +1,15 @@
 {
-  "pages": ["pages/today/index", "pages/progress/index", "pages/mine/index", "pages/edit/index", "pages/detail/index", "pages/manage/index", "pages/sync/index", "pages/assistant/index", "pages/data/index", "pages/share-create/index", "pages/share-list/index", "pages/share-view/index", "pages/reminder/index"],
+  "pages": ["pages/today/index", "pages/progress/index", "pages/mine/index", "pages/edit/index", "pages/detail/index", "pages/manage/index", "pages/sync/index", "pages/assistant/index", "pages/data/index", "pages/share-create/index", "pages/share-list/index", "pages/share-view/index", "pages/reminder/index", "pages/appearance/index"],
   "window": {
     "navigationBarTitleText": "渐成习惯打卡",
-    "navigationBarBackgroundColor": "#ffffff",
+    "navigationBarBackgroundColor": "#F7F8F5",
     "navigationBarTextStyle": "black",
-    "backgroundColor": "#ffffff"
+    "backgroundColor": "#F7F8F5"
   },
   "tabBar": {
-    "color": "#65756c",
-    "selectedColor": "#245c44",
-    "backgroundColor": "#ffffff",
+    "color": "#647067",
+    "selectedColor": "#486557",
+    "backgroundColor": "#FFFFFF",
     "borderStyle": "white",
     "list": [
       {

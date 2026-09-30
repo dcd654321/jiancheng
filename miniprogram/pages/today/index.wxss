@@ -3,3 +3,15 @@
 .tomorrow { margin-top: 22px; }
 .tomorrow-task { display: flex; align-items: center; gap: 12px; padding: 10px 0; flex-wrap: wrap; }
 .tomorrow-task .grow { min-width: 0; overflow-wrap: anywhere; }
+
+/* 冷启动等待：问候 + 轻微生长的三根小柱 + 如实的读取说明；动画柔和、无跳变。 */
+.loading-hero { text-align: center; padding: 26px 0 6px; }
+.loading-greet { font-size: 26px; font-weight: 600; line-height: 1.3; }
+.loading-note { margin-top: 8px; }
+.loading-bars { display: flex; align-items: flex-end; justify-content: center; gap: 6px; height: 36px; margin: 22px 0 16px; }
+.loading-bars .bar { width: 6px; border-radius: 6px; background: var(--color-primary, #486557); transform-origin: bottom; animation: bar-grow 1.8s ease-in-out infinite; }
+.loading-bars .bar1 { height: 14px; }
+.loading-bars .bar2 { height: 24px; animation-delay: .2s; }
+.loading-bars .bar3 { height: 34px; animation-delay: .4s; }
+@keyframes bar-grow { 0%, 100% { transform: scaleY(.5); opacity: .55; } 50% { transform: scaleY(1); opacity: 1; } }
+.loading-progress { margin-top: 4px; }

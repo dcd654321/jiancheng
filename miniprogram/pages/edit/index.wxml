@@ -1,39 +1,62 @@
-<view class="page compact-form">
+<view class="page compact-form edit-page {{keyboardOpen ? 'keyboard-open' : ''}} theme-{{theme}}">
   <view wx:if="{{loading}}" class="empty"><view class="section-title">正在读取记录</view><view class="sub">请稍候。</view></view>
-  <view wx:elif="{{dataUnavailable}}" class="empty"><view class="heading">暂时读不到云端记录</view><view class="sub">{{error}}</view></view>
+  <view wx:elif="{{dataUnavailable}}" class="empty"><view class="heading">暂时没能读取记录</view><view class="sub">{{error}}</view><button class="primary spaced" bindtap="onDataRetry">{{recoveryLabel || '重新读取'}}</button></view>
   <block wx:elif="{{dataReady}}">
-    <view class="heading">{{editing ? '编辑习惯' : '添加一个习惯'}}</view>
-    <view class="sub">{{editing ? '修改明天生效，历史记录不变。' : '选一件小事，从今天开始。'}}</view>
+    <view class="heading">{{editing ? '编辑习惯' : compact ? '先从这个大小开始' : '添加一个习惯'}}</view>
+    <view class="sub">{{editing ? '修改明天生效，今天的安排和历史不会改变。' : compact ? '确认名称和目标；点下面的按钮才会创建。' : '选一件小事，从今天开始。'}}</view>
+    <view wx:if="{{error}}" class="error spaced">{{error}}</view>
     <view wx:if="{{source}}" class="inline-note sub">{{source}}</view>
     <view id="field-title" class="form-field">
       <view class="row between"><label class="field-label" for="title">习惯名称</label><text class="sub">{{titleCount}}/20</text></view>
-      <input id="title" class="input" value="{{title}}" maxlength="-1" disabled="{{saving}}" placeholder="例如：下班读一会儿" data-field="title" bindinput="onInput" bindblur="onBlur" />
+      <input id="title" class="input {{focusField === 'title' ? 'focused' : ''}}" value="{{title}}" maxlength="-1" disabled="{{saving}}" placeholder="例如：下班读一会儿" data-field="title" bindinput="onInput" bindblur="onBlur" bindfocus="onFocus" bindkeyboardheightchange="onKeyboard" />
       <view wx:if="{{fieldErrors.title}}" class="field-error">{{fieldErrors.title}}</view>
     </view>
     <view id="field-target" class="form-field">
-      <label class="field-label" for="target">每次目标</label>
+      <label class="field-label" for="target">{{compact ? '平时目标' : '每次目标'}}</label>
       <view class="row goal-row">
-        <input id="target" class="input grow" type="number" maxlength="4" disabled="{{saving}}" value="{{target}}" placeholder="{{targetPlaceholder}}" data-field="target" bindinput="onInput" bindblur="onBlur" aria-label="每次目标数量" />
+        <input id="target" class="input grow {{focusField === 'target' ? 'focused' : ''}}" type="number" maxlength="4" disabled="{{saving}}" value="{{target}}" placeholder="{{targetPlaceholder}}" data-field="target" bindinput="onInput" bindblur="onBlur" bindfocus="onFocus" bindkeyboardheightchange="onKeyboard" aria-label="平时目标数量" />
         <picker mode="selector" range="{{units}}" disabled="{{saving}}" bindchange="onUnit" aria-label="选择目标单位"><view class="picker picker-select">{{unit}}<view class="chevron down" /></view></picker>
       </view>
-      <view class="field-hint">{{targetHint}}</view>
+      <view wx:if="{{targetHint}}" class="field-hint">{{targetHint}}</view>
       <view wx:if="{{fieldErrors.target}}" class="field-error">{{fieldErrors.target}}</view>
     </view>
-    <view id="field-minimum" class="form-field"><label class="field-label" for="minimum">忙时的小目标（选填）</label><input id="minimum" class="input" type="number" maxlength="4" disabled="{{saving}}" value="{{minimum}}" placeholder="例如：2" data-field="minimum" bindinput="onInput" bindblur="onBlur" /><view class="field-hint">忙不过来时做这个，也能留下记录。填比每次目标小的整数，留空可以不设。</view><view wx:if="{{fieldErrors.minimum}}" class="field-error">{{fieldErrors.minimum}}</view></view>
-    <view id="field-weekdays" class="form-field">
-      <view class="row between"><view class="field-label">哪些天做</view><text class="sub">{{frequencyLabel}}</text></view>
-      <view class="week-options"><button wx:for="{{days}}" wx:key="value" class="day-option {{item.selected ? 'selected' : ''}}" disabled="{{saving}}" data-day="{{item.value}}" bindtap="onDay" aria-label="周{{item.label}}{{item.selected ? '已选' : '未选'}}">{{item.label}}</button></view>
-      <view class="row frequency-actions"><button class="text-button" disabled="{{saving}}" data-kind="daily" bindtap="onFrequency">每天</button><button class="text-button" disabled="{{saving}}" data-kind="work" bindtap="onFrequency">周一至周五</button></view>
-      <view class="field-hint">按星期安排，不含节假日调休。</view>
-      <view wx:if="{{fieldErrors.weekdays}}" class="field-error">{{fieldErrors.weekdays}}</view>
+    <view id="field-minimum" class="form-field">
+      <block wx:if="{{!addingMinimum && !minimum}}">
+        <button class="text-button" disabled="{{saving}}" bindtap="onAddMinimum">添加忙时目标（选填）</button>
+        <view class="field-hint">忙不过来时做这个小一点的目标，也能留下记录。</view>
+      </block>
+      <block wx:else>
+        <view class="row between"><label class="field-label" for="minimum">忙时目标</label><button class="text-button" disabled="{{saving}}" bindtap="onRemoveMinimum">不设置</button></view>
+        <input id="minimum" class="input {{focusField === 'minimum' ? 'focused' : ''}}" type="number" maxlength="4" disabled="{{saving}}" value="{{minimum}}" placeholder="例如：2" data-field="minimum" bindinput="onInput" bindblur="onBlur" bindfocus="onFocus" bindkeyboardheightchange="onKeyboard" />
+        <view class="field-hint">填比平时目标小的整数；忙的那天做这个也算完成。</view>
+        <view wx:if="{{fieldErrors.minimum}}" class="field-error">{{fieldErrors.minimum}}</view>
+      </block>
     </view>
+    <view class="form-field">
+      <block wx:if="{{compact}}">
+        <button class="setting-row" disabled="{{saving}}" bindtap="onToggleFrequency" aria-expanded="{{frequencyOpen}}"><text class="grow">执行频率</text><text class="sub">{{frequencyLabel}}</text><text class="text-button">{{frequencyOpen ? '收起' : '调整'}}</text></button>
+      </block>
+      <view wx:else class="row between"><view class="field-label">哪些天做</view><text class="sub">{{frequencyLabel}}</text></view>
+      <view wx:if="{{!compact || frequencyOpen}}" id="field-weekdays" class="form-field">
+        <view class="week-options"><button wx:for="{{days}}" wx:key="value" class="day-option {{item.selected ? 'selected' : ''}}" disabled="{{saving}}" data-day="{{item.value}}" bindtap="onDay" aria-label="周{{item.label}}{{item.selected ? '已选' : '未选'}}">{{item.label}}</button></view>
+        <view class="row frequency-actions"><button class="text-button" disabled="{{saving}}" data-kind="daily" bindtap="onFrequency">每天</button><button class="text-button" disabled="{{saving}}" data-kind="work" bindtap="onFrequency">周一至周五</button></view>
+        <view class="field-hint">按星期安排，不含节假日调休。</view>
+        <view wx:if="{{fieldErrors.weekdays}}" class="field-error">{{fieldErrors.weekdays}}</view>
+      </view>
+    </view>
+    <view wx:if="{{!editing}}" class="form-field">
+      <button wx:if="{{compact}}" class="setting-row" disabled="{{saving}}" bindtap="onToggleStart" aria-expanded="{{startOpen}}"><text class="grow">开始日期</text><text class="sub">{{startOffset === 1 ? '明天开始' : '今天开始'}}</text><text class="text-button">{{startOpen ? '收起' : '修改'}}</text></button>
+      <view wx:if="{{!compact || startOpen}}" class="segments"><button class="segment {{startOffset === 0 ? 'selected' : ''}}" disabled="{{saving || !canCreateToday}}" data-offset="0" bindtap="onStart">今天开始</button><button class="segment {{startOffset === 1 ? 'selected' : ''}}" disabled="{{saving}}" data-offset="1" bindtap="onStart">明天开始</button></view>
+    </view>
+    <view class="summary-line">{{editing ? '修改从明天生效：' : '首次安排：'}}<text class="strong">{{editing ? effectiveLabel : firstLabel}}</text></view>
+    <view wx:if="{{capacityNote}}" class="notice">{{capacityNote}}</view>
     <button class="disclosure spaced" disabled="{{saving}}" bindtap="onMore" aria-expanded="{{moreOpen}}"><view class="grow"><view>更多设置</view><view class="sub">{{moreSummary}}</view></view><view class="chevron {{moreOpen ? 'up' : 'down'}}" /></button>
     <view wx:if="{{moreOpen}}" class="optional-fields">
       <view id="field-time" class="form-field"><view class="field-label">计划时间（选填）</view><view class="row"><picker class="grow" mode="time" disabled="{{saving}}" value="{{time || '21:30'}}" bindchange="onTime"><view class="picker picker-select">{{time || '不固定时间'}}<view class="chevron down" /></view></picker><button wx:if="{{time}}" class="text-button" disabled="{{saving}}" bindtap="clearTime">清除</button></view><view class="field-hint">只用于排序，不会发送提醒。</view><view wx:if="{{fieldErrors.time}}" class="field-error">{{fieldErrors.time}}</view></view>
-      <view wx:if="{{!editing}}" class="segments"><button class="segment {{startOffset === 0 ? 'selected' : ''}}" disabled="{{saving}}" data-offset="0" bindtap="onStart">今天开始</button><button class="segment {{startOffset === 1 ? 'selected' : ''}}" disabled="{{saving}}" data-offset="1" bindtap="onStart">明天开始</button></view>
     </view>
-    <view class="summary-line spaced">{{editing ? '修改生效：' : '首次安排：'}}<text class="strong">{{editing ? effectiveLabel : firstLabel}}</text></view>
-    <view wx:if="{{error}}" class="error spaced">{{error}}</view>
-    <view class="actions"><button class="primary" loading="{{saving}}" disabled="{{saving}}" bindtap="onSave">{{editing ? '保存明日计划' : '创建习惯'}}</button></view>
+    <view class="submit-bar {{keyboardOpen ? 'inline' : ''}}">
+      <view wx:if="{{editing}}" class="sub submit-note">修改从明天生效</view>
+      <button class="primary" loading="{{saving}}" disabled="{{saving || dataReadOnly}}" bindtap="onSave">{{saving ? (editing ? '正在保存…' : '正在创建…') : (editing ? '保存明日计划' : '创建这个习惯')}}</button>
+    </view>
   </block>
 </view>

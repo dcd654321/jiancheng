@@ -10,9 +10,10 @@ function drafts() {
 
 Page(ui.withLifecycle({
   data: { error: '', loading: true, dataUnavailable: false, dataReady: false,
+    invalid: false,
     title: '', schedule: '', current: null, future: null, task: null, history: [], note: '',
     noteDirty: false, noteExpired: false, noteDate: '', date: '', statusText: '',
-    noteOpen: false, moreOpen: false, showHistory: false, visibleHistory: [],
+    noteOpen: false, moreOpen: false, showHistory: false, visibleHistory: [], focusNote: false,
     quickMinimumEnabled: ui.quickMinimumEnabled, featuresEnabled: false, pinned: false, pinning: false, pinError: '' },
   onLoad(options) { this._id = options.id; this.refresh(); },
   async onShow() {
@@ -25,7 +26,8 @@ Page(ui.withLifecycle({
     } catch (_) { if (!this._gone && this._visible && key === ui.contextKey()) this.setData({ pinError: '暂时未读取到置顶设置，打卡不受影响' }); }
   },
   refresh() {
-    if (!this._id) return;
+    if (!this._id) { this.setData({ loading: false, dataReady: false, dataUnavailable: false, invalid: true,
+      error: '这个习惯链接不完整，没有可显示的记录。' }); return; }
     ui.read(this, (state, date) => {
       const context = ui.contextKey();
       const draft = drafts().read(context, this._id);
@@ -35,7 +37,15 @@ Page(ui.withLifecycle({
           history: [], dataReady: false, dataUnavailable: true });
       }
       this._draftContext = context;
-      const habit = ui.domain.findHabit(state, this._id);
+      // 无效ID不渲染空白卡或别人的记录，给原因和出口。
+      const habit = state.habits.find(h => h.id === this._id);
+      if (!habit) {
+        this._revision = null;
+        this.setData({ invalid: true, dataReady: true, title: '', current: null, future: null, task: null,
+          history: [], visibleHistory: [], note: '', noteDirty: false });
+        return;
+      }
+      this.setData({ invalid: false });
       this._revision = habit.revision;
       const current = ui.domain.versionAt(habit, date);
       const last = habit.versions[habit.versions.length - 1];
@@ -70,6 +80,8 @@ Page(ui.withLifecycle({
     finally { this._pinning = false; if (!this._gone) this.setData({ pinning: false }); }
   },
   onToggleNote() { this.setData({ noteOpen: !this.data.noteOpen }); },
+  onNoteFocus() { this.setData({ focusNote: true }); },
+  onNoteBlur() { this.setData({ focusNote: false }); },
   onMore() { this.setData({ moreOpen: !this.data.moreOpen }); },
   onToggleHistory() { this.setData({ showHistory: !this.data.showHistory }); this.refresh(); },
   onNote(event) {
@@ -106,9 +118,10 @@ Page(ui.withLifecycle({
     const status = event.currentTarget.dataset.status;
     const verb = { active: '恢复', paused: '暂停', archived: '归档' }[status];
     const baseRevision = this._revision;
-    wx.showModal({ title: `明日起${verb}？`, content: '今天的安排仍保留，历史记录不会改变。', confirmText: verb, confirmColor: '#245c44',
+    wx.showModal({ title: `明日起${verb}？`, content: '今天的安排仍保留，历史记录不会改变。', confirmText: verb, confirmColor: ui.primaryColor(),
       success: result => { if (result.confirm) ui.mutate(this, { type: 'status', id: this._id, status, baseRevision }, '修改明日生效'); } });
   },
   onCancelFuture() { ui.mutate(this, { type: 'cancelFuture', id: this._id, baseRevision: this._revision }, '待生效修改已撤销'); },
+  onToday() { wx.switchTab({ url: '/pages/today/index' }); },
   ...ui.taskActions
 }));
