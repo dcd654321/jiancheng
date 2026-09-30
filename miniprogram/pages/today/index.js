@@ -24,17 +24,14 @@ Page(ui.withLifecycle({
   data: { error: '', loading: true, dataUnavailable: false, dataReady: false, dataReadOnly: false,
     loadingGreeting: '今天好', loadingNote: LOADING_NOTES[0],
     pendingConfirm: false, recoveryLabel: '重新读取',
-    date: '', dateLabel: '', pending: [], completed: [], completedGroup: [], total: 0, done: 0, minimum: 0, rate: 0,
+    date: '', dateLabel: '', pending: [], completed: [], total: 0, done: 0, minimum: 0, rate: 0,
     hasHabits: false, hideQuote: false, quote: QUOTES[0], showCompleted: false, chooserOpen: false,
     quickMinimumEnabled: ui.quickMinimumEnabled,
-    firstHabitGuide: '', returnGuide: null, pendingRows: [], tomorrow: null, canCreateToday: true, canCreateTomorrow: true },
+    firstHabitGuide: '', returnGuide: null, tomorrow: null, canCreateToday: true, canCreateTomorrow: true },
   refresh() {
     ui.read(this, (state, date) => {
       if (this._pinContext !== ui.contextKey()) this._visitPinnedId = null;
       this._pinContext = ui.contextKey();
-      const context = ui.contextKey();
-      // 本次可见访问的完成行只在同一账户、同一业务日期内有意义；跨天或换账户立即丢弃。
-      if (this._retained && this._retained.some(item => item.context !== context || item.date !== date)) this._retained = null;
       const cached = features().cachedPreferences();
       const pinnedId = this._visitPinnedId || (cached && cached.pinnedHabitId);
       const tasks = ui.domain.tasksOn(state, date).map(task => ({ ...task, pinned: task.id === pinnedId }));
@@ -62,13 +59,8 @@ Page(ui.withLifecycle({
       }
       // 今天已经留下任何记录后，回归提示不再出现；有同步异常时优先恢复，不叠加提示。
       const returnGuide = (ui.storageInfo().syncAttention || completed.length) ? null : firstReturnTask(state, date, pending);
-      // 原位保留的行用习惯ID去重，不再进入“今日已完成”分组；统计仍只来自权威状态。
-      const retained = flow.effectiveRetained(this._retained, completed, date, context);
-      const retainedIds = new Set(retained.map(item => item.id));
-      const completedGroup = completed.filter(t => !retainedIds.has(t.id));
       const capacity = flow.creationAvailability(state, date);
-      this.setData({ date, dateLabel: ui.date.label(date), pending, completed, completedGroup, firstHabitGuide, returnGuide,
-        pendingRows: flow.pendingRows(pending, completed, this._retained, date, context),
+      this.setData({ date, dateLabel: ui.date.label(date), pending, completed, firstHabitGuide, returnGuide,
         tomorrow: flow.tomorrowSummary(state, date), canCreateToday: capacity.today, canCreateTomorrow: capacity.tomorrow,
         total: tasks.length, done: completed.length, minimum: completed.filter(t => t.status === 'minimum').length,
         rate: tasks.length ? completed.length / tasks.length * 100 : 0,
@@ -87,28 +79,15 @@ Page(ui.withLifecycle({
       }
     } catch (_) { /* Keep the stable time/ID order when preferences are unavailable. */ }
   },
-  onRecorded(command, order) {
-    if (command.type === 'undo') {
-      this._retained = (this._retained || []).filter(item => !(item.id === command.id && item.date === command.date));
-      return;
-    }
+  // 打卡确认后立刻归入“今日已完成”并自动展开分组；完成反馈由通用写入层的小弹窗提示。
+  onRecorded(command) {
     if (!['complete', 'completeMinimum'].includes(command.type) || command.date !== ui.date.today()) return;
-    this._retained = flow.retainCompletion(this._retained, { id: command.id, date: command.date, context: ui.contextKey(), order });
-  },
-  onQuickUndo(event) {
-    const id = event.currentTarget.dataset.id, day = ui.date.today();
-    const item = (this._retained || []).find(entry => entry.id === id && entry.date === day && entry.context === ui.contextKey());
-    if (!item || this._gone || !this._visible || this.data.dataReadOnly) {
-      if (!this._gone && this._visible) this.refresh();
-      return false;
-    }
-    return this.recordCompletion(id, day, 'undo');
+    this.setData({ showCompleted: true });
   },
   onHide() {
-    this._retained = null; this._visitPinnedId = null; this.setData({ firstHabitGuide: '', returnGuide: null, pendingRows: [], chooserOpen: false, showCompleted: false });
+    this._visitPinnedId = null; this.setData({ firstHabitGuide: '', returnGuide: null, chooserOpen: false, showCompleted: false });
     this._firstGuideId = null;
   },
-  onUnload() { this._retained = null; },
   onDismissGuide() { this.setData({ firstHabitGuide: '' }); this._firstGuideId = null; },
   onToggleChooser() { this.setData({ chooserOpen: !this.data.chooserOpen }); },
   onCreate(event) {
@@ -131,6 +110,5 @@ Page(ui.withLifecycle({
   onManage() { wx.navigateTo({ url: '/pages/manage/index' }); },
   onToggleCompleted() { this.setData({ showCompleted: !this.data.showCompleted }); },
   onSync() { wx.navigateTo({ url: '/pages/sync/index' }); },
-  onAssistant() { wx.navigateTo({ url: '/pages/assistant/index' }); },
   ...ui.taskActions
 }));

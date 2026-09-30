@@ -1,5 +1,0 @@
-.preview { background: var(--color-surface, #fff); border: 1px solid var(--color-line, #E2E7DF); border-radius: 16px; padding: 16px; margin-top: 24px; }
-.result-title { font-size: 21px; font-weight: 600; margin: 12px 0; }
-.preview-goals { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-.preview-goals .goal-main { font-size: 16px; font-weight: 600; color: var(--color-ink, #303A34); }
-.consent { display: flex; align-items: flex-start; font-size: 14px; color: var(--color-secondary, #647067); margin-top: 20px; }

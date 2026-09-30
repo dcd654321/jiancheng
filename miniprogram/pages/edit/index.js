@@ -2,10 +2,10 @@ const ui = require('../../services/ui');
 const form = require('../../services/plan-form');
 const flow = require('../../services/today-flow');
 const templates = {
-  read: { title: '读一会儿', target: '5', minimum: '2' },
-  walk: { title: '走路一会儿', target: '10', minimum: '3' },
-  study: { title: '复习一小段', target: '5', minimum: '2' },
-  tidy: { title: '整理桌面', target: '3', minimum: '1' }
+  read: { title: '读一会儿', target: '30', minimum: '10' },
+  walk: { title: '锻炼一会儿', target: '30', minimum: '10' },
+  study: { title: '复习一小段', target: '30', minimum: '10' },
+  tidy: { title: '整理桌面', target: '10', minimum: '3' }
 };
 
 Page(ui.withLifecycle({

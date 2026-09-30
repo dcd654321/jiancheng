@@ -99,13 +99,13 @@ test('cold-start loading view greets, animates softly and states the real reason
   const wxss = mini('pages/today/index.wxss');
   assert.match(wxss, /@keyframes bar-grow/);
 });
-test('first-run empty state exposes value, dual-tier templates and a single helper', () => {
+test('first-run empty state exposes value, dual-tier templates and a clear secondary entry', () => {
   const markup = mini('pages/today/index.wxml');
   assert.match(markup, /忙的时候，也能做一点/);
   assert.match(markup, /给习惯准备平时和忙时两个目标，做完再记下。/);
   for (const tpl of ['read', 'walk', 'study', 'tidy']) assert.match(markup, new RegExp('data-template="' + tpl + '"'));
   assert.match(markup, /自己设一个/);
-  assert.match(markup, /帮我定个起点/);
+  assert.doesNotMatch(markup, /帮我定个起点|onAssistant/, '助手入口已按用户要求移除');
   assert.match(markup, /<button wx:if="\{\{hasHabits\}\}" class="add-button"/);
   assert.match(markup, /skeleton skeleton-card/);
   assert.match(markup, /暂时没能读取记录/);
@@ -134,7 +134,7 @@ test('cloud status naming and tab navigation titles stay consistent', () => {
 
 test('user-visible legacy wording is gone from active pages', () => {
   const files = ['templates/task.wxml', 'pages/today/index.wxml', 'pages/progress/index.wxml', 'pages/progress/index.js', 'pages/edit/index.wxml', 'pages/edit/index.js',
-    'pages/mine/index.wxml', 'pages/mine/index.js', 'pages/assistant/index.wxml', 'pages/detail/index.wxml', 'pages/manage/index.wxml', 'pages/data/index.wxml',
+    'pages/mine/index.wxml', 'pages/mine/index.js', 'pages/detail/index.wxml', 'pages/manage/index.wxml', 'pages/data/index.wxml',
     'pages/sync/index.wxml', 'services/ui.js', 'core/habits.js'];
   for (const file of files) {
     const source = mini(file);

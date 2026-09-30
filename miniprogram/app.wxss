@@ -77,7 +77,6 @@ button.primary.button-hover { background: #486557; box-shadow: inset 0 0 0 999px
 .tpl-name { display: block; font-size: 16px; font-weight: 600; margin-bottom: 5px; overflow-wrap: anywhere; }
 .tpl-line { display: block; font-size: 14px; color: var(--color-secondary, #647067); line-height: 1.5; overflow-wrap: anywhere; }
 .tpl-chip { display: inline-block; margin-top: 6px; background: var(--color-busy-bg, #EDF1E2); color: var(--color-busy-text, #536343); border-radius: 6px; padding: 2px 8px; font-size: 14px; font-weight: 600; }
-.helper-row { display: flex; align-items: center; justify-content: center; margin-top: 16px; padding: 0 2px; flex-wrap: wrap; gap: 4px; }
 .template-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
 .template-choice { border: 1px solid var(--color-control-border, #819086); border-radius: 12px; font-size: 14px; padding: 10px 12px; min-height: 44px; background: var(--color-surface, #fff); }
 
@@ -100,7 +99,6 @@ button.primary.button-hover { background: #486557; box-shadow: inset 0 0 0 999px
 .task-options .text-button { padding: 6px 0; }
 .task-options .undo { margin-left: auto; }
 .done-tag { display: inline-flex; align-items: center; gap: 5px; color: var(--color-ink, #303A34); font-size: 14px; font-weight: 600; flex-shrink: 0; max-width: 140px; }
-.done-line { display: flex; align-items: center; gap: 8px; font-size: 16px; font-weight: 600; color: var(--color-ink, #303A34); overflow-wrap: anywhere; }
 .stamp-in { animation: stamp-in .26s ease-out both; }
 @keyframes stamp-in { 0% { transform: scale(1.35); opacity: 0; } 60% { transform: scale(.96); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
 

@@ -46,7 +46,7 @@ test('return prompt completes today through the task row without touching missed
   assert.deepEqual(before, {});
   assert.deepEqual(h.navigation, []);
   assert.equal(h.page.data.returnGuide, null);
-  assert.equal(h.toasts.at(-1).title, '第一次，记下了 · 已同步');
+  assert.equal(h.toasts.at(-1).title, '已完成 · 第一次');
 });
 
 test('busy-goal return completes as minimum through the task row without a modal', t => {
@@ -62,7 +62,7 @@ test('busy-goal return completes as minimum through the task row without a modal
   assert.equal(record.todayTarget, 2);
   assert.equal(h.modals.length, 0);
   assert.deepEqual(h.navigation, []);
-  assert.equal(h.toasts.at(-1).title, '接上了 · 已同步');
+  assert.equal(h.toasts.at(-1).title, '已完成 · 接上了');
 });
 
 test('smaller target reuses confirmation and does not complete or fill missed days; original restores today', t => {
@@ -114,7 +114,7 @@ test('completion removes prompt after cloud acknowledgement; failure never claim
   h.page.onComplete(event('read', h.today));
   assert.equal(h.page.data.returnGuide, null);
   assert.equal(h.page.data.done, 1);
-  assert.equal(h.toasts.at(-1).title, '接上了 · 已同步');
+  assert.equal(h.toasts.at(-1).title, '已完成 · 接上了');
 
   const pending = harness(t, [['read', {}]]);
   pending.storage[STORAGE_KEY] = JSON.stringify(domain.reduce(pending.store.read(),

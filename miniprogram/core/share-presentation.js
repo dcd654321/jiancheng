@@ -1,6 +1,6 @@
 const domain = require('./habits');
 const dates = require('./date');
-const LABELS = { read: '读一会儿', walk: '走路一会儿', study: '复习一小段', tidy: '整理桌面' };
+const LABELS = { read: '读一会儿', walk: '锻炼一会儿', study: '复习一小段', tidy: '整理桌面' };
 const CAPTIONS = { 'small-steps': '每天一小步，也在向前。', 'keep-going': '不必完美，今天继续。', 'busy-still-counts': '忙时少做一点，也值得记录。' };
 const own = (o, k) => Object.prototype.hasOwnProperty.call(o, k);
 function present(snapshot) {

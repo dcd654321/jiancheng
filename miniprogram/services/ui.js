@@ -68,12 +68,13 @@ function mutate(page, command, message, options = {}) {
     if (page.onRecorded && page._visible !== false) page.onRecorded(command, previousOrder);
     page.refresh();
     const completion = ['complete', 'completeMinimum'].includes(command.type);
-    const notice = command.type === 'undo' ? '已撤销这次记录'
-      : options.firstCompletion && completion ? '第一次，记下了 · 已同步'
-      : options.returnCompletion && completion ? '接上了 · 已同步'
-      : completion ? '记下了 · 已同步'
-      : message || '';
-    if (notice) wx.showToast({ title: notice, icon: 'none' });
+    // 完成确认用带成功图标的小弹窗“已完成”；首次/回归加短后缀；撤销与调整沿用文字提示。
+    const toast = command.type === 'undo' ? { title: '已撤销这次记录', icon: 'none' }
+      : options.firstCompletion && completion ? { title: '已完成 · 第一次', icon: 'success' }
+      : options.returnCompletion && completion ? { title: '已完成 · 接上了', icon: 'success' }
+      : completion ? { title: '已完成', icon: 'success' }
+      : message ? { title: message, icon: 'none' } : null;
+    if (toast) wx.showToast(toast);
     return true;
   };
   const failed = err => { page._mutating = false; if (!page._gone) { clearRecording(); error(page, err); } return false; };

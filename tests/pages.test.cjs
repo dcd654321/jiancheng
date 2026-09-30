@@ -163,7 +163,7 @@ test('真实页面控制器：模板创建不会自动打卡；今日勾选、�
   const task = today.data.pending[0];
   today.onComplete(event({ id: task.id, date: task.date, done: false }));
   assert.equal(today.data.completed.length, 1);
-  assert.equal(app.toasts.at(-1).title, '第一次，记下了 · 已同步');
+  assert.equal(app.toasts.at(-1).title, '已完成 · 第一次');
   const progress = app.page('progress'); assert.equal(progress.data.stats.done, 1);
   today.onComplete(event({ id: task.id, date: task.date, done: true }));
   progress.refresh(); assert.equal(progress.data.stats.done, 0);
@@ -180,11 +180,11 @@ test('真实页面控制器：简化确认只是改目标，完成后单独统�
 test('首次行动反馈只在没有既有完成记录时出现', () => {
   const app = harness(), firstId = seed(app), today = app.page('today'), day = ui.date.today();
   today.onComplete(event({ id: firstId, date: day, done: false }));
-  assert.equal(app.toasts.at(-1).title, '第一次，记下了 · 已同步');
+  assert.equal(app.toasts.at(-1).title, '已完成 · 第一次');
   app.store.dispatch({ type: 'create', id: 'later', startDate: day,
     plan: { title: '再做一件', target: 1, minimum: null, unit: '次', time: '', weekdays: [1, 2, 3, 4, 5, 6, 7] } });
   today.refresh(); today.onComplete(event({ id: 'later', date: day, done: false }));
-  assert.equal(app.toasts.at(-1).title, '记下了 · 已同步');
+  assert.equal(app.toasts.at(-1).title, '已完成');
 });
 test('真实页面控制器：跨日后旧按钮报错，不写到新日期', () => {
   const app = harness(); seed(app); const today = app.page('today');
@@ -201,9 +201,9 @@ test('真实页面控制器：创建验证失败留在当前页', () => {
 });
 test('真实页面控制器：已有计划编辑更新同一个ID，使用原生返回栈', () => {
   const app = harness(), id = seed(app), edit = app.page('edit', { id });
-  edit.onInput(event({ field: 'target' }, '8')); edit.onSave();
+  edit.onInput(event({ field: 'target' }, '40')); edit.onSave();
   assert.equal(app.store.read().habits.length, 1);
-  assert.equal(app.store.read().habits[0].versions[1].target, 8);
+  assert.equal(app.store.read().habits[0].versions[1].target, 40);
   assert.deepEqual(app.navigation[app.navigation.length - 1], ['back']);
 });
 test('真实页面控制器：统计切换后区间、日期格和选中详情一致', () => {

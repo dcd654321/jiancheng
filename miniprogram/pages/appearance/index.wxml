@@ -13,9 +13,9 @@
         <view class="sub theme-desc">{{item.desc}}</view>
         <view class="theme-thumb theme-{{item.key}}">
           <view class="thumb-title">读一会儿</view>
-          <view class="thumb-goal"><text class="thumb-main">平时 5 分钟</text><text class="chip-lime">忙时 2 分钟</text></view>
-          <view class="thumb-btn">按 5 分钟记下</view>
-          <view class="thumb-btn soft">忙时按 2 分钟记下</view>
+          <view class="thumb-goal"><text class="thumb-main">平时 30 分钟</text><text class="chip-lime">忙时 10 分钟</text></view>
+          <view class="thumb-btn">按 30 分钟记下</view>
+          <view class="thumb-btn soft">忙时按 10 分钟记下</view>
         </view>
       </button>
     </view>

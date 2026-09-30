@@ -41,13 +41,13 @@ test('compact create keeps optional values while the busy-day target stays in th
 });
 test('template entry uses the compact confirmation with the read defaults and one-time draft consumption', t => {
   const h=harness(t), p=h.page('edit',{template:'read'});
-  assert.equal(p.data.compact,true); assert.equal(p.data.title,'读一会儿'); assert.equal(p.data.target,'5'); assert.equal(p.data.minimum,'2');
+  assert.equal(p.data.compact,true); assert.equal(p.data.title,'读一会儿'); assert.equal(p.data.target,'30'); assert.equal(p.data.minimum,'10');
   assert.equal(p.data.unit,'分钟'); assert.equal(p.data.startOffset,0); assert.equal(p.data.frequencyLabel,'每天');
   assert.equal(p.data.frequencyOpen,false); assert.equal(p.data.startOpen,false);
   assert.equal(h.store.read().habits.length,0, 'template stays uncommitted until the user saves');
   p.onSave(); assert.equal(h.store.read().habits.length,1);
-  assert.equal(h.store.read().habits[0].versions[0].target,5);
-  assert.equal(h.store.read().habits[0].versions[0].minimum,2);
+  assert.equal(h.store.read().habits[0].versions[0].target,30);
+  assert.equal(h.store.read().habits[0].versions[0].minimum,10);
 });
 test('custom and edit entries keep the full form while drafts cannot be re-consumed after reload', t => {
   const h=harness(t), custom=h.page('edit'); assert.equal(custom.data.compact,false);
@@ -95,7 +95,8 @@ test('invalid detail id shows a reason and exit instead of an endless loading ca
 });
 test('completed group collapse is display-only and completion counts keep their exact meaning', t => {
   const h=harness(t); h.seed(); const p=h.page('today'); p.onComplete(e({id:'read',date:dates.today(),done:false}));
-  assert.equal(p.data.showCompleted,false); const before=h.store.rawBackup(); p.onToggleCompleted(); p.refresh(); assert.equal(p.data.showCompleted,true); assert.equal(h.store.rawBackup(),before);
+  assert.equal(p.data.showCompleted,true, '完成后自动展开今日已完成'); const before=h.store.rawBackup();
+  p.onToggleCompleted(); assert.equal(p.data.showCompleted,false); p.onToggleCompleted(); p.refresh(); assert.equal(p.data.showCompleted,true); assert.equal(h.store.rawBackup(),before);
   const progress=h.page('progress'); assert.equal(progress.data.stats.done,1); assert.equal(progress.data.stats.planned,1);
   assert.equal(progress.data.stats.cells.at(-1).mark,'1/1'); assert.equal(progress.data.stats.cells[0].mark,'休');
   progress.onToggleHabits(); assert.equal(progress.data.showHabits,true); assert.equal(h.store.rawBackup(),before);
@@ -165,7 +166,7 @@ test('one-tap busy-goal check-in moves only that habit to completed', t => {
   assert.match(todayMarkup,/<text>待做<\/text><text class="section-count">\{\{pending\.length\}\} 项<\/text>/);
   assert.match(todayMarkup,/<text class="progress-value">\{\{done\}\} \/ \{\{total\}\}<\/text>/);
   const mineMarkup=fs.readFileSync(path.resolve(__dirname,'../miniprogram/pages/mine/index.wxml'),'utf8');
-  assert.doesNotMatch(mineMarkup,/open-type="feedback"|意见与问题反馈/, "原生反馈页含平台分类，入口已按用户要求移除");
+  assert.match(mineMarkup,/open-type="feedback"[^>]*>.*意见与问题反馈/);
 });
 test('five scheduled habits keep independent cards and an accurate remaining count', t => {
   const h=harness(t); h.seed(); const day=dates.today();
@@ -177,17 +178,23 @@ test('five scheduled habits keep independent cards and an accurate remaining cou
   assert.equal(p.data.completed[0].id,'habit2');
   assert.equal(Object.keys(h.store.read().records).length,1);
 });
-test('retained completion keeps an inline undo slot and undo only restores that habit', t => {
+test('a confirmed completion moves straight into the expanded 今日已完成 group', t => {
   const h=harness(t); h.seed(); const day=dates.today();
   for (const id of ['a','z']) h.store.dispatch({type:'create',id,startDate:day,plan:{title:id,target:5,minimum:2,unit:'分钟',time:'',weekdays:[1,2,3,4,5,6,7]}});
   const p=h.page('today'); assert.deepEqual(p.data.pending.map(t=>t.id),['a','read','z']);
   p.onComplete(e({id:'read',date:day,done:false}));
-  assert.deepEqual(p.data.pendingRows.map(t=>[t.id,t.undo]),[['a',false],['read',true],['z',false]]);
-  assert.equal(p.data.completedGroup.length,0, '原位的完成行不重复进入已完成分组');
-  p.onQuickUndo(e({id:'read'})); assert.equal(p.data.done,0); assert.equal(p.data.pendingRows.some(t=>t.undo),false);
+  assert.deepEqual(p.data.pending.map(t=>t.id),['a','z'], '完成项立刻离开待做，不留原位');
+  assert.equal(p.data.completed.some(t=>t.id==='read'), true, '直接进入今日已完成');
+  assert.equal(p.data.showCompleted, true, '自动展开今日已完成');
+  assert.equal(h.toasts.at(-1).title, '已完成 · 第一次', '首次完成带短后缀');
+  assert.equal(h.toasts.at(-1).icon, 'success', '完成用小弹窗（成功图标）');
   assert.equal(h.store.read().records['a@'+day],undefined);
+  // 在分组里撤销回到待做，同时提示已撤销
+  p.onComplete(e({id:'read',date:day,done:true}));
+  assert.equal(p.data.done,0); assert.equal(p.data.pending.some(t=>t.id==='read'), true);
+  assert.equal(h.toasts.at(-1).title, '已撤销这次记录');
 });
-test('several completions during one visit stay in place, count correctly and cap at five', t => {
+test('several completions move into the group immediately and keep accurate counts', t => {
   const h=harness(t); h.seed(); const day=dates.today();
   for (let i=0;i<4;i++) h.store.dispatch({type:'create',id:'h'+i,startDate:day,plan:{title:'任务'+i,target:5,minimum:2,unit:'次',time:'0'+(i+1)+':00',weekdays:[1,2,3,4,5,6,7]}});
   const p=h.page('today'); assert.equal(p.data.total,5, '最多5个活跃习惯');
@@ -195,27 +202,18 @@ test('several completions during one visit stay in place, count correctly and ca
   p.onComplete(e({id:order[0],date:day,done:false}));
   p.onCompleteMinimum(e({id:order[1],date:day}));
   assert.equal(p.data.done,2); assert.equal(p.data.minimum,1);
-  assert.equal(p.data.pendingRows.filter(row=>row.undo).length,2, '两次完成都原位保留，不只剩最近一项');
-  assert.equal(p.data.completedGroup.length,0);
-  assert.deepEqual(p.data.pendingRows.filter(row=>!row.undo).map(r=>r.id),order.slice(2), '未完成项不改变顺序');
-  const retainedIds=p.data.pendingRows.filter(row=>row.undo).map(r=>r.id);
-  assert.equal(new Set(retainedIds).size,retainedIds.length, '同一次访问不重复展示同一习惯');
+  assert.deepEqual(p.data.pending.map(t=>t.id),order.slice(2), '未完成项保持顺序');
+  assert.deepEqual(p.data.completed.map(t=>t.id).sort(),[order[0],order[1]].sort(), '两次完成都立刻归入已完成');
+  assert.equal(p.data.showCompleted, true);
   for (const id of order.slice(2)) p.onComplete(e({id,date:day,done:false}));
-  assert.equal(p.data.pendingRows.filter(row=>row.undo).length,5, '一次访问最多保留5行');
-  assert.equal(p.data.done,5);
+  assert.equal(p.data.done,5); assert.equal(p.data.pending.length,0);
 });
-test('hidden, cross-day and changed-account undo controls never dispatch', t => {
-  const h=harness(t); h.seed(); const day=dates.today(), p=h.page('today');
-  p.onComplete(e({id:'read',date:day,done:false})); const valid=p._retained.slice();
-  let dispatches=0; h.store.dispatch=()=>{dispatches++;};
-  for(const patch of [{date:dates.shift(day,-1)},{context:'another-account'}]) {
-    p._retained=[{...valid[0],...patch}]; p.onQuickUndo(e({id:'read'}));
-    assert.equal(dispatches,0);
-  }
-  p._retained=valid; p.onHide();
-  assert.equal(p._retained,null, '页面隐藏后本次展示状态清除');
-  p.onQuickUndo(e({id:'read'}));
-  assert.equal(dispatches,0);
+test('a completion confirmed while hidden does not auto-expand and leaves no retained state', async t => {
+  const h=harness(t); h.seed(); const p=h.page('today'), day=dates.today();
+  let resolve; h.store.dispatch=()=>new Promise(r=>{resolve=r;});
+  const work=p.onComplete(e({id:'read',date:day})); p.onHide(); resolve(); await work;
+  assert.equal(p._retained, undefined, '不再有任何原位展示状态');
+  assert.equal(p.data.showCompleted, false, '隐藏页面的回执不触发自动展开');
 });
 test('repeated taps on a record button keep a single intent until the write resolves', async t => {
   const h=harness(t); h.seed(); const p=h.page('today'), day=dates.today();
@@ -264,14 +262,12 @@ test('small-screen, keyboard and safe-area adaptations stay in the shipped style
   assert.match(edit,/bindkeyboardheightchange="onKeyboard"/);
   assert.match(edit,/class="submit-bar \{\{keyboardOpen \? 'inline' : ''\}\}"/);
 });
-test('failed completion does not create inline success and hidden responses keep no retained rows', async t => {
+test('failed completion never reports success or expands the group', async t => {
   const h=harness(t); h.seed(); const p=h.page('today'), day=dates.today();
   h.store.dispatch=()=>{throw Error('disk full');};
-  assert.equal(p.onComplete(e({id:'read',date:day})),false); assert.ok(p._retained == null);
-  assert.equal(p.data.done,0); assert.equal(p.data.pendingRows.some(t=>t.undo),false);
-  let resolve; h.store.dispatch=()=>new Promise(r=>{resolve=r;});
-  const work=p.onComplete(e({id:'read',date:day})); p.onHide(); resolve(); await work;
-  assert.ok(p._retained == null);
+  assert.equal(p.onComplete(e({id:'read',date:day})),false);
+  assert.equal(p.data.done,0); assert.equal(p.data.showCompleted,false);
+  assert.equal(h.toasts.length,0, '失败不弹完成提示');
 });
 test('full capacity leads to management and a free tomorrow opens the correct start date', t => {
   const h=harness(t); h.seed(); const day=dates.today();
@@ -339,20 +335,6 @@ test('my page routes to cloud data hub; double-confirm deletion still works ther
   h.modals.pop().success({confirm:false}); assert.equal(p.data.deleting,false); assert.equal(h.store.read().habits.length,1);
   p.onDelete(); h.modals.pop().success({confirm:true}); await h.modals.pop().success({confirm:true}); assert.equal(h.store.read().habits.length,0); assert.equal(p.data.deleting,false);
 });
-test('assistant advanced schedule stays in preview and adoption never creates automatically', t => {
-  const h=harness(t), p=h.page('assistant'); assert.equal(p.data.moreOpen,false);
-  p.onMore(); p.onTime(e({},'20:15')); p.onMore(); p.onRules(); assert.equal(p.data.preview.draft.time,'20:15');
-  assert.match(p.data.inputSchedule,/20:15/); p.onAdopt(); const token=h.nav.at(-1).split('draft=')[1];
-  const edit=h.page('edit',{draft:token}); assert.equal(edit.data.time,'20:15'); assert.match(edit.data.moreSummary,/20:15/); assert.equal(h.store.read().habits.length,0);
-  assert.equal(edit.data.compact,true, '有效草稿进入紧凑确认模式');
-});
-test('assistant preview folds the long explanation behind one disclosure', t => {
-  const h=harness(t), p=h.page('assistant'); p.onRules();
-  assert.equal(p.data.whyOpen,false); p.onWhy(); assert.equal(p.data.whyOpen,true);
-  const markup=fs.readFileSync(path.resolve(__dirname,'../miniprogram/pages/assistant/index.wxml'),'utf8');
-  assert.match(markup,/为什么这样建议/); assert.match(markup,/采用这个计划/);
-  assert.ok(markup.indexOf('为什么这样建议') < markup.indexOf('采用这个计划'));
-});
 test('acknowledged deletion does not access device files and releases the control', async t => {
   const h=harness(t); h.seed(); const p=h.page('data');
   h.wx.getFileSystemManager=()=>{throw Error('file access denied');};
@@ -376,9 +358,8 @@ test('registered pages, touchable weekday selectors, truthful copy and data-menu
   assert.ok(pages.includes('pages/data/index'));
   assert.ok(pages.includes('pages/appearance/index'), '外观主题页面已注册');
   assert.match(read('app.wxss'),/\.week-options\s*\{[^}]*repeat\(4, minmax\(0, 1fr\)\)/);
-  for(const name of ['edit','assistant']) assert.match(read('pages/'+name+'/index.wxml'),/class="week-options"/);
-  const mine=read('pages/mine/index.wxml'); assert.doesNotMatch(mine,/bindtap="onDelete"|bindtap="onExport"|open-type="feedback"/);
+  assert.match(read('pages/edit/index.wxml'),/class="week-options"/);
+  const mine=read('pages/mine/index.wxml'); assert.doesNotMatch(mine,/bindtap="onDelete"|bindtap="onExport"/); assert.match(mine,/open-type="feedback"/);
   assert.match(read('pages/data/index.wxml'),/bindtap="onDelete"/); assert.doesNotMatch(read('pages/data/index.wxml'),/onExport|onBackupHub/);
-  assert.doesNotMatch(read('pages/assistant/index.wxml'),/AI服务尚未接入|不消耗模型费用/);
   assert.match(read('templates/task.wxml'),/>撤销打卡</);
 });
