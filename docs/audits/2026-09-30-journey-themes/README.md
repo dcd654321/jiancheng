@@ -86,6 +86,13 @@
   原生反馈页，页内“违规举报/渠道”等分类由微信平台定义、开发者不可定制。`open-type="feedback"`
   入口移除后用户不再经此到达该页；`tests/ux.test.cjs` 断言同步为“入口不存在”。
 
+- 2026-09-30 23:2x 排查“首页短句开关不生效”：经 evaluate 通道直连云端实测，保存链路完全正常——
+  `dispatch({type:'settings',hideQuote:true})` → ok，账户 revision 10→11、`hideQuote:true` 读回；
+  还原后再测 → ok、revision 12、`hideQuote:false`。该动作同时被 `tests/cloud.test.cjs`（257 次
+  settings 变更端到端）与页面用例覆盖。判定：此现象与同一工具实例的严重退化有关（自动化在本实例
+  中路由命令报 `rawPath` 内部错误、`getCurrentPages()` 返回空、跳转需数秒），UI 事件在冻结的
+  模拟器中可能直接丢失；需完全重启开发者工具后复测。应用侧未发现缺陷。
+
 ## 未采集 / 阻塞
 
 - 320×430 宽度、设备大字号、软键盘、安全区与读屏：模拟器设备切换与真机项，未采集（见 ACCEPTANCE-RESULTS 的分层结论）。
