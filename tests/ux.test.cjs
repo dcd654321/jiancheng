@@ -165,7 +165,7 @@ test('one-tap busy-goal check-in moves only that habit to completed', t => {
   assert.match(todayMarkup,/<text>待做<\/text><text class="section-count">\{\{pending\.length\}\} 项<\/text>/);
   assert.match(todayMarkup,/<text class="progress-value">\{\{done\}\} \/ \{\{total\}\}<\/text>/);
   const mineMarkup=fs.readFileSync(path.resolve(__dirname,'../miniprogram/pages/mine/index.wxml'),'utf8');
-  assert.match(mineMarkup,/open-type="feedback"[^>]*>.*意见与问题反馈/);
+  assert.doesNotMatch(mineMarkup,/open-type="feedback"|意见与问题反馈/, "原生反馈页含平台分类，入口已按用户要求移除");
 });
 test('five scheduled habits keep independent cards and an accurate remaining count', t => {
   const h=harness(t); h.seed(); const day=dates.today();
@@ -377,7 +377,7 @@ test('registered pages, touchable weekday selectors, truthful copy and data-menu
   assert.ok(pages.includes('pages/appearance/index'), '外观主题页面已注册');
   assert.match(read('app.wxss'),/\.week-options\s*\{[^}]*repeat\(4, minmax\(0, 1fr\)\)/);
   for(const name of ['edit','assistant']) assert.match(read('pages/'+name+'/index.wxml'),/class="week-options"/);
-  const mine=read('pages/mine/index.wxml'); assert.doesNotMatch(mine,/bindtap="onDelete"|bindtap="onExport"/); assert.match(mine,/open-type="feedback"/);
+  const mine=read('pages/mine/index.wxml'); assert.doesNotMatch(mine,/bindtap="onDelete"|bindtap="onExport"|open-type="feedback"/);
   assert.match(read('pages/data/index.wxml'),/bindtap="onDelete"/); assert.doesNotMatch(read('pages/data/index.wxml'),/onExport|onBackupHub/);
   assert.doesNotMatch(read('pages/assistant/index.wxml'),/AI服务尚未接入|不消耗模型费用/);
   assert.match(read('templates/task.wxml'),/>撤销打卡</);
