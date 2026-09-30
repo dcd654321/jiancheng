@@ -1,11 +1,11 @@
 <view class="page">
   <view wx:if="{{loading}}" class="empty"><view class="section-title">正在读取习惯</view></view>
-  <view wx:elif="{{dataUnavailable}}" class="empty"><view class="section-title">暂时无法读取习惯</view><view class="sub">{{error}}</view></view>
+  <view wx:elif="{{dataUnavailable}}" class="empty"><view class="heading">暂时读不到云端记录</view><view class="sub">{{error}}</view></view>
   <block wx:elif="{{dataReady}}">
     <view wx:if="{{error}}" class="error">{{error}}</view>
     <view class="heading">我的习惯</view><view class="sub">暂停、归档和目标调整不会抹去过去。</view>
     <view wx:if="{{!habits.length}}" class="empty"><view class="sub">还没有习惯，从一件小事开始。</view></view>
-    <button wx:for="{{habits}}" wx:key="id" class="setting-row" data-id="{{item.id}}" bindtap="onOpen"><view class="grow">{{item.title}}<view class="sub">{{item.schedule}}</view><view wx:if="{{item.pending}}" class="sub">{{item.pending}}</view></view><text class="sub">{{item.status}}</text><view class="chevron" /></button>
+    <view wx:else class="card list-card"><button wx:for="{{habits}}" wx:key="id" class="setting-row" data-id="{{item.id}}" bindtap="onOpen"><view class="grow">{{item.title}}<view class="sub">{{item.schedule}}</view><view wx:if="{{item.pending}}" class="sub">{{item.pending}}</view></view><text class="sub">{{item.status}}</text><view class="chevron" /></button></view>
     <view class="actions"><button class="primary" bindtap="onCreate">添加习惯</button></view>
   </block>
 </view>

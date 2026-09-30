@@ -1,6 +1,5 @@
-.recent-done { min-height: 88px; padding: 16px 0; border-bottom: 1px solid #e5ebe6; gap: 12px; }
-.recent-done .grow { min-width: 0; overflow-wrap: anywhere; }
-.recent-done .text-button { flex-shrink: 0; min-height: 44px; }
-.tomorrow { border-top: 1px solid #e5ebe6; }
-.tomorrow-task { display: flex; align-items: center; gap: 12px; padding: 12px 0; flex-wrap: wrap; }
+.skeleton-wrap { padding-top: 6px; }
+.undo-row { margin-bottom: 10px; }
+.tomorrow { margin-top: 22px; }
+.tomorrow-task { display: flex; align-items: center; gap: 12px; padding: 10px 0; flex-wrap: wrap; }
 .tomorrow-task .grow { min-width: 0; overflow-wrap: anywhere; }

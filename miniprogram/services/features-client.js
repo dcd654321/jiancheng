@@ -26,8 +26,8 @@ function createFeaturesClient(wxApi, cloudConfig, config, session, options = {})
     const before = context();
     if (expectedContext && before.key !== expectedContext) throw Error('账户数据已变化，请重新打开页面');
     if (before.status.deletionPending) throw Error('删除尚未确认，请先到数据管理完成删除');
-    if (before.status.networkOffline || before.status.phase === 'offline') throw Error('此操作需要联网，当前习惯记录不受影响');
-    if (before.status.pending || before.status.conflict) throw Error('请先完成数据同步，再使用分享或置顶');
+    if (before.status.networkOffline || before.status.phase === 'offline') throw Error('现在无法联网，记录没有丢失。联网后重试');
+    if (before.status.pending || before.status.conflict) throw Error('请先完成云端同步，再使用分享或置顶');
     if (!privateTransport) privateTransport = factory(wxApi, { ...cloudConfig, functionName: resources.featuresFunction });
     const result = await timeout(privateTransport({ ...payload, epoch: before.status.epoch }));
     if (context().key !== before.key) throw Error('账户数据已变化，已忽略旧页面的结果');

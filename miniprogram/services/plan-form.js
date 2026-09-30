@@ -13,8 +13,10 @@ function presentation(input) {
   const extras = [];
   if (input.time) extras.push(input.time);
   if (!input.editing && input.startOffset === 1) extras.push('明天开始');
+  const limit = input.unit === '分钟' ? 120 : 999;
   return { titleCount: Array.from(String(input.title || '')).length,
-    targetHint: `1—${input.unit === '分钟' ? 120 : 999}，填整数`,
+    targetHint: '完成后点「打卡」；不会自动计时或累计。',
+    targetPlaceholder: `1—${limit}`,
     frequencyLabel: domain.weekdayText(input.weekdays), moreSummary: extras.join(' · ') || (input.editing ? '计划时间' : '计划时间、开始日期') };
 }
 module.exports = { fields, presentation };

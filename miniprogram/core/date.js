@@ -32,4 +32,9 @@ function label(date) {
   return `${Number(date.slice(5, 7))}月${Number(date.slice(8))}日 周${'一二三四五六日'[weekday(date) - 1]}`;
 }
 
-module.exports = { today, shift, weekday, range, label, assertDate };
+function shortLabel(date) {
+  assertDate(date);
+  return `${Number(date.slice(5, 7))}月${Number(date.slice(8))}日`;
+}
+
+module.exports = { today, shift, weekday, range, label, shortLabel, assertDate };

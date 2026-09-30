@@ -39,7 +39,8 @@ Page(ui.withLifecycle({
         const task = pending.find(item => item.id === this._firstGuideId);
         if (task) { pending.splice(pending.indexOf(task), 1); pending.unshift(task); }
       }
-      const returnGuide = ui.storageInfo().syncAttention ? null : firstReturnTask(state, date, pending);
+      // 今天已经留下任何记录后，"接上"就不再出现：欢迎回来只做一次破冰，不逐条催。
+      const returnGuide = (ui.storageInfo().syncAttention || completed.length) ? null : firstReturnTask(state, date, pending);
       const context = ui.contextKey();
       if (this._recentDone && (this._recentDone.context !== context || this._recentDone.date !== date ||
         this._recentDone.until <= Date.now() || !completed.some(t => t.id === this._recentDone.id))) this.clearRecent();
@@ -89,7 +90,15 @@ Page(ui.withLifecycle({
       this.refresh(); return;
     }
     if (guide.simplified) return ui.taskActions.onRestore.call(this, event);
-    wx.navigateTo({ url: '/pages/detail/index?id=' + guide.id });
+    return this.recordCompletion(guide.id, this.data.date, 'complete');
+  },
+  onReturnMinimum(event) {
+    const guide = this.data.returnGuide;
+    if (!guide || guide.id !== event.currentTarget.dataset.id || this.data.date !== ui.date.today()) {
+      this.refresh(); return;
+    }
+    if (!guide.minimum || guide.simplified || !ui.quickMinimumEnabled) return this.onReturnSmall(event);
+    return this.recordCompletion(guide.id, this.data.date, 'completeMinimum');
   },
   onReturnSmall(event) {
     const guide = this.data.returnGuide;

@@ -1,1 +1,2 @@
-/* pages/sync/index.wxss */
+.status-card { padding: 16px; margin-top: 4px; }
+.status-title { font-size: 17px; font-weight: 600; margin-bottom: 8px; }

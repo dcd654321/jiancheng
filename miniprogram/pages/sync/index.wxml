@@ -1,20 +1,22 @@
 <view class="page">
-  <view class="heading">数据同步</view>
+  <view class="heading">云端状态</view>
   <view wx:if="{{error}}" class="error spaced">{{error}}</view>
   <view wx:if="{{loading}}" class="empty">
     <view class="section-title">正在读取记录</view><view class="sub">请稍候，不会创建重复数据。</view>
   </view>
   <view wx:elif="{{dataUnavailable}}" class="empty">
-    <view class="section-title">暂时无法读取记录</view>
-    <view class="sub">{{lastError || '请检查网络后重试，已有数据不会被清除。'}}</view>
+    <view class="heading">暂时读不到云端记录</view>
+    <view class="sub">{{lastError || '数据没有丢失。检查网络后重试。'}}</view>
     <button class="primary spaced" disabled="{{busy}}" loading="{{busy}}" bindtap="onRefresh">{{deletionPending ? '继续确认删除' : pending ? '重试确认' : '重新读取'}}</button>
   </view>
   <block wx:elif="{{ready}}">
-    <view class="section-title">{{syncText}}</view>
-    <view class="sub">当前微信账号 · {{count}} 个习惯</view>
-    <view class="sub">{{pending ? '有一项云端操作结果待确认，请重试确认' : '习惯与打卡直接保存在云端，不保留本机记录'}}</view>
-    <view wx:if="{{lastSyncedLabel}}" class="sub">最近确认：{{lastSyncedLabel}}</view>
-    <view wx:if="{{lastError}}" class="error spaced">{{lastError}}</view>
+    <view class="card status-card">
+      <view class="status-title">{{syncText}}</view>
+      <view class="sub">当前微信账号 · {{count}} 个习惯</view>
+      <view class="sub">{{pending ? '有一项云端操作结果待确认，请重试确认' : '习惯与打卡直接保存在云端，不保留本机记录'}}</view>
+      <view wx:if="{{lastSyncedLabel}}" class="sub">最近确认：{{lastSyncedLabel}}</view>
+      <view wx:if="{{lastError}}" class="error spaced">{{lastError}}</view>
+    </view>
     <view class="actions">
       <button wx:if="{{deletionPending}}" class="primary" disabled="{{busy}}" bindtap="onData">前往数据管理，继续删除</button>
       <button wx:if="{{pending && !deletionPending}}" class="primary" disabled="{{busy}}" loading="{{busy}}" bindtap="onRetry">重试确认</button>

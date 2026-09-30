@@ -1,8 +1,8 @@
 <view class="page">
   <view wx:if="{{loading}}" class="empty"><view class="section-title">正在读取记录</view><view class="sub">请稍候。</view></view>
-  <view wx:elif="{{dataUnavailable}}" class="empty"><view class="section-title">暂时无法读取记录</view><view class="sub">{{error}}</view></view>
+  <view wx:elif="{{dataUnavailable}}" class="empty"><view class="heading">暂时读不到云端记录</view><view class="sub">{{error}}</view></view>
   <block wx:elif="{{dataReady}}">
-    <view class="heading">我的</view><view class="sub">已添加 {{count}} 个习惯</view>
+    <view class="heading heading-xl">我的</view><view class="sub">记录跟随当前微信账号</view>
     <view wx:if="{{error}}" class="error spaced">{{error}}</view>
     <view class="group"><view class="group-label">习惯管理</view><button class="setting-row" bindtap="onManage"><text class="grow">我的习惯</text><text class="sub">{{count}} 个</text><view class="chevron" /></button></view>
     <view class="group"><view class="group-label">偏好设置</view><view class="setting-row"><text class="grow">显示首页短句</text><switch checked="{{!hideQuote}}" color="#245c44" bindchange="onQuote" aria-label="显示首页短句" /></view><button wx:if="{{remindersEnabled}}" class="setting-row" bindtap="onReminders"><view class="grow">下一次提醒<view class="sub">主动申请，一次聚合提醒</view></view><view class="chevron" /></button></view>

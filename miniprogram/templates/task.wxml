@@ -1,28 +1,24 @@
 <template name="task">
-  <view class="task {{task.done ? 'completed' : ''}}">
-    <view class="row">
+  <view class="task {{task.done ? 'done' : ''}}">
+    <view class="task-top">
       <button wx:if="{{!detail}}" class="task-open" data-id="{{task.id}}" bindtap="onOpen" aria-label="查看{{task.title}}">
         <view class="task-title">{{task.title}}<text wx:if="{{task.pinned}}" class="small"> · 置顶</text></view>
-        <view class="sub task-goals">平时 {{task.originalTarget}}{{task.unit}}<text wx:if="{{task.minimum}}"> · 忙时 {{task.minimum}}{{task.unit}}</text></view>
-        <view class="small task-current">{{task.time ? task.time + ' · ' : ''}}今天按 {{task.target}}{{task.unit}}{{task.simplified ? '（已调小）' : ''}}</view>
+        <view class="task-goal"><text wx:if="{{task.time}}">{{task.time}} · </text><text class="goal-main">今天 {{task.target}}{{task.unit}}</text><text wx:if="{{task.simplified}}" class="sub">（原 {{task.originalTarget}}{{task.unit}}）</text><text wx:if="{{task.minimum && !task.simplified}}" class="chip-lime">忙时 {{task.minimum}}{{task.unit}}</text></view>
       </button>
       <view wx:else class="task-open">
-        <view class="task-title">今天按 {{task.target}}{{task.unit}}</view>
-        <view class="sub task-goals">平时 {{task.originalTarget}}{{task.unit}}<text wx:if="{{task.minimum}}"> · 忙时 {{task.minimum}}{{task.unit}}</text></view>
-        <view wx:if="{{task.simplified}}" class="small task-current">仅今天调小</view>
+        <view class="task-title">{{task.title}}<text wx:if="{{task.pinned}}" class="small"> · 置顶</text></view>
+        <view class="task-goal"><text wx:if="{{task.time}}">{{task.time}} · </text><text class="goal-main">今天 {{task.target}}{{task.unit}}</text><text wx:if="{{task.simplified}}" class="sub">（原 {{task.originalTarget}}{{task.unit}}）</text><text wx:if="{{task.minimum && !task.simplified}}" class="chip-lime">忙时 {{task.minimum}}{{task.unit}}</text></view>
       </view>
-      <view wx:if="{{task.done}}" class="completed-status"><icon type="success" size="22" color="#245c44" /><text>{{task.status === 'minimum' ? '小目标完成' : '原目标完成'}}</text></view>
-      <button wx:else class="check-button" data-id="{{task.id}}" data-date="{{task.date}}" data-done="{{false}}" bindtap="onComplete" aria-label="按今天目标完成{{task.title}}">
-        <icon type="circle" size="27" color="#7d8b80" /><text class="check-label">打卡</text>
-      </button>
+      <button wx:if="{{!task.done}}" class="check-pill" data-id="{{task.id}}" data-date="{{task.date}}" data-done="{{false}}" bindtap="onComplete" aria-label="按今天目标完成{{task.title}}">打卡</button>
+      <view wx:else class="done-tag"><icon type="success" size="20" color="#245c44" /><text>{{task.status === 'minimum' ? '忙时完成' : '原目标完成'}}</text></view>
     </view>
-    <view class="task-options">
-      <block wx:if="{{!task.done && task.originalTarget > 1}}">
-        <button wx:if="{{quickMinimumEnabled && task.minimum && !task.simplified}}" class="text-button quick-checkin" data-id="{{task.id}}" data-date="{{task.date}}" bindtap="onCompleteMinimum" aria-label="已完成{{task.title}}忙时目标，按{{task.minimum}}{{task.unit}}打卡">按忙时目标打卡 · {{task.minimum}}{{task.unit}}</button>
-        <button wx:if="{{!quickMinimumEnabled || !task.minimum || detail || task.simplified}}" class="text-button" data-id="{{task.id}}" data-date="{{task.date}}" bindtap="onSimplify">{{task.minimum ? '今天少做一点 · ' + task.minimum + task.unit : '今天少做一点 · 自己填'}}</button>
-        <button wx:if="{{task.simplified}}" class="text-button" data-id="{{task.id}}" data-date="{{task.date}}" bindtap="onRestore">恢复原目标</button>
-      </block>
-      <button wx:if="{{task.done}}" class="text-button undo" data-id="{{task.id}}" data-date="{{task.date}}" data-done="{{true}}" bindtap="onComplete" aria-label="撤销{{task.title}}今天的打卡">撤销打卡</button>
+    <view wx:if="{{!task.done && task.originalTarget > 1}}" class="task-options">
+      <button wx:if="{{quickMinimumEnabled && task.minimum && !task.simplified}}" class="soft-button" data-id="{{task.id}}" data-date="{{task.date}}" bindtap="onCompleteMinimum" aria-label="已完成{{task.title}}忙时目标，按{{task.minimum}}{{task.unit}}打卡">按忙时目标打卡 · {{task.minimum}}{{task.unit}}</button>
+      <button wx:if="{{!quickMinimumEnabled || !task.minimum || detail || task.simplified}}" class="text-button" data-id="{{task.id}}" data-date="{{task.date}}" bindtap="onSimplify">{{task.minimum ? '今天少做一点 · ' + task.minimum + task.unit : '今天少做一点 · 自己填'}}</button>
+      <button wx:if="{{task.simplified}}" class="text-button" data-id="{{task.id}}" data-date="{{task.date}}" bindtap="onRestore">恢复原目标</button>
+    </view>
+    <view wx:if="{{task.done}}" class="task-options">
+      <button class="text-button undo" data-id="{{task.id}}" data-date="{{task.date}}" data-done="{{true}}" bindtap="onComplete" aria-label="撤销{{task.title}}今天的打卡">撤销打卡</button>
     </view>
   </view>
 </template>

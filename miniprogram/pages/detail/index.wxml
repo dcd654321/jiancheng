@@ -1,7 +1,7 @@
 <import src="../../templates/task.wxml" />
 <view class="page">
   <view wx:if="{{loading}}" class="empty"><view class="section-title">正在读取习惯</view><view class="sub">请稍候。</view></view>
-  <view wx:elif="{{dataUnavailable}}" class="empty"><view class="section-title">暂时无法读取习惯</view><view class="sub">{{error}}</view></view>
+  <view wx:elif="{{dataUnavailable}}" class="empty"><view class="heading">暂时读不到云端记录</view><view class="sub">{{error}}</view></view>
   <block wx:elif="{{dataReady}}">
     <view wx:if="{{error}}" class="error">{{error}}</view>
     <view class="heading">{{title}}</view><view class="sub">{{statusText}} · {{schedule}}</view>
@@ -23,13 +23,15 @@
     <button class="disclosure" bindtap="onMore" aria-expanded="{{moreOpen}}"><text class="grow">更多操作</text><text class="sub">暂停、归档</text><view class="chevron {{moreOpen ? 'up' : 'down'}}" /></button>
     <view wx:if="{{moreOpen}}">
       <view class="sub spaced">暂停或归档明天生效，今天和历史记录保留。</view>
-      <button wx:if="{{current.status === 'active'}}" class="setting-row" data-status="paused" bindtap="onStatus">明日起暂停</button>
-      <button wx:else class="setting-row" data-status="active" bindtap="onStatus">明日起恢复</button>
-      <button class="setting-row danger" data-status="archived" bindtap="onStatus">明日起归档</button>
+      <view class="card list-card">
+        <button wx:if="{{current.status === 'active'}}" class="setting-row" data-status="paused" bindtap="onStatus">明日起暂停</button>
+        <button wx:else class="setting-row" data-status="active" bindtap="onStatus">明日起恢复</button>
+        <button class="setting-row danger" data-status="archived" bindtap="onStatus">明日起归档</button>
+      </view>
     </view>
     <view class="section-title">近28天有安排的记录</view>
     <view wx:if="{{!history.length}}" class="sub">这段时间还没有安排，不算漏做。</view>
-    <view wx:for="{{visibleHistory}}" wx:key="date" class="setting-row"><view class="grow">{{item.date}}<view class="sub">{{item.goal}}</view></view><text class="sub">{{item.status}}</text></view>
+    <view wx:else class="card list-card"><view wx:for="{{visibleHistory}}" wx:key="date" class="setting-row"><view class="grow">{{item.date}}<view class="sub">{{item.goal}}</view></view><text class="sub">{{item.status}}</text></view></view>
     <button wx:if="{{history.length > 7}}" class="text-button spaced" bindtap="onToggleHistory">{{showHistory ? '收起历史' : '查看全部 ' + history.length + ' 天'}}</button>
   </block>
 </view>

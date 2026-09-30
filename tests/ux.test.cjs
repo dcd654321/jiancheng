@@ -86,9 +86,9 @@ test('today task keeps choosing a smaller goal separate from completing it', t =
   p.onComplete(e({id:'read',date:dates.today(),done:false}));
   assert.equal(p.data.completed[0].status,'minimum');
   const progress=h.page('progress');
-  assert.equal(progress.data.selected.tasks[0].statusText,'小目标完成');
-  assert.match(progress.data.selected.description,/小目标1项/);
-  assert.equal(h.page('detail',{id:'read'}).data.history[0].status,'小目标完成');
+  assert.equal(progress.data.selected.tasks[0].statusText,'忙时完成');
+  assert.match(progress.data.selected.description,/忙时1项/);
+  assert.equal(h.page('detail',{id:'read'}).data.history[0].status,'忙时完成');
   p.onComplete(e({id:'read',date:dates.today(),done:true}));
   p.onRestore(e({id:'read',date:dates.today()}));
   p.onComplete(e({id:'read',date:dates.today(),done:false}));
@@ -103,19 +103,28 @@ test('unconfigured small goal stays unset and target one offers no lower-goal ac
   assert.match(markup,/task\.originalTarget > 1/); assert.match(markup,/task\.minimum && !task\.simplified/);
   assert.match(markup,/!task\.minimum \|\| detail \|\| task\.simplified/);
   assert.match(markup,/按忙时目标打卡/); assert.match(markup,/今天少做一点 · 自己填/);
-  assert.match(markup,/小目标完成/); assert.match(markup,/原目标完成/);
-  assert.match(markup,/平时 \{\{task\.originalTarget\}\}/); assert.match(markup,/忙时 \{\{task\.minimum\}\}/);
+  assert.match(markup,/忙时完成/); assert.match(markup,/原目标完成/);
+  assert.match(markup,/今天 \{\{task\.target\}\}/); assert.match(markup,/忙时 \{\{task\.minimum\}\}/);
+  assert.match(markup,/原 \{\{task\.originalTarget\}\}/);
 });
-test('legacy cloud API hides the unsupported one-tap command and keeps manual adjustment available', t => {
+test('one-tap busy-goal availability follows the config flag and keeps the manual path', t => {
   const h=harness(t); h.seed(); const today=h.page('today');
   const detail=h.page('detail',{id:'read'});
-  assert.equal(today.data.quickMinimumEnabled,false);
-  assert.equal(detail.data.quickMinimumEnabled,false);
+  assert.equal(today.data.quickMinimumEnabled,true);
+  assert.equal(detail.data.quickMinimumEnabled,true);
   assert.equal(today.data.pending[0].minimum,2);
   const markup=fs.readFileSync(path.resolve(__dirname,'../miniprogram/templates/task.wxml'),'utf8');
   assert.match(markup,/quickMinimumEnabled && task\.minimum && !task\.simplified/);
   assert.match(markup,/!quickMinimumEnabled \|\| !task\.minimum/);
   assert.match(markup,/今天少做一点 · /);
+  const ui=require('../miniprogram/services/ui');
+  const original=ui.quickMinimumEnabled;
+  ui.quickMinimumEnabled=false;
+  try {
+    const legacy=h.page('today');
+    assert.equal(legacy.data.quickMinimumEnabled,false);
+    assert.equal(legacy.data.pending[0].minimum,2);
+  } finally { ui.quickMinimumEnabled=original; }
 });
 test('one-tap busy-goal check-in moves only that habit to completed', t => {
   const h=harness(t); h.seed();
@@ -129,7 +138,8 @@ test('one-tap busy-goal check-in moves only that habit to completed', t => {
   assert.equal(p.data.completed[0].target,2);
   assert.equal(h.store.read().records['walk@'+day],undefined);
   const todayMarkup=fs.readFileSync(path.resolve(__dirname,'../miniprogram/pages/today/index.wxml'),'utf8');
-  assert.match(todayMarkup,/待做 \{\{pending\.length\}\} · 已做 \{\{completed\.length\}\}/);
+  assert.match(todayMarkup,/<text>待做<\/text><text class="section-count">\{\{pending\.length\}\} 项<\/text>/);
+  assert.match(todayMarkup,/<text class="progress-value">\{\{done\}\} \/ \{\{total\}\}<\/text>/);
   const mineMarkup=fs.readFileSync(path.resolve(__dirname,'../miniprogram/pages/mine/index.wxml'),'utf8');
   assert.match(mineMarkup,/open-type="feedback"[^>]*>.*意见与问题反馈/);
 });
@@ -193,10 +203,17 @@ test('tomorrow summary uses future versions, limits visible titles and never mod
   h.store.dispatch({type:'status',id:'read',baseRevision:1,status:'paused'}); p.refresh();
   assert.equal(p.data.tomorrow.count,4); assert.equal(p.data.total,5);
 });
-test('legacy help describes only the enabled two-step busy goal flow', t => {
+test('help describes the enabled one-tap flow and keeps the two-step fallback wording', t => {
   const h=harness(t); h.seed(); const p=h.page('mine'); p.onHelp();
-  assert.doesNotMatch(h.modals.at(-1).content,/按忙时目标打卡/);
+  assert.match(h.modals.at(-1).content,/按忙时目标打卡/);
   assert.match(h.modals.at(-1).content,/调整本身不会打卡/);
+  const ui=require('../miniprogram/services/ui'); const original=ui.quickMinimumEnabled;
+  ui.quickMinimumEnabled=false;
+  try {
+    p.onHelp();
+    assert.doesNotMatch(h.modals.at(-1).content,/按忙时目标打卡/);
+    assert.match(h.modals.at(-1).content,/调整本身不会打卡/);
+  } finally { ui.quickMinimumEnabled=original; }
 });
 test('first created habit is the next visible task, without auto-completion', t => {
   const h=harness(t), edit=h.page('edit',{template:'read'}); edit.onSave();

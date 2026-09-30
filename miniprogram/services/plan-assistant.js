@@ -23,7 +23,7 @@ function createPlanAssistant(wxApi, cloudConfig, aiConfig, options = {}) {
       const context=()=>{
         const s=session && session.status();
         if(!s||!s.ready||!s.accountId||!s.epoch)throw Error('云端记录尚未读取，请稍后再申请AI建议');
-        if(s.deletionPending||s.conflict||s.pending||s.networkOffline||s.phase==='offline')throw Error('请先完成数据同步，再申请AI建议');
+        if(s.deletionPending||s.conflict||s.pending||s.networkOffline||s.phase==='offline')throw Error('请先完成云端同步，再申请AI建议');
         return {key:s.accountId+':'+s.epoch,epoch:s.epoch};
       };
       const before=context(),requestKey=before.key+':'+JSON.stringify(normalized);

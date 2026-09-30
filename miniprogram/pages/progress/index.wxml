@@ -1,25 +1,32 @@
 <view class="page">
   <view wx:if="{{loading}}" class="empty"><view class="section-title">正在读取进度</view><view class="sub">请稍候。</view></view>
-  <view wx:elif="{{dataUnavailable}}" class="empty"><view class="section-title">暂时无法读取进度</view><view class="sub">{{error}}</view></view>
+  <view wx:elif="{{dataUnavailable}}" class="empty"><view class="heading">暂时读不到云端记录</view><view class="sub">{{error}}</view></view>
   <block wx:elif="{{dataReady}}">
     <view wx:if="{{error}}" class="error">{{error}}</view>
-    <view class="heading">进度</view>
+    <view class="heading heading-xl">进度</view>
     <view class="segments"><button class="segment {{days === 7 ? 'selected' : ''}}" data-days="7" bindtap="onPeriod">近7天</button><button class="segment {{days === 28 ? 'selected' : ''}}" data-days="28" bindtap="onPeriod">近28天</button></view>
     <block wx:if="{{stats}}">
-      <view class="sub">{{stats.start}} 至 {{stats.end}}</view>
+      <view class="range">{{rangeLabel}}</view>
       <block wx:if="{{stats.planned}}">
-        <view class="row spaced"><view class="metric">{{stats.done}}<text class="metric-suffix"> 次</text></view><view class="sub"><view>已完成</view><view>共安排 {{stats.planned}} 次</view></view></view>
-        <view class="sub spaced">记录率 {{stats.rate}}% · 原目标 {{stats.standard}} 次 · 小目标 {{stats.minimum}} 次</view>
+        <view class="card metric-card">
+          <view class="row"><view class="metric">{{stats.done}}<text class="metric-suffix"> 次</text></view><view class="sub"><view>已完成</view><view>共安排 {{stats.planned}} 次</view></view></view>
+          <view class="metric-note">原目标 {{stats.standard}} 次 · 忙时目标 {{stats.minimum}} 次 · 记录率 {{stats.rate}}%</view>
+        </view>
+        <view wx:if="{{advice}}" class="card advice"><view class="dot" /><view class="grow"><view class="advice-text">{{advice}}</view><text class="advice-label">根据最近记录，不会自动调整你的目标</text></view></view>
+        <view class="calendar"><button wx:for="{{stats.cells}}" wx:key="date" class="cell {{item.tone}} {{item.date === selectedDate ? 'picked' : ''}}" data-date="{{item.date}}" bindtap="onDate" aria-label="{{item.description}}{{item.date === selectedDate ? '，已选' : ''}}"><text class="cell-weekday">{{item.weekday}}</text><text>{{item.day}}</text><text class="cell-status">{{item.mark}}</text></button></view>
+        <view class="legend"><view class="legend-item"><view class="legend-mark full" />全部完成</view><view class="legend-item"><view class="legend-mark partial" />部分完成</view><view class="legend-item"><view class="legend-mark pending" />未记录</view><view class="legend-item"><view class="legend-mark rest" />无安排</view></view>
+        <view class="section-title"><text>{{selected.date}}</text></view>
+        <view wx:if="{{!selected.tasks.length}}" class="sub">当天没有安排，不算漏做。</view>
+        <view wx:else class="card list-card"><button wx:for="{{selected.tasks}}" wx:key="id" class="setting-row" data-id="{{item.id}}" bindtap="onOpen"><view class="grow">{{item.title}}<view class="sub">{{item.target}} {{item.unit}}</view></view><text class="sub">{{item.statusText}}</text><view class="chevron" /></button></view>
+        <button wx:if="{{stats.habits.length}}" class="disclosure spaced" bindtap="onToggleHabits" aria-expanded="{{showHabits}}"><text class="grow">按习惯查看汇总</text><text class="sub">{{stats.habits.length}} 个</text><view class="chevron {{showHabits ? 'up' : 'down'}}" /></button>
+        <block wx:if="{{showHabits}}"><view class="card list-card"><button wx:for="{{stats.habits}}" wx:key="id" class="setting-row" data-id="{{item.id}}" bindtap="onOpen"><view class="grow">{{item.title}}<view class="sub">原目标 {{item.standard}} 次 · 忙时目标 {{item.minimum}} 次</view></view><text class="sub">{{item.done}} / {{item.planned}}</text><view class="chevron" /></button></view></block>
+        <view class="sub spaced">含今天；今天还没有结束。忙时目标也算一次记录，不等于完成原目标。</view>
       </block>
-      <view wx:else class="empty"><view class="section-title">这段时间没有安排</view><view class="sub">创建习惯后，这里会留下你的记录。</view></view>
-      <view class="calendar"><button wx:for="{{stats.cells}}" wx:key="date" class="cell {{item.tone}} {{item.date === selectedDate ? 'picked' : ''}}" data-date="{{item.date}}" bindtap="onDate" aria-label="{{item.description}}{{item.date === selectedDate ? '，已选' : ''}}"><text class="cell-weekday">{{item.weekday}}</text><text>{{item.day}}</text><text class="cell-status">{{item.mark}}</text></button></view>
-      <view class="legend"><view class="legend-item"><view class="legend-mark full" />全部完成</view><view class="legend-item"><view class="legend-mark partial" />部分完成</view><view class="legend-item"><view class="legend-mark pending" />尚未完成</view><view class="legend-item"><view class="legend-mark" />无安排</view></view>
-      <view class="section-title">{{selected.date}} 的记录</view>
-      <view wx:if="{{!selected.tasks.length}}" class="sub">当天没有安排，不算漏做。</view>
-      <button wx:for="{{selected.tasks}}" wx:key="id" class="setting-row" data-id="{{item.id}}" bindtap="onOpen"><view class="grow">{{item.title}}<view class="sub">{{item.target}} {{item.unit}}</view></view><text class="sub">{{item.statusText}}</text><view class="chevron" /></button>
-      <button wx:if="{{stats.habits.length}}" class="disclosure spaced" bindtap="onToggleHabits" aria-expanded="{{showHabits}}"><text class="grow">按习惯查看汇总</text><text class="sub">{{stats.habits.length}} 个</text><view class="chevron {{showHabits ? 'up' : 'down'}}" /></button>
-      <block wx:if="{{showHabits}}"><button wx:for="{{stats.habits}}" wx:key="id" class="setting-row" data-id="{{item.id}}" bindtap="onOpen"><view class="grow">{{item.title}}<view class="sub">原目标 {{item.standard}} 次 · 小目标 {{item.minimum}} 次</view></view><text class="sub">{{item.done}} / {{item.planned}}</text><view class="chevron" /></button></block>
-      <view class="sub spaced">含今天，今天尚未结束。小目标完成不代表完成原目标。</view>
+      <view wx:else class="empty">
+        <view class="heading">这段时间还没有安排</view>
+        <view class="sub">创建习惯后，这里会留下你的记录。</view>
+        <button class="primary spaced" bindtap="onCreate">创建习惯</button>
+      </view>
     </block>
   </block>
 </view>

@@ -15,7 +15,7 @@ function validatePlan(input) {
   const target = Number(input.target);
   if (!Number.isInteger(target) || target < 1 || target > (input.unit === '分钟' ? 120 : 999)) throw Error('目标数量超出允许范围');
   const minimum = input.minimum === '' || input.minimum == null ? null : Number(input.minimum);
-  if (minimum !== null && (!Number.isInteger(minimum) || minimum < 1 || minimum >= target)) throw Error('简化目标需大于0、小于原目标');
+  if (minimum !== null && (!Number.isInteger(minimum) || minimum < 1 || minimum >= target)) throw Error('忙时目标需大于0、小于原目标');
   if (!Array.isArray(input.weekdays) || !input.weekdays.length || input.weekdays.some(n => !ALL_DAYS.includes(n))) throw Error('至少选择一个执行星期');
   const time = input.time || '';
   if (time && !/^([01]\d|2[0-3]):[0-5]\d$/.test(time)) throw Error('计划时间格式无效');
@@ -45,7 +45,7 @@ function taskAt(state, habit, date) {
     id: habit.id, date, title: version.title, unit: version.unit, time: version.time,
     originalTarget: version.target, target, minimum: version.minimum,
     status, done: status !== 'pending', simplified: target < version.target,
-    statusText: status === 'standard' ? '原目标完成' : status === 'minimum' ? '简化完成' : '未记录',
+    statusText: status === 'standard' ? '原目标完成' : status === 'minimum' ? '忙时完成' : '未记录',
     note: saved ? saved.note : '', versionRevision: version.revision
   };
 }
@@ -118,7 +118,7 @@ function reduce(state, command, nowDate) {
     if (['simplify', 'restore'].includes(command.type)) {
       if (record.status !== 'pending') throw Error('请先撤销今天的记录，再调整目标');
       const target = command.type === 'restore' ? task.originalTarget : Number(command.target);
-      if (!Number.isInteger(target) || target < 1 || target > task.originalTarget || (command.type === 'simplify' && target === task.originalTarget)) throw Error('简化目标需大于0、小于原目标');
+      if (!Number.isInteger(target) || target < 1 || target > task.originalTarget || (command.type === 'simplify' && target === task.originalTarget)) throw Error('今天的目标需大于0、小于原目标');
       record.todayTarget = target;
     }
     if (command.type === 'note') {
@@ -155,7 +155,7 @@ function summary(state, end, days) {
     return { date, day: Number(date.slice(8)), weekday: '一二三四五六日'[dates.weekday(date) - 1],
       planned: tasks.length, standard, minimum, done, tasks,
       tone: !tasks.length ? 'rest' : !done ? 'pending' : done === tasks.length ? 'full' : 'partial',
-      description: `${dates.label(date)}，${tasks.length ? `记录${done}/${tasks.length}项，原目标${standard}项，简化${minimum}项` : '休息，无安排'}` };
+      description: `${dates.label(date)}，${tasks.length ? `记录${done}/${tasks.length}项，原目标${standard}项，忙时${minimum}项` : '休息，无安排'}` };
   });
   const result = { start: cells[0].date, end, days, cells, habits: Object.values(byHabit), planned: 0, standard: 0, minimum: 0 };
   cells.forEach(c => { result.planned += c.planned; result.standard += c.standard; result.minimum += c.minimum; });

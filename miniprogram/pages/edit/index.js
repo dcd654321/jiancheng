@@ -35,7 +35,7 @@ Page(ui.withLifecycle({
           source: (result.source === 'ai' ? 'AI建议 · 请自行核对' : '基础建议 · 本机规则，非AI') + '。' + draft.action });
       } catch (err) { this._invalidDraft = true; ui.error(this, err); }
     }
-    if (templates[options.template]) this.setData({ ...templates[options.template], source: '快捷模板 · 已填忙时小目标，创建前可以修改' });
+    if (templates[options.template]) this.setData({ ...templates[options.template], source: '已按模板填好名称、目标与忙时目标，都可以修改。' });
     if (options.id) wx.setNavigationBarTitle({ title: '编辑习惯' });
     this.refresh();
   },

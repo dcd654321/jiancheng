@@ -10,7 +10,8 @@ const TARGETS = Object.freeze({
     envId: 'cloud1-d8gopnalv908bb47a',
     resourceAppid: 'wx7ad85943fe81e095',
     functionName: resources.apiFunction,
-    storageNamespace: 'jiancheng_daka'
+    storageNamespace: 'jiancheng_daka',
+    completeMinimumEnabled: true
   }),
   product: Object.freeze({
     enabled: true,
@@ -18,7 +19,8 @@ const TARGETS = Object.freeze({
     envId: 'product-d2g59zty74d7d1ec1',
     resourceAppid: 'wx7ad85943fe81e095',
     functionName: resources.apiFunction,
-    storageNamespace: 'jiancheng_daka'
+    storageNamespace: 'jiancheng_daka',
+    completeMinimumEnabled: true
   })
 });
 

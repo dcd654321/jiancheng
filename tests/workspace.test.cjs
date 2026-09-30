@@ -113,7 +113,7 @@ test('today and progress show cloud-confirmed completion only after the request 
   assert.equal(today.toasts.length, 0);
   gate.resolve(); await work;
   assert.equal(today.result.data.done, 1);
-  assert.match(today.toasts[0].title, /已保存到云端/);
+  assert.match(today.toasts[0].title, /记下了 · 已同步/);
   assert.equal(page(h, 'progress').result.data.stats.done, 1);
 });
 

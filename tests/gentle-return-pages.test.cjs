@@ -34,14 +34,35 @@ function harness(t, plans) {
   return { page, store, app, storage, modals, toasts, navigation, today };
 }
 
-test('today shows at most one gentle return and original action only guides, without historical writes', t => {
+test('return card completes today in place without touching missed days', t => {
   const h = harness(t, [['read', {}], ['walk', {}]]);
-  const before = h.store.rawBackup();
+  const before = h.store.read().records;
   assert.equal(h.page.data.returnGuide.id, h.page.data.pending[0].id);
-  h.page.onReturnOriginal(event(h.page.data.returnGuide.id, h.today));
-  assert.equal(h.store.rawBackup(), before);
-  assert.deepEqual(h.navigation, ['/pages/detail/index?id=' + h.page.data.returnGuide.id]);
-  assert.equal(h.page.data.done, 0);
+  const id = h.page.data.returnGuide.id;
+  h.page.onReturnOriginal(event(id, h.today));
+  assert.equal(h.page.data.done, 1);
+  const record = h.store.read().records[id + '@' + h.today];
+  assert.equal(record.status, 'standard');
+  assert.deepEqual(before, {});
+  assert.deepEqual(h.navigation, []);
+  assert.equal(h.page.data.returnGuide, null);
+  assert.equal(h.toasts.at(-1).title, '第一次，记下了 · 已同步');
+});
+
+test('busy-goal return completes as minimum without a modal', t => {
+  const h = harness(t, [['read', {}]]);
+  const past = dates.shift(h.today, -4);
+  h.storage[STORAGE_KEY] = JSON.stringify(domain.reduce(h.store.read(), { type: 'complete', id: 'read', date: past }, past));
+  h.page.refresh();
+  const id = h.page.data.returnGuide.id;
+  h.page.onReturnMinimum(event(id, h.today));
+  assert.equal(h.page.data.done, 1);
+  const record = h.store.read().records[id + '@' + h.today];
+  assert.equal(record.status, 'minimum');
+  assert.equal(record.todayTarget, 2);
+  assert.equal(h.modals.length, 0);
+  assert.deepEqual(h.navigation, []);
+  assert.equal(h.toasts.at(-1).title, '接上了 · 已同步');
 });
 
 test('smaller target reuses confirmation and does not complete or fill missed days; original restores today', t => {
@@ -61,14 +82,15 @@ test('smaller target reuses confirmation and does not complete or fill missed da
   assert.deepEqual(Object.keys(h.store.read().records), [`read@${h.today}`]);
 });
 
-test('a target of one has no smaller action', t => {
+test('a target of one offers only the original action', t => {
   const h = harness(t, [['water', { target: 1, minimum: null, unit: '次' }]]);
   assert.equal(h.page.data.returnGuide.originalTarget, 1);
   h.page.onReturnSmall(event('water', h.today));
   assert.equal(h.modals.length, 0);
-  const before = h.store.rawBackup();
   h.page.onReturnOriginal(event('water', h.today));
-  assert.equal(h.store.rawBackup(), before);
+  assert.equal(h.page.data.done, 1);
+  assert.equal(h.store.read().records['water@' + h.today].status, 'standard');
+  assert.deepEqual(h.navigation, []);
 });
 
 test('today without an arranged task does not display a return prompt', t => {
@@ -89,7 +111,7 @@ test('completion removes prompt after cloud acknowledgement; failure never claim
   h.page.onComplete(event('read', h.today));
   assert.equal(h.page.data.returnGuide, null);
   assert.equal(h.page.data.done, 1);
-  assert.equal(h.toasts.at(-1).title, '今天继续了，已保存到云端');
+  assert.equal(h.toasts.at(-1).title, '接上了 · 已同步');
 
   const pending = harness(t, [['read', {}]]);
   pending.storage[STORAGE_KEY] = JSON.stringify(domain.reduce(pending.store.read(),
@@ -136,11 +158,10 @@ test('native markup provides one conditional prompt and hides invalid smaller ac
   const root = path.resolve(__dirname, '../miniprogram');
   const markup = fs.readFileSync(path.join(root, 'pages/today/index.wxml'), 'utf8');
   assert.match(markup, /wx:if="\{\{returnGuide\}\}"/);
-  assert.match(markup, /wx:if="\{\{returnGuide\.originalTarget > 1\}\}"/);
+  assert.match(markup, /returnGuide\.originalTarget > 1/);
   assert.match(markup, /bindtap="onReturnOriginal"/);
+  assert.match(markup, /bindtap="onReturnMinimum"/);
   assert.match(markup, /bindtap="onReturnSmall"/);
   assert.match(markup, /过去不用补打卡/);
-  assert.match(markup, /wx:if="\{\{!hideQuote && !returnGuide\}\}" class="sub quote"/);
-  assert.match(markup, /wx:if="\{\{!hideQuote && returnGuide\}\}" class="sub quote"/);
-  assert.ok(markup.indexOf('wx:if="{{!hideQuote && returnGuide}}"') > markup.indexOf('wx:for="{{pending}}"'));
+  assert.match(markup, /wx:if="\{\{!hideQuote && !returnGuide && total\}\}" class="sub quote"/);
 });

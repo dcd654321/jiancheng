@@ -30,7 +30,7 @@ function read(page, callback) {
     else error(page, err);
   }
 }
-function taskStatusLabel(task) { return task.status === 'minimum' ? '小目标完成' : task.statusText; }
+function taskStatusLabel(task) { return task.status === 'minimum' ? '忙时完成' : task.statusText; }
 function mutate(page, command, message, options = {}) {
   if (page._mutating) return false;
   const mutationContext = contextKey();
@@ -42,10 +42,10 @@ function mutate(page, command, message, options = {}) {
     page.refresh();
     const completion = ['complete', 'completeMinimum'].includes(command.type);
     const notice = options.firstCompletion && completion
-      ? '第一步已保存到云端'
+      ? '第一次，记下了 · 已同步'
       : options.returnCompletion && completion
-      ? '今天继续了，已保存到云端'
-      : '已保存到云端';
+      ? '接上了 · 已同步'
+      : '记下了 · 已同步';
     if (notice) wx.showToast({ title: notice, icon: 'none' });
     return true;
   };
@@ -147,7 +147,7 @@ const taskActions = {
         content: task.minimum ? String(task.minimum) : '', editable: true,
         placeholderText: `原目标${task.originalTarget}${task.unit}，输入更小的整数`,
         confirmText: '只改今天', confirmColor: '#245c44',
-        success: result => { if (result.confirm) mutate(this, { type: 'simplify', id, date: taskDate, target: result.content }, '今天目标已简化'); }
+        success: result => { if (result.confirm) mutate(this, { type: 'simplify', id, date: taskDate, target: result.content }, '今天目标已调小'); }
       });
     } catch (err) { error(this, err); }
   },

@@ -3,7 +3,7 @@
   <view class="heading">分享一点进步</view>
   <view wx:if="{{!enabled}}" class="notice spaced">分享功能尚未开放，现有打卡不受影响。</view>
   <view wx:elif="{{loading}}" class="sub spaced">正在读取习惯…</view>
-  <view wx:elif="{{dataUnavailable}}" class="error spaced">暂时无法读取习惯，请先恢复数据同步。</view>
+  <view wx:elif="{{dataUnavailable}}" class="error spaced">暂时无法读取习惯，请先恢复云端同步。</view>
   <block wx:elif="{{dataReady}}">
     <view class="sub">只公开下方预览。私人名称、备注和身份不会分享。</view>
     <view class="template-row spaced"><button class="secondary" disabled="{{busy}}" data-kind="invite" bindtap="onKind" aria-pressed="{{kind === 'invite'}}">{{kind === 'invite' ? '✓ ' : ''}}邀请使用</button><button class="secondary" disabled="{{busy}}" data-kind="plan" bindtap="onKind" aria-pressed="{{kind === 'plan'}}">{{kind === 'plan' ? '✓ ' : ''}}轻计划</button><button class="secondary" disabled="{{busy}}" data-kind="weekly" bindtap="onKind" aria-pressed="{{kind === 'weekly'}}">{{kind === 'weekly' ? '✓ ' : ''}}一周进展</button></view>

@@ -191,7 +191,7 @@ function createCloudSession(wxApi, config, transportFactory = createCloudTranspo
   function makeEvent(action, command, confirmation) {
     ensureReadable();
     if (busy || pendingEvent) throw Error('上一操作尚未确认，请先重试确认');
-    if (networkOffline) throw Error('当前无网络，云端保存不可用');
+    if (networkOffline) throw Error('现在无法联网，记录没有丢失。联网后重试');
     const operationDate = dates.today(now());
     if (command) {
       if (RECORD_TYPES.includes(command.type) && command.date !== operationDate) throw Error('只能记录今天的打卡');
