@@ -1,0 +1,30 @@
+const fs=require('node:fs'),path=require('node:path');
+const automator=require(path.join(process.env.TEMP,'mp-automator/node_modules/miniprogram-automator'));
+const domain=require('../../../miniprogram/core/habits'),dates=require('../../../miniprogram/core/date');
+const {THEMES}=require('../../../miniprogram/config/theme-tokens');
+const pause=ms=>new Promise(r=>setTimeout(r,ms));
+const day=dates.today(),start=dates.shift(day,-6),out=__dirname,log=[];
+function state(count,long=false){let s=domain.emptyState();for(let i=0;i<count;i++)s=domain.reduce(s,{type:'create',id:'h'+i,startDate:start,plan:{title:long?'下班以后给自己留一点时间慢慢读一本书':'读书锻炼整理复习练习'.slice(i*2,i*2+2)+'一会儿',target:30,minimum:10,unit:'分钟',time:'',weekdays:[1,2,3,4,5,6,7]}},start);return s;}
+const pending=state(3),completed=domain.reduce(pending,{type:'completeMinimum',id:'h0',date:day},day),undone=domain.reduce(completed,{type:'undo',id:'h0',date:day},day);
+const five=state(5,true);let history=state(5);for(let n=1;n<=4;n++)history=domain.reduce(history,{type:n%2?'complete':'completeMinimum',id:'h'+(n-1),date:dates.shift(day,-n)},dates.shift(day,-n));
+(async()=>{const m=await automator.connect({wsEndpoint:'ws://127.0.0.1:9431'});let serial=0;
+const native=async(theme)=>m.evaluate(p=>{wx.setNavigationBarColor({frontColor:'#000000',backgroundColor:p.tokens.page});wx.setBackgroundColor({backgroundColor:p.tokens.page,backgroundColorTop:p.tokens.page,backgroundColorBottom:p.tokens.page});wx.setTabBarStyle({color:p.tokens.secondary,selectedColor:p.tokens.primary,backgroundColor:p.tokens.surface,borderStyle:'white'});['today','progress','mine'].forEach((name,index)=>wx.setTabBarItem({index,iconPath:'assets/tabbar/'+name+'.png',selectedIconPath:'assets/tabbar/'+name+(p.theme==='paper'?'-selected-paper.png':'-selected.png')}));},{theme,tokens:THEMES[theme]});
+const install=async(states,theme)=>m.evaluate(p=>{const app=getApp();if(!app.__uxOriginal)app.__uxOriginal={store:app.store,appearance:app.appearanceController};let i=0,calls=0;app.store={read:()=>JSON.parse(JSON.stringify(p.states[i])),contextKey:()=>p.key,info:()=>({source:'cloud',ready:true,phase:'ready',pending:0,conflict:null,syncAttention:false,syncText:'云端数据已确认'}),stale:()=>null,dispatch:()=>{calls++;return new Promise(r=>setTimeout(()=>{i=Math.min(i+1,p.states.length-1);r(JSON.parse(JSON.stringify(p.states[i])));},800));},audit:()=>({index:i,calls})};const view=()=>({theme:p.theme,enabled:true,revision:0,key:p.key,loadState:'ready',loadError:'',pendingTheme:'',themeName:p.theme==='paper'?'暖纸白':'薄雾绿'});app.appearanceController={view,subscribe:()=>()=>{},ensureRead:()=>Promise.resolve(view()),invalidate(){}};wx.setNavigationBarColor({frontColor:'#000000',backgroundColor:p.tokens.page});wx.setBackgroundColor({backgroundColor:p.tokens.page,backgroundColorTop:p.tokens.page,backgroundColorBottom:p.tokens.page});wx.setTabBarStyle({color:p.tokens.secondary,selectedColor:p.tokens.primary,backgroundColor:p.tokens.surface,borderStyle:'white'});}, {states,theme,tokens:THEMES[theme],key:'ux-fixture-'+(++serial)});
+const goto=async(route)=>{await m.reLaunch(route);await pause(1000);return m.currentPage();};
+const shot=async(name)=>{await pause(2700);const p=await m.currentPage(),d=await p.data();await native(d.theme);const row={name,path:p.path,theme:d.theme,ready:d.dataReady,total:d.total,done:d.done,minimum:d.minimum,feedback:d.completionFeedback,stats:d.stats&&{planned:d.stats.planned,done:d.stats.done,standard:d.stats.standard,minimum:d.stats.minimum,habits:d.stats.habits.length},selected:d.selected&&{date:d.selected.date,planned:d.selected.planned,tasks:d.selected.tasks.length},showHabits:d.showHabits};log.push(row);await m.screenshot({path:path.join(out,name+'.png')});console.log(name);};
+try{
+for(const theme of ['mist','paper']){
+await install([domain.emptyState()],theme);await goto('/pages/today/index');await shot('01-empty-'+theme+'-F');
+await m.navigateTo('/pages/edit/index?template=read');await shot('02-confirm-'+theme+'-F');let edit=await m.currentPage();await(await edit.$('#minimum')).input('30');await(await edit.$('.primary')).tap();await shot('12-invalid-'+theme+'-F');log.push({name:'invalid-'+theme,errors:(await edit.data()).fieldErrors,calls:await m.evaluate(()=>getApp().store.audit().calls)});
+await install([pending,completed,undone],theme);let p=await goto('/pages/today/index');await shot('03-tasks-'+theme+'-F');await(await p.$('.soft-button')).tap();await shot('04-done-'+theme+'-F');await(await p.$('.feedback-undo')).tap();await shot('05-undo-'+theme+'-F');
+await install([history],theme);p=await goto('/pages/progress/index');await shot('06-review-'+theme+'-F');await(await p.$('.review-more')).tap();await m.pageScrollTo(350);await shot('07-expanded-'+theme+'-F');await m.pageScrollTo(0);
+await p.callMethod('onPeriod',{currentTarget:{dataset:{days:28}}});await shot('08-review28-'+theme+'-F');
+await p.callMethod('onDate',{currentTarget:{dataset:{date:dates.shift(day,-1)}}});const pd=await p.data();log.push({name:'selected-date-'+theme,planned:pd.selected.planned,tasks:pd.selected.tasks.length,date:pd.selected.date});
+await m.pageScrollTo(1300);await shot('09-day-detail-'+theme+'-F');
+await(await p.$('.habit-fact')).tap();await shot('11-detail-'+theme+'-F');
+await install([five],theme);await goto('/pages/today/index');await shot('10-long-five-'+theme+'-F');
+await install([pending],theme);await goto('/pages/progress/index');await shot('13-no-record-'+theme+'-F');
+await install([domain.emptyState()],theme);await goto('/pages/progress/index');await shot('14-no-plan-'+theme+'-F');
+}
+}finally{const restored=await m.evaluate(()=>{const app=getApp();if(app.__uxOriginal){app.store=app.__uxOriginal.store;app.appearanceController=app.__uxOriginal.appearance;delete app.__uxOriginal;}const theme=app.appearanceController.view().theme;return {restored:true,theme};});log.push(restored);fs.writeFileSync(path.join(out,'observations.json'),JSON.stringify(log,null,2));await m.reLaunch('/pages/today/index');await native(restored.theme);await m.disconnect();}
+})().catch(e=>{console.error(e.message);process.exitCode=1;});

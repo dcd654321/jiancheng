@@ -5,6 +5,16 @@ const {createRecipientCodec,recipientAAD}=require('../server/reminders');
 const {authorizeTimer,createSender}=require('../server/reminder-worker');
 const {dates}=require('./helpers/cloud-fixture.cjs');
 
+test('shared reminder recipients use the same trusted caller identity as the account',async()=>{
+  const f=reminderFixture(),a=await f.seed();
+  const shared={APPID:'wx-resource',OPENID:'resource-openid',SOURCE:'wx_client',FROM_APPID:f.identity.APPID,FROM_OPENID:f.identity.OPENID};
+  const response=await f.reminderApi({action:'previewReminder',epoch:a.epoch,slot:'12:30'},shared);
+  assert.equal(response.ok,true);const {templateId,...preview}=response.preview;
+  const result=await f.reminderApi({action:'scheduleReminder',epoch:a.epoch,...preview,subscriptionResult:'accept'},shared);
+  assert.equal(result.ok,true);const doc=[...f.reminders.values()][0];
+  assert.equal(f.codec.open(doc.recipient,recipientAAD(doc)),f.identity.OPENID);
+});
+
 test('reminder preview selects Beijing future scheduled date without writing and rejects identity, extra fields and rejected authorization',async()=>{
   const f=reminderFixture(),a=await f.seed(),preview=await f.preview();
   assert.equal(preview.businessDate,f.date);assert.equal(preview.dueAt,f.date+'T04:30:00.000Z');assert.equal(f.reminders.size,0);

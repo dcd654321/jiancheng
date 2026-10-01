@@ -1,0 +1,13 @@
+{
+  "classification": "W:微信开发者工具只读系统信息及夹具恢复确认",
+  "model": "iPhone 12/13 (Pro)",
+  "SDKVersion": "3.17.3",
+  "version": "8.0.5",
+  "windowWidth": 390,
+  "windowHeight": 671,
+  "fixturePresent": false,
+  "restoredTheme": "mist",
+  "restoredTotal": 2,
+  "restoredDone": 2,
+  "readState": "ready"
+}

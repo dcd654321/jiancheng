@@ -1,0 +1,91 @@
+{
+  "date": "2026-10-01",
+  "classification": "F:真实模板/页面处理器，受控内存领域状态；非真实云端写入",
+  "log": [
+    {
+      "step": "before",
+      "pending": 3,
+      "completed": 0,
+      "done": 0
+    },
+    {
+      "step": "busy-confirmed",
+      "pending": 2,
+      "completed": 1,
+      "done": 1,
+      "showCompleted": true
+    },
+    {
+      "step": "undo",
+      "pending": 3,
+      "done": 0,
+      "target": 2,
+      "original": 5,
+      "status": "pending"
+    },
+    {
+      "step": "button-sizes",
+      "sizes": [
+        {
+          "width": 320,
+          "height": 50
+        },
+        {
+          "width": 320,
+          "height": 50
+        }
+      ]
+    },
+    {
+      "step": "field-error",
+      "errors": {
+        "minimum": "忙时目标要小于平时目标：请输入更小的正整数，或留空"
+      }
+    },
+    {
+      "step": "theme-applied",
+      "saved": "mist",
+      "preview": "mist"
+    },
+    {
+      "step": "operations",
+      "calls": [
+        {
+          "type": "completeMinimum",
+          "id": "review-read",
+          "date": "2026-10-01"
+        },
+        {
+          "type": "undo",
+          "id": "review-read",
+          "date": "2026-10-01"
+        },
+        {
+          "type": "create",
+          "id": "h_muore7eg_y1exa67t",
+          "startDate": "2026-10-01",
+          "plan": {
+            "title": "读一会儿",
+            "target": 30,
+            "minimum": 10,
+            "unit": "分钟",
+            "weekdays": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7
+            ],
+            "time": ""
+          }
+        },
+        {
+          "type": "theme-mock",
+          "theme": "mist"
+        }
+      ]
+    }
+  ]
+}

@@ -121,7 +121,8 @@ test('actual sync page retries a failed cloud read without consent, file or back
   let offline = true;
   const h = await setup((event, f) => offline ? Promise.reject(Error('offline')) : f.api(event));
   global.wx = forbiddenStorage(); global.wx.navigateTo = () => {};
-  global.getApp = () => ({ cloudSession: h.session });
+  const store = require('../miniprogram/services/workspace-store').createWorkspaceStore(h.session);
+  global.getApp = () => ({ cloudSession: h.session, store });
   let definition; global.Page = page => { definition = page; };
   const source = path.resolve(__dirname, '../miniprogram/pages/sync/index.js');
   delete require.cache[source]; require(source);

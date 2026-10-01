@@ -1,7 +1,7 @@
 'use strict';
 const crypto = require('node:crypto');
 const { ApiError, fail, token, canonical } = require('./protocol');
-const { authenticate } = require('./identity');
+const { authenticate, callerIdentity } = require('./identity');
 const { read, readAccount } = require('./features-repository');
 const { COLLECTION } = require('./cloudbase-repository');
 const REMINDERS = 'jiancheng_daka_reminders';
@@ -116,7 +116,7 @@ function createReminderApi({repository,domain,dates,allowedAppId,allowedSources,
         const created={_id:id,schemaVersion:1,owner,ownerEpoch:account.epoch,...next,slot:event.slot,generation:event.generation+1,
           templateId,status:'pending',acceptedReportedAt:now.toISOString(),claimedAt:null,updatedAt:now.toISOString(),
           expiresAt:new Date(Date.parse(next.dueAt)+14*86400000).toISOString(),receipts:[...(doc?doc.receipts:[]),{operationId:event.operationId,fingerprint}]};
-        created.recipient=codec.seal(identity.OPENID,recipientAAD(created));
+        created.recipient=codec.seal(callerIdentity(identity).OPENID,recipientAAD(created));
         await tx.put(created);return {ok:true,reminder:view(created),replayed:false};
       });
     } catch(err) {return err instanceof ApiError?{ok:false,code:err.code,message:err.message}:{ok:false,code:'SERVICE_UNAVAILABLE',message:'提醒服务暂不可用，请稍后重试'};}

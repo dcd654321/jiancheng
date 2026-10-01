@@ -1,1 +1,9 @@
-/* pages/progress/index.wxss */
+/* 同一周期已有事实前置，统计与日期算法沿用领域层。 */
+.progress-page .metric { font-size: 32px; margin-top: 4px; }
+.metric-caption { color: var(--color-secondary, #647067); font-size: 16px; }
+.review-heading { font-size: 18px; margin: 20px 0 10px; }
+.habit-facts { margin-top: 0; }
+.habit-fact { align-items: center; }
+.fact-title { font-size: 16px; font-weight: 600; overflow-wrap: anywhere; }
+.fact-count { margin: 3px 0; }
+.review-more { margin-top: 8px; }

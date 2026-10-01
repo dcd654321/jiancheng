@@ -19,6 +19,7 @@ Page(ui.withLifecycle({
     this._id = options.id || ui.id();
     this._loaded = false;
     this._editContext = ui.contextKey();
+    this._contextBound = !!(options.draft || options.sharedDraft);
     // 模板、有效助手草稿和有效分享草稿进入紧凑确认；自定义和编辑保留完整表单。
     const compact = !options.id && !!(options.template || options.draft || options.sharedDraft);
     this.setData({ editing: !!options.id, compact });
@@ -48,6 +49,12 @@ Page(ui.withLifecycle({
   },
   refresh() {
     ui.read(this, state => {
+      const context = ui.contextKey();
+      if (this._contextBound && this._editContext !== context) {
+        this.setData({ title: '', target: '', minimum: '', weekdays: [], time: '', source: '', fieldErrors: {}, focusField: '' });
+        throw Error('数据状态已变化，请返回后重新打开表单');
+      }
+      if (!this._contextBound) { this._editContext = context; this._contextBound = true; }
       if (this.data.editing && !this._loaded) {
         const habit = ui.domain.findHabit(state, this._id);
         const plan = habit.versions[habit.versions.length - 1];
@@ -116,10 +123,12 @@ Page(ui.withLifecycle({
     // 提交前收起键盘：不依赖键盘覆盖下的按钮完成操作。
     if (typeof wx.hideKeyboard === 'function') wx.hideKeyboard({ fail() {} });
     this.setData({ saving: true, error: '', keyboardOpen: false });
+    const context = ui.contextKey(), showVersion = this._showVersion;
     let firstGuide = null;
     const finish = () => {
       if (this._gone) return;
       this.setData({ saving: false });
+      if (!ui.isCurrentView(this, context, showVersion)) return;
       if (this.data.editing) wx.navigateBack();
       else {
         if (firstGuide) getApp().firstHabitGuide = firstGuide;
@@ -127,7 +136,7 @@ Page(ui.withLifecycle({
       }
       wx.showToast({ title: this.data.editing ? '已保存，明天生效' : '已创建', icon: 'none' });
     };
-    const failed = err => { if (!this._gone) { ui.error(this, err); this.setData({ saving: false }); } };
+    const failed = err => { if (!this._gone) this.setData({ saving: false }); if (ui.isCurrentView(this, context, showVersion)) ui.error(this, err); };
     try {
       if (this._invalidDraft) throw Error('计划草稿已失效，请返回重新预览，未创建任何习惯');
       if (this._editContext !== ui.contextKey()) throw Error('数据状态已变化，请返回后重新打开表单');
@@ -141,8 +150,19 @@ Page(ui.withLifecycle({
       }
       const plan = ui.domain.validatePlan(this.data);
       const startDate = ui.date.shift(ui.date.today(), this.data.startOffset);
-      if (!this.data.editing && !ui.store().read().habits.length) firstGuide = {
-        id: this._id, title: plan.title, firstDate: ui.domain.firstExecution(plan, startDate)
+      const state = ui.store().read();
+      const existing = !this.data.editing && state.habits.find(habit => habit.id === this._id);
+      if (existing) {
+        const saved = existing.versions[existing.versions.length - 1];
+        const samePlan = ['title', 'target', 'minimum', 'unit', 'time', 'weekdays'].every(field =>
+          JSON.stringify(saved[field]) === JSON.stringify(plan[field]));
+        if (!samePlan || existing.versions.length !== 1 || saved.status !== 'active' || saved.effectiveDate !== startDate) {
+          throw Error('这个习惯已创建，当前修改尚未保存。请返回今日，从习惯详情修改计划。');
+        }
+        finish(); return;
+      }
+      if (!this.data.editing && !state.habits.length) firstGuide = {
+        id: this._id, title: plan.title, firstDate: ui.domain.firstExecution(plan, startDate), context
       };
       const command = this.data.editing
         ? { type: 'edit', id: this._id, baseRevision: this._baseRevision, plan }

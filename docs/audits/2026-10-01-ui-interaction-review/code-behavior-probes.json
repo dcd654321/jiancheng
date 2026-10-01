@@ -1,0 +1,67 @@
+{
+  "classification": "L:本地实际模块与页面生命周期；没有网络或真实账户",
+  "results": [
+    {
+      "id": "THEME_CONTEXT_PENDING",
+      "before": {
+        "theme": "mist",
+        "pending": "paper"
+      },
+      "after": {
+        "theme": "mist",
+        "pending": ""
+      },
+      "newAccountFirstSave": {
+        "code": "EPOCH_CHANGED",
+        "message": "账户数据已变化，请重新打开页面"
+      },
+      "calls": [
+        {
+          "action": "getAppearance",
+          "epoch": "E1"
+        },
+        {
+          "action": "setAppearance",
+          "epoch": "E1"
+        },
+        {
+          "action": "getAppearance",
+          "epoch": "E2"
+        }
+      ]
+    },
+    {
+      "id": "THEME_CONTEXT_IMMEDIATE",
+      "viewWithoutEnsureRead": {
+        "theme": "paper",
+        "revision": 0,
+        "enabled": true,
+        "key": "AUDIT_A:E1",
+        "loadState": "ready",
+        "loadError": "",
+        "pendingTheme": "",
+        "themeName": "暖纸白"
+      },
+      "note": "核心会话变化本身是否立即重置主题；此处不调用再次读取"
+    },
+    {
+      "id": "THEME_PREVIEW_REFRESH",
+      "picked": {
+        "theme": "paper",
+        "preview": "paper"
+      },
+      "refreshed": {
+        "theme": "mist",
+        "preview": "paper",
+        "savedTheme": "mist"
+      }
+    },
+    {
+      "id": "OFFLINE_RECHECK_BUTTON",
+      "offline": true,
+      "label": "重新核对",
+      "disabled": false,
+      "statusNote": "主题保存结果待核对，请点“重新核对”确认，不会重复保存。"
+    }
+  ]
+}

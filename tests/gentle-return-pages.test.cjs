@@ -89,7 +89,7 @@ test('a target of one offers only the original action', t => {
   assert.equal(h.modals.length, 0, '目标为1时不开“少做一点”确认');
   assert.match(h.page.data.error, /最小/);
   const template = fs.readFileSync(path.resolve(__dirname, '../miniprogram/templates/task.wxml'), 'utf8');
-  assert.match(template, /wx:if="\{\{task\.originalTarget > 1\}\}"[^>]*bindtap="onSimplify"/);
+  assert.match(template, /wx:if="\{\{detail && !task\.simplified && task\.originalTarget > 1\}\}"[^>]*bindtap="onSimplify"/);
   h.page.onComplete(event('water', h.today));
   assert.equal(h.page.data.done, 1);
   assert.equal(h.store.read().records['water@' + h.today].status, 'standard');

@@ -64,6 +64,15 @@ test('late private preview and account change cannot leave old content or naviga
   const view=await h.page('share-view',{id:share.shareId,mine:'1'});assert.ok(view.data.view);
   h.status.epoch='changed';h.listeners.forEach(fn=>fn());assert.equal(view.data.view,null);assert.equal(view.data.shareEnabled,false);
 });
+
+test('late owner action failure cannot overwrite a share after leaving and reopening',async t=>{
+  const h=await setup(t),share=await h.client.create(await h.client.preview({kind:'invite'}));
+  const p=await h.page('share-view',{id:share.shareId,mine:'1'});let reject;
+  h.app.featuresClient={...h.client,revoke:()=>new Promise((_,fail)=>{reject=fail;})};
+  p.onManage(e({action:'revoke'}));const work=h.modals.pop().success({confirm:true});
+  p.onHide();await p.onShow();reject(Error('旧撤回失败'));await work;
+  assert.equal(p.data.error,'');assert.equal(p.data.active,true);assert.equal(p.data.busy,false);
+});
 test('pinning changes only ordering, ignores rest days and falls back when preference read fails',async t=>{
   const h=await setup(t);
   await h.f.mutate({type:'create',id:'walk',startDate:h.f.date,plan:{title:'走路',target:10,minimum:3,unit:'分钟',time:'08:00',weekdays:[1,2,3,4,5,6,7]}});

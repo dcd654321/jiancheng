@@ -82,4 +82,16 @@ test('已安装真实wx-server-sdk合同：事务、序列化、错误、幂等�
       assert.equal(calls.filter(c => c.action === 'database.startTransaction').length, 2);
       assert.equal((await api({ action: 'pull' }, identity)).state.records['read@2026-09-15'].status, 'standard');
     });
+    await t.test('删除旁路清理完成标记通过真实SDK持久化，后续读取不重复清理',async()=>{
+      let cleanups=0;
+      const cleanupApi=createApi({repository:createRepository(db),domain,dates,allowedAppId:'wx-contract',allowedSources:['wx_client'],
+        clock:()=>new Date('2026-09-15T04:00:00Z'),newEpoch:()=> 'cleanup-epoch',cleanup:async()=>{cleanups++;}});
+      const current=await api({action:'pull'},identity);
+      const result=await cleanupApi({action:'purge',operationId:'sdk-cleanup',epoch:current.epoch,expectedRevision:current.revision,
+        operationDate:'2026-09-15',confirmation:'DELETE_MY_DATA'},identity);
+      assert.equal(result.ok,true);assert.equal(cleanups,1);
+      const stored=JSON.parse(saved.get(current.accountId)).payload;
+      assert.equal(stored.cleanupPending,undefined);assert.equal(stored.cleanupSourceEpoch,undefined);
+      assert.equal((await cleanupApi({action:'pull'},identity)).ok,true);assert.equal(cleanups,1);
+    });
   });

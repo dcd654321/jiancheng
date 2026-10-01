@@ -20,16 +20,12 @@ Page(ui.withLifecycle({
     pendingTheme: '', saving: false, saveError: '', offline: false,
     options: optionsFor('mist', 'mist'), primaryLabel: '正在使用', primaryDisabled: true, statusNote: '',
     quickMinimumEnabled: ui.quickMinimumEnabled },
-  onLoad() {
-    const controller = appearanceController();
-    if (controller) this._unsubscribe = controller.subscribe(() => { if (!this._gone && this._visible !== false) this.syncView(); });
-  },
+  onThemeChange() { this.syncView(); },
   onShow() {
     const controller = appearanceController();
     if (controller) controller.ensureRead();
     this.syncView();
   },
-  onUnload() { if (this._unsubscribe) this._unsubscribe(); this._unsubscribe = null; },
   onHide() { this.setData({ saving: false }); },
   // 不需要习惯数据：主题读取失败也不阻塞本页预览和核心任务。
   refresh() { this.syncView(); },
@@ -38,7 +34,10 @@ Page(ui.withLifecycle({
     if (!controller) { this.setData({ enabled: false, options: optionsFor('mist', 'mist') }); return; }
     const view = controller.view();
     // 账户上下文变化时清空预览；同一账户内保存成功或冲突读取都不丢弃用户的选择。
-    if (this._viewKey !== view.key) { this._viewKey = view.key; this._preview = null; }
+    if (this._viewKey !== view.key) {
+      this._viewKey = view.key; this._preview = null;
+      this.setData({ saving: false, saveError: '' });
+    }
     if (view.pendingTheme && !this._preview) this._preview = view.pendingTheme;
     const preview = this._preview || view.theme;
     if (!view.enabled) {
@@ -60,7 +59,7 @@ Page(ui.withLifecycle({
     this.setData({ enabled: true, theme: preview, savedTheme: view.theme, preview, hasRevision,
       pendingTheme: view.pendingTheme || '', offline, options: optionsFor(preview, view.theme),
       primaryLabel: this.data.saving ? '正在保存…' : pending ? '重新核对' : usingSaved ? '正在使用' : '使用' + option.name,
-      primaryDisabled: this.data.saving || usingSaved || (!pending && (!hasRevision || offline)),
+      primaryDisabled: this.data.saving || usingSaved || offline || (!pending && !hasRevision),
       statusNote });
   },
   isOffline() {
@@ -82,18 +81,20 @@ Page(ui.withLifecycle({
     const controller = appearanceController();
     if (!controller) return;
     const preview = this.data.preview;
+    const key = controller.view().key;
+    const context = ui.contextKey(), showVersion = this._showVersion;
     this.setData({ saving: true, saveError: '' });
     try {
       if (this.data.pendingTheme) await controller.replay();
       else await controller.save(preview);
-      if (!this._gone) {
+      if (ui.isCurrentView(this, context, showVersion) && controller.view().key === key) {
         this._preview = null;
         this.setData({ saving: false });
         this.syncView();
         if (this._visible !== false) wx.showToast({ title: '已切换为' + (this.data.savedTheme === 'paper' ? '暖纸白' : '薄雾绿'), icon: 'none' });
       }
     } catch (err) {
-      if (this._gone) return;
+      if (!ui.isCurrentView(this, context, showVersion) || controller.view().key !== key) return;
       const view = controller.view();
       const message = err.code === 'CONFLICT'
         ? '主题设置已在其他设备更新，已读取当前主题；请确认后再应用。'

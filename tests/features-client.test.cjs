@@ -34,6 +34,20 @@ test('preferences coalesce reads, cache by account and do not optimistically pin
   h.fail=true;await assert.rejects(h.client.setPinned(null));assert.equal(h.client.cachedPreferences().pinnedHabitId,'read');
   h.status.epoch='another';assert.equal(h.client.cachedPreferences(),null);
 });
+
+test('an older pin confirmation cannot roll back a newer confirmed preference', async () => {
+  const h = await setup(); let release, first = true;
+  const client = createFeaturesClient({}, h.cloud, h.config, h.session, { transportFactory: () => async event => {
+    const result = await h.f.features(event, h.f.identity);
+    if (event.action === 'setPreferences' && first) { first = false; await new Promise(ok => { release = ok; }); }
+    return result;
+  } });
+  const old = client.setPinned('read'); await new Promise(setImmediate);
+  const latest = await client.setPinned(null); assert.equal(latest.revision, 2);
+  release(); const delayed = await old;
+  assert.equal(delayed.pinnedHabitId, null);
+  assert.deepEqual(client.cachedPreferences(), { revision: 2, pinnedHabitId: null, reminderSlot: null });
+});
 test('preview is read-only, loss of create response reuses secure server request and never duplicates',async()=>{
   const h=await setup();const preview=await h.client.preview({kind:'plan',sourceHabitId:'read',categoryKey:'read',includeWeekdays:false});
   assert.equal(h.f.shares.size,0);assert.match(preview.request.requestId,/^[a-f0-9]{64}$/);

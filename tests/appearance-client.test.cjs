@@ -31,6 +31,33 @@ function harness(options = {}) {
   return { f, session, client, calls, login, account, identity: () => identity };
 }
 
+test('a slow read from before a confirmed save cannot roll back the cache or global theme', async () => {
+  let delay=false,release;
+  const h=harness({route:async(event,f)=>{
+    const value=await f.features(event,h.identity());
+    if(delay&&event.action==='getAppearance') await new Promise(ok=>{release=ok;});
+    return value;
+  }});
+  await h.login(); const controller=createAppearanceController({client:h.client,wxApi:{},session:h.session});
+  await controller.ensureRead(); delay=true; const read=controller.ensureRead(true);
+  await new Promise(setImmediate); await controller.save('paper');
+  assert.equal(controller.current(),'paper'); release(); await read;
+  assert.equal(h.client.status().cached.theme,'paper'); assert.equal(controller.current(),'paper');
+  assert.equal(controller.view().revision,1);
+});
+
+test('invalidating a read does not forget a higher confirmed appearance revision', async () => {
+  let stale = false;
+  const h = harness({ route: async (event, f) => stale && event.action === 'getAppearance'
+    ? { ok: true, appearance: { revision: 0, theme: 'mist' } } : f.features(event, h.identity()) });
+  await h.login(); const controller = createAppearanceController({ client: h.client, wxApi: {}, session: h.session });
+  await controller.ensureRead(); await controller.save('paper');
+  stale = true; controller.invalidate(); await controller.ensureRead(true);
+  assert.deepEqual(h.client.status().cached, { revision: 1, theme: 'paper' });
+  assert.equal(controller.current(), 'paper'); assert.equal(controller.view().loadState, 'ready');
+  controller.dispose();
+});
+
 test('appearance requests use the dedicated features function, never the main api function', async () => {
   const f = featuresFixture();
   const snapshot = await f.pull();
@@ -221,4 +248,109 @@ test('theme snapshot falls back to mist without an app controller and reports th
   await assert.rejects(controller.save('paper'));
   assert.equal(themeSnapshot().pendingTheme, 'paper');
   assert.equal(themeSnapshot().theme, 'mist', '不确定状态下全局仍显示已确认主题');
+});
+
+test('a frozen unknown write from A never blocks the first explicit save for B', async () => {
+  let lost = true;
+  const h = harness({ route: async (event, f) => {
+    const result = await f.features(event, h.identity());
+    if (event.action === 'setAppearance' && lost) { lost = false; throw Error('receipt lost'); }
+    return result;
+  } });
+  await h.login();
+  const controller = createAppearanceController({ client: h.client, wxApi: {}, session: h.session });
+  await controller.ensureRead();
+  await assert.rejects(controller.save('paper'), /receipt lost/);
+  assert.equal(controller.view().pendingTheme, 'paper');
+  await h.login('account_b');
+  assert.equal(controller.view().revision, null, '读取前已失效旧已确认偏好');
+  assert.equal(controller.view().pendingTheme, '');
+  await controller.ensureRead();
+  const saved = await controller.save('paper');
+  assert.equal(saved.theme, 'paper');
+  const writes = h.calls.filter(call => call.action === 'setAppearance');
+  assert.equal(writes.length, 2, 'A与B各一次，不重放A');
+  assert.notEqual(writes[0].epoch, writes[1].epoch);
+  assert.notEqual(writes[0].operationId, writes[1].operationId);
+  assert.equal(h.f.prefs.get(h.account.id).revision, 1);
+});
+
+function deferred() { let resolve, reject; const work = new Promise((a, b) => { resolve = a; reject = b; }); return { work, resolve, reject }; }
+function controlledThemes() {
+  const state = { ready: true, accountId: 'local-A', epoch: 'E1', generation: 0, pending: 0, networkOffline: false };
+  const listeners = new Set(), calls = [];
+  const session = { status: () => ({ ...state }), subscribe: fn => { listeners.add(fn); return () => listeners.delete(fn); } };
+  const client = createAppearanceClient({}, { enabled: true, functionName: 'jiancheng_daka_api' }, { enabled: true }, session,
+    { transportFactory: () => event => { const d = deferred(); calls.push({ event, ...d }); return d.work; }, clock: () => 1000 });
+  const controller = createAppearanceController({ client, wxApi: {}, session });
+  const receipt = theme => ({ ok: true, appearance: { revision: 0, theme } });
+  function switchContext() { state.accountId = 'local-B'; state.epoch = 'E2'; listeners.forEach(fn => fn()); }
+  return { state, calls, client, controller, receipt, switchContext };
+}
+
+test('late read failure and finally from A do not clear B loading or its shared read', async () => {
+  const h = controlledThemes(), old = h.controller.ensureRead();
+  h.switchContext();
+  const next = h.controller.ensureRead();
+  assert.equal(h.calls.length, 2, 'B无需等待A返回即可独立读取');
+  h.calls[0].reject(Error('late network failure'));
+  await old;
+  assert.equal(h.controller.view().loadState, 'loading');
+  const again = h.controller.ensureRead();
+  assert.equal(again, next, '旧finally不能清除B的去重句柄');
+  h.calls[1].resolve(h.receipt('paper'));
+  await next;
+  assert.equal(h.controller.current(), 'paper');
+  h.controller.dispose();
+});
+
+test('late A save success or failure cannot clear B frozen write or apply an old receipt', async () => {
+  for (const lateResult of ['success','failure']) {
+  const h = controlledThemes();
+  let read = h.controller.ensureRead(); h.calls[0].resolve(h.receipt('mist')); await read;
+  const old = h.controller.save('paper');
+  const oldRejected = assert.rejects(old, err => err.code === 'EPOCH_CHANGED');
+  await new Promise(resolve => setImmediate(resolve));
+  h.switchContext();
+  read = h.controller.ensureRead(); h.calls[2].resolve(h.receipt('mist')); await read;
+  const newer = h.controller.save('paper');
+  const newerRejected = assert.rejects(newer, /B receipt lost/);
+  await new Promise(resolve => setImmediate(resolve));
+  h.calls[3].reject(Error('B receipt lost')); await newerRejected;
+  assert.equal(h.client.status().frozen, 'paper');
+  if (lateResult === 'success') h.calls[1].resolve(h.receipt('paper'));
+  else h.calls[1].reject(Error('A late failure'));
+  await oldRejected;
+  assert.equal(h.client.status().frozen, 'paper', 'A catch不能删除B核对请求');
+  assert.equal(h.controller.view().pendingTheme, 'paper');
+  assert.equal(h.controller.current(), 'mist');
+  h.controller.dispose();
+  }
+});
+
+test('generation change resets theme immediately and an old read cannot change native color', async () => {
+  const h = controlledThemes();
+  let work = h.controller.ensureRead(); h.calls[0].resolve(h.receipt('paper')); await work;
+  const old = h.controller.ensureRead(true);
+  h.state.generation += 1;
+  assert.equal(h.controller.view().theme, 'mist');
+  assert.equal(h.controller.view().revision, null);
+  const next = h.controller.ensureRead();
+  h.calls[1].resolve(h.receipt('paper')); await old;
+  assert.equal(h.controller.current(), 'mist');
+  h.calls[2].resolve(h.receipt('mist')); await next;
+  assert.equal(h.controller.current(), 'mist'); h.controller.dispose();
+});
+
+test('parallel explicit save/recheck sends one intent and leaves no duplicate preparation', async () => {
+  const h = controlledThemes();
+  let work = h.controller.ensureRead(); h.calls[0].resolve(h.receipt('mist')); await work;
+  const first = h.client.save('paper'), second = h.client.save('mist');
+  await new Promise(resolve => setImmediate(resolve));
+  assert.equal(h.calls.length, 2);
+  const replay = h.client.replay();
+  assert.equal(h.calls.length, 2, '已发送的意图也复用在途确认');
+  h.calls[1].resolve(h.receipt('paper'));
+  assert.equal((await first).theme, 'paper'); await second; await replay;
+  assert.equal(h.client.status().frozen, null); h.controller.dispose();
 });

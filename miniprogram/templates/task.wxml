@@ -23,21 +23,20 @@
     </view>
     <view wx:if="{{!task.done}}" class="task-actions">
       <block wx:if="{{task.simplified}}">
-        <button class="check-pill" disabled="{{readOnly || recordingId === task.id}}" data-id="{{task.id}}" data-date="{{task.date}}" data-done="{{false}}" bindtap="onComplete" aria-label="已完成{{task.title}}，按今天的目标{{task.target}}{{task.unit}}记下">{{recordingId === task.id ? '正在记录…' : '按今天 ' + task.target + task.unit + ' 记下'}}</button>
-        <button class="text-button" disabled="{{readOnly || recordingId === task.id}}" data-id="{{task.id}}" data-date="{{task.date}}" bindtap="onRestore">恢复今天原目标</button>
+        <button class="check-pill" disabled="{{readOnly || writeBusy}}" data-id="{{task.id}}" data-date="{{task.date}}" data-done="{{false}}" bindtap="onComplete" aria-label="已完成{{task.title}}，按今天的目标{{task.target}}{{task.unit}}记下">{{recordingId === task.id && recordingType === 'complete' ? recordingLabel : '按今天 ' + task.target + task.unit + ' 记下'}}</button>
+        <button class="text-button" disabled="{{readOnly || writeBusy}}" data-id="{{task.id}}" data-date="{{task.date}}" bindtap="onRestore">{{recordingId === task.id && recordingType === 'restore' ? recordingLabel : '恢复今天原目标'}}</button>
       </block>
       <block wx:elif="{{quickMinimumEnabled && task.minimum}}">
-        <button class="check-pill" disabled="{{readOnly || recordingId === task.id}}" data-id="{{task.id}}" data-date="{{task.date}}" data-done="{{false}}" bindtap="onComplete" aria-label="已完成{{task.title}}，按原目标{{task.originalTarget}}{{task.unit}}记下今天">{{recordingId === task.id ? '正在记录…' : '按 ' + task.target + task.unit + ' 记下'}}</button>
-        <button class="soft-button" disabled="{{readOnly || recordingId === task.id}}" data-id="{{task.id}}" data-date="{{task.date}}" bindtap="onCompleteMinimum" aria-label="已完成{{task.title}}忙时目标，按{{task.minimum}}{{task.unit}}记下今天">{{recordingId === task.id ? '正在记录…' : '忙时按 ' + task.minimum + task.unit + ' 记下'}}</button>
-        <button wx:if="{{task.originalTarget > 1}}" class="text-button" disabled="{{readOnly || recordingId === task.id}}" data-id="{{task.id}}" data-date="{{task.date}}" bindtap="onSimplify">今天少做一点 · {{task.minimum}}{{task.unit}}</button>
+        <button class="check-pill" disabled="{{readOnly || writeBusy}}" data-id="{{task.id}}" data-date="{{task.date}}" data-done="{{false}}" bindtap="onComplete" aria-label="已完成{{task.title}}，按原目标{{task.originalTarget}}{{task.unit}}记下今天">{{recordingId === task.id && recordingType === 'complete' ? recordingLabel : '按 ' + task.target + task.unit + ' 记下'}}</button>
+        <button class="soft-button" disabled="{{readOnly || writeBusy}}" data-id="{{task.id}}" data-date="{{task.date}}" bindtap="onCompleteMinimum" aria-label="已完成{{task.title}}忙时目标，按{{task.minimum}}{{task.unit}}记下今天">{{recordingId === task.id && recordingType === 'completeMinimum' ? recordingLabel : '按忙时 ' + task.minimum + task.unit + ' 记下'}}</button>
       </block>
       <block wx:else>
-        <button class="check-pill" disabled="{{readOnly || recordingId === task.id}}" data-id="{{task.id}}" data-date="{{task.date}}" data-done="{{false}}" bindtap="onComplete" aria-label="已完成{{task.title}}，按今天的目标{{task.target}}{{task.unit}}记下">{{recordingId === task.id ? '正在记录…' : '按 ' + task.target + task.unit + ' 记下'}}</button>
-        <button wx:if="{{task.originalTarget > 1}}" class="text-button" disabled="{{readOnly || recordingId === task.id}}" data-id="{{task.id}}" data-date="{{task.date}}" bindtap="onSimplify">{{task.minimum ? '今天少做一点 · ' + task.minimum + task.unit : '今天少做一点 · 自己填'}}</button>
+        <button class="check-pill" disabled="{{readOnly || writeBusy}}" data-id="{{task.id}}" data-date="{{task.date}}" data-done="{{false}}" bindtap="onComplete" aria-label="已完成{{task.title}}，按今天的目标{{task.target}}{{task.unit}}记下">{{recordingId === task.id && recordingType === 'complete' ? recordingLabel : '按 ' + task.target + task.unit + ' 记下'}}</button>
       </block>
+      <button wx:if="{{detail && !task.simplified && task.originalTarget > 1}}" class="text-button" disabled="{{readOnly || writeBusy}}" data-id="{{task.id}}" data-date="{{task.date}}" bindtap="onSimplify">只调整今天目标（不记录）</button>
     </view>
     <view wx:if="{{task.done}}" class="task-options">
-      <button class="text-button undo" disabled="{{readOnly || recordingId === task.id}}" data-id="{{task.id}}" data-date="{{task.date}}" data-done="{{true}}" bindtap="onComplete" aria-label="撤销{{task.title}}今天的打卡">撤销打卡</button>
+      <button class="text-button undo" disabled="{{readOnly || writeBusy}}" data-id="{{task.id}}" data-date="{{task.date}}" data-done="{{true}}" bindtap="onComplete" aria-label="撤销{{task.title}}今天的打卡">{{recordingId === task.id && recordingType === 'undo' ? recordingLabel : '撤销打卡'}}</button>
     </view>
   </view>
 </template>

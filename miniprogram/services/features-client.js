@@ -42,6 +42,10 @@ function createFeaturesClient(wxApi, cloudConfig, config, session, options = {})
       ![null,'08:00','12:30','20:30'].includes(value.reminderSlot)) throw Error('偏好响应格式无效');
     return { revision: value.revision, pinnedHabitId: value.pinnedHabitId, reminderSlot: value.reminderSlot };
   }
+  function acceptPreferences(key, value) {
+    if (!cache || cache.key !== key || value.revision > cache.value.revision) cache = { key, value };
+    return clone(cache.value);
+  }
   function share(value) {
     if (!value || !hex(value.shareId) || !['active','revoked','expired'].includes(value.status) ||
       typeof value.createdAt !== 'string' || !Number.isFinite(Date.parse(value.createdAt)) ||
@@ -56,7 +60,7 @@ function createFeaturesClient(wxApi, cloudConfig, config, session, options = {})
     if (inFlight && inFlight.key === key) return inFlight.work;
     const flight = { key };
     flight.work = request({ action: 'getPreferences' }, key).then(result => {
-      const value = validatePreferences(result.preferences); cache = { key, value }; return clone(value);
+      return acceptPreferences(key, validatePreferences(result.preferences));
     }).finally(() => { if (inFlight === flight) inFlight = null; });
     inFlight = flight; return flight.work;
   }
@@ -81,7 +85,7 @@ function createFeaturesClient(wxApi, cloudConfig, config, session, options = {})
       const key = context().key, value = await preferences(true);
       const result = await request({ action: 'setPreferences', operationId: 'pref-' + clock().toString(36) + '-' + (++serial),
         expectedRevision: value.revision, patch: { pinnedHabitId: id } }, key);
-      cache = { key, value: validatePreferences(result.preferences) }; return clone(cache.value);
+      return acceptPreferences(key, validatePreferences(result.preferences));
     },
     async preview(input) {
       const key = context().key, selected = clone(input);

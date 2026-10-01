@@ -1,0 +1,12 @@
+{
+  "classification": "F:受控内存延迟，真实页面处理器，无云写入",
+  "secondAction": {
+    "callsBefore": 1,
+    "callsAfter": 1
+  },
+  "undoInFlight": {
+    "recordingId": "review-read",
+    "done": 1,
+    "completed": 1
+  }
+}

@@ -113,7 +113,7 @@ test('first-run empty state exposes value, dual-tier templates and a clear secon
   assert.match(task, /check-pill/);
   assert.match(task, /chip-lime/);
   assert.match(task, /忙时完成/);
-  assert.match(task, /忙时按/);
+  assert.match(task, /按忙时/);
   const wxss = mini('app.wxss').toLowerCase();
   for (const token of ['#f7f8f5', '#edf1e2', '.card {', '.check-pill', '.soft-button', '.stamp-in', '.skeleton']) assert.ok(wxss.includes(token), token);
   assert.ok(wxss.includes('@import "styles/theme.wxss"'), 'app.wxss 引入主题作用域');

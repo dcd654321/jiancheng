@@ -1,0 +1,15 @@
+{
+  "classification": "W:当前运行页面；调用页面选色事件+真实云读取；没有保存",
+  "before": {
+    "theme": "paper",
+    "preview": "paper",
+    "savedTheme": "mist",
+    "label": "使用暖纸白"
+  },
+  "after": {
+    "theme": "paper",
+    "preview": "paper",
+    "savedTheme": "mist",
+    "label": "使用暖纸白"
+  }
+}

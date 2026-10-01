@@ -10,9 +10,10 @@
   <block wx:elif="{{dataReady}}">
     <view wx:if="{{error}}" class="error">{{error}}</view>
     <view class="heading">{{title}}</view><view class="sub">{{statusText}} · {{schedule}}</view>
-    <block wx:if="{{featuresEnabled && current.status === 'active'}}"><button class="text-button" disabled="{{pinning}}" loading="{{pinning}}" bindtap="onPin">{{pinned ? '取消置顶' : '置顶这个习惯'}}</button><view class="sub">最多置顶一个；今天有安排时优先显示。</view><view wx:if="{{pinError}}" class="error">{{pinError}}</view></block>
-    <view wx:if="{{future}}" class="notice">{{future.effectiveDate}} 生效：{{future.title}} · {{future.target}} {{future.unit}} · {{nextStatusText}}<button wx:if="{{current}}" class="text-button" bindtap="onCancelFuture">撤销这次修改</button></view>
-    <view wx:if="{{task}}"><view class="section-title">今天</view><template is="task" data="{{task: task, detail: true, readOnly: dataReadOnly, taskIconColor: primary, recordingId: recordingId, quickMinimumEnabled: quickMinimumEnabled}}" /></view>
+    <block wx:if="{{featuresEnabled && current.status === 'active'}}"><button class="text-button" disabled="{{pinning || dataReadOnly || writeBusy}}" loading="{{pinning}}" bindtap="onPin">{{pinned ? '取消置顶' : '置顶这个习惯'}}</button><view class="sub">最多置顶一个；今天有安排时优先显示。</view><view wx:if="{{pinError}}" class="error">{{pinError}}</view></block>
+    <view wx:if="{{writeBusy}}" class="sub spaced">{{writeStatus}}</view>
+    <view wx:if="{{future}}" class="notice">{{future.effectiveDate}} 生效：{{future.title}} · {{future.target}} {{future.unit}} · {{nextStatusText}}<button wx:if="{{current}}" class="text-button" disabled="{{dataReadOnly || writeBusy}}" bindtap="onCancelFuture">撤销这次修改</button></view>
+    <view wx:if="{{task}}"><view class="section-title">今天</view><template is="task" data="{{task: task, detail: true, readOnly: dataReadOnly, writeBusy: writeBusy, recordingLabel: recordingLabel, recordingType: recordingType, taskIconColor: primary, recordingId: recordingId, quickMinimumEnabled: quickMinimumEnabled}}" /></view>
     <view wx:else class="notice">今天没有安排，不计入未记录。</view>
     <view wx:if="{{task || noteDirty}}">
       <button class="disclosure" bindtap="onToggleNote" aria-expanded="{{noteOpen || noteDirty}}"><text class="grow">{{noteDirty ? '备注草稿 · 尚未保存' : note ? '今天的备注' : '留一句话（选填）'}}</text><text class="sub">{{noteDirty ? '编辑中' : noteOpen ? '收起' : '编辑'}}</text><view class="chevron {{noteOpen || noteDirty ? 'up' : 'down'}}" /></button>
@@ -21,17 +22,17 @@
         <label class="field-label" for="note">今天的备注</label>
         <view wx:if="{{noteDirty}}" class="sub">{{noteExpired ? noteDate + ' 的草稿未提交，不能保存到今天。请先复制保留。' : '尚未保存 · 暂存于本次打开，退出小程序前请保存。'}}</view>
         <textarea id="note" class="input {{focusNote ? 'focused' : ''}}" maxlength="140" value="{{note}}" bindinput="onNote" bindfocus="onNoteFocus" bindblur="onNoteBlur" placeholder="只留给自己，不用于AI或分享" />
-        <view class="row"><button class="text-button" disabled="{{noteExpired}}" bindtap="onSaveNote">保存备注</button><button wx:if="{{noteDirty}}" class="text-button" bindtap="onDiscardNote">放弃草稿</button></view>
+        <view class="row"><button class="text-button" disabled="{{noteExpired || dataReadOnly || writeBusy}}" bindtap="onSaveNote">保存备注</button><button wx:if="{{noteDirty}}" class="text-button" bindtap="onDiscardNote">放弃草稿</button></view>
       </view>
     </view>
-    <view class="actions"><button class="secondary" bindtap="onEdit">编辑计划</button></view>
+    <view class="actions"><button class="secondary" bindtap="onEdit">修改明日计划</button></view>
     <button class="disclosure" bindtap="onMore" aria-expanded="{{moreOpen}}"><text class="grow">更多操作</text><text class="sub">暂停、归档</text><view class="chevron {{moreOpen ? 'up' : 'down'}}" /></button>
     <view wx:if="{{moreOpen}}">
       <view class="sub spaced">暂停或归档明天生效，今天和历史记录保留。</view>
       <view class="card list-card">
-        <button wx:if="{{current.status === 'active'}}" class="setting-row" data-status="paused" bindtap="onStatus">明日起暂停</button>
-        <button wx:else class="setting-row" data-status="active" bindtap="onStatus">明日起恢复</button>
-        <button class="setting-row danger" data-status="archived" bindtap="onStatus">明日起归档</button>
+        <button wx:if="{{current.status === 'active'}}" class="setting-row" disabled="{{dataReadOnly || writeBusy}}" data-status="paused" bindtap="onStatus">明日起暂停</button>
+        <button wx:else class="setting-row" disabled="{{dataReadOnly || writeBusy}}" data-status="active" bindtap="onStatus">明日起恢复</button>
+        <button class="setting-row danger" disabled="{{dataReadOnly || writeBusy}}" data-status="archived" bindtap="onStatus">明日起归档</button>
       </view>
     </view>
     <view class="section-title">近28天有安排的记录</view>

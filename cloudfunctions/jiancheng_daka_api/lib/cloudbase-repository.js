@@ -19,8 +19,10 @@ function createRepository(db) {
           if (data) saved = data.payload;
           if (data && !saved) throw Error('ACCOUNT_DOCUMENT_CORRUPT');
         } catch (err) { if (!isMissingDocument(err)) throw err; }
+        // 清理流程会原地删除标记，须在回调前保留原值以判断是否需要持久化。
+        const before = JSON.stringify(saved);
         const outcome = await operation(saved);
-        if (!saved || JSON.stringify(saved) !== JSON.stringify(outcome.account)) {
+        if (!saved || before !== JSON.stringify(outcome.account)) {
           await ref.set({ data: { payload: outcome.account } });
         }
         return outcome.result;

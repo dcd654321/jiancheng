@@ -11,6 +11,7 @@ const { createStore } = require('./legacy/store.cjs');
 async function boot({ fail = false } = {}) {
   const f = fixture(); f.date = dates.today(); await f.seed();
   const wxApi = storageFixture();
+  Object.assign(wxApi, { setNavigationBarTitle() {}, switchTab() {}, showToast() {}, navigateBack() {} });
   const config = require('../miniprogram/config/cloud');
   let release;
   const gate = new Promise(resolve => { release = resolve; });
@@ -26,20 +27,27 @@ async function boot({ fail = false } = {}) {
   const app = {}; global.wx = wxApi; global.getApp = () => app;
   lifecycle.onLaunch(app); lifecycle.onShow(app);
   const pages = [];
-  function page(name) {
+  function page(name, options = {}) {
     let definition;
     global.Page = value => { definition = value; };
     const source = path.resolve(__dirname, '../miniprogram/pages/' + name + '/index.js');
     delete require.cache[source]; require(source);
     const p = { ...definition, updates: 0, data: JSON.parse(JSON.stringify(definition.data)),
       setData(patch) { this.updates++; Object.assign(this.data, patch); } };
-    pages.push(p); p.onShow(); return p;
+    pages.push(p); if (p.onLoad) p.onLoad(options); p.onShow(); return p;
   }
   return { app, page, release,
     async finish() { release(); await app.dataReady; await new Promise(resolve => setImmediate(resolve)); },
     cleanup() { for (const p of pages) p.onUnload(); }
   };
 }
+
+test('an edit form opened before bootstrap binds its first confirmed account and can save', async t => {
+  const h=await boot(); t.after(()=>h.cleanup());
+  const p=h.page('edit',{template:'read'}); assert.equal(p.data.loading,true);
+  await h.finish(); assert.equal(p.data.dataReady,true); await p.onSave();
+  assert.equal(p.data.error,''); assert.equal(h.app.store.read().habits.length,2);
+});
 
 test('cloud-first entry points do not render a separate cloud-storage consent step', () => {
   for (const name of ['today', 'sync', 'progress', 'mine', 'edit', 'detail', 'data', 'manage']) {

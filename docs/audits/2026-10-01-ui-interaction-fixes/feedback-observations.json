@@ -1,0 +1,19 @@
+{
+  "classification": "F:实际模板/领域派生内存状态，撤销和查看已完成使用模拟器元素tap，无真实云写入",
+  "singleUndoDone": 0,
+  "multiple": {
+    "total": 5,
+    "done": 2,
+    "showCompleted": true,
+    "feedback": {
+      "id": "review-walk",
+      "date": "2026-10-01",
+      "title": "锻炼一会儿",
+      "goal": "已按忙时10分钟记下"
+    }
+  },
+  "anchor": {
+    "left": 18,
+    "top": -0.03125
+  }
+}

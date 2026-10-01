@@ -8,7 +8,7 @@ Page(ui.withLifecycle({
     work.resetOnContext(this,()=>{this._preview=null;this._authorized=null;this.setData({preview:null,items:[],retrySchedule:false});});
     this.setData({enabled:features().status().reminders,busy:!!this._featureBusy});ui.read(this,()=>{});
   },
-  async onShow(){await Promise.resolve(getApp().dataReady);if(this._visible&&!this._gone&&this.data.enabled&&this.data.dataReady)this.load();},
+  async onShow(){const context=ui.contextKey(),version=this._showVersion;await Promise.resolve(getApp().dataReady);if(ui.isCurrentView(this,context,version)&&this.data.enabled&&this.data.dataReady)this.load();},
   load(){return work.run(this,s=>s.reminders(),items=>this.showItems(items));},
   showItems(items){this.setData({items:items.map(item=>({...item,label:LABELS[item.status],canCancel:item.status==='pending'}))});},
   onRefresh(){return this.load();},
@@ -21,27 +21,28 @@ Page(ui.withLifecycle({
     catch(err){ui.error(this,err);return;}
     if(typeof wx.requestSubscribeMessage!=='function'){this.setData({error:'当前微信版本不支持订阅提醒，仍可正常打卡'});return;}
     const preview=this._preview;this._featureBusy=true;this.setData({busy:true,error:''});
+    const context=ui.contextKey(),version=this._showVersion;
     // Must be called synchronously from the user's tap, not after an await/network request.
     try{wx.requestSubscribeMessage({tmplIds:[preview.templateId],
       success:async result=>{
         try{
-          if(this._gone||!this._visible||features().contextKey()!==key||this._preview!==preview)return;
+          if(!ui.isCurrentView(this,context,version)||features().contextKey()!==key||this._preview!==preview)return;
           if(result[preview.templateId]!=='accept'){this.setData({error:'未申请提醒，打卡不受影响'});return;}
-          this._authorized=preview;await this.saveAuthorized(key);
-        }catch(err){if(!this._gone&&this._visible)ui.error(this,err);}finally{this.release();}
+          this._authorized=preview;await this.saveAuthorized(key,context,version);
+        }catch(err){if(ui.isCurrentView(this,context,version))ui.error(this,err);}finally{this.release();}
       },
-      fail:()=>{if(!this._gone&&this._visible)this.setData({error:'未取得订阅授权，未申请提醒'});this.release();}
+      fail:()=>{if(ui.isCurrentView(this,context,version))this.setData({error:'未取得订阅授权，未申请提醒'});this.release();}
     });}catch(_){this.release();this.setData({error:'当前暂不能申请订阅提醒'});}
   },
-  async saveAuthorized(key){
+  async saveAuthorized(key,context,version){
     const preview=this._authorized;if(!preview)return;
     try{
       const result=await features().scheduleReminder(preview);
-      if(this._gone||!this._visible||features().contextKey()!==key)return;
+      if(!ui.isCurrentView(this,context,version)||features().contextKey()!==key)return;
       this._preview=null;this._authorized=null;this.setData({preview:null,retrySchedule:false});
       const items=this.data.items.filter(i=>i.businessDate!==result.businessDate).concat(result).sort((a,b)=>a.businessDate.localeCompare(b.businessDate));this.showItems(items);
     }catch(err){
-      if(this._gone||!this._visible||features().contextKey()!==key)return;
+      if(!ui.isCurrentView(this,context,version)||features().contextKey()!==key)return;
       if(['PREVIEW_CHANGED','RECONFIRM_REQUIRED','EPOCH_CHANGED','CONFLICT'].includes(err.code)) {
         this._preview=null;this._authorized=null;this.setData({preview:null,retrySchedule:false,error:'计划或提醒状态已变化，请重新预览并授权'});
       }else this.setData({retrySchedule:true,error:'登记结果尚未确认，可刷新状态或重试登记；不会再次申请授权'});
@@ -50,7 +51,8 @@ Page(ui.withLifecycle({
   async onRetrySchedule(){
     if(this._featureBusy||!this._authorized)return;
     this._featureBusy=true;this.setData({busy:true,error:''});
-    try{ui.assertContext(this);await this.saveAuthorized(features().contextKey());}catch(err){ui.error(this,err);}finally{this.release();}
+    const context=ui.contextKey(),version=this._showVersion;
+    try{ui.assertContext(this);await this.saveAuthorized(features().contextKey(),context,version);}catch(err){if(ui.isCurrentView(this,context,version))ui.error(this,err);}finally{this.release();}
   },
   release(){this._featureBusy=false;if(!this._gone)this.setData({busy:false});},
   onCancel(event){

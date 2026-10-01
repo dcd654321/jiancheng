@@ -24,4 +24,4 @@ function businessEvent(event) {
   const { userInfo, tcbContext, ...request } = event;
   return request;
 }
-module.exports = { authenticate, businessEvent };
+module.exports = { authenticate, businessEvent, callerIdentity };

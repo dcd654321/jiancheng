@@ -1,0 +1,79 @@
+[
+  {
+    "name": "01-entry-W",
+    "path": "pages/today/index",
+    "loading": false,
+    "dataReady": true,
+    "total": 2,
+    "done": 2,
+    "writeBusy": false,
+    "feedback": null
+  },
+  {
+    "name": "02-template-W",
+    "path": "pages/edit/index",
+    "loading": false,
+    "dataReady": true,
+    "compact": true,
+    "writeBusy": false
+  },
+  {
+    "name": "03-tasks-F",
+    "path": "pages/today/index",
+    "loading": false,
+    "dataReady": true,
+    "total": 3,
+    "done": 0,
+    "writeBusy": false,
+    "feedback": null
+  },
+  {
+    "name": "04-completion-F",
+    "path": "pages/today/index",
+    "loading": false,
+    "dataReady": true,
+    "total": 3,
+    "done": 1,
+    "writeBusy": false,
+    "feedback": {
+      "id": "read",
+      "date": "2026-10-01",
+      "title": "读一会儿",
+      "goal": "已按忙时10分钟记下"
+    }
+  },
+  {
+    "name": "05-undo-control-F",
+    "path": "pages/today/index",
+    "loading": false,
+    "dataReady": true,
+    "total": 3,
+    "done": 0,
+    "writeBusy": false,
+    "feedback": null
+  },
+  {
+    "name": "06-progress-F",
+    "path": "pages/progress/index",
+    "loading": false,
+    "dataReady": true,
+    "writeBusy": false
+  },
+  {
+    "name": "07-detail-F",
+    "path": "pages/detail/index",
+    "loading": false,
+    "dataReady": true,
+    "writeBusy": false
+  },
+  {
+    "name": "08-first-empty-F",
+    "path": "pages/today/index",
+    "loading": false,
+    "dataReady": true,
+    "total": 0,
+    "done": 0,
+    "writeBusy": false,
+    "feedback": null
+  }
+]

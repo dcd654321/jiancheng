@@ -23,25 +23,26 @@ module.exports = {
     this.setData({ deleting: true });
     const release = () => { this._deleting = false; if (!this._gone) this.setData({ deleting: false }); };
     const context = ui.contextKey();
+    const showVersion = this._showVersion;
     wx.showModal({ title: '清除全部打卡数据？',
       content: '将删除云端习惯、打卡、备注和已启用功能的偏好/分享/提醒/AI结果。删除后不能恢复。',
       confirmText: '继续', confirmColor: '#983e28',
       success: first => {
-        if (!first.confirm || this._gone) { release(); return; }
+        if (!first.confirm || !ui.isCurrentView(this, context, showVersion)) { release(); return; }
         wx.showModal({ title: '最后确认',
           content: '删除后无法恢复。确认清除全部习惯、备注和打卡记录？',
           confirmText: '确认清除', confirmColor: '#983e28',
           success: async second => {
-            if (!second.confirm || this._gone) { release(); return; }
+            if (!second.confirm || !ui.isCurrentView(this, context, showVersion)) { release(); return; }
             try {
               if (context !== ui.contextKey()) throw Error('数据状态已变化，请重新确认删除');
               await ui.store().clear('DELETE_MY_DATA');
             } catch (_) {
-              if (!this._gone) this.setData({ error: '云端尚未完成或未确认删除，请联网重试确认。' });
+              if (ui.isCurrentView(this, context, showVersion)) this.setData({ error: '云端尚未完成或未确认删除，请联网重试确认。' });
               release();
               return;
             }
-            if (!this._gone) {
+            if (!this._gone && this._visible !== false && this._showVersion === showVersion) {
               this.refresh();
               this.setData({ error: '' });
               if (this._visible !== false) wx.showToast({ title: '云端数据已清除', icon: 'none' });

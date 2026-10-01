@@ -1,0 +1,58 @@
+{
+  "head": "b3355ebfa6a3a757a8fd6d4bf2d078ab63defb71",
+  "backup": "C:\\Users\\dcd\\AppData\\Local\\Temp\\jiancheng-ux-20261001-143750",
+  "files": [
+    {
+      "path": "miniprogram/pages/today/index.wxml",
+      "sha256": "77682FDF0ADAAB99318E1555BDBBAF15641650FF499E25446C42E5DA03A96AB5"
+    },
+    {
+      "path": "miniprogram/pages/today/index.wxss",
+      "sha256": "AEA3FD3D4B387398F5E09223DAE288723F02F6445EBB119872DDB0DA499062BF"
+    },
+    {
+      "path": "miniprogram/pages/edit/index.wxml",
+      "sha256": "1863D533B22A01FE8815838874CACCFAF187B4298B92508E5962230F61E21FD7"
+    },
+    {
+      "path": "miniprogram/pages/progress/index.wxml",
+      "sha256": "AB71FB0E4741F7914650E2A8E28B21E1E41CA6D8B5890A2296092BE948841CFB"
+    },
+    {
+      "path": "miniprogram/pages/progress/index.wxss",
+      "sha256": "BC1920DD6156FD1F8E346E9B2E49F663AF47567F74D5A0687846A78108E66F3A"
+    },
+    {
+      "path": "miniprogram/pages/detail/index.wxml",
+      "sha256": "AA17265CD331BB45CA096C07D3588A13E36AE84BE92AC6E1CB0EFF7320AF9E34"
+    },
+    {
+      "path": "miniprogram/templates/task.wxml",
+      "sha256": "83A9B2EDA50BD7C19FA34A3E6459D7C62BAF5CD652EBAAC2B1F2557BC33E32D4"
+    },
+    {
+      "path": "tests/core-experience.test.cjs",
+      "sha256": "AE18BA00E2C9D0EEEBDF78CA08B094A740E8ABECDA330D93845C75BA61D95D8F"
+    },
+    {
+      "path": "tests/ux.test.cjs",
+      "sha256": "056E853ACDD14AF5D53FCD4DC66C139706D39CAB33EBB4E9694ACCD2D3F30435"
+    },
+    {
+      "path": "openspec/changes/refine-journey-and-add-themes/proposal.md",
+      "sha256": "D40D3A4E25B7DF405A3EB13BC7477DF93F48E745E612135643075891CC41A6AA"
+    },
+    {
+      "path": "openspec/changes/refine-journey-and-add-themes/design.md",
+      "sha256": "47C91C40C81EDE63483F93CCE69211C39A9FB1C05625B242AD5580325F6B6BB0"
+    },
+    {
+      "path": "openspec/changes/refine-journey-and-add-themes/tasks.md",
+      "sha256": "75A24D37AEA6059046156D243DF5BDCE20EAD3814DDB4D437A7991CCAB014526"
+    },
+    {
+      "path": "openspec/changes/refine-journey-and-add-themes/specs/journey-refinement/spec.md",
+      "sha256": "B31AE758D7A0BD66C5919B1E5265E7A93C0F3E324021CD588A032FEEAAD518E4"
+    }
+  ]
+}

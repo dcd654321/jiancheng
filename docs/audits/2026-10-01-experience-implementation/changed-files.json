@@ -1,0 +1,15 @@
+[
+  "miniprogram/pages/today/index.wxml",
+  "miniprogram/pages/today/index.wxss",
+  "miniprogram/pages/edit/index.wxml",
+  "miniprogram/pages/progress/index.wxml",
+  "miniprogram/pages/progress/index.wxss",
+  "miniprogram/pages/detail/index.wxml",
+  "miniprogram/templates/task.wxml",
+  "tests/core-experience.test.cjs",
+  "tests/ux.test.cjs",
+  "openspec/changes/refine-journey-and-add-themes/proposal.md",
+  "openspec/changes/refine-journey-and-add-themes/design.md",
+  "openspec/changes/refine-journey-and-add-themes/tasks.md",
+  "openspec/changes/refine-journey-and-add-themes/specs/journey-refinement/spec.md"
+]

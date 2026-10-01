@@ -18,6 +18,12 @@ async function setup(t){
   const p={...definition,data:structuredClone(definition.data),setData(v){Object.assign(this.data,v);}};
   t.after(()=>p.onUnload());p.onShow();await new Promise(setImmediate);h.p=p;h.client=client;return h;
 }
+
+test('an old subscription authorization after leaving and returning cannot schedule a reminder',async t=>{
+  const h=await setup(t),p=h.p;await p.onPreview();p.onSubscribe();const request=h.requests.at(-1);
+  p.onHide();await p.onShow();await request.success({[p._preview.templateId]:'accept'});
+  assert.equal(h.f.reminders.size,0);assert.equal(p.data.busy,false);assert.equal(p.data.error,'');
+});
 test('reminder page requires separate preview and direct user authorization; rejection never schedules, success is once then cancel',async t=>{
   const h=await setup(t),p=h.p;assert.equal(p.data.enabled,true);assert.equal(h.requests.length,0);assert.equal(h.f.reminders.size,0);
   await p.onPreview();assert.ok(p.data.preview);assert.equal(h.requests.length,0);

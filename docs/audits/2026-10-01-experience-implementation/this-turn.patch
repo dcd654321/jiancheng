@@ -1,0 +1,226 @@
+--- a/miniprogram/pages/today/index.wxml
++++ b/miniprogram/pages/today/index.wxml
+@@ -33,16 +33,15 @@
+       <button class="secondary" data-template="" bindtap="onCreate">自己设一个</button>
+     </block>
+     <block wx:if="{{total}}">
+-      <view class="card progress-card">
+-        <view class="progress-row"><text class="progress-title">今天已记录</text><text class="progress-value">{{done}} / {{total}}</text></view>
+-        <view class="meter"><view class="meter-fill" style="width: {{rate}}%"></view></view>
+-        <view wx:if="{{minimum}}" class="progress-note">其中 {{minimum}} 项按忙时目标完成</view>
++      <view class="today-summary">
++        <view class="summary-count"><text>已记</text><text class="progress-value">{{done}} / {{total}}</text></view>
++        <text class="sub">待做 {{pending.length}} 项</text>
+       </view>
++      <view wx:if="{{minimum}}" class="sub summary-busy">其中 {{minimum}} 项按忙时目标完成</view>
+       <view wx:if="{{writeBusy}}" class="sub write-status">{{writeStatus}}</view>
+-      <view wx:if="{{pending.length}}" class="section-title"><text>待做</text><text class="section-count">{{pending.length}} 项</text></view>
+       <view wx:if="{{pending.length}}" class="sub task-explain">做完再记下，不会自动计时。</view>
+       <block wx:for="{{pending}}" wx:key="id">
+-        <view wx:if="{{returnGuide && item.id === returnGuide.id}}" class="notice return-line">回来就从今天的一点开始。</view>
++        <view wx:if="{{returnGuide && item.id === returnGuide.id}}" class="sub return-line">回来就从今天的一点开始。</view>
+         <template is="task" data="{{task: item, readOnly: dataReadOnly, writeBusy: writeBusy, taskIconColor: primary, recordingId: recordingId, recordingLabel: recordingLabel, recordingType: recordingType, quickMinimumEnabled: quickMinimumEnabled}}" />
+       </block>
+       <view wx:if="{{!pending.length}}" class="sub spaced">今天安排的都记下了。</view>
+@@ -58,6 +57,7 @@
+       <block wx:else>
+         <view class="hero-title">忙的时候，也能做一点</view>
+         <view class="hero-sub">给习惯准备平时和忙时两个目标，做完再记下。</view>
++        <view class="sub template-hint">选一个示例，下一步可以修改目标。</view>
+         <view class="tpl-grid">
+           <button class="tpl-card" data-template="read" bindtap="onCreate"><text class="tpl-name">读一会儿</text><text class="tpl-line">平时 30 分钟 · 忙时 10 分钟</text></button>
+           <button class="tpl-card" data-template="walk" bindtap="onCreate"><text class="tpl-name">锻炼一会儿</text><text class="tpl-line">平时 30 分钟 · 忙时 10 分钟</text></button>
+--- a/miniprogram/pages/today/index.wxss
++++ b/miniprogram/pages/today/index.wxss
+@@ -1,4 +1,13 @@
+ .skeleton-wrap { padding-top: 6px; }
++.today-summary { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin: 12px 0; }
++.summary-count { display: flex; align-items: baseline; gap: 8px; color: var(--color-secondary, #647067); font-size: 14px; }
++.today-summary .progress-value { font-size: 18px; color: var(--color-ink, #303A34); }
++.summary-busy { margin: -4px 0 12px; }
++.task-explain { margin: 0 0 12px; }
++.return-line { margin: 0 0 8px; }
++.today-page .empty { padding-top: 12px; }
++.today-page .hero-title { margin-top: 8px; }
++.template-hint { margin-top: 8px; }
+ .today-page.with-feedback { padding-bottom: calc(184px + env(safe-area-inset-bottom)); }
+ .write-status { margin: 8px 0; }
+ .completion-feedback { position: fixed; left: 16px; right: 16px; bottom: 12px; z-index: 9; padding: 12px 14px; border: 1px solid var(--color-control-border, #819086); border-radius: 16px; background: var(--color-surface, #FFFFFF); box-shadow: 0 3px 14px rgba(0, 0, 0, .06); }
+--- a/miniprogram/pages/edit/index.wxml
++++ b/miniprogram/pages/edit/index.wxml
+@@ -2,8 +2,8 @@
+   <view wx:if="{{loading}}" class="empty"><view class="section-title">正在读取记录</view><view class="sub">请稍候。</view></view>
+   <view wx:elif="{{dataUnavailable}}" class="empty"><view class="heading">暂时没能读取记录</view><view class="sub">{{error}}</view><button class="primary spaced" bindtap="onDataRetry">{{recoveryLabel || '重新读取'}}</button></view>
+   <block wx:elif="{{dataReady}}">
+-    <view class="heading">{{editing ? '编辑习惯' : compact ? '先从这个大小开始' : '添加一个习惯'}}</view>
+-    <view class="sub">{{editing ? '修改明天生效，今天的安排和历史不会改变。' : compact ? '确认名称和目标；点下面的按钮才会创建。' : '选一件小事，从今天开始。'}}</view>
++    <view class="heading">{{editing ? '编辑习惯' : compact ? '给习惯准备两种安排' : '添加一个习惯'}}</view>
++    <view class="sub">{{editing ? '修改明天生效，今天的安排和历史不会改变。' : compact ? '目标可以按你的时间修改；确认后再创建。' : '选一件小事，从今天开始。'}}</view>
+     <view wx:if="{{error}}" class="error spaced">{{error}}</view>
+     <view wx:if="{{source}}" class="inline-note sub">{{source}}</view>
+     <view id="field-title" class="form-field">
+--- a/miniprogram/pages/progress/index.wxml
++++ b/miniprogram/pages/progress/index.wxml
+@@ -1,4 +1,4 @@
+-<view class="page theme-{{theme}}">
++<view class="page progress-page theme-{{theme}}">
+   <view wx:if="{{loading}}" class="empty"><view class="section-title">正在读取进度</view><view class="sub">请稍候。</view></view>
+   <view wx:elif="{{dataUnavailable}}" class="empty"><view class="heading">暂时没能读取记录</view><view class="sub">{{error}}</view><button class="primary spaced" bindtap="onDataRetry">{{recoveryLabel || '重新读取'}}</button></view>
+   <block wx:elif="{{dataReady}}">
+@@ -9,17 +9,27 @@
+       <view class="range">{{rangeLabel}}</view>
+       <block wx:if="{{stats.planned}}">
+         <view class="card metric-card">
+-          <view class="row"><view class="metric">{{stats.done}}<text class="metric-suffix"> 次</text></view><view class="sub"><view>已完成</view><view>共安排 {{stats.planned}} 次</view></view></view>
+-          <view class="metric-note">原目标 {{stats.standard}} 次 · 忙时目标 {{stats.minimum}} 次 · 记录率 {{stats.rate}}%</view>
++          <view class="metric-caption">近{{days}}天，记下</view>
++          <view class="metric">{{stats.done}}<text class="metric-suffix"> 次</text></view>
++          <view class="metric-note">原目标 {{stats.standard}} 次 · 忙时目标 {{stats.minimum}} 次</view>
+         </view>
++        <view wx:if="{{stats.habits.length}}" class="section-title review-heading"><text>{{stats.done ? '每个习惯的记录' : '从今天的一项开始'}}</text></view>
++        <view wx:if="{{stats.habits.length}}" class="card list-card habit-facts">
++          <block wx:for="{{stats.habits}}" wx:key="id">
++            <button wx:if="{{index < 3 || showHabits}}" class="setting-row habit-fact" data-id="{{item.id}}" bindtap="onOpen" aria-label="{{item.title}}，这段时间记录{{item.done}}次，原目标{{item.standard}}次，忙时目标{{item.minimum}}次，查看详情">
++              <view class="grow"><view class="fact-title">{{item.title}}</view><view class="sub fact-count">{{item.done ? '记下 ' + item.done + ' 次' : '还没有记录'}} · 安排 {{item.planned}} 次</view><view class="sub">原目标 {{item.standard}} 次 · 忙时目标 {{item.minimum}} 次</view></view><view class="chevron" />
++            </button>
++          </block>
++        </view>
++        <button wx:if="{{stats.habits.length > 3}}" class="disclosure review-more" bindtap="onToggleHabits" aria-expanded="{{showHabits}}"><text class="grow">{{showHabits ? '收起更多习惯' : '还有 ' + (stats.habits.length - 3) + ' 个习惯 · 查看'}}</text><view class="chevron {{showHabits ? 'up' : 'down'}}" /></button>
+         <view wx:if="{{advice}}" class="card advice"><view class="dot" /><view class="grow"><view class="advice-text">{{advice}}</view><text class="advice-label">根据这段时间的真实记录，不会自动调整你的目标</text></view></view>
++        <view class="section-title review-heading"><text>逐日记录</text><text class="sub">点日期查看</text></view>
+         <view class="calendar"><button wx:for="{{stats.cells}}" wx:key="date" class="cell {{item.tone}} {{item.date === selectedDate ? 'picked' : ''}}" data-date="{{item.date}}" bindtap="onDate" aria-label="{{item.description}}{{item.date === selectedDate ? '，已选' : ''}}"><text class="cell-weekday">{{item.weekday}}</text><text>{{item.day}}</text><text class="cell-status">{{item.mark}}</text></button></view>
+         <view class="legend"><view class="legend-item"><view class="legend-mark full" />全部完成</view><view class="legend-item"><view class="legend-mark partial" />部分完成</view><view class="legend-item"><view class="legend-mark pending" />未记录</view><view class="legend-item"><view class="legend-mark rest" />无安排</view></view>
+         <view class="section-title"><text>{{selected.date}}</text></view>
+         <view wx:if="{{!selected.tasks.length}}" class="sub">当天没有安排，不算漏做。</view>
+         <view wx:else class="card list-card"><button wx:for="{{selected.tasks}}" wx:key="id" class="setting-row" data-id="{{item.id}}" bindtap="onOpen"><view class="grow">{{item.title}}<view class="sub">{{item.target}} {{item.unit}}</view></view><text class="sub">{{item.statusText}}</text><view class="chevron" /></button></view>
+-        <button wx:if="{{stats.habits.length}}" class="disclosure spaced" bindtap="onToggleHabits" aria-expanded="{{showHabits}}"><text class="grow">按习惯查看汇总</text><text class="sub">{{stats.habits.length}} 个</text><view class="chevron {{showHabits ? 'up' : 'down'}}" /></button>
+-        <block wx:if="{{showHabits}}"><view class="card list-card"><button wx:for="{{stats.habits}}" wx:key="id" class="setting-row" data-id="{{item.id}}" bindtap="onOpen"><view class="grow">{{item.title}}<view class="sub">原目标 {{item.standard}} 次 · 忙时目标 {{item.minimum}} 次</view></view><text class="sub">{{item.done}} / {{item.planned}}</text><view class="chevron" /></button></view></block>
++        <view class="sub spaced">这段时间共安排 {{stats.planned}} 次 · 记录率 {{stats.rate}}%</view>
+         <view class="sub spaced">含今天；今天还没有结束。忙时目标也算一次记录，不等于完成原目标。</view>
+       </block>
+       <view wx:else class="empty">
+--- a/miniprogram/pages/progress/index.wxss
++++ b/miniprogram/pages/progress/index.wxss
+@@ -1 +1,9 @@
+-/* pages/progress/index.wxss */+/* 同一周期已有事实前置，统计与日期算法沿用领域层。 */
++.progress-page .metric { font-size: 32px; margin-top: 4px; }
++.metric-caption { color: var(--color-secondary, #647067); font-size: 16px; }
++.review-heading { font-size: 18px; margin: 20px 0 10px; }
++.habit-facts { margin-top: 0; }
++.habit-fact { align-items: center; }
++.fact-title { font-size: 16px; font-weight: 600; overflow-wrap: anywhere; }
++.fact-count { margin: 3px 0; }
++.review-more { margin-top: 8px; }
+--- a/miniprogram/pages/detail/index.wxml
++++ b/miniprogram/pages/detail/index.wxml
+@@ -25,7 +25,7 @@
+         <view class="row"><button class="text-button" disabled="{{noteExpired || dataReadOnly || writeBusy}}" bindtap="onSaveNote">保存备注</button><button wx:if="{{noteDirty}}" class="text-button" bindtap="onDiscardNote">放弃草稿</button></view>
+       </view>
+     </view>
+-    <view class="actions"><button class="secondary" bindtap="onEdit">编辑计划</button></view>
++    <view class="actions"><button class="secondary" bindtap="onEdit">修改明日计划</button></view>
+     <button class="disclosure" bindtap="onMore" aria-expanded="{{moreOpen}}"><text class="grow">更多操作</text><text class="sub">暂停、归档</text><view class="chevron {{moreOpen ? 'up' : 'down'}}" /></button>
+     <view wx:if="{{moreOpen}}">
+       <view class="sub spaced">暂停或归档明天生效，今天和历史记录保留。</view>
+--- a/miniprogram/templates/task.wxml
++++ b/miniprogram/templates/task.wxml
+@@ -28,7 +28,7 @@
+       </block>
+       <block wx:elif="{{quickMinimumEnabled && task.minimum}}">
+         <button class="check-pill" disabled="{{readOnly || writeBusy}}" data-id="{{task.id}}" data-date="{{task.date}}" data-done="{{false}}" bindtap="onComplete" aria-label="已完成{{task.title}}，按原目标{{task.originalTarget}}{{task.unit}}记下今天">{{recordingId === task.id && recordingType === 'complete' ? recordingLabel : '按 ' + task.target + task.unit + ' 记下'}}</button>
+-        <button class="soft-button" disabled="{{readOnly || writeBusy}}" data-id="{{task.id}}" data-date="{{task.date}}" bindtap="onCompleteMinimum" aria-label="已完成{{task.title}}忙时目标，按{{task.minimum}}{{task.unit}}记下今天">{{recordingId === task.id && recordingType === 'completeMinimum' ? recordingLabel : '忙时按 ' + task.minimum + task.unit + ' 记下'}}</button>
++        <button class="soft-button" disabled="{{readOnly || writeBusy}}" data-id="{{task.id}}" data-date="{{task.date}}" bindtap="onCompleteMinimum" aria-label="已完成{{task.title}}忙时目标，按{{task.minimum}}{{task.unit}}记下今天">{{recordingId === task.id && recordingType === 'completeMinimum' ? recordingLabel : '按忙时 ' + task.minimum + task.unit + ' 记下'}}</button>
+       </block>
+       <block wx:else>
+         <button class="check-pill" disabled="{{readOnly || writeBusy}}" data-id="{{task.id}}" data-date="{{task.date}}" data-done="{{false}}" bindtap="onComplete" aria-label="已完成{{task.title}}，按今天的目标{{task.target}}{{task.unit}}记下">{{recordingId === task.id && recordingType === 'complete' ? recordingLabel : '按 ' + task.target + task.unit + ' 记下'}}</button>
+--- a/tests/core-experience.test.cjs
++++ b/tests/core-experience.test.cjs
+@@ -113,7 +113,7 @@
+   assert.match(task, /check-pill/);
+   assert.match(task, /chip-lime/);
+   assert.match(task, /忙时完成/);
+-  assert.match(task, /忙时按/);
++  assert.match(task, /按忙时/);
+   const wxss = mini('app.wxss').toLowerCase();
+   for (const token of ['#f7f8f5', '#edf1e2', '.card {', '.check-pill', '.soft-button', '.stamp-in', '.skeleton']) assert.ok(wxss.includes(token), token);
+   assert.ok(wxss.includes('@import "styles/theme.wxss"'), 'app.wxss 引入主题作用域');
+--- a/tests/ux.test.cjs
++++ b/tests/ux.test.cjs
+@@ -128,7 +128,7 @@
+   const markup=fs.readFileSync(path.resolve(__dirname,'../miniprogram/templates/task.wxml'),'utf8');
+   assert.match(markup,/task\.originalTarget > 1/); assert.match(markup,/quickMinimumEnabled && task\.minimum/);
+   assert.match(markup,/task\.simplified/); assert.match(markup,/恢复今天原目标/);
+-  assert.match(markup,/忙时按 ' \+ task\.minimum \+ task\.unit \+ ' 记下/); assert.match(markup,/只调整今天目标（不记录）/);
++  assert.match(markup,/按忙时 ' \+ task\.minimum \+ task\.unit \+ ' 记下/); assert.match(markup,/只调整今天目标（不记录）/);
+   assert.match(markup,/忙时完成/); assert.match(markup,/原目标完成/);
+   assert.match(markup,/今天' \+ task\.target/); assert.match(markup,/忙时 \{\{task\.minimum\}\}/);
+   assert.match(markup,/原计划 \{\{task\.originalTarget\}\}/);
+@@ -163,7 +163,7 @@
+   assert.equal(p.data.completed[0].target,2);
+   assert.equal(h.store.read().records['walk@'+day],undefined);
+   const todayMarkup=fs.readFileSync(path.resolve(__dirname,'../miniprogram/pages/today/index.wxml'),'utf8');
+-  assert.match(todayMarkup,/<text>待做<\/text><text class="section-count">\{\{pending\.length\}\} 项<\/text>/);
++  assert.match(todayMarkup,/<text class="sub">待做 \{\{pending\.length\}\} 项<\/text>/);
+   assert.match(todayMarkup,/<text class="progress-value">\{\{done\}\} \/ \{\{total\}\}<\/text>/);
+   const mineMarkup=fs.readFileSync(path.resolve(__dirname,'../miniprogram/pages/mine/index.wxml'),'utf8');
+   assert.match(mineMarkup,/open-type="feedback"[^>]*>.*意见与问题反馈/);
+--- a/openspec/changes/refine-journey-and-add-themes/proposal.md
++++ b/openspec/changes/refine-journey-and-add-themes/proposal.md
+@@ -11,6 +11,7 @@
+ - 提供共享布局的“薄雾绿 mist”和“暖纸白 paper”，默认薄雾绿；采用浅底、低饱和边框按钮和局部忙时色块，落实字号、触区和状态规范。
+ - 新增主题选择页、会话预览及云端偏好协议。复用偏好集合，使用独立主题动作和开关，保留身份、幂等、冲突、删除与账户隔离约束，不连带启用分享或提醒。
+ - 交付逐页执行规格、需求—文件—验收映射、确定性测试夹具及实施顺序。2026-09-30已实施主体；2026-10-01按复核R1–R7修复预览、会话清理、等待反馈及操作可达性。
++- 2026-10-01产品审查后，用户授权继续本地优化：今日摘要减量、模板目标解释、两档记录文字精简、已有习惯统计前置以及明日计划入口文案。只重排现有事实与入口，不增加统计算法、默认值迁移或云动作。
+ 
+ ## Capabilities
+ 
+--- a/openspec/changes/refine-journey-and-add-themes/design.md
++++ b/openspec/changes/refine-journey-and-add-themes/design.md
+@@ -78,6 +78,12 @@
+ 
+ 删除助手页面和入口，保留已关闭云AI及内部规则模块。回归提示不复制任务动作，gentle-return条件保持。progress-advice只解释真实统计，分享直达不启用关闭能力。表单错误同时呈现具体恢复文字与2px错误边界，修正即清除，提交定位首错且保留其他值。
+ 
++### D8：任务优先的信息层级
++
++按[产品体验设计](../../../docs/PRODUCT-EXPERIENCE-DESIGN-20261001.md)落地已有能力的呈现优化。今日用一行“已记done/total、待做N项”替代大摘要和进度条；忙时次数仍可见，回归句去掉独立色块，保留原判定与动作。首次空态说明模板可修改，确认页明确两档只是可调目标，保留30/10与10/3默认和用户既有计划。记录按钮改为“按忙时N单位记下”，保留完整数值、进行中状态和读屏语义。
++
++进度继续使用domain.summary、原始日期范围和progress-advice，顶卡先显示记录次数与两档次数；已有stats.habits列表前置，默认最多展示3项，其余复用showHabits展开。每个入口仍去相同详情，单项次数与总统计取同一周期；记录率/安排次数移到逐日明细之后。不产生排序评分、新建议规则、额外云读取或目标自动变更。详情“修改明日计划”仅明确既有次日生效规则。新一轮任务与证据列第9组；先前未覆盖的D/C/U不因本轮修改勾选。
++
+ ## Risks / Trade-offs
+ 
+ - [样式变量/原生API支持未核验] → 记录目标基础库、微信工具与真机验证；不支持时保持中性可读原生区域，token采用单源生成作用域样式。
+--- a/openspec/changes/refine-journey-and-add-themes/tasks.md
++++ b/openspec/changes/refine-journey-and-add-themes/tasks.md
+@@ -69,3 +69,12 @@
+ - [x] 8.6 R6字段2px错误边界配文字，定位首错、输入保留、修正清除；真实键盘/读屏留7.2。
+ - [x] 8.7 R7主题固定保存区/安全区/内容空间，预览、使用中、失败/核对均可达；当前工具宽390，真实小屏/安全区留7.2。
+ - [x] 8.8 修复回归与当前W/F截图、必需四项检查、逐项证据及回滚说明；D/C/U未执行分别报告，不抵扣7组。
++
++## 9. 2026-10-01产品体验优化（用户已授权本地实施）
++
++证据见[本轮实施记录](../../../docs/PRODUCT-EXPERIENCE-IMPLEMENTATION-20261001.md)与[28张截图和操作方式](../../../docs/audits/2026-10-01-experience-implementation/README.md)。本组勾选范围为本地自动检查及微信工具内存夹具；第7组真实环境验收保持未完成。
++
++- [x] 9.1 今日紧凑摘要、首次价值与回归说明减量；保留三/五任务、忙时计数、等待与撤销规则，取得当前W/F截图。
++- [x] 9.2 模板确认说明目标可修改，精简忙时记录文案，详情入口明确明日生效；验证30/10与10/3不变、非法输入不提交及忙时撤销仍保留今日目标。
++- [x] 9.3 重排既有进度总计/按习惯事实/逐日与比例，超过3项可展开；验证7/28天口径、无记录/无安排、详情入口与日期选中事实一致。
++- [x] 9.4 运行四项必需检查，采集两个主题与长名/多任务关键态；交付本轮独立差异、证据和回滚说明，真实云/真机/用户测试仍不计通过。
+--- a/openspec/changes/refine-journey-and-add-themes/specs/journey-refinement/spec.md
++++ b/openspec/changes/refine-journey-and-add-themes/specs/journey-refinement/spec.md
+@@ -125,3 +125,17 @@
+ 
+ - **WHEN** 忙时目标等于平时目标
+ - **THEN** 仅错误字段呈现2px错误边界与解释，不发保存请求，修正后清除错误而布局不跳变
++
++### Requirement: 核心任务与回顾事实优先
++
++系统 SHALL 在今日以紧凑摘要呈现已记次数和待做数量，保留忙时计数、可见恢复及完成撤销反馈。模板确认 SHALL 明确目标可按用户时间修改，MUST 保留原默认值和已有计划。进度 SHALL 先展示同一周期的记录次数、两档次数和已有按习惯汇总，再展示逐日细节和记录率；MUST 使用原统计算法、建议条件及入口，不新增自动目标调整。
++
++#### Scenario: 多任务扫描与模板确认
++
++- **WHEN** 今日存在3项待做，或用户选择读书模板
++- **THEN** 今日不以大进度条占据任务上方空间；确认页解释目标可修改但保持30/10默认，创建仍需明确提交，两档记录仍包含数量和单位
++
++#### Scenario: 同周期习惯事实
++
++- **WHEN** 用户查看7天或28天进度
++- **THEN** 按习惯事实来自当前周期stats.habits，默认最多展示3项且可展开其余，点击仍进入原习惯详情；总完成次数、两档次数、分母、日历和历史语义保持一致，不修改账户数据

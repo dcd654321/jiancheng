@@ -18,6 +18,7 @@ function createAppLifecycle(dependencies) {
 
   return {
     onLaunch(app) {
+      if (app.appearanceController && app.appearanceController.dispose) app.appearanceController.dispose();
       if (app.networkRecovery) app.networkRecovery.dispose();
       app.cloudSession = d.createCloudSession(d.wxApi, d.cloudConfig);
       app.noteDrafts = createNoteDrafts();
@@ -26,7 +27,8 @@ function createAppLifecycle(dependencies) {
       app.planAssistant = d.createPlanAssistant(d.wxApi, d.cloudConfig, d.aiConfig, { session: app.cloudSession });
       app.quoteSession = d.createQuoteSession();
       if (d.createAppearanceClient && d.createAppearanceController) {
-        app.appearanceClient = d.createAppearanceClient(d.wxApi, d.cloudConfig, d.appearanceConfig, app.cloudSession);
+        app.appearanceClient = d.createAppearanceClient(d.wxApi, d.cloudConfig, d.appearanceConfig, app.cloudSession,
+          { contextKey: () => app.store.contextKey() });
         app.appearanceController = d.createAppearanceController({ client: app.appearanceClient, wxApi: d.wxApi, session: app.cloudSession });
       }
       readAppearance(app);

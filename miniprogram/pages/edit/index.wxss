@@ -11,3 +11,6 @@
 .submit-bar.inline { position: static; border-top: 0; padding: 16px 0 0; background: transparent; }
 .submit-bar .primary { display: block; max-width: 560px; margin: 0 auto; }
 .submit-note { text-align: center; margin-bottom: 6px; }
+.input.invalid, .picker.invalid, .week-options.invalid { border-color: var(--color-error, #A33D2A); box-shadow: inset 0 0 0 1px var(--color-error, #A33D2A); }
+
+.week-options.invalid { box-shadow: inset 0 0 0 2px var(--color-error, #A33D2A); border-radius: 12px; }

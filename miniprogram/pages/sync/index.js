@@ -15,10 +15,11 @@ Page(ui.withLifecycle({
   },
   async run(action) {
     if (this.data.busy) return;
+    const context = ui.contextKey(), showVersion = this._showVersion;
     this._running = true;
     this.setData({ busy: true, error: '' });
     try { await action(); }
-    catch (err) { if (!this._gone) this.setData({ error: err.message || '云端操作未确认，请重试' }); }
+    catch (err) { if (ui.isCurrentView(this, context, showVersion)) this.setData({ error: err.message || '云端操作未确认，请重试' }); }
     finally { this._running = false; if (!this._gone && this._visible) this.refresh(); }
   },
   onRefresh() { return this.run(() => getApp().cloudSession.refresh()); },

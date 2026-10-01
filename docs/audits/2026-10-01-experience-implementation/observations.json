@@ -1,0 +1,410 @@
+[
+  {
+    "name": "01-empty-mist-F",
+    "path": "pages/today/index",
+    "theme": "mist",
+    "ready": true,
+    "total": 0,
+    "done": 0,
+    "minimum": 0,
+    "feedback": null
+  },
+  {
+    "name": "02-confirm-mist-F",
+    "path": "pages/edit/index",
+    "theme": "mist",
+    "ready": true,
+    "minimum": "10"
+  },
+  {
+    "name": "12-invalid-mist-F",
+    "path": "pages/edit/index",
+    "theme": "mist",
+    "ready": true,
+    "minimum": "30"
+  },
+  {
+    "name": "invalid-mist",
+    "errors": {
+      "minimum": "忙时目标要小于平时目标：请输入更小的正整数，或留空"
+    },
+    "calls": 0
+  },
+  {
+    "name": "03-tasks-mist-F",
+    "path": "pages/today/index",
+    "theme": "mist",
+    "ready": true,
+    "total": 3,
+    "done": 0,
+    "minimum": 0,
+    "feedback": null
+  },
+  {
+    "name": "04-done-mist-F",
+    "path": "pages/today/index",
+    "theme": "mist",
+    "ready": true,
+    "total": 3,
+    "done": 1,
+    "minimum": 1,
+    "feedback": {
+      "id": "h0",
+      "date": "2026-10-01",
+      "title": "读书一会儿",
+      "goal": "已按忙时10分钟记下"
+    }
+  },
+  {
+    "name": "05-undo-mist-F",
+    "path": "pages/today/index",
+    "theme": "mist",
+    "ready": true,
+    "total": 3,
+    "done": 0,
+    "minimum": 0,
+    "feedback": null
+  },
+  {
+    "name": "06-review-mist-F",
+    "path": "pages/progress/index",
+    "theme": "mist",
+    "ready": true,
+    "stats": {
+      "planned": 35,
+      "done": 4,
+      "standard": 2,
+      "minimum": 2,
+      "habits": 5
+    },
+    "selected": {
+      "date": "2026-10-01",
+      "planned": 5,
+      "tasks": 5
+    },
+    "showHabits": false
+  },
+  {
+    "name": "07-expanded-mist-F",
+    "path": "pages/progress/index",
+    "theme": "mist",
+    "ready": true,
+    "stats": {
+      "planned": 35,
+      "done": 4,
+      "standard": 2,
+      "minimum": 2,
+      "habits": 5
+    },
+    "selected": {
+      "date": "2026-10-01",
+      "planned": 5,
+      "tasks": 5
+    },
+    "showHabits": true
+  },
+  {
+    "name": "08-review28-mist-F",
+    "path": "pages/progress/index",
+    "theme": "mist",
+    "ready": true,
+    "stats": {
+      "planned": 35,
+      "done": 4,
+      "standard": 2,
+      "minimum": 2,
+      "habits": 5
+    },
+    "selected": {
+      "date": "2026-10-01",
+      "planned": 5,
+      "tasks": 5
+    },
+    "showHabits": true
+  },
+  {
+    "name": "selected-date-mist",
+    "planned": 5,
+    "tasks": 5,
+    "date": "2026-09-30"
+  },
+  {
+    "name": "09-day-detail-mist-F",
+    "path": "pages/progress/index",
+    "theme": "mist",
+    "ready": true,
+    "stats": {
+      "planned": 35,
+      "done": 4,
+      "standard": 2,
+      "minimum": 2,
+      "habits": 5
+    },
+    "selected": {
+      "date": "2026-09-30",
+      "planned": 5,
+      "tasks": 5
+    },
+    "showHabits": true
+  },
+  {
+    "name": "11-detail-mist-F",
+    "path": "pages/detail/index",
+    "theme": "mist",
+    "ready": true
+  },
+  {
+    "name": "10-long-five-mist-F",
+    "path": "pages/today/index",
+    "theme": "mist",
+    "ready": true,
+    "total": 5,
+    "done": 0,
+    "minimum": 0,
+    "feedback": null
+  },
+  {
+    "name": "13-no-record-mist-F",
+    "path": "pages/progress/index",
+    "theme": "mist",
+    "ready": true,
+    "stats": {
+      "planned": 21,
+      "done": 0,
+      "standard": 0,
+      "minimum": 0,
+      "habits": 3
+    },
+    "selected": {
+      "date": "2026-10-01",
+      "planned": 3,
+      "tasks": 3
+    },
+    "showHabits": false
+  },
+  {
+    "name": "14-no-plan-mist-F",
+    "path": "pages/progress/index",
+    "theme": "mist",
+    "ready": true,
+    "stats": {
+      "planned": 0,
+      "done": 0,
+      "standard": 0,
+      "minimum": 0,
+      "habits": 0
+    },
+    "selected": {
+      "date": "2026-10-01",
+      "planned": 0,
+      "tasks": 0
+    },
+    "showHabits": false
+  },
+  {
+    "name": "01-empty-paper-F",
+    "path": "pages/today/index",
+    "theme": "paper",
+    "ready": true,
+    "total": 0,
+    "done": 0,
+    "minimum": 0,
+    "feedback": null
+  },
+  {
+    "name": "02-confirm-paper-F",
+    "path": "pages/edit/index",
+    "theme": "paper",
+    "ready": true,
+    "minimum": "10"
+  },
+  {
+    "name": "12-invalid-paper-F",
+    "path": "pages/edit/index",
+    "theme": "paper",
+    "ready": true,
+    "minimum": "30"
+  },
+  {
+    "name": "invalid-paper",
+    "errors": {
+      "minimum": "忙时目标要小于平时目标：请输入更小的正整数，或留空"
+    },
+    "calls": 0
+  },
+  {
+    "name": "03-tasks-paper-F",
+    "path": "pages/today/index",
+    "theme": "paper",
+    "ready": true,
+    "total": 3,
+    "done": 0,
+    "minimum": 0,
+    "feedback": null
+  },
+  {
+    "name": "04-done-paper-F",
+    "path": "pages/today/index",
+    "theme": "paper",
+    "ready": true,
+    "total": 3,
+    "done": 1,
+    "minimum": 1,
+    "feedback": {
+      "id": "h0",
+      "date": "2026-10-01",
+      "title": "读书一会儿",
+      "goal": "已按忙时10分钟记下"
+    }
+  },
+  {
+    "name": "05-undo-paper-F",
+    "path": "pages/today/index",
+    "theme": "paper",
+    "ready": true,
+    "total": 3,
+    "done": 0,
+    "minimum": 0,
+    "feedback": null
+  },
+  {
+    "name": "06-review-paper-F",
+    "path": "pages/progress/index",
+    "theme": "paper",
+    "ready": true,
+    "stats": {
+      "planned": 35,
+      "done": 4,
+      "standard": 2,
+      "minimum": 2,
+      "habits": 5
+    },
+    "selected": {
+      "date": "2026-10-01",
+      "planned": 5,
+      "tasks": 5
+    },
+    "showHabits": false
+  },
+  {
+    "name": "07-expanded-paper-F",
+    "path": "pages/progress/index",
+    "theme": "paper",
+    "ready": true,
+    "stats": {
+      "planned": 35,
+      "done": 4,
+      "standard": 2,
+      "minimum": 2,
+      "habits": 5
+    },
+    "selected": {
+      "date": "2026-10-01",
+      "planned": 5,
+      "tasks": 5
+    },
+    "showHabits": true
+  },
+  {
+    "name": "08-review28-paper-F",
+    "path": "pages/progress/index",
+    "theme": "paper",
+    "ready": true,
+    "stats": {
+      "planned": 35,
+      "done": 4,
+      "standard": 2,
+      "minimum": 2,
+      "habits": 5
+    },
+    "selected": {
+      "date": "2026-10-01",
+      "planned": 5,
+      "tasks": 5
+    },
+    "showHabits": true
+  },
+  {
+    "name": "selected-date-paper",
+    "planned": 5,
+    "tasks": 5,
+    "date": "2026-09-30"
+  },
+  {
+    "name": "09-day-detail-paper-F",
+    "path": "pages/progress/index",
+    "theme": "paper",
+    "ready": true,
+    "stats": {
+      "planned": 35,
+      "done": 4,
+      "standard": 2,
+      "minimum": 2,
+      "habits": 5
+    },
+    "selected": {
+      "date": "2026-09-30",
+      "planned": 5,
+      "tasks": 5
+    },
+    "showHabits": true
+  },
+  {
+    "name": "11-detail-paper-F",
+    "path": "pages/detail/index",
+    "theme": "paper",
+    "ready": true
+  },
+  {
+    "name": "10-long-five-paper-F",
+    "path": "pages/today/index",
+    "theme": "paper",
+    "ready": true,
+    "total": 5,
+    "done": 0,
+    "minimum": 0,
+    "feedback": null
+  },
+  {
+    "name": "13-no-record-paper-F",
+    "path": "pages/progress/index",
+    "theme": "paper",
+    "ready": true,
+    "stats": {
+      "planned": 21,
+      "done": 0,
+      "standard": 0,
+      "minimum": 0,
+      "habits": 3
+    },
+    "selected": {
+      "date": "2026-10-01",
+      "planned": 3,
+      "tasks": 3
+    },
+    "showHabits": false
+  },
+  {
+    "name": "14-no-plan-paper-F",
+    "path": "pages/progress/index",
+    "theme": "paper",
+    "ready": true,
+    "stats": {
+      "planned": 0,
+      "done": 0,
+      "standard": 0,
+      "minimum": 0,
+      "habits": 0
+    },
+    "selected": {
+      "date": "2026-10-01",
+      "planned": 0,
+      "tasks": 0
+    },
+    "showHabits": false
+  },
+  {
+    "restored": true,
+    "theme": "mist"
+  }
+]

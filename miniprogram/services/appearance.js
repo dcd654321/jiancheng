@@ -13,6 +13,7 @@ const TAB_ICONS = [
 function createAppearanceController({ client, wxApi, session }) {
   let saved = { theme: DEFAULT_THEME, revision: null };
   let loadState = 'idle', loadError = '', accountKey = '', reading = null;
+  let generation = 0;
   const listeners = new Set();
 
   function status() {
@@ -21,12 +22,23 @@ function createAppearanceController({ client, wxApi, session }) {
     return current;
   }
   function view() {
+    syncContext();
     const s = status();
     return { theme: saved.theme, revision: saved.revision, enabled: s.enabled, key: accountKey,
       loadState, loadError, pendingTheme: s.frozen || '', themeName: THEME_NAMES[saved.theme] };
   }
   function notify() { listeners.forEach(listener => { try { listener(view()); } catch (_) { /* 页面回调不能打断主题状态 */ } }); }
   function subscribe(listener) { listeners.add(listener); return () => listeners.delete(listener); }
+  function syncContext() {
+    const key = status().contextKey || '';
+    if (key === accountKey) return false;
+    accountKey = key; generation += 1; reading = null;
+    saved = { theme: DEFAULT_THEME, revision: null }; loadState = 'idle'; loadError = '';
+    client.invalidate(); applyNative(DEFAULT_THEME);
+    return true;
+  }
+  function ticket() { syncContext(); return { key: accountKey, generation }; }
+  function isCurrent(request) { syncContext(); return request.key === accountKey && request.generation === generation; }
 
   // 原生区域：官方 API 可用则换色，失败保留中性浅底且不阻塞业务页面。
   function applyNative(theme) {
@@ -41,6 +53,7 @@ function createAppearanceController({ client, wxApi, session }) {
   }
 
   function applyConfirmed(value) {
+    if (saved.revision !== null && value.revision < saved.revision) { loadState = 'ready'; loadError = ''; return false; }
     const next = { theme: value.theme === 'paper' ? 'paper' : DEFAULT_THEME, revision: value.revision };
     const changed = next.theme !== saved.theme || next.revision !== saved.revision;
     saved = next; loadState = 'ready'; loadError = '';
@@ -50,47 +63,61 @@ function createAppearanceController({ client, wxApi, session }) {
 
   // 冷启动/账户就绪后去重读取：同一上下文最多一个在途请求，不阻塞核心数据。
   function ensureRead(force = false) {
+    syncContext();
     if (!status().enabled) { loadState = 'disabled'; notify(); return Promise.resolve(null); }
     let key = '';
     try { key = client.contextKey(); } catch (_) { loadState = saved.revision === null ? 'unavailable' : loadState; return Promise.resolve(null); }
-    if (key !== accountKey) {
-      // 账户或 epoch 变化：清空旧账户已确认主题，只使用当前上下文的合法回执。
-      accountKey = key; saved = { theme: DEFAULT_THEME, revision: null };
-      client.invalidate(); applyNative(saved.theme); notify();
-    }
-    if (reading) return reading;
+    if (reading) return reading.work;
     if (!force && saved.revision !== null) return Promise.resolve(view());
     loadState = 'loading'; notify();
-    reading = client.read(force).then(value => {
+    const flight = ticket();
+    flight.work = client.read(force).then(value => {
+      if (!isCurrent(flight)) return null;
       applyConfirmed(value); notify();
       return view();
     }).catch(err => {
+      if (!isCurrent(flight)) return null;
       loadState = 'unavailable'; loadError = err.message || '主题暂未读取，可稍后重试'; notify();
       return null;
-    }).finally(() => { reading = null; });
-    return reading;
+    }).finally(() => { if (reading === flight) reading = null; });
+    reading = flight;
+    return flight.work;
   }
 
   // 保存由页面发起；回执合法才应用全局，离页不影响已发出的云事务。
   function save(theme) {
+    const request = ticket();
     return client.save(theme).then(value => {
+      if (!isCurrent(request)) { const err = Error('账户数据已变化，已忽略旧页面的结果'); err.code = 'EPOCH_CHANGED'; throw err; }
       applyConfirmed(value); notify();
       return view();
     });
   }
   function replay() {
+    const request = ticket();
     return client.replay().then(value => {
+      if (!isCurrent(request)) return view();
       if (value) { applyConfirmed(value); notify(); }
       return view();
     });
   }
 
+  let wasReadable = false;
+  const unsubscribe = session && typeof session.subscribe === 'function' ? session.subscribe(() => {
+    const changed = syncContext(), s = session.status();
+    const readable = !!s.ready && !s.pending && !s.conflict && !s.deletionPending && !s.networkOffline;
+    const becameReadable = readable && !wasReadable;
+    wasReadable = readable;
+    if (changed) notify();
+    if (accountKey && readable && (changed || becameReadable) && saved.revision === null) ensureRead();
+  }) : null;
   return {
     view, subscribe, ensureRead, save, replay,
-    current: () => saved.theme,
-    confirmedTheme: () => saved.theme,
-    hasRevision: () => saved.revision !== null,
-    invalidate() { client.invalidate(); }
+    current: () => view().theme,
+    confirmedTheme: () => view().theme,
+    hasRevision: () => view().revision !== null,
+    invalidate() { client.invalidate(); },
+    dispose() { if (unsubscribe) unsubscribe(); listeners.clear(); }
   };
 }
 

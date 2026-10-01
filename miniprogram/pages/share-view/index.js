@@ -81,7 +81,7 @@ Page({
             this._snapshot = null; this.setData({ view: null, active: false, shareEnabled: false, error: '这份分享已删除' });
             if (wx.hideShareMenu) wx.hideShareMenu();
           } else await this.load();
-        } catch (err) { if (!this._gone && this._visible) this.setData({ error: err.message || '操作未确认，请重试' }); }
+        } catch (err) { if (!this._gone && this._visible && version === this._version) this.setData({ error: err.message || '操作未确认，请重试' }); }
         finally { if (!this._gone) this.setData({ busy: false }); }
       } });
   },

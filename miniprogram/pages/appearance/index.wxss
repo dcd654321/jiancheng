@@ -13,4 +13,8 @@
 .thumb-main { font-size: 14px; font-weight: 600; color: var(--color-ink, #303A34); }
 .thumb-btn { margin-top: 8px; min-height: 32px; line-height: 32px; padding: 0 12px; border-radius: 12px; border: 1px solid var(--color-control-border, #819086); color: var(--color-ink, #303A34); background: var(--color-surface, #FFFFFF); font-size: 14px; text-align: center; }
 .thumb-btn.soft { background: var(--color-soft, #F1F4EF); }
-.theme-status { margin-top: 16px; }
+.appearance-page { padding-bottom: calc(144px + env(safe-area-inset-bottom)); }
+.appearance-page.with-recovery { padding-bottom: calc(248px + env(safe-area-inset-bottom)); }
+.theme-submit-bar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 10; padding: 10px 18px calc(16px + env(safe-area-inset-bottom)); border-top: 1px solid var(--color-line, #E2E7DF); background: var(--color-surface, #FFFFFF); }
+.theme-submit-bar .theme-status, .theme-submit-bar .error { margin: 0 0 8px; }
+.theme-submit-bar .primary { max-width: 560px; margin: 0 auto; }

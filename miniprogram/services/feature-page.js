@@ -3,13 +3,14 @@ const { features } = require('./features-client');
 async function run(page, work, finish) {
   if (page._featureBusy) return;
   const context = ui.contextKey();
+  const showVersion = page._showVersion;
   page._featureBusy = true; page.setData({ busy: true, error: '' });
   try {
     ui.assertContext(page);
     const value = await work(features());
-    if (!page._gone && page._visible && context === ui.contextKey()) finish(value);
+    if (ui.isCurrentView(page, context, showVersion)) finish(value);
   } catch (err) {
-    if (!page._gone && page._visible && context === ui.contextKey()) ui.error(page, err);
+    if (ui.isCurrentView(page, context, showVersion)) ui.error(page, err);
   } finally { page._featureBusy = false; if (!page._gone && page._visible) page.setData({ busy: false }); }
 }
 function resetOnContext(page, reset) {

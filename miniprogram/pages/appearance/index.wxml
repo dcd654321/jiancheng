@@ -1,4 +1,4 @@
-<view class="page theme-{{theme}}">
+<view class="page appearance-page {{!hasRevision || saveError ? 'with-recovery' : ''}} theme-{{theme}}">
   <view class="heading">外观主题</view>
   <view class="sub">选一个看起来舒服的颜色，布局和记录方式不变。</view>
   <view wx:if="{{!enabled}}" class="empty">
@@ -19,9 +19,11 @@
         </view>
       </button>
     </view>
-    <view wx:if="{{statusNote}}" class="sub theme-status">{{statusNote}}</view>
-    <button wx:if="{{!hasRevision}}" class="text-button" bindtap="onReload">重新读取主题</button>
-    <view wx:if="{{saveError}}" class="error spaced">{{saveError}}</view>
-    <button class="primary spaced" loading="{{saving}}" disabled="{{primaryDisabled}}" bindtap="onApply">{{primaryLabel}}</button>
+    <view class="theme-submit-bar">
+      <view wx:if="{{statusNote}}" class="sub theme-status">{{statusNote}}</view>
+      <button wx:if="{{!hasRevision}}" class="text-button" bindtap="onReload">重新读取主题</button>
+      <view wx:if="{{saveError}}" class="error">{{saveError}}</view>
+      <button class="primary" loading="{{saving}}" disabled="{{primaryDisabled}}" bindtap="onApply">{{primaryLabel}}</button>
+    </view>
   </block>
 </view>

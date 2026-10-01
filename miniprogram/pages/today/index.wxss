@@ -1,4 +1,20 @@
 .skeleton-wrap { padding-top: 6px; }
+.today-summary { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin: 12px 0; }
+.summary-count { display: flex; align-items: baseline; gap: 8px; color: var(--color-secondary, #647067); font-size: 14px; }
+.today-summary .progress-value { font-size: 18px; color: var(--color-ink, #303A34); }
+.summary-busy { margin: -4px 0 12px; }
+.task-explain { margin: 0 0 12px; }
+.return-line { margin: 0 0 8px; }
+.today-page .empty { padding-top: 12px; }
+.today-page .hero-title { margin-top: 8px; }
+.template-hint { margin-top: 8px; }
+.today-page.with-feedback { padding-bottom: calc(184px + env(safe-area-inset-bottom)); }
+.write-status { margin: 8px 0; }
+.completion-feedback { position: fixed; left: 16px; right: 16px; bottom: 12px; z-index: 9; padding: 12px 14px; border: 1px solid var(--color-control-border, #819086); border-radius: 16px; background: var(--color-surface, #FFFFFF); box-shadow: 0 3px 14px rgba(0, 0, 0, .06); }
+.feedback-copy { min-width: 0; overflow-wrap: anywhere; }
+.feedback-title { font-size: 16px; font-weight: 600; }
+.feedback-undo { min-width: 64px; flex-shrink: 0; }
+.feedback-all { width: 100%; text-align: left; margin-top: 2px; }
 .tomorrow { margin-top: 22px; }
 .tomorrow-task { display: flex; align-items: center; gap: 12px; padding: 10px 0; flex-wrap: wrap; }
 .tomorrow-task .grow { min-width: 0; overflow-wrap: anywhere; }

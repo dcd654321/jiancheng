@@ -52,6 +52,22 @@ async function setup(t, options = {}) {
   return { f, snapshot, sessionState, session, client, calls, wx, nav, toasts, controller, app, page, open };
 }
 
+for (const fail of [false,true]) test(`an old theme save ${fail?'failure':'success'} keeps a newer preview and stays quiet`, async t=>{
+  let release,started=false;
+  const h=await setup(t,{route:async(event,f)=>{
+    if(event.action==='setAppearance'){
+      started=true;await new Promise(ok=>{release=ok;});
+      if(fail)throw Error('旧保存失败');
+    }
+    return f.features(event,f.identity);
+  }});
+  const p=await h.open('appearance'); p.onPick({currentTarget:{dataset:{theme:'paper'}}});
+  const work=p.onApply(); await new Promise(setImmediate); assert.equal(started,true);
+  p.onHide();p.onShow();p.onPick({currentTarget:{dataset:{theme:'mist'}}});release();await work;
+  assert.equal(p.data.preview,'mist');assert.equal(p.data.saveError,'');assert.equal(h.toasts.length,0);
+  assert.equal(p.data.saving,false);
+});
+
 test('closed capability hides the mine entry and the direct page explains and exits', async t => {
   const h = await setup(t, { enabled: false });
   const mine = await h.open('mine');
@@ -80,6 +96,32 @@ test('two fixed previews keep their own colors; picking previews in-page without
   const markup = fs.readFileSync(path.resolve(__dirname, '../miniprogram/pages/appearance/index.wxml'), 'utf8');
   assert.match(markup, /class="theme-thumb theme-\{\{item\.key\}\}"/, '缩略图固定使用各自主题');
   assert.match(markup, /aria-pressed/);
+});
+
+test('preview keeps its root color after a forced read and delayed first read', async t => {
+  const h = await setup(t);
+  const page = await h.open('appearance');
+  page.onPick({ currentTarget: { dataset: { theme: 'paper' } } });
+  await h.controller.ensureRead(true);
+  assert.equal(page.data.theme, 'paper');
+  assert.equal(page.data.preview, 'paper');
+  assert.equal(page.data.savedTheme, 'mist');
+  assert.equal(page.data.primaryLabel, '使用暖纸白');
+  assert.equal(h.calls.filter(call => call.action === 'setAppearance').length, 0);
+
+  let release;
+  const delayed = await setup(t, { route: async (event, f) => {
+    if (event.action === 'getAppearance') await new Promise(resolve => { release = resolve; });
+    return f.features(event, f.identity);
+  } });
+  const first = delayed.page('appearance');
+  first.onPick({ currentTarget: { dataset: { theme: 'paper' } } });
+  assert.equal(first.data.hasRevision, false);
+  release();
+  await delayed.controller.ensureRead();
+  assert.equal(first.data.theme, 'paper');
+  assert.equal(first.data.savedTheme, 'mist');
+  assert.equal(delayed.calls.filter(call => call.action === 'setAppearance').length, 0);
 });
 
 test('leaving without saving discards the preview while a save applies one request and keeps the page', async t => {
@@ -153,6 +195,8 @@ test('conflict reads the current cloud value, keeps the preview and only a new e
   await page.onApply();
   assert.match(page.data.saveError, /其他设备更新/);
   assert.equal(page.data.preview, 'paper', '保留用户选择预览，不静默覆盖');
+  await h.controller.ensureRead(true);
+  assert.equal(page.data.theme, 'paper', '冲突重读后的根颜色仍与预览一致');
   assert.equal(h.controller.current(), 'mist', '冲突后先应用当前云值');
   const writes = h.calls.filter(call => call.action === 'setAppearance');
   assert.equal(writes.length, 1, '冲突不产生第二次自动写入');

@@ -1,0 +1,149 @@
+{
+  "classification": "L:实际token组合计算；不代表所有控件状态和真机读屏",
+  "results": [
+    {
+      "theme": "mist",
+      "foreground": "ink",
+      "background": "page",
+      "ratio": 11.065,
+      "min": 4.5,
+      "pass": true
+    },
+    {
+      "theme": "mist",
+      "foreground": "secondary",
+      "background": "page",
+      "ratio": 4.858,
+      "min": 4.5,
+      "pass": true
+    },
+    {
+      "theme": "mist",
+      "foreground": "ink",
+      "background": "surface",
+      "ratio": 11.795,
+      "min": 4.5,
+      "pass": true
+    },
+    {
+      "theme": "mist",
+      "foreground": "secondary",
+      "background": "surface",
+      "ratio": 5.178,
+      "min": 4.5,
+      "pass": true
+    },
+    {
+      "theme": "mist",
+      "foreground": "onPrimary",
+      "background": "primary",
+      "ratio": 6.413,
+      "min": 4.5,
+      "pass": true
+    },
+    {
+      "theme": "mist",
+      "foreground": "busyText",
+      "background": "busyBg",
+      "ratio": 5.654,
+      "min": 4.5,
+      "pass": true
+    },
+    {
+      "theme": "mist",
+      "foreground": "controlBorder",
+      "background": "surface",
+      "ratio": 3.351,
+      "min": 3,
+      "pass": true
+    },
+    {
+      "theme": "mist",
+      "foreground": "controlBorder",
+      "background": "page",
+      "ratio": 3.144,
+      "min": 3,
+      "pass": true
+    },
+    {
+      "theme": "mist",
+      "foreground": "error",
+      "background": "errorBg",
+      "ratio": 5.842,
+      "min": 4.5,
+      "pass": true
+    },
+    {
+      "theme": "paper",
+      "foreground": "ink",
+      "background": "page",
+      "ratio": 11.475,
+      "min": 4.5,
+      "pass": true
+    },
+    {
+      "theme": "paper",
+      "foreground": "secondary",
+      "background": "page",
+      "ratio": 5.106,
+      "min": 4.5,
+      "pass": true
+    },
+    {
+      "theme": "paper",
+      "foreground": "ink",
+      "background": "surface",
+      "ratio": 12.068,
+      "min": 4.5,
+      "pass": true
+    },
+    {
+      "theme": "paper",
+      "foreground": "secondary",
+      "background": "surface",
+      "ratio": 5.37,
+      "min": 4.5,
+      "pass": true
+    },
+    {
+      "theme": "paper",
+      "foreground": "onPrimary",
+      "background": "primary",
+      "ratio": 5.835,
+      "min": 4.5,
+      "pass": true
+    },
+    {
+      "theme": "paper",
+      "foreground": "busyText",
+      "background": "busyBg",
+      "ratio": 5.398,
+      "min": 4.5,
+      "pass": true
+    },
+    {
+      "theme": "paper",
+      "foreground": "controlBorder",
+      "background": "surface",
+      "ratio": 3.31,
+      "min": 3,
+      "pass": true
+    },
+    {
+      "theme": "paper",
+      "foreground": "controlBorder",
+      "background": "page",
+      "ratio": 3.148,
+      "min": 3,
+      "pass": true
+    },
+    {
+      "theme": "paper",
+      "foreground": "error",
+      "background": "errorBg",
+      "ratio": 5.842,
+      "min": 4.5,
+      "pass": true
+    }
+  ]
+}

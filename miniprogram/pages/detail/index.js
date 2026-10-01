@@ -20,10 +20,11 @@ Page(ui.withLifecycle({
     const service = features();
     if (!service.status().enabled) return;
     const key = ui.contextKey();
+    const showVersion = this._showVersion;
     try {
       await service.preferences();
-      if (!this._gone && this._visible && key === ui.contextKey()) this.refresh();
-    } catch (_) { if (!this._gone && this._visible && key === ui.contextKey()) this.setData({ pinError: '暂时未读取到置顶设置，打卡不受影响' }); }
+      if (ui.isCurrentView(this, key, showVersion)) this.refresh();
+    } catch (_) { if (ui.isCurrentView(this, key, showVersion)) this.setData({ pinError: '暂时未读取到置顶设置，打卡不受影响' }); }
   },
   refresh() {
     if (!this._id) { this.setData({ loading: false, dataReady: false, dataUnavailable: false, invalid: true,
@@ -69,14 +70,15 @@ Page(ui.withLifecycle({
   },
   onEdit() { wx.navigateTo({ url: '/pages/edit/index?id=' + this._id }); },
   async onPin() {
-    if (this._pinning) return;
+    if (this._pinning || this._mutating) return;
     const key = ui.contextKey();
+    const showVersion = this._showVersion;
     this._pinning = true; this.setData({ pinning: true, pinError: '' });
     try {
       ui.assertContext(this);
       await features().setPinned(this.data.pinned ? null : this._id);
-      if (!this._gone && this._visible && key === ui.contextKey()) this.refresh();
-    } catch (err) { if (!this._gone && this._visible && key === ui.contextKey()) this.setData({ pinError: err.message || '置顶未保存，请重试' }); }
+      if (ui.isCurrentView(this, key, showVersion)) this.refresh();
+    } catch (err) { if (ui.isCurrentView(this, key, showVersion)) this.setData({ pinError: err.message || '置顶未保存，请重试' }); }
     finally { this._pinning = false; if (!this._gone) this.setData({ pinning: false }); }
   },
   onToggleNote() { this.setData({ noteOpen: !this.data.noteOpen }); },
@@ -96,11 +98,11 @@ Page(ui.withLifecycle({
       ui.error(this, Error('日期已变化，旧草稿未提交。请复制保留后，点击“放弃草稿”填写今天的备注。'));
       return false;
     }
-    const context = ui.contextKey(), draft = { date: this.data.noteDate, text: this.data.note };
+    const context = ui.contextKey(), showVersion = this._showVersion, draft = { date: this.data.noteDate, text: this.data.note };
     const finish = saved => {
       if (saved) {
         drafts().remove(context, this._id, draft);
-        if (!this._gone && this._visible) this.refresh();
+        if (ui.isCurrentView(this, context, showVersion)) this.refresh();
       }
       return saved;
     };
@@ -109,17 +111,20 @@ Page(ui.withLifecycle({
   },
   onDiscardNote() {
     const context = ui.contextKey(), draft = drafts().read(context, this._id);
+    const showVersion = this._showVersion;
     wx.showModal({ title: '放弃未保存的备注？', content: '草稿将被清除，已保存的备注不会改变。', confirmText: '放弃草稿',
       success: result => {
-        if (result.confirm && !this._gone) { drafts().remove(context, this._id, draft); this.refresh(); }
+        if (result.confirm && ui.isCurrentView(this, context, showVersion)) { drafts().remove(context, this._id, draft); this.refresh(); }
       } });
   },
   onStatus(event) {
+    if (this._mutating) return false;
     const status = event.currentTarget.dataset.status;
     const verb = { active: '恢复', paused: '暂停', archived: '归档' }[status];
     const baseRevision = this._revision;
+    const context = ui.contextKey(), showVersion = this._showVersion;
     wx.showModal({ title: `明日起${verb}？`, content: '今天的安排仍保留，历史记录不会改变。', confirmText: verb, confirmColor: ui.primaryColor(),
-      success: result => { if (result.confirm) ui.mutate(this, { type: 'status', id: this._id, status, baseRevision }, '修改明日生效'); } });
+      success: result => { if (result.confirm && ui.isCurrentView(this, context, showVersion)) ui.mutate(this, { type: 'status', id: this._id, status, baseRevision }, '修改明日生效'); } });
   },
   onCancelFuture() { ui.mutate(this, { type: 'cancelFuture', id: this._id, baseRevision: this._revision }, '待生效修改已撤销'); },
   onToday() { wx.switchTab({ url: '/pages/today/index' }); },
