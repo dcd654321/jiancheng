@@ -85,3 +85,16 @@ test('AI entry cannot open with missing budget or provider configuration and rev
   f.env.HABIT_APP_ID='wx-entry';f.env.HABIT_AI_PROVIDER='deepseek';
   const result=await f.main({action:'suggest'});assert.equal(result.code,'AI_UNAVAILABLE');assert.equal(f.calls,0);assert.doesNotMatch(JSON.stringify(result),/KEY|budget|provider/i);
 });
+test('AI defaults open but safety gates and explicit false still reject before database',async()=>{
+  const ready={HABIT_APP_ID:'wx-entry',HABIT_AI_PROVIDER:'deepseek',HABIT_AI_MODEL:'fixture',HABIT_AI_API_KEY:'fixture-key-not-a-real-key',
+    HABIT_AI_USER_DAILY:'2',HABIT_AI_RESERVATION_MICRO_CNY:'100',HABIT_AI_DAY_MICRO_CNY:'1000',HABIT_AI_MONTH_MICRO_CNY:'10000'};
+  const gates=['HABIT_AI_STORAGE_READY','HABIT_AI_BUDGET_VERIFIED','HABIT_AI_CATALOG_VERIFIED','HABIT_IDENTITY_VERIFIED','HABIT_MINIPROGRAM_ONLY','HABIT_LIMITS_VERIFIED','HABIT_SIDECAR_CLEANUP_ENABLED'];
+  gates.forEach(k=>{ready[k]='true';});const open=entryFixture('jiancheng_daka_plan');Object.assign(open.env,ready);
+  assert.equal((await open.main({action:'suggest'})).code,'AI_UNAVAILABLE');assert.equal(open.calls,1);
+  for(const key of [...gates,'HABIT_APP_ID']){
+    const f=entryFixture('jiancheng_daka_plan');Object.assign(f.env,ready);delete f.env[key];
+    assert.equal((await f.main({action:'suggest'})).code,'NOT_ENABLED',key);assert.equal(f.calls,0);
+  }
+  const off=entryFixture('jiancheng_daka_plan');Object.assign(off.env,ready,{HABIT_AI_ENABLED:'false'});
+  assert.equal((await off.main({action:'suggest'})).code,'NOT_ENABLED');assert.equal(off.calls,0);
+});

@@ -15,10 +15,11 @@ function scan(dir) {
   }
 }
 scan(root);
-for (const [exe, args] of [['wcc.exe', files], ...styles.map(style => ['wcsc.exe', [style]])]) {
+// 导入样式必须一起交给编译器；使用一致的相对路径，保证 @import 可解析。
+for (const [exe, args] of [['wcc.exe', files], ['wcsc.exe', ['-pc', String(styles.length), ...styles.map(style => style.replace(/^\.\//, ''))]]]) {
   const result = spawnSync(path.join(bin, exe), args, { cwd: root, encoding: 'utf8', maxBuffer: 10 * 1024 * 1024, windowsHide: true });
   if (result.error || result.status !== 0 || /error|unexpected|not found/i.test(result.stderr)) {
     console.error(result.error || result.stderr || result.stdout); process.exitCode = 1;
-  } else console.log(`PASS ${exe}: ${args.length} inputs${exe === 'wcsc.exe' ? ' (' + args[0] + ')' : ''}, ${Buffer.byteLength(result.stdout)} compiled bytes${result.stderr ? '; ' + result.stderr.trim() : ''}`);
+  } else console.log(`PASS ${exe}: ${exe === 'wcsc.exe' ? styles.length : args.length} inputs, ${Buffer.byteLength(result.stdout)} compiled bytes${result.stderr ? '; ' + result.stderr.trim() : ''}`);
 }
 console.log('This checks real WeChat compiler syntax, not simulator rendering or device APIs.');

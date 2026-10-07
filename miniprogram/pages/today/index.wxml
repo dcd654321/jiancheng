@@ -31,6 +31,7 @@
         <button class="tpl-card" data-template="tidy" bindtap="onCreate"><text class="tpl-name">整理桌面</text><text class="tpl-line">平时 10 分钟 · 忙时 3 分钟</text></button>
       </view>
       <button class="secondary" data-template="" bindtap="onCreate">自己设一个</button>
+      <button wx:if="{{aiEnabled}}" class="assistant-entry" bindtap="onAssistant"><view class="grow"><view>让 AI 帮我定个小目标</view><view class="sub">选方向和时间，先看方案再创建</view></view><view class="chevron" /></button>
     </block>
     <block wx:if="{{total}}">
       <view class="today-summary">
@@ -65,6 +66,7 @@
           <button class="tpl-card" data-template="tidy" bindtap="onCreate"><text class="tpl-name">整理桌面</text><text class="tpl-line">平时 10 分钟 · 忙时 3 分钟</text></button>
         </view>
         <button class="secondary" data-template="" bindtap="onCreate">自己设一个</button>
+        <button wx:if="{{aiEnabled}}" class="assistant-entry" bindtap="onAssistant"><view class="grow"><view>让 AI 帮我定个小目标</view><view class="sub">选方向和时间，先看方案再创建</view></view><view class="chevron" /></button>
       </block>
     </view>
     <view wx:if="{{hasHabits && !pending.length && tomorrow}}" class="tomorrow spaced">

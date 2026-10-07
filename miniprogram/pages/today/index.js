@@ -30,6 +30,8 @@ Page(ui.withLifecycle({
     quickMinimumEnabled: ui.quickMinimumEnabled,
     firstHabitGuide: '', returnGuide: null, tomorrow: null, canCreateToday: true, canCreateTomorrow: true },
   refresh() {
+    const assistant = getApp().planAssistant;
+    this.setData({ aiEnabled: !!(assistant && typeof assistant.status === 'function' && assistant.status().configured) });
     ui.read(this, (state, date) => {
       const feedbackContext = ui.contextKey() + ':' + date;
       if (this._firstGuideContext !== feedbackContext) {
@@ -85,9 +87,12 @@ Page(ui.withLifecycle({
   async onShow() {
     const service = features();
     if (!service.status().enabled) return;
-    const key = ui.contextKey();
     const showVersion = this._showVersion;
+    let key;
     try {
+      await Promise.resolve(getApp().dataReady);
+      if (this._gone || this._visible === false || this._showVersion !== showVersion) return;
+      key = ui.contextKey();
       const preferences = await service.preferences();
       if (ui.isCurrentView(this, key, showVersion)) {
         this._visitPinnedId = preferences && preferences.pinnedHabitId; this.refresh();
@@ -122,6 +127,7 @@ Page(ui.withLifecycle({
   onUnload() { this.clearCompletionFeedback(); },
   onDismissGuide() { this.setData({ firstHabitGuide: '' }); this._firstGuideId = null; },
   onToggleChooser() { this.setData({ chooserOpen: !this.data.chooserOpen }); },
+  onAssistant() { this.setData({ chooserOpen: false }); wx.navigateTo({ url: '/pages/assistant/index' }); },
   onCreate(event) {
     try {
       ui.assertContext(this);

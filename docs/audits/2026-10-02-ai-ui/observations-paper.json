@@ -1,0 +1,39 @@
+[
+  {
+    "theme": "paper",
+    "selector": ".direction-option",
+    "size": {
+      "width": 173,
+      "height": 48
+    }
+  },
+  {
+    "theme": "paper",
+    "selector": ".minute-option",
+    "size": {
+      "width": 66,
+      "height": 44
+    }
+  },
+  {
+    "theme": "paper",
+    "selector": ".generate-button",
+    "size": {
+      "width": 354,
+      "height": 48
+    }
+  },
+  {
+    "theme": "paper",
+    "selector": ".rules-button",
+    "size": {
+      "width": 354,
+      "height": 50
+    }
+  },
+  {
+    "theme": "paper",
+    "previewSource": "ai",
+    "level": "F"
+  }
+]

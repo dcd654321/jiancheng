@@ -1,0 +1,46 @@
+<view class="page assistant-page theme-{{theme}}">
+  <view class="heading">从能做到的一点开始</view>
+  <view class="sub">选方向和时间，AI 帮你定一个小目标。</view>
+  <view class="assistant-field">
+    <view class="field-label">想做什么</view>
+    <view class="direction-options">
+      <button wx:for="{{directions}}" wx:key="id" class="direction-option {{direction === item.id ? 'selected' : ''}}" data-id="{{item.id}}" disabled="{{busy || adopting}}" bindtap="onDirection" aria-label="{{item.label}}{{direction === item.id ? '，已选' : '，未选'}}"><text>{{item.label}}</text><text class="selection-mark">{{direction === item.id ? '已选' : ''}}</text></button>
+    </view>
+  </view>
+  <view id="field-minutes" class="assistant-field">
+    <view class="field-label">每次最多几分钟</view>
+    <view class="minute-options"><button wx:for="{{presets}}" wx:key="*this" class="minute-option {{minutes == item ? 'selected' : ''}}" disabled="{{busy || adopting}}" data-minutes="{{item}}" bindtap="onPreset" aria-label="{{item}}分钟{{minutes == item ? '，已选' : ''}}">{{item}}</button><button class="minute-option {{customMinutes ? 'selected' : ''}}" disabled="{{busy || adopting}}" bindtap="onCustom">自定</button></view>
+    <input wx:if="{{customMinutes}}" id="minutes" class="input custom-input {{fieldErrors.minutes ? 'invalid' : ''}} {{focusField === 'minutes' ? 'focused' : ''}}" type="number" maxlength="2" value="{{minutes}}" disabled="{{busy || adopting}}" focus="{{focusField === 'minutes'}}" bindinput="onMinutes" bindfocus="onFieldFocus" bindblur="onFieldBlur" aria-label="每次可用分钟，1至60" placeholder="1—60分钟" />
+    <view wx:if="{{fieldErrors.minutes}}" class="field-error">{{fieldErrors.minutes}}</view><view wx:else class="sub minute-hint">建议不超过 {{minutes || '你选择的'}} 分钟，也会留一档忙时目标。</view>
+  </view>
+  <button class="disclosure schedule-control" disabled="{{busy || adopting}}" bindtap="onMore" aria-expanded="{{moreOpen}}"><view class="grow"><view>执行安排</view><view class="sub">{{inputSchedule}}</view></view><view class="chevron {{moreOpen ? 'up' : 'down'}}" /></button>
+  <view wx:if="{{moreOpen}}" class="schedule-fields">
+    <view id="field-weekdays" class="assistant-field"><view class="field-label">哪些天做</view><view class="week-options"><button wx:for="{{days}}" wx:key="value" class="day-option {{item.selected ? 'selected' : ''}}" disabled="{{busy || adopting}}" data-day="{{item.value}}" bindtap="onDay" aria-label="周{{item.label}}{{item.selected ? '，已选' : '，未选'}}">{{item.label}}</button></view><view wx:if="{{fieldErrors.weekdays}}" class="field-error">{{fieldErrors.weekdays}}</view><view class="sub spaced">按星期安排，不含节假日调休。</view></view>
+    <view class="assistant-field"><view class="field-label">计划时间（选填）</view><picker mode="time" disabled="{{busy || adopting}}" value="{{time || '20:30'}}" bindchange="onTime"><view class="picker picker-select">{{time || '时间自定'}}<view class="chevron down" /></view></picker><button wx:if="{{time}}" class="text-button" disabled="{{busy || adopting}}" bindtap="onClearTime">清除时间</button><view class="sub">只用于排序，不会自动提醒。</view></view>
+  </view>
+  <view wx:if="{{configured}}" id="ai-generation" class="generation-area">
+    <checkbox-group bindchange="onConsent"><label class="consent"><checkbox value="agree" checked="{{consent}}" disabled="{{busy || adopting}}" color="{{primary}}" /><text>同意本次将方向和可用分钟发送给 DeepSeek，生成建议。</text></label></checkbox-group>
+    <button class="privacy-toggle text-button" bindtap="onPrivacy" aria-expanded="{{privacyOpen}}">{{privacyOpen ? '收起数据说明' : '会发送哪些信息？'}}</button>
+    <view wx:if="{{privacyOpen}}" class="notice privacy-copy">云端接收本页方向、分钟和安排；DeepSeek 仅接收方向与分钟，不接收身份、习惯记录或备注。AI 从预设动作中选择方案，供你核对。每次修改选择后需重新同意。</view>
+    <view wx:if="{{blockedReason}}" class="notice">{{blockedReason}}<button wx:if="{{needsCloudRefresh}}" class="text-button" disabled="{{loading}}" bindtap="onDataRetry">{{loading ? '正在读取…' : '重新读取云端账户'}}</button><button wx:elif="{{capacityFull}}" class="text-button" bindtap="onManage">管理习惯</button><button wx:elif="{{!dataReady || dataReadOnly}}" class="text-button" bindtap="onDataRetry">重新读取</button><button wx:elif="{{!canGenerate && !serviceBusy}}" class="text-button" bindtap="onSync">查看云端状态</button></view>
+    <button class="primary generate-button" loading="{{busy}}" disabled="{{busy || adopting || serviceBusy || !canGenerate || !consent}}" bindtap="onGenerate">{{busy ? '正在生成建议…' : (serviceBusy ? 'AI 仍在处理' : retryLabel)}}</button>
+    <view wx:if="{{!consent && !busy && !serviceBusy}}" class="sub consent-hint">先勾选本次发送同意，再生成。</view>
+    <view wx:if="{{busy || serviceBusy}}" class="notice generation-status" role="status">正在等待 AI，不会自动重复生成。你也可以先看基础方案。</view>
+  </view>
+  <view wx:else class="notice">AI 建议暂未开放，可以先看基础方案。</view>
+  <view wx:if="{{requestError}}" class="error request-error" role="alert">{{requestError}}</view>
+  <button class="secondary rules-button" disabled="{{adopting}}" bindtap="onRules">{{busy || serviceBusy ? '先看基础方案' : '查看基础方案'}}</button>
+  <view class="sub rule-hint">基础方案无需发送给 AI。预览后还可以修改。</view>
+  <view wx:if="{{preview}}" id="plan-preview" class="preview card">
+    <view class="preview-source">{{preview.source === 'ai' ? 'AI 建议 · 待你确认' : '基础方案 · 本机规则'}}</view>
+    <view class="result-title">{{preview.draft.title}}</view>
+    <view class="preview-action">{{preview.draft.action}}</view>
+    <view class="preview-goals"><view class="goal"><view class="sub">平时目标</view><view class="goal-value">{{preview.draft.target}}<text class="goal-unit"> 分钟</text></view></view><view wx:if="{{preview.draft.minimum}}" class="goal busy-goal"><view class="sub">忙时目标</view><view class="goal-value">{{preview.draft.minimum}}<text class="goal-unit"> 分钟</text></view></view></view>
+    <view class="sub spaced">{{schedule}}</view><view class="sub spaced">{{preview.draft.reason}}</view>
+    <view wx:if="{{!preview.draft.minimum}}" class="sub spaced">{{preview.draft.target === 1 ? '已经是 1 分钟起点，无需再调小。' : '这份建议未设置忙时目标，可在下一步补充。'}}</view>
+    <view wx:if="{{capacityNote}}" class="notice">{{capacityNote}}<button wx:if="{{capacityFull}}" class="text-button" bindtap="onManage">管理习惯</button></view>
+    <view wx:if="{{!canAdopt && !capacityFull}}" class="notice">恢复云端记录后可确认创建，方案已保留。<button class="text-button" bindtap="onDataRetry">重新读取</button></view>
+    <button class="primary spaced" disabled="{{busy || adopting || !canAdopt}}" bindtap="onAdopt">{{adopting ? '正在打开确认页…' : '下一步：确认习惯'}}</button>
+    <view class="sub preview-footnote">下一步可修改名称、目标和安排。确认保存才会创建。</view>
+  </view>
+</view>

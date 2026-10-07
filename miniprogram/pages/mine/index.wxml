@@ -4,7 +4,7 @@
   <block wx:elif="{{dataReady}}">
     <view class="heading heading-xl">我的</view><view class="sub">记录跟随当前微信账号</view>
     <view wx:if="{{error}}" class="error spaced">{{error}}</view>
-    <view class="group"><view class="group-label">习惯管理</view><button class="setting-row" bindtap="onManage"><text class="grow">我的习惯</text><text class="sub">{{count}} 个</text><view class="chevron" /></button></view>
+    <view class="group"><view class="group-label">习惯管理</view><button class="setting-row" bindtap="onManage"><text class="grow">我的习惯</text><text class="sub">{{count}} 个</text><view class="chevron" /></button><button wx:if="{{aiEnabled}}" class="setting-row" bindtap="onAssistant"><view class="grow">AI 小目标助手<view class="sub">按你的时间，先定一个可做的方案</view></view><view class="chevron" /></button></view>
     <view class="group">
       <view class="group-label">偏好设置</view>
       <view class="setting-row"><text class="grow">显示首页短句</text><switch checked="{{!hideQuote}}" color="{{primary}}" bindchange="onQuote" aria-label="显示首页短句" /></view>

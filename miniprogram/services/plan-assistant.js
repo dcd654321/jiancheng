@@ -11,8 +11,16 @@ function createPlanAssistant(wxApi, cloudConfig, aiConfig, options = {}) {
   const configured = () => aiConfig.enabled === true && cloudConfig.enabled === true
     && cloudConfig.functionName === apiFunction && aiConfig.functionName === planFunction
     && typeof cloudConfig.envId === 'string' && cloudConfig.envId.trim() !== '' && !/YOUR_|PLACEHOLDER/i.test(cloudConfig.envId);
+  const status = () => {
+    const s = options.session && options.session.status();
+    const blockedReason = !configured() ? 'AI建议暂未开放，可以先用基础方案'
+      : !s || !s.ready || !s.accountId || !s.epoch ? '云端记录尚未读取，请先重新读取'
+      : s.deletionPending || s.conflict || s.pending ? '请先核对云端记录，再申请AI建议'
+      : s.networkOffline || s.phase === 'offline' ? '连接网络后可申请AI建议，基础方案仍可预览' : '';
+    return { configured: configured(), busy, canGenerate: !blockedReason && !busy, blockedReason };
+  };
   return {
-    status: () => ({ configured: configured(), busy }),
+    status,
     rules: ruleSuggestion,
     async generate(input, consent) {
       const normalized = validateInput(input);
@@ -39,17 +47,32 @@ function createPlanAssistant(wxApi, cloudConfig, aiConfig, options = {}) {
           if(requests.size>=8)requests.delete(requests.keys().next().value);requests.set(requestKey,intent);
         }
         const operationId=intent.operationId;
+        if (intent.result) { busy = false; return clone(intent.result); }
         const request=Promise.resolve(transport({action:'suggest',operationId,operationDate:intent.operationDate,epoch:before.epoch,consent:true,input:normalized}));
         // Do not permit another billable request while the timed-out request is still in flight.
         const tracked = request.then(x => { busy = false; return x; }, err => { busy = false; throw err; });
         const response = await Promise.race([tracked, new Promise((_, reject) => {
-          timer = setTimeout(() => reject(Error('AI响应超时，未自动重试；可使用本机规则建议')), aiConfig.timeoutMs || 12000);
+          timer = setTimeout(() => {
+            const err = Error('AI响应超时，未自动重试。可先用基础方案，稍后核对这次结果');
+            err.code = 'AI_TIMEOUT'; reject(err);
+          }, aiConfig.timeoutMs || 12000);
         })]);
         const result = response;
         if(context().key!==before.key)throw Error('账户数据已变化，已忽略旧生成结果');
-        if (!result || result.ok !== true) throw Error(result && result.code === 'RATE_LIMITED' ? '本次AI额度已用完，可使用本机规则建议' : 'AI暂时不可用，未生成计划；可使用本机规则建议');
+        if (!result || result.ok !== true) {
+          const messages = { RATE_LIMITED: '本期AI额度已用完，可以先用基础方案',
+            NOT_ENABLED: 'AI服务暂未就绪，可以先用基础方案',
+            AI_PENDING: '这次AI请求仍在核对，未发起新的生成。可以先用基础方案',
+            AI_UNAVAILABLE: '这次AI未返回可用建议，可以先用基础方案',
+            EPOCH_CHANGED: '云端账户数据已变化，请重新读取后再申请AI建议',
+            ACCOUNT_REQUIRED: '请先重新读取云端账户，再申请AI建议',
+            DELETE_PENDING: '云端个人数据正在删除，请稍后重新读取。可以先预览基础方案' };
+          const err = Error(messages[result && result.code] || 'AI暂时不可用，可以先用基础方案');
+          err.code = result && result.code || 'AI_UNAVAILABLE'; throw err;
+        }
         if (result.source !== 'ai' || result.moderated !== true || result.safetyMode !== 'allowlist-v1' || result.operationId !== operationId) throw Error('AI结果未通过来源或安全校验，请使用本机规则建议');
-        return { source: 'ai', input: normalized, draft: validateDraft(result.draft, normalized) };
+        const suggestion = { source: 'ai', input: normalized, draft: validateDraft(result.draft, normalized) };
+        intent.result = clone(suggestion); return suggestion;
       } catch (err) {
         // A synchronous init/call error has no outstanding Promise to release the lock.
         if (!timer) busy = false;

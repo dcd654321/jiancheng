@@ -8,7 +8,12 @@ Page(ui.withLifecycle({
     work.resetOnContext(this,()=>{this._preview=null;this._authorized=null;this.setData({preview:null,items:[],retrySchedule:false});});
     this.setData({enabled:features().status().reminders,busy:!!this._featureBusy});ui.read(this,()=>{});
   },
-  async onShow(){const context=ui.contextKey(),version=this._showVersion;await Promise.resolve(getApp().dataReady);if(ui.isCurrentView(this,context,version)&&this.data.enabled&&this.data.dataReady)this.load();},
+  async onShow(){
+    const version=this._showVersion;
+    try{await Promise.resolve(getApp().dataReady);}catch(_){/* 核心读取失败由页面恢复入口处理。 */}
+    if(this._gone||this._visible===false||this._showVersion!==version)return;
+    this.refresh();if(this.data.enabled&&this.data.dataReady)this.load();
+  },
   load(){return work.run(this,s=>s.reminders(),items=>this.showItems(items));},
   showItems(items){this.setData({items:items.map(item=>({...item,label:LABELS[item.status],canCancel:item.status==='pending'}))});},
   onRefresh(){return this.load();},

@@ -1,6 +1,7 @@
 const ui = require('../../services/ui');
 const { createNoteDrafts } = require('../../services/note-drafts');
 const { features } = require('../../services/features-client');
+const PIN_READ_ERROR = '暂时未读取到置顶设置，打卡不受影响';
 
 function drafts() {
   const app = getApp();
@@ -19,12 +20,22 @@ Page(ui.withLifecycle({
   async onShow() {
     const service = features();
     if (!service.status().enabled) return;
-    const key = ui.contextKey();
     const showVersion = this._showVersion;
+    let key;
     try {
+      await Promise.resolve(getApp().dataReady);
+      if (this._gone || this._visible === false || this._showVersion !== showVersion) return;
+      key = ui.contextKey();
       await service.preferences();
-      if (ui.isCurrentView(this, key, showVersion)) this.refresh();
-    } catch (_) { if (ui.isCurrentView(this, key, showVersion)) this.setData({ pinError: '暂时未读取到置顶设置，打卡不受影响' }); }
+      if (ui.isCurrentView(this, key, showVersion)) {
+        if (this.data.pinError === PIN_READ_ERROR) this.setData({ pinError: '' });
+        this.refresh();
+      }
+    } catch (_) {
+      if (ui.isCurrentView(this, key, showVersion) && (!this.data.pinError || this.data.pinError === PIN_READ_ERROR)) {
+        this.setData({ pinError: PIN_READ_ERROR });
+      }
+    }
   },
   refresh() {
     if (!this._id) { this.setData({ loading: false, dataReady: false, dataUnavailable: false, invalid: true,
@@ -34,7 +45,7 @@ Page(ui.withLifecycle({
       const draft = drafts().read(context, this._id);
       if (this._draftContext && this._draftContext !== context) {
         // Do not leave another account/generation's text visible if this habit no longer exists.
-        this.setData({ note: '', noteDirty: false, noteExpired: false, title: '', task: null,
+        this.setData({ note: '', noteDirty: false, noteExpired: false, title: '', task: null, pinError: '',
           history: [], dataReady: false, dataUnavailable: true });
       }
       this._draftContext = context;

@@ -1,4 +1,4 @@
-// Enable only after server identity, moderation, quota and real-device checks.
-// No API keys or model provider credentials belong in the mini-program package.
+// 允许主动申请 AI；服务端仍检查身份、审核目录和真实预算。
+// 密钥只在服务端；客户端开关不代表云端已经配置或部署。
 const { planFunction } = require('./cloud-resources');
-module.exports = { enabled: false, functionName: planFunction, timeoutMs: 12000 };
+module.exports = { enabled: true, functionName: planFunction, timeoutMs: 12000 };

@@ -1,0 +1,39 @@
+[
+  {
+    "theme": "mist",
+    "selector": ".direction-option",
+    "size": {
+      "width": 173,
+      "height": 48
+    }
+  },
+  {
+    "theme": "mist",
+    "selector": ".minute-option",
+    "size": {
+      "width": 66,
+      "height": 44
+    }
+  },
+  {
+    "theme": "mist",
+    "selector": ".generate-button",
+    "size": {
+      "width": 354,
+      "height": 48
+    }
+  },
+  {
+    "theme": "mist",
+    "selector": ".rules-button",
+    "size": {
+      "width": 354,
+      "height": 50
+    }
+  },
+  {
+    "theme": "mist",
+    "previewSource": "ai",
+    "level": "F"
+  }
+]

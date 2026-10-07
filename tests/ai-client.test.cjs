@@ -5,6 +5,15 @@ const {ruleSuggestion}=require('../miniprogram/core/plan-assistant');
 const input={direction:'read',minutes:5,weekdays:[1],time:''};
 const cloud={enabled:true,functionName:'jiancheng_daka_api',envId:'fixture-shared',mode:'shared',resourceAppid:'wx1234567890abcdef'};
 const config={enabled:true,functionName:'jiancheng_daka_plan',timeoutMs:30};
+test('successful AI is reused in memory, bounded by account and day, and returned as a copy',async()=>{
+  let time=Date.now(),calls=0;const s={ready:true,accountId:'a',epoch:'e',pending:0};
+  const service=createPlanAssistant({},cloud,config,{clock:()=>time,session:{status:()=>({...s})},transportFactory:()=>async r=>{
+    calls++;return {ok:true,source:'ai',moderated:true,safetyMode:'allowlist-v1',operationId:r.operationId,draft:ruleSuggestion(r.input).draft};}});
+  const first=await service.generate(input,true);first.draft.title='changed';
+  assert.equal((await service.generate(input,true)).draft.title,'读一会儿');assert.equal(calls,1);
+  s.epoch='new';await service.generate(input,true);assert.equal(calls,2);
+  time+=86400000;await service.generate(input,true);assert.equal(calls,3);
+});
 test('AI uses only shared instance, retries same request after network loss and rejects account-switch response',async()=>{
   const status={ready:true,accountId:'a',epoch:'e',pending:0},calls=[],constructed=[];let lose=true,change=false;
   const wx={cloud:{init(){throw Error('default init forbidden');},callFunction(){throw Error('default call forbidden');},

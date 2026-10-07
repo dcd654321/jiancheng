@@ -1,0 +1,123 @@
+{
+  "level": "F",
+  "cases": [
+    {
+      "direction": "read",
+      "minutes": "1",
+      "target": 1,
+      "minimum": null
+    },
+    {
+      "direction": "read",
+      "minutes": "2",
+      "target": 2,
+      "minimum": 1
+    },
+    {
+      "direction": "read",
+      "minutes": "5",
+      "target": 5,
+      "minimum": 2
+    },
+    {
+      "direction": "read",
+      "minutes": "60",
+      "target": 5,
+      "minimum": 2
+    },
+    {
+      "direction": "study",
+      "minutes": "1",
+      "target": 1,
+      "minimum": null
+    },
+    {
+      "direction": "study",
+      "minutes": "2",
+      "target": 2,
+      "minimum": 1
+    },
+    {
+      "direction": "study",
+      "minutes": "5",
+      "target": 5,
+      "minimum": 2
+    },
+    {
+      "direction": "study",
+      "minutes": "60",
+      "target": 5,
+      "minimum": 2
+    },
+    {
+      "direction": "tidy",
+      "minutes": "1",
+      "target": 1,
+      "minimum": null
+    },
+    {
+      "direction": "tidy",
+      "minutes": "2",
+      "target": 2,
+      "minimum": 1
+    },
+    {
+      "direction": "tidy",
+      "minutes": "5",
+      "target": 5,
+      "minimum": 2
+    },
+    {
+      "direction": "tidy",
+      "minutes": "60",
+      "target": 5,
+      "minimum": 2
+    },
+    {
+      "direction": "walk",
+      "minutes": "1",
+      "target": 1,
+      "minimum": null
+    },
+    {
+      "direction": "walk",
+      "minutes": "2",
+      "target": 2,
+      "minimum": 1
+    },
+    {
+      "direction": "walk",
+      "minutes": "5",
+      "target": 5,
+      "minimum": 2
+    },
+    {
+      "direction": "walk",
+      "minutes": "60",
+      "target": 5,
+      "minimum": 2
+    }
+  ],
+  "invalidWeekdaysScroll": [
+    {
+      "selector": "#field-weekdays",
+      "ok": true
+    }
+  ],
+  "confirm": {
+    "route": "pages/edit/index",
+    "target": "5",
+    "minimum": "2",
+    "weekdays": [
+      1,
+      3,
+      5
+    ],
+    "time": "20:30"
+  },
+  "accountRecovery": {
+    "blockedBeforeReread": true,
+    "actualRecoveryTap": true,
+    "requiresNewConsent": true
+  }
+}

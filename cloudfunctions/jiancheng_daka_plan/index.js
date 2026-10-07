@@ -9,7 +9,7 @@ cloud.init({env:cloud.DYNAMIC_CURRENT_ENV});
 let limiter;
 exports.main=async event=>{
   const env=process.env;
-  if(['HABIT_AI_ENABLED','HABIT_AI_STORAGE_READY','HABIT_AI_BUDGET_VERIFIED','HABIT_AI_CATALOG_VERIFIED','HABIT_IDENTITY_VERIFIED',
+  if(env.HABIT_AI_ENABLED==='false'||['HABIT_AI_STORAGE_READY','HABIT_AI_BUDGET_VERIFIED','HABIT_AI_CATALOG_VERIFIED','HABIT_IDENTITY_VERIFIED',
     'HABIT_MINIPROGRAM_ONLY','HABIT_LIMITS_VERIFIED','HABIT_SIDECAR_CLEANUP_ENABLED'].some(k=>env[k]!=='true')||!env.HABIT_APP_ID)return {ok:false,code:'NOT_ENABLED',message:'AI服务尚未开放，可使用本机规则建议'};
   try{
     if(env.HABIT_AI_PROVIDER!=='deepseek')throw Error('AI_PROVIDER_NOT_CONFIGURED');

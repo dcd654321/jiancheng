@@ -11,7 +11,12 @@ Page(ui.withLifecycle({
     this.setData({ enabled: features().status().enabled, busy: !!this._featureBusy });
     ui.read(this, () => {});
   },
-  async onShow() { await Promise.resolve(getApp().dataReady); if (!this._gone && this._visible) { this.refresh(); if (this.data.enabled && this.data.dataReady) this.load(false); } },
+  async onShow() {
+    const showVersion = this._showVersion;
+    try { await Promise.resolve(getApp().dataReady); } catch (_) { /* 核心读取失败由页面恢复入口处理。 */ }
+    if (this._gone || this._visible === false || this._showVersion !== showVersion) return;
+    this.refresh(); if (this.data.enabled && this.data.dataReady) this.load(false);
+  },
   load(more) {
     return pageWork.run(this, service => service.list(more ? this.data.nextCursor : null), result => {
       const items = result.items.map(item => ({ ...item, title: present(item.publicSnapshot).title,

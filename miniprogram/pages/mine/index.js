@@ -6,15 +6,18 @@ const { APP_NAME } = require('../../config/brand');
 Page(ui.withLifecycle({
   ...actions,
   data: { ...actions.data, sharingEnabled: false, remindersEnabled: false,
-    appearanceEnabled: false, appearanceLabel: '', appearancePending: false },
+    appearanceEnabled: false, appearanceLabel: '', appearancePending: false, aiEnabled: false },
   refresh() {
     actions.refresh.call(this);
     const theme = themeSnapshot();
+    const assistant = getApp().planAssistant;
     this.setData({ sharingEnabled: features().status().enabled, remindersEnabled: features().status().reminders,
+      aiEnabled: !!(assistant && typeof assistant.status === 'function' && assistant.status().configured),
       appearanceEnabled: theme.enabled, appearancePending: !!theme.pendingTheme,
       appearanceLabel: theme.pendingTheme ? '主题保存结果待核对' : theme.themeName });
   },
   onAppearance() { wx.navigateTo({ url: '/pages/appearance/index' }); },
+  onAssistant() { wx.navigateTo({ url: '/pages/assistant/index' }); },
   onReminders() { wx.navigateTo({url:'/pages/reminder/index'}); },
   onShares() { wx.navigateTo({ url: '/pages/share-list/index' }); },
   onShareAppMessage() { return { title: APP_NAME + '：再忙，也能做一点', path: '/pages/today/index' }; },

@@ -105,7 +105,7 @@ test('first-run empty state exposes value, dual-tier templates and a clear secon
   assert.match(markup, /给习惯准备平时和忙时两个目标，做完再记下。/);
   for (const tpl of ['read', 'walk', 'study', 'tidy']) assert.match(markup, new RegExp('data-template="' + tpl + '"'));
   assert.match(markup, /自己设一个/);
-  assert.doesNotMatch(markup, /帮我定个起点|onAssistant/, '助手入口已按用户要求移除');
+  assert.match(markup, /wx:if="\{\{aiEnabled\}\}".*bindtap="onAssistant"/, 'AI开启时在创建区域提供入口');
   assert.match(markup, /<button wx:if="\{\{hasHabits\}\}" class="add-button"/);
   assert.match(markup, /skeleton skeleton-card/);
   assert.match(markup, /暂时没能读取记录/);

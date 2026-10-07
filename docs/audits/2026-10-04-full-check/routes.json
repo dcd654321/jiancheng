@@ -1,0 +1,172 @@
+{
+  "level": "F",
+  "routes": [
+    {
+      "route": "pages/today/index",
+      "theme": "mist",
+      "loading": false,
+      "dataReady": true,
+      "errorVisible": false,
+      "guardedDisabledFeature": false
+    },
+    {
+      "route": "pages/progress/index",
+      "theme": "mist",
+      "loading": false,
+      "dataReady": true,
+      "errorVisible": false,
+      "guardedDisabledFeature": false
+    },
+    {
+      "route": "pages/mine/index",
+      "theme": "mist",
+      "loading": false,
+      "dataReady": true,
+      "errorVisible": false,
+      "guardedDisabledFeature": false
+    },
+    {
+      "route": "pages/edit/index",
+      "theme": "mist",
+      "loading": false,
+      "dataReady": true,
+      "errorVisible": false,
+      "guardedDisabledFeature": false
+    },
+    {
+      "route": "pages/detail/index",
+      "theme": "mist",
+      "loading": false,
+      "dataReady": true,
+      "errorVisible": false,
+      "guardedDisabledFeature": false
+    },
+    {
+      "route": "pages/manage/index",
+      "theme": "mist",
+      "loading": false,
+      "dataReady": true,
+      "errorVisible": false,
+      "guardedDisabledFeature": false
+    },
+    {
+      "route": "pages/sync/index",
+      "theme": "mist",
+      "loading": false,
+      "errorVisible": false,
+      "guardedDisabledFeature": false
+    },
+    {
+      "route": "pages/data/index",
+      "theme": "mist",
+      "loading": false,
+      "dataReady": true,
+      "errorVisible": false,
+      "guardedDisabledFeature": false
+    },
+    {
+      "route": "pages/share-create/index",
+      "theme": "mist",
+      "loading": false,
+      "dataReady": true,
+      "errorVisible": false,
+      "guardedDisabledFeature": true
+    },
+    {
+      "route": "pages/share-list/index",
+      "theme": "mist",
+      "loading": false,
+      "dataReady": true,
+      "errorVisible": false,
+      "guardedDisabledFeature": true
+    },
+    {
+      "route": "pages/share-view/index",
+      "theme": "mist",
+      "loading": false,
+      "errorVisible": true,
+      "guardedDisabledFeature": true
+    },
+    {
+      "route": "pages/reminder/index",
+      "theme": "mist",
+      "loading": false,
+      "dataReady": true,
+      "errorVisible": false,
+      "guardedDisabledFeature": true
+    },
+    {
+      "route": "pages/appearance/index",
+      "theme": "mist",
+      "loading": false,
+      "dataReady": true,
+      "errorVisible": false,
+      "guardedDisabledFeature": false
+    },
+    {
+      "route": "pages/assistant/index",
+      "theme": "mist",
+      "loading": false,
+      "dataReady": true,
+      "errorVisible": false,
+      "guardedDisabledFeature": false
+    },
+    {
+      "route": "pages/today/index",
+      "theme": "paper",
+      "loading": false,
+      "dataReady": true,
+      "errorVisible": false,
+      "guardedDisabledFeature": false
+    },
+    {
+      "route": "pages/progress/index",
+      "theme": "paper",
+      "loading": false,
+      "dataReady": true,
+      "errorVisible": false,
+      "guardedDisabledFeature": false
+    },
+    {
+      "route": "pages/mine/index",
+      "theme": "paper",
+      "loading": false,
+      "dataReady": true,
+      "errorVisible": false,
+      "guardedDisabledFeature": false
+    },
+    {
+      "route": "pages/edit/index",
+      "theme": "paper",
+      "loading": false,
+      "dataReady": true,
+      "errorVisible": false,
+      "guardedDisabledFeature": false
+    },
+    {
+      "route": "pages/detail/index",
+      "theme": "paper",
+      "loading": false,
+      "dataReady": true,
+      "errorVisible": false,
+      "guardedDisabledFeature": false
+    },
+    {
+      "route": "pages/appearance/index",
+      "theme": "paper",
+      "loading": false,
+      "dataReady": true,
+      "errorVisible": false,
+      "guardedDisabledFeature": false
+    },
+    {
+      "route": "pages/assistant/index",
+      "theme": "paper",
+      "loading": false,
+      "dataReady": true,
+      "errorVisible": false,
+      "guardedDisabledFeature": false
+    }
+  ],
+  "invalidDetail": true
+}

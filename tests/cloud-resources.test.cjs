@@ -30,7 +30,7 @@ test('渐成打卡所有新云资源使用同一专属前缀，构建目录与�
   assert.equal(fs.existsSync(path.join(legacyFunction, 'index.js')), false);
   assert.equal(fs.existsSync(path.join(legacyFunction, 'package.json')), false);
   assert.equal(require('../miniprogram/config/ai').functionName, names.planFunction);
-  assert.equal(require('../miniprogram/config/ai').enabled, false);
+  assert.equal(require('../miniprogram/config/ai').enabled, true);
 });
 
 test('目标按版本解析：开发/体验连共享测试环境，正式连共享正式环境，缓存范围独立', () => {

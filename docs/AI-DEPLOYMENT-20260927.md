@@ -1,5 +1,7 @@
 # AI 计划增强启用清单
 
+2026-10-02 更新：客户端开关、助手入口和云函数独立产品开关已在本地 dev 开放，`HABIT_AI_ENABLED=false` 可关闭。其余身份/目录/清理验证门禁和真实密钥/预算配置继续必需；本轮没有部署或真实模型调用。当前 UI 与验证记录见 [AI开放与交互优化](AI-UI-OPTIMIZATION-20261002.md)。
+
 本轮只完成本地实现和模拟验证，没有真实模型请求或付费，也没有选择/购买套餐。现有基础建议离线可用，AI 失败不影响打卡。
 
 ## 功能与数据
@@ -24,7 +26,7 @@
 
 ## 门禁与恢复
 
-入口要求 `HABIT_AI_ENABLED`、`HABIT_AI_STORAGE_READY`、`HABIT_AI_BUDGET_VERIFIED`、`HABIT_AI_CATALOG_VERIFIED` 以及现有身份/小程序专属调用/限流/旁路清理门禁全部为 true。客户端还需 AI 开关及已验收的正式主 API；旧 habitApi 环境不调用新 AI。
+独立产品开关默认开放，`HABIT_AI_ENABLED=false` 停止申请；入口仍要求 `HABIT_AI_STORAGE_READY`、`HABIT_AI_BUDGET_VERIFIED`、`HABIT_AI_CATALOG_VERIFIED` 以及现有身份/小程序专属调用/限流/旁路清理门禁全部为 true。客户端还需 AI 开关及受支持的主 API；旧 habitApi 环境不调用新 AI。
 
 先事务预留，再调用模型；同 operationId/指纹只付费尝试一次，成功重复返回同结果，pending/unknown 不再调用。失败和超时不退还预留，避免实际已计费时放大开销。超过 90 秒的在途回执只可标 unknown；新的明确操作可用剩余额度，但原请求永不重发。
 

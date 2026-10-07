@@ -1,0 +1,33 @@
+.assistant-page { padding-bottom: calc(36px + env(safe-area-inset-bottom)); }
+.assistant-field { margin-top: 18px; }
+.assistant-field .field-label { margin-bottom: 8px; }
+.direction-options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.direction-option { display: flex; align-items: center; justify-content: space-between; gap: 4px; min-height: 48px; padding: 10px 12px; border: 1px solid var(--color-control-border, #819086); border-radius: 12px; background: var(--color-surface, #fff); text-align: left; }
+.direction-option.selected, .minute-option.selected { border: 2px solid var(--color-primary, #486557); background: var(--color-soft, #F1F4EF); color: var(--color-primary, #486557); font-weight: 600; }
+.selection-mark { font-size: 14px; font-weight: 400; flex-shrink: 0; }
+.minute-options { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; }
+.minute-option { min-height: 44px; border: 1px solid var(--color-control-border, #819086); border-radius: 10px; background: var(--color-surface, #fff); }
+.custom-input { margin-top: 10px; }
+.input.invalid { border: 2px solid var(--color-error, #A33D2A); box-shadow: none; }
+.minute-hint { margin-top: 8px; }
+.schedule-control { margin-top: 18px; }
+.schedule-fields { padding: 0 4px; }
+.consent { display: flex; align-items: flex-start; gap: 8px; min-height: 44px; padding: 8px 0; font-size: 14px; line-height: 1.5; }
+.consent checkbox { flex-shrink: 0; }
+.generation-area { margin-top: 16px; }
+.privacy-toggle { padding-left: 0; text-align: left; }
+.privacy-copy { margin-top: 0; }
+.generate-button { margin-top: 8px; }
+.consent-hint, .rule-hint, .preview-footnote { margin-top: 8px; }
+.rules-button { margin-top: 12px; }
+.request-error { margin-top: 16px; margin-bottom: 0; }
+.preview { padding: 18px 16px; margin-top: 28px; overflow-wrap: anywhere; }
+.preview-source { color: var(--color-primary, #486557); font-size: 14px; font-weight: 600; }
+.result-title { font-size: 22px; font-weight: 600; line-height: 1.4; margin: 10px 0; }
+.preview-action { font-size: 16px; line-height: 1.6; }
+.preview-goals { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+.goal { flex: 1; min-width: 96px; padding: 12px; border-radius: 12px; background: var(--color-soft, #F1F4EF); }
+.busy-goal { background: var(--color-busy-bg, #EDF1E2); }
+.goal-value { font-size: 26px; font-weight: 600; margin-top: 4px; }
+.goal-unit { font-size: 14px; font-weight: 400; }
+@media (max-width: 359px) { .minute-options { gap: 4px; } .direction-option { padding: 10px; } }
