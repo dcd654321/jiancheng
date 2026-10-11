@@ -22,10 +22,12 @@ function createCloudSession(wxApi, config, transportFactory = createCloudTranspo
   let networkOffline = false;
   let lastError = '';
   let lastSyncedAt = '';
+  let lastConfirmedAt = 0;
   let lastAttemptAt = 0;
   let transport = null;
   let notificationQueued = false;
   const listeners = new Set();
+  const confirmationListeners = new Set();
   const now = typeof options.now === 'function' ? options.now : Date.now;
   const newId = typeof options.newId === 'function' ? options.newId
     : () => 'op_' + now().toString(36) + '_' + Math.random().toString(36).slice(2, 12);
@@ -69,7 +71,7 @@ function createCloudSession(wxApi, config, transportFactory = createCloudTranspo
     return {
       configured,
       connected: !!snapshot,
-      ready: !!snapshot && phase === 'ready',
+      ready: !!snapshot && phase === 'ready' && !networkOffline,
       // 已有本账户已确认快照但当前阶段不可写（离线/待核对）：页面可只读呈现，不创建本机快照。
       stale: !!snapshot && phase !== 'ready',
       phase,
@@ -105,15 +107,22 @@ function createCloudSession(wxApi, config, transportFactory = createCloudTranspo
 
   function acceptSnapshot(value) {
     validate(value);
+    acceptValidatedSnapshot(value);
+  }
+
+  function acceptValidatedSnapshot(value) {
     snapshot = clone(value);
-    phase = 'ready';
-    lastError = '';
-    lastSyncedAt = new Date(now()).toISOString();
+    // 请求发出后可能先收到断网通知，再收到合法的云回执。
+    // 确认数据仍应接收，页面须继续只读，等待联网恢复重新读取。
+    phase = networkOffline ? 'offline' : 'ready';
+    lastError = networkOffline ? '当前无网络，云端记录不可用' : '';
+    lastConfirmedAt = now();
+    lastSyncedAt = new Date(lastConfirmedAt).toISOString();
     notify();
   }
 
   function ensureReadable() {
-    if (!snapshot || phase !== 'ready') throw Error(lastError || '云端记录尚未读取，请联网重试');
+    if (!snapshot || phase !== 'ready' || networkOffline) throw Error(lastError || '云端记录尚未读取，请联网重试');
   }
 
   async function pull() {
@@ -172,8 +181,10 @@ function createCloudSession(wxApi, config, transportFactory = createCloudTranspo
         if (result.snapshot) {
           try { acceptSnapshot({ ok: true, ...result.snapshot }); }
           catch (_) { phase = 'offline'; }
-        } else phase = snapshot ? 'ready' : 'offline';
-        lastError = result.message || '云端未接受本次操作，请刷新后重试';
+        } else phase = snapshot && !networkOffline ? 'ready' : 'offline';
+        lastError = event.command && event.command.type === 'deleteHabit'
+          && ['INVALID_REQUEST', 'INVALID_COMMAND'].includes(result.code) && /不支持.*操作/.test(result.message || '')
+          ? '删除功能暂不可用，请稍后重试。' : result.message || '云端未接受本次操作，请刷新后重试';
       }
       notify();
       throw Error(lastError);
@@ -186,7 +197,13 @@ function createCloudSession(wxApi, config, transportFactory = createCloudTranspo
       throw error;
     }
     pendingEvent = null;
-    acceptSnapshot(result);
+    acceptValidatedSnapshot(result);
+    // 只在账户/操作/版本均匹配的合法回执之后通知，包括原请求的重试回执。
+    const confirmation = { accountId: result.accountId, epoch: event.epoch, operationId: event.operationId,
+      command: event.command ? clone(event.command) : null };
+    confirmationListeners.forEach(listener => {
+      try { listener(clone(confirmation)); } catch (_) { /* Views cannot interrupt acknowledged cloud work. */ }
+    });
     return event.action === 'purge' ? { state: clone(snapshot.state) } : clone(snapshot.state);
   }
 
@@ -231,7 +248,7 @@ function createCloudSession(wxApi, config, transportFactory = createCloudTranspo
   async function foregroundWork(force) {
     if (activeWork) await activeWork;
     if (pendingEvent) return retry();
-    if (!snapshot || phase !== 'ready' || force || now() - lastAttemptAt >= 30000) return refresh();
+    if (!snapshot || phase !== 'ready' || force || now() - lastConfirmedAt >= 30000) return refresh();
     return status();
   }
 
@@ -279,6 +296,7 @@ function createCloudSession(wxApi, config, transportFactory = createCloudTranspo
       notify();
     },
     subscribe(listener) { listeners.add(listener); return () => listeners.delete(listener); },
+    subscribeConfirmed(listener) { confirmationListeners.add(listener); return () => confirmationListeners.delete(listener); },
     read() { ensureReadable(); return clone(snapshot.state); },
     // 只读回退：仅在网络失败（非写入待核对、非删除中）时返回确认过的快照，
     // 用于刷新失败后的只读呈现；不落磁盘、不构成离线写队列。

@@ -3,7 +3,6 @@ const assert = require('node:assert/strict');
 const path = require('node:path');
 const fs = require('node:fs');
 const { createStore, STORAGE_KEY } = require('./legacy/store.cjs');
-const { createPlanAssistant } = require('../miniprogram/services/plan-assistant');
 const { fields } = require('../miniprogram/services/plan-form');
 const domain = require('../miniprogram/core/habits');
 const dates = require('../miniprogram/core/date');
@@ -15,7 +14,7 @@ function harness(t) {
     navigateTo: o => nav.push(o.url), navigateBack() {}, switchTab: o => nav.push(o.url),
     env: { USER_DATA_PATH: '/files' }, shareFileMessage: o => sends.push(o),
     getFileSystemManager: () => ({ writeFile: o => { writes.push(o); o.success(); }, unlinkSync() {}, renameSync() {} }) };
-  const store = createStore(wx), app = { store, planAssistant: createPlanAssistant(wx, {}, {}) };
+  const store = createStore(wx), app = { store };
   global.wx = wx; global.getApp = () => app;
   const pages = []; t.after(() => pages.forEach(p => p.onUnload()));
   function page(name, options={}) {
@@ -76,16 +75,24 @@ test('first-habit guidance names the actual future execution date and expires on
   const original=dates.today; dates.today=()=> dates.shift(day,1);
   try { today.refresh(); assert.equal(today.data.firstHabitGuide,''); } finally { dates.today=original; }
 });
-test('compact create keeps optional values while the busy-day target stays in the main form', t => {
+test('custom create shows the optional busy-day target directly and retains other optional values', t => {
   const h=harness(t), p=h.page('edit'); assert.equal(p.data.moreOpen,false); assert.equal(p.data.compact,false);
-  p.onMore(); p.onTime(e({},'21:30')); p.onAddMinimum(); p.onInput(e({field:'minimum'},'2')); p.onStart(e({offset:1})); p.onMore(); p.refresh();
+  assert.equal(p.data.minimum,'', '默认可见输入不自动设置忙时数值');
+  p.onMore(); p.onTime(e({},'21:30')); p.onInput(e({field:'minimum'},'2')); p.onStart(e({offset:1})); p.onMore(); p.refresh();
   assert.equal(p.data.moreOpen,false); assert.equal(p.data.time,'21:30'); assert.equal(p.data.minimum,'2');
   assert.equal(p.data.moreSummary,'21:30'); assert.doesNotMatch(p.data.moreSummary,/忙时|2分钟|明天/);
   const markup=fs.readFileSync(path.resolve(__dirname,'../miniprogram/pages/edit/index.wxml'),'utf8');
   assert.ok(markup.indexOf('id="field-minimum"') < markup.indexOf('id="field-weekdays"'));
+  const minimumField=markup.slice(markup.indexOf('<view id="field-minimum"'), markup.indexOf('<view class="form-field">', markup.indexOf('<view id="field-minimum"')));
+  assert.match(minimumField, /for="minimum">忙时目标（选填）<\/label>/);
+  assert.match(minimumField, /<input id="minimum"/);
+  assert.doesNotMatch(minimumField, /addingMinimum|onAddMinimum|wx:else/);
+  p.onRemoveMinimum(); p.refresh();
+  assert.equal(p.data.minimum,''); assert.equal(p.data.fieldErrors.minimum,'');
+  assert.equal(domain.validatePlan({...p.data,title:'读书'}).minimum,null, '清空后仍可以不设置忙时目标');
   assert.equal(h.store.read().habits.length,0);
 });
-test('template entry uses the compact confirmation with the read defaults and one-time draft consumption', t => {
+test('template entry uses the compact confirmation with the read defaults and explicit creation', t => {
   const h=harness(t), p=h.page('edit',{template:'read'});
   assert.equal(p.data.compact,true); assert.equal(p.data.title,'读一会儿'); assert.equal(p.data.target,'30'); assert.equal(p.data.minimum,'10');
   assert.equal(p.data.unit,'分钟'); assert.equal(p.data.startOffset,0); assert.equal(p.data.frequencyLabel,'每天');
@@ -95,14 +102,20 @@ test('template entry uses the compact confirmation with the read defaults and on
   assert.equal(h.store.read().habits[0].versions[0].target,30);
   assert.equal(h.store.read().habits[0].versions[0].minimum,10);
 });
-test('custom and edit entries keep the full form while drafts cannot be re-consumed after reload', t => {
+test('custom and edit entries keep the full form', t => {
   const h=harness(t), custom=h.page('edit'); assert.equal(custom.data.compact,false);
   h.seed(); const edit=h.page('edit',{id:'read'}); assert.equal(edit.data.compact,false); assert.equal(edit.data.editing,true);
-  const { ruleSuggestion } = require('../miniprogram/core/plan-assistant');
-  const token=h.app.planAssistant.handoff(ruleSuggestion({ direction:'read', minutes:5, weekdays:[1,2,3], time:'' }), 'cloud');
-  const compact=h.page('edit',{draft:token}); assert.equal(compact.data.compact,true); assert.equal(compact.data.weekdays.length,3);
-  compact.onInput(e({field:'title'},'改过的名字')); compact.refresh();
-  assert.equal(compact.data.title,'改过的名字', 'refresh keeps user input instead of re-reading a consumed draft');
+});
+
+test('retired assistant draft links show a recoverable stop and cannot create a habit', async t => {
+  const h = harness(t), p = h.page('edit', { draft: 'retired-local-token' });
+  assert.equal(p._invalidDraft, true); assert.match(p.data.error, /入口已停用/);
+  p.refresh(); assert.match(p.data.error, /入口已停用/);
+  p.onInput(e({ field: 'title' }, '不应创建的习惯')); await p.onSave();
+  assert.equal(p.data.saving, false); assert.equal(h.store.read().habits.length, 0);
+  assert.match(p.data.error, /入口已停用/);
+  assert.equal(h.nav.length, 0); assert.equal(h.toasts.length, 0);
+  const fresh = h.page('edit'); assert.equal(fresh.data.title, ''); assert.equal(fresh.data.draftRestored, false);
 });
 test('Unicode title cap agrees with domain and validation errors are next to fields', t => {
   const h=harness(t), p=h.page('edit');
@@ -141,11 +154,11 @@ test('invalid detail id shows a reason and exit instead of an endless loading ca
 });
 test('completed group collapse is display-only and completion counts keep their exact meaning', t => {
   const h=harness(t); h.seed(); const p=h.page('today'); p.onComplete(e({id:'read',date:dates.today(),done:false}));
-  assert.equal(p.data.showCompleted,true, '完成后自动展开今日已完成'); const before=h.store.rawBackup();
-  p.onToggleCompleted(); assert.equal(p.data.showCompleted,false); p.onToggleCompleted(); p.refresh(); assert.equal(p.data.showCompleted,true); assert.equal(h.store.rawBackup(),before);
+  assert.equal(p.data.showCompleted,false, '打卡后保留用户的展开选择'); const before=h.store.rawBackup();
+  p.onToggleCompleted(); assert.equal(p.data.showCompleted,true); p.onToggleCompleted(); p.refresh(); assert.equal(p.data.showCompleted,false); assert.equal(h.store.rawBackup(),before);
   const progress=h.page('progress'); assert.equal(progress.data.stats.done,1); assert.equal(progress.data.stats.planned,1);
   assert.equal(progress.data.stats.cells.at(-1).mark,'1/1'); assert.equal(progress.data.stats.cells[0].mark,'休');
-  progress.onToggleHabits(); assert.equal(progress.data.showHabits,true); assert.equal(h.store.rawBackup(),before);
+  assert.equal(h.store.rawBackup(),before);
 });
 test('today task keeps choosing a smaller goal separate from completing it', t => {
   const h=harness(t); h.seed(); const p=h.page('today');
@@ -158,9 +171,9 @@ test('today task keeps choosing a smaller goal separate from completing it', t =
   p.onComplete(e({id:'read',date:dates.today(),done:false}));
   assert.equal(p.data.completed[0].status,'minimum');
   const progress=h.page('progress');
-  assert.equal(progress.data.selected.tasks[0].statusText,'忙时完成');
+  assert.equal(progress.data.selected.tasks[0].statusText,'忙时打卡');
   assert.match(progress.data.selected.description,/忙时1项/);
-  assert.equal(h.page('detail',{id:'read'}).data.history[0].status,'忙时完成');
+  assert.equal(h.page('detail',{id:'read'}).data.history[0].status,'忙时打卡');
   p.onComplete(e({id:'read',date:dates.today(),done:true}));
   p.onRestore(e({id:'read',date:dates.today()}));
   p.onComplete(e({id:'read',date:dates.today(),done:false}));
@@ -174,10 +187,10 @@ test('unconfigured small goal stays unset and target one offers no lower-goal ac
   const markup=fs.readFileSync(path.resolve(__dirname,'../miniprogram/templates/task.wxml'),'utf8');
   assert.match(markup,/task\.originalTarget > 1/); assert.match(markup,/quickMinimumEnabled && task\.minimum/);
   assert.match(markup,/task\.simplified/); assert.match(markup,/恢复今天原目标/);
-  assert.match(markup,/按忙时 ' \+ task\.minimum \+ task\.unit \+ ' 记下/); assert.match(markup,/只调整今天目标（不记录）/);
-  assert.match(markup,/忙时完成/); assert.match(markup,/原目标完成/);
-  assert.match(markup,/今天' \+ task\.target/); assert.match(markup,/忙时 \{\{task\.minimum\}\}/);
-  assert.match(markup,/原计划 \{\{task\.originalTarget\}\}/);
+  assert.match(markup,/record-action-goal">忙时 {{task.minimum}}{{task.unit}}/); assert.match(markup,/只调整今天目标（不打卡）/);
+  assert.match(markup,/忙时打卡/); assert.match(markup,/原目标打卡/);
+  assert.match(markup,/今天目标 ' \+ task\.target/); assert.match(markup,/忙时 \{\{task\.minimum\}\}/);
+  assert.match(markup,/平时目标 \{\{task\.originalTarget\}\}/);
 });
 test('one-tap busy-goal availability follows the config flag and keeps the manual path', t => {
   const h=harness(t); h.seed(); const today=h.page('today');
@@ -224,21 +237,21 @@ test('five scheduled habits keep independent cards and an accurate remaining cou
   assert.equal(p.data.completed[0].id,'habit2');
   assert.equal(Object.keys(h.store.read().records).length,1);
 });
-test('a confirmed completion moves straight into the expanded 今日已完成 group', t => {
+test('a confirmed completion moves into the group without opening it and shows one toast', t => {
   const h=harness(t); h.seed(); const day=dates.today();
   for (const id of ['a','z']) h.store.dispatch({type:'create',id,startDate:day,plan:{title:id,target:5,minimum:2,unit:'分钟',time:'',weekdays:[1,2,3,4,5,6,7]}});
   const p=h.page('today'); assert.deepEqual(p.data.pending.map(t=>t.id),['a','read','z']);
   p.onComplete(e({id:'read',date:day,done:false}));
   assert.deepEqual(p.data.pending.map(t=>t.id),['a','z'], '完成项立刻离开待做，不留原位');
   assert.equal(p.data.completed.some(t=>t.id==='read'), true, '直接进入今日已完成');
-  assert.equal(p.data.showCompleted, true, '自动展开今日已完成');
-  assert.equal(h.toasts.at(-1).title, '已完成 · 第一次', '首次完成带短后缀');
+  assert.equal(p.data.showCompleted, false, '由用户展开今日已打卡');
+  assert.equal(h.toasts.length, 1); assert.equal(h.toasts.at(-1).title, '打卡成功');
   assert.equal(h.toasts.at(-1).icon, 'success', '完成用小弹窗（成功图标）');
   assert.equal(h.store.read().records['a@'+day],undefined);
   // 在分组里撤销回到待做，同时提示已撤销
   p.onComplete(e({id:'read',date:day,done:true}));
   assert.equal(p.data.done,0); assert.equal(p.data.pending.some(t=>t.id==='read'), true);
-  assert.equal(h.toasts.at(-1).title, '已撤销这次记录');
+  assert.equal(h.toasts.at(-1).title, '已撤销打卡');
 });
 test('several completions move into the group immediately and keep accurate counts', t => {
   const h=harness(t); h.seed(); const day=dates.today();
@@ -250,7 +263,7 @@ test('several completions move into the group immediately and keep accurate coun
   assert.equal(p.data.done,2); assert.equal(p.data.minimum,1);
   assert.deepEqual(p.data.pending.map(t=>t.id),order.slice(2), '未完成项保持顺序');
   assert.deepEqual(p.data.completed.map(t=>t.id).sort(),[order[0],order[1]].sort(), '两次完成都立刻归入已完成');
-  assert.equal(p.data.showCompleted, true);
+  assert.equal(p.data.showCompleted, false);
   for (const id of order.slice(2)) p.onComplete(e({id,date:day,done:false}));
   assert.equal(p.data.done,5); assert.equal(p.data.pending.length,0);
 });
@@ -283,7 +296,7 @@ test('undo keeps the note and the adjusted today target while the long-term plan
   assert.equal(record.status,'pending'); assert.equal(record.todayTarget,2);
   assert.equal(record.note,'今天很忙');
   assert.equal(h.store.read().habits[0].versions[0].target,5);
-  assert.equal(h.toasts.at(-1).title,'已撤销这次记录');
+  assert.equal(h.toasts.at(-1).title,'已撤销打卡');
   p.onRestore(e({id:'read',date:day}));
   assert.equal(h.store.read().records['read@'+day].todayTarget,5);
 });
@@ -294,8 +307,8 @@ test('a pending record labels the active operation and locks all write controls'
   const work=p.onComplete(e({id:'read',date:day,done:false}));
   assert.equal(p.data.recordingId,'read','进行中显示在对应的任务行');
   const markup=fs.readFileSync(path.resolve(__dirname,'../miniprogram/templates/task.wxml'),'utf8');
-  assert.equal(p.data.writeBusy,true); assert.equal(p.data.recordingLabel,'正在记录…');
-  assert.match(markup,/recordingId === task\.id && recordingType === 'complete' \? recordingLabel/);
+  assert.equal(p.data.writeBusy,true); assert.equal(p.data.recordingLabel,'正在打卡…');
+  assert.match(markup,/wx:if="\{\{recordingId === task\.id && recordingType === 'complete'\}\}">\{\{recordingLabel\}\}/);
   assert.match(markup,/disabled="\{\{readOnly \|\| writeBusy\}\}"/);
   resolve(); await work;
   assert.equal(p.data.recordingId,'','确认后清除进行中状态');
@@ -314,41 +327,41 @@ test('another record/simplify intent is blocked during a write and undo has its 
   assert.equal(p.onSimplify(e({id:'other',date:day})),false);
   assert.equal(calls,1); assert.equal(h.modals.length,0);
   release(); await work;
-  assert.equal(p.data.completionFeedback.goal,'已按忙时2分钟记下');
+  assert.equal(p.data.completed.find(task=>task.id==='read').target,2); assert.equal(h.toasts.at(-1).title,'打卡成功');
   work=p.onComplete(e({id:'read',date:day,done:true}));
   assert.equal(p.data.recordingLabel,'正在撤销…'); assert.equal(p.data.writeBusy,true);
   assert.equal(p.data.done,1); assert.equal(p.data.completed[0].status,'minimum');
   release(); await work;
-  assert.equal(p.data.done,0); assert.equal(p.data.writeBusy,false); assert.equal(p.data.completionFeedback,null);
+  assert.equal(p.data.done,0); assert.equal(p.data.writeBusy,false); assert.equal(p.data.completionFeedback,undefined);
   assert.equal(p.data.pending.find(task=>task.id==='read').target,2);
 });
 
-test('failed undo keeps confirmed facts and feedback, unlocks controls and gives a recoverable error', async t => {
+test('failed undo keeps confirmed facts, unlocks controls and adds no success toast', async t => {
   const h=harness(t); h.seed(); const p=h.page('today'), day=dates.today();
   p.onCompleteMinimum(e({id:'read',date:day}));
   h.store.dispatch=async()=>{throw Error('模拟拒绝：请重试');};
   await p.onComplete(e({id:'read',date:day,done:true}));
-  assert.equal(p.data.done,1); assert.equal(p.data.completionFeedback.goal,'已按忙时2分钟记下');
+  assert.equal(p.data.done,1); assert.equal(p.data.completed[0].target,2); assert.equal(h.toasts.length,1);
   assert.equal(p.data.writeBusy,false); assert.equal(p.data.recordingId,''); assert.match(p.data.error,/请重试/);
 });
 
-test('completion feedback follows confirmed facts for 1/3/5 tasks and clears on hide, date and context', t => {
+test('single check-in toasts and the completed list remain accurate for 1/3/5 tasks', t => {
   for (const count of [1,3,5]) {
     const h=harness(t); h.seed(); const day=dates.today();
     for(let i=1;i<count;i++) h.store.dispatch({type:'create',id:'h'+i,startDate:day,plan:{title:'任务'+i,target:5,minimum:2,unit:'分钟',time:'',weekdays:[1,2,3,4,5,6,7]}});
     const p=h.page('today'), ids=p.data.pending.map(task=>task.id);
     for(const id of ids) p.onCompleteMinimum(e({id,date:day}));
     assert.equal(p.data.done,count); assert.equal(p.data.completed.length,count);
-    assert.equal(p.data.completionFeedback.id,ids.at(-1)); assert.equal(p.data.completionFeedback.goal,'已按忙时2分钟记下');
-    p.onViewCompleted(); assert.equal(p.data.showCompleted,true);
+    assert.equal(h.toasts.length,count); assert.equal(p.data.completionFeedback,undefined);
+    assert.equal(p.data.showCompleted,false); p.onToggleCompleted(); assert.equal(p.data.showCompleted,true);
     p.onComplete(e({id:ids.at(-1),date:day,done:true}));
-    assert.equal(p.data.completionFeedback,null, '撤销最新项后不重新展示旧反馈');
-    p.onHide(); assert.equal(p.data.completionFeedback,null); p.onShow(); assert.equal(p.data.completionFeedback,null);
+    assert.equal(p.data.done,count-1); assert.equal(p.data.completionFeedback,undefined);
+    p.onHide(); assert.equal(p.data.showCompleted,false); p.onShow(); assert.equal(p.data.completionFeedback,undefined);
     p.onCompleteMinimum(e({id:ids.at(-1),date:day}));
-    h.store.contextKey=()=> 'new-context'; p.refresh(); assert.equal(p.data.completionFeedback,null);
+    h.store.contextKey=()=> 'new-context'; p.refresh(); assert.equal(p.data.completionFeedback,undefined);
     p.onComplete(e({id:ids.at(-1),date:day,done:true})); p.onCompleteMinimum(e({id:ids.at(-1),date:day}));
     const today=dates.today; dates.today=()=> dates.shift(day,1);
-    try { p.refresh(); assert.equal(p.data.completionFeedback,null); }
+    try { p.refresh(); assert.equal(p.data.done,0); assert.equal(p.data.completionFeedback,undefined); }
     finally { dates.today=today; }
   }
 });
@@ -402,21 +415,21 @@ test('tomorrow summary uses future versions, limits visible titles and never mod
 });
 test('help describes the enabled one-tap flow and keeps the two-step fallback wording', t => {
   const h=harness(t); h.seed(); const p=h.page('mine'); p.onHelp();
-  assert.match(h.modals.at(-1).content,/忙时按…记下/);
-  assert.match(h.modals.at(-1).content,/调整本身不会记下/);
+  assert.match(h.modals.at(-1).content,/忙时目标下的“打卡”/);
+  assert.match(h.modals.at(-1).content,/调整本身不会打卡/);
   const ui=require('../miniprogram/services/ui'); const original=ui.quickMinimumEnabled;
   ui.quickMinimumEnabled=false;
   try {
     p.onHelp();
-    assert.doesNotMatch(h.modals.at(-1).content,/忙时按…记下/);
-    assert.match(h.modals.at(-1).content,/调整本身不会记下/);
+    assert.doesNotMatch(h.modals.at(-1).content,/忙时目标下的“打卡”/);
+    assert.match(h.modals.at(-1).content,/调整本身不会打卡/);
   } finally { ui.quickMinimumEnabled=original; }
 });
-test('help and today copy never claim a timer or automatic counting', t => {
+test('help explains manual check-ins while today omits the repeated explanation', t => {
   const h=harness(t); h.seed(); const p=h.page('mine'); p.onHelp();
   assert.match(h.modals.at(-1).content,/不会自动计时/);
   const today=fs.readFileSync(path.resolve(__dirname,'../miniprogram/pages/today/index.wxml'),'utf8');
-  assert.equal((today.match(/做完再记下，不会自动计时。/g)||[]).length,1, '解释只出现一次');
+  assert.doesNotMatch(today, /做完再打卡，不会自动计时。/, '今日页不再显示重复说明');
 });
 test('first created habit is the next visible task, without auto-completion', t => {
   const h=harness(t), edit=h.page('edit',{template:'read'}); edit.onSave();
@@ -425,7 +438,7 @@ test('first created habit is the next visible task, without auto-completion', t 
   h.store.dispatch({type:'create',id:'a_other',startDate:day,plan:other});
   const today=h.page('today');
   assert.equal(today.data.pending[0].id,firstId); assert.equal(today.data.done,0);
-  assert.match(today.data.firstHabitGuide,/做完后，在这里记下/); assert.equal(h.app.firstHabitGuide,null);
+  assert.match(today.data.firstHabitGuide,/做完后，在这里打卡/); assert.equal(h.app.firstHabitGuide,null);
   today.refresh(); assert.equal(today.data.pending[0].id,firstId);
   today.onComplete(e({id:firstId,date:day,done:false})); assert.equal(today.data.firstHabitGuide,'');
 });

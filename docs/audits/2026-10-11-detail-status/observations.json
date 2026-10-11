@@ -1,0 +1,726 @@
+{
+  "level": "isolated native simulator fixture projection",
+  "project": "D:\\codex\\coding\\jiancheng-miniprogram\\qa\\local\\detail-status-20261011\\project",
+  "copiedCurrentTemplates": [
+    "app.wxss",
+    "styles/theme.wxss",
+    "templates/task-summary.wxml",
+    "pages/detail/index.wxml",
+    "pages/detail/index.wxss"
+  ],
+  "handlerEvidence": "Current source onMore/onToggleNote/onEdit single-line handlers; all other event handlers blocked",
+  "realWrites": 0,
+  "cloudCalls": 0,
+  "storageCalls": 0,
+  "blockedEvents": 0,
+  "exceptions": [],
+  "automationRetries": [],
+  "checks": [
+    {
+      "theme": "mist",
+      "fixture": "active-pending",
+      "taskState": "pending",
+      "zeroTaskButtons": true,
+      "moreToggled": true,
+      "futureOnlyInsideMore": true,
+      "cancelFutureVisible": false,
+      "actions": [
+        "明日起暂停",
+        "明日起归档",
+        "删除习惯"
+      ],
+      "rects": [
+        {
+          "id": "",
+          "dataset": {},
+          "left": 19,
+          "right": 371,
+          "top": 345.28125,
+          "bottom": 654.28125,
+          "width": 352,
+          "height": 309
+        },
+        {
+          "id": "",
+          "dataset": {},
+          "left": 19,
+          "right": 371,
+          "top": 397.28125,
+          "bottom": 654.28125,
+          "width": 352,
+          "height": 257
+        },
+        null
+      ],
+      "planAndMoreRetained": true,
+      "editRoute": "/pages/edit/index?id=visual-habit"
+    },
+    {
+      "theme": "mist",
+      "fixture": "active-done",
+      "taskState": "done",
+      "zeroTaskButtons": true,
+      "moreToggled": true,
+      "futureOnlyInsideMore": true,
+      "cancelFutureVisible": false,
+      "actions": [
+        "明日起暂停",
+        "明日起归档",
+        "删除习惯"
+      ],
+      "rects": [
+        {
+          "id": "",
+          "dataset": {},
+          "left": 19,
+          "right": 371,
+          "top": 368.28125,
+          "bottom": 677.28125,
+          "width": 352,
+          "height": 309
+        },
+        {
+          "id": "",
+          "dataset": {},
+          "left": 19,
+          "right": 371,
+          "top": 420.28125,
+          "bottom": 677.28125,
+          "width": 352,
+          "height": 257
+        },
+        null
+      ],
+      "planAndMoreRetained": true
+    },
+    {
+      "theme": "mist",
+      "fixture": "pause-pending",
+      "taskState": "pending",
+      "zeroTaskButtons": true,
+      "moreToggled": true,
+      "futureOnlyInsideMore": true,
+      "cancelFutureVisible": false,
+      "actions": [
+        "撤销暂停",
+        "明日起归档",
+        "删除习惯"
+      ],
+      "rects": [
+        {
+          "id": "",
+          "dataset": {},
+          "left": 19,
+          "right": 371,
+          "top": 345.28125,
+          "bottom": 711.28125,
+          "width": 352,
+          "height": 366
+        },
+        {
+          "id": "",
+          "dataset": {},
+          "left": 19,
+          "right": 371,
+          "top": 397.28125,
+          "bottom": 711.28125,
+          "width": 352,
+          "height": 314
+        },
+        {
+          "id": "",
+          "dataset": {},
+          "left": 35,
+          "right": 355,
+          "top": 442.28125,
+          "bottom": 487.28125,
+          "width": 320,
+          "height": 45
+        }
+      ],
+      "planAndMoreRetained": true
+    },
+    {
+      "theme": "mist",
+      "fixture": "paused",
+      "taskState": "no task",
+      "zeroTaskButtons": true,
+      "moreToggled": true,
+      "futureOnlyInsideMore": true,
+      "cancelFutureVisible": false,
+      "actions": [
+        "明日起恢复",
+        "明日起归档",
+        "删除习惯"
+      ],
+      "rects": [
+        {
+          "id": "",
+          "dataset": {},
+          "left": 19,
+          "right": 371,
+          "top": 210.796875,
+          "bottom": 519.796875,
+          "width": 352,
+          "height": 309
+        },
+        {
+          "id": "",
+          "dataset": {},
+          "left": 19,
+          "right": 371,
+          "top": 262.796875,
+          "bottom": 519.796875,
+          "width": 352,
+          "height": 257
+        },
+        null
+      ],
+      "planAndMoreRetained": true
+    },
+    {
+      "theme": "mist",
+      "fixture": "archive-pending",
+      "taskState": "done",
+      "zeroTaskButtons": true,
+      "moreToggled": true,
+      "futureOnlyInsideMore": true,
+      "cancelFutureVisible": false,
+      "actions": [
+        "撤销归档",
+        "删除习惯"
+      ],
+      "rects": [
+        {
+          "id": "",
+          "dataset": {},
+          "left": 19,
+          "right": 371,
+          "top": 368.28125,
+          "bottom": 678.28125,
+          "width": 352,
+          "height": 310
+        },
+        {
+          "id": "",
+          "dataset": {},
+          "left": 19,
+          "right": 371,
+          "top": 420.28125,
+          "bottom": 678.28125,
+          "width": 352,
+          "height": 258
+        },
+        {
+          "id": "",
+          "dataset": {},
+          "left": 35,
+          "right": 355,
+          "top": 465.28125,
+          "bottom": 510.28125,
+          "width": 320,
+          "height": 45
+        }
+      ],
+      "planAndMoreRetained": true
+    },
+    {
+      "theme": "mist",
+      "fixture": "paused-archive-pending",
+      "taskState": "no task",
+      "zeroTaskButtons": true,
+      "moreToggled": true,
+      "futureOnlyInsideMore": true,
+      "cancelFutureVisible": false,
+      "actions": [
+        "撤销归档",
+        "删除习惯"
+      ],
+      "rects": [
+        {
+          "id": "",
+          "dataset": {},
+          "left": 19,
+          "right": 371,
+          "top": 210.796875,
+          "bottom": 520.796875,
+          "width": 352,
+          "height": 310
+        },
+        {
+          "id": "",
+          "dataset": {},
+          "left": 19,
+          "right": 371,
+          "top": 262.796875,
+          "bottom": 520.796875,
+          "width": 352,
+          "height": 258
+        },
+        {
+          "id": "",
+          "dataset": {},
+          "left": 35,
+          "right": 355,
+          "top": 307.796875,
+          "bottom": 352.796875,
+          "width": 320,
+          "height": 45
+        }
+      ],
+      "planAndMoreRetained": true
+    },
+    {
+      "theme": "mist",
+      "fixture": "archived",
+      "taskState": "no task",
+      "zeroTaskButtons": true,
+      "moreToggled": true,
+      "futureOnlyInsideMore": true,
+      "cancelFutureVisible": false,
+      "actions": [
+        "明日起撤销归档",
+        "删除习惯"
+      ],
+      "rects": [
+        {
+          "id": "",
+          "dataset": {},
+          "left": 19,
+          "right": 371,
+          "top": 210.796875,
+          "bottom": 463.796875,
+          "width": 352,
+          "height": 253
+        },
+        {
+          "id": "",
+          "dataset": {},
+          "left": 19,
+          "right": 371,
+          "top": 262.796875,
+          "bottom": 463.796875,
+          "width": 352,
+          "height": 201
+        },
+        null
+      ],
+      "planAndMoreRetained": true
+    },
+    {
+      "theme": "mist",
+      "fixture": "future-edit",
+      "taskState": "done",
+      "zeroTaskButtons": true,
+      "moreToggled": true,
+      "futureOnlyInsideMore": true,
+      "cancelFutureVisible": true,
+      "actions": [
+        "明日起暂停",
+        "明日起归档",
+        "删除习惯"
+      ],
+      "rects": [
+        {
+          "id": "",
+          "dataset": {},
+          "left": 19,
+          "right": 371,
+          "top": 368.28125,
+          "bottom": 799.28125,
+          "width": 352,
+          "height": 431
+        },
+        {
+          "id": "",
+          "dataset": {},
+          "left": 19,
+          "right": 371,
+          "top": 420.28125,
+          "bottom": 799.28125,
+          "width": 352,
+          "height": 379
+        },
+        {
+          "id": "",
+          "dataset": {},
+          "left": 35,
+          "right": 355,
+          "top": 465.28125,
+          "bottom": 575.28125,
+          "width": 320,
+          "height": 110
+        }
+      ],
+      "planAndMoreRetained": true
+    },
+    {
+      "theme": "mist",
+      "fixture": "resume-pending",
+      "taskState": "no task",
+      "zeroTaskButtons": true,
+      "moreToggled": true,
+      "futureOnlyInsideMore": true,
+      "cancelFutureVisible": true,
+      "actions": [
+        "明日起暂停",
+        "明日起归档",
+        "删除习惯"
+      ],
+      "rects": [
+        {
+          "id": "",
+          "dataset": {},
+          "left": 19,
+          "right": 371,
+          "top": 210.796875,
+          "bottom": 641.796875,
+          "width": 352,
+          "height": 431
+        },
+        {
+          "id": "",
+          "dataset": {},
+          "left": 19,
+          "right": 371,
+          "top": 262.796875,
+          "bottom": 641.796875,
+          "width": 352,
+          "height": 379
+        },
+        {
+          "id": "",
+          "dataset": {},
+          "left": 35,
+          "right": 355,
+          "top": 307.796875,
+          "bottom": 417.796875,
+          "width": 320,
+          "height": 110
+        }
+      ],
+      "planAndMoreRetained": true
+    },
+    {
+      "theme": "mist",
+      "fixture": "unarchive-pending",
+      "taskState": "no task",
+      "zeroTaskButtons": true,
+      "moreToggled": true,
+      "futureOnlyInsideMore": true,
+      "cancelFutureVisible": true,
+      "actions": [
+        "明日起暂停",
+        "明日起归档",
+        "删除习惯"
+      ],
+      "rects": [
+        {
+          "id": "",
+          "dataset": {},
+          "left": 19,
+          "right": 371,
+          "top": 210.796875,
+          "bottom": 641.796875,
+          "width": 352,
+          "height": 431
+        },
+        {
+          "id": "",
+          "dataset": {},
+          "left": 19,
+          "right": 371,
+          "top": 262.796875,
+          "bottom": 641.796875,
+          "width": 352,
+          "height": 379
+        },
+        {
+          "id": "",
+          "dataset": {},
+          "left": 35,
+          "right": 355,
+          "top": 307.796875,
+          "bottom": 417.796875,
+          "width": 320,
+          "height": 110
+        }
+      ],
+      "planAndMoreRetained": true
+    },
+    {
+      "theme": "mist",
+      "fixture": "future-only",
+      "taskState": "no task",
+      "zeroTaskButtons": true,
+      "moreToggled": true,
+      "futureOnlyInsideMore": true,
+      "cancelFutureVisible": false,
+      "actions": [
+        "明日起暂停",
+        "明日起归档",
+        "删除习惯"
+      ],
+      "rects": [
+        {
+          "id": "",
+          "dataset": {},
+          "left": 19,
+          "right": 371,
+          "top": 210.796875,
+          "bottom": 597.796875,
+          "width": 352,
+          "height": 387
+        },
+        {
+          "id": "",
+          "dataset": {},
+          "left": 19,
+          "right": 371,
+          "top": 262.796875,
+          "bottom": 597.796875,
+          "width": 352,
+          "height": 335
+        },
+        {
+          "id": "",
+          "dataset": {},
+          "left": 35,
+          "right": 355,
+          "top": 307.796875,
+          "bottom": 373.796875,
+          "width": 320,
+          "height": 66
+        }
+      ],
+      "planAndMoreRetained": true
+    },
+    {
+      "theme": "paper",
+      "fixture": "active-done",
+      "taskState": "done",
+      "zeroTaskButtons": true,
+      "moreToggled": true,
+      "futureOnlyInsideMore": true,
+      "cancelFutureVisible": false,
+      "actions": [
+        "明日起暂停",
+        "明日起归档",
+        "删除习惯"
+      ],
+      "rects": [
+        {
+          "id": "",
+          "dataset": {},
+          "left": 19,
+          "right": 371,
+          "top": 368.28125,
+          "bottom": 677.28125,
+          "width": 352,
+          "height": 309
+        },
+        {
+          "id": "",
+          "dataset": {},
+          "left": 19,
+          "right": 371,
+          "top": 420.28125,
+          "bottom": 677.28125,
+          "width": 352,
+          "height": 257
+        },
+        null
+      ],
+      "planAndMoreRetained": true,
+      "editRoute": "/pages/edit/index?id=visual-habit"
+    },
+    {
+      "theme": "paper",
+      "fixture": "archive-pending",
+      "taskState": "done",
+      "zeroTaskButtons": true,
+      "moreToggled": true,
+      "futureOnlyInsideMore": true,
+      "cancelFutureVisible": false,
+      "actions": [
+        "撤销归档",
+        "删除习惯"
+      ],
+      "rects": [
+        {
+          "id": "",
+          "dataset": {},
+          "left": 19,
+          "right": 371,
+          "top": 368.28125,
+          "bottom": 678.28125,
+          "width": 352,
+          "height": 310
+        },
+        {
+          "id": "",
+          "dataset": {},
+          "left": 19,
+          "right": 371,
+          "top": 420.28125,
+          "bottom": 678.28125,
+          "width": 352,
+          "height": 258
+        },
+        {
+          "id": "",
+          "dataset": {},
+          "left": 35,
+          "right": 355,
+          "top": 465.28125,
+          "bottom": 510.28125,
+          "width": 320,
+          "height": 45
+        }
+      ],
+      "planAndMoreRetained": true
+    },
+    {
+      "theme": "paper",
+      "fixture": "future-edit",
+      "taskState": "done",
+      "zeroTaskButtons": true,
+      "moreToggled": true,
+      "futureOnlyInsideMore": true,
+      "cancelFutureVisible": true,
+      "actions": [
+        "明日起暂停",
+        "明日起归档",
+        "删除习惯"
+      ],
+      "rects": [
+        {
+          "id": "",
+          "dataset": {},
+          "left": 19,
+          "right": 371,
+          "top": 368.28125,
+          "bottom": 799.28125,
+          "width": 352,
+          "height": 431
+        },
+        {
+          "id": "",
+          "dataset": {},
+          "left": 19,
+          "right": 371,
+          "top": 420.28125,
+          "bottom": 799.28125,
+          "width": 352,
+          "height": 379
+        },
+        {
+          "id": "",
+          "dataset": {},
+          "left": 35,
+          "right": 355,
+          "top": 465.28125,
+          "bottom": 575.28125,
+          "width": 320,
+          "height": 110
+        }
+      ],
+      "planAndMoreRetained": true
+    }
+  ],
+  "screenshots": [
+    "mist-active-pending-collapsed.png",
+    "mist-active-pending-more-open.png",
+    "mist-active-done-collapsed.png",
+    "mist-active-done-more-open.png",
+    "mist-pause-pending-more-open.png",
+    "mist-paused-more-open.png",
+    "mist-archive-pending-collapsed.png",
+    "mist-archive-pending-more-open.png",
+    "mist-paused-archive-pending-more-open.png",
+    "mist-archived-more-open.png",
+    "mist-future-edit-collapsed.png",
+    "mist-future-edit-more-open.png",
+    "mist-resume-pending-more-open.png",
+    "mist-unarchive-pending-more-open.png",
+    "mist-future-only-more-open.png",
+    "paper-active-done-collapsed.png",
+    "paper-active-done-more-open.png",
+    "paper-archive-pending-collapsed.png",
+    "paper-archive-pending-more-open.png",
+    "paper-future-edit-collapsed.png",
+    "paper-future-edit-more-open.png"
+  ],
+  "recoveries": [
+    "The initial launch returned before page metadata existed; a subsequent getCurrentPages confirmed detail and zero guards. Added bounded currentPage waits.",
+    "Stopped the first broad matrix run to limit paper to three representative states; this final run rechecks the mist matrix on one page to avoid repeated navigation."
+  ],
+  "boundary": "Fixture rendering via setData; does not prove successful business writes, production environment, real devices, or account isolation.",
+  "systemInfo": {
+    "brand": "devtools",
+    "model": "iPhone 12/13 (Pro)",
+    "system": "iOS 10.0.1",
+    "platform": "devtools",
+    "benchmarkLevel": -1,
+    "pixelRatio": 3,
+    "screenWidth": 390,
+    "screenHeight": 844,
+    "windowWidth": 390,
+    "windowHeight": 753,
+    "statusBarHeight": 47,
+    "safeArea": {
+      "top": 47,
+      "left": 0,
+      "right": 390,
+      "bottom": 810,
+      "width": 390,
+      "height": 763
+    },
+    "language": "zh_CN",
+    "version": "8.0.5",
+    "fontSizeSetting": 16,
+    "SDKVersion": "3.17.3",
+    "host": {
+      "env": "WeChat"
+    },
+    "enableDebug": false,
+    "mode": "default",
+    "deviceOrientation": "portrait",
+    "bluetoothEnabled": true,
+    "locationEnabled": true,
+    "wifiEnabled": true,
+    "albumAuthorized": true,
+    "cameraAuthorized": true,
+    "locationAuthorized": true,
+    "microphoneAuthorized": true,
+    "notificationAuthorized": true,
+    "notificationAlertAuthorized": true,
+    "notificationBadgeAuthorized": true,
+    "notificationSoundAuthorized": true,
+    "phoneCalendarAuthorized": true,
+    "bluetoothAuthorized": true,
+    "locationReducedAccuracy": true,
+    "devicePixelRatio": 3
+  },
+  "status": "passed",
+  "visualReview": {
+    "result": "passed",
+    "files": [
+      "mist-active-pending-collapsed.png",
+      "mist-active-done-more-open.png",
+      "mist-archive-pending-more-open.png",
+      "mist-paused-archive-pending-more-open.png",
+      "mist-future-edit-more-open.png",
+      "mist-archived-more-open.png",
+      "paper-active-done-collapsed.png",
+      "paper-archive-pending-more-open.png",
+      "paper-future-edit-more-open.png"
+    ],
+    "findings": "Readonly today cards have zero action buttons. Future descriptions and cancellation actions stay within expanded more actions. Paused and archived no-task views retain plan/more. Both theme layouts are readable."
+  },
+  "isolatedProjectClosed": {
+    "command": "cli close --project D:\\codex\\coding\\jiancheng-miniprogram\\qa\\local\\detail-status-20261011\\project",
+    "exitCode": 0
+  },
+  "currentSourceHashesMatch": true
+}

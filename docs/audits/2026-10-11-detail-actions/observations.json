@@ -1,0 +1,192 @@
+{
+  "level": "isolated native simulator",
+  "project": "D:\\codex\\coding\\jiancheng-miniprogram\\qa\\local\\detail-actions-20261011\\project",
+  "copiedCurrentTemplates": [
+    "app.wxss",
+    "styles/theme.wxss",
+    "templates/task.wxml",
+    "pages/detail/index.wxml",
+    "pages/detail/index.wxss",
+    "pages/progress/index.wxml",
+    "pages/progress/index.wxss"
+  ],
+  "handlerEvidence": "Current source single-line handlers extracted into fixture pages",
+  "realWrites": 0,
+  "cloudCalls": 0,
+  "storageCalls": 0,
+  "exceptions": [],
+  "checks": [
+    {
+      "theme": "mist",
+      "controls": [
+        "留一句话（选填）编辑",
+        "调整计划",
+        "更多操作暂停、归档、删除"
+      ],
+      "colors": [
+        {
+          "selector": ".detail-actions",
+          "background": "rgb(255, 255, 255)"
+        },
+        {
+          "selector": ".note-header",
+          "background": "rgb(255, 255, 255)"
+        },
+        {
+          "selector": ".plan-action",
+          "background": "rgb(255, 255, 255)"
+        },
+        {
+          "selector": ".more-header",
+          "background": "rgb(255, 255, 255)"
+        },
+        {
+          "selector": ".more-group",
+          "background": "rgb(255, 255, 255)"
+        }
+      ],
+      "rects": [
+        {
+          "id": "",
+          "dataset": {},
+          "left": 18,
+          "right": 372,
+          "top": 316.28125,
+          "bottom": 475.28125,
+          "width": 354,
+          "height": 159
+        },
+        {
+          "id": "",
+          "dataset": {},
+          "left": 19,
+          "right": 371,
+          "top": 317.28125,
+          "bottom": 369.28125,
+          "width": 352,
+          "height": 52
+        },
+        {
+          "id": "",
+          "dataset": {},
+          "left": 19,
+          "right": 371,
+          "top": 370.28125,
+          "bottom": 422.28125,
+          "width": 352,
+          "height": 52
+        },
+        {
+          "id": "",
+          "dataset": {},
+          "left": 19,
+          "right": 371,
+          "top": 422.28125,
+          "bottom": 474.28125,
+          "width": 352,
+          "height": 52
+        }
+      ],
+      "noteAndMoreIndependent": true,
+      "editRoute": "/pages/edit/index?id=visual-0",
+      "noTaskRetainsPlanAndMore": true,
+      "progressAdjustmentRemoved": true,
+      "progressCollapseCount": 3,
+      "progressExpandedCount": 4,
+      "habitRoute": "/pages/detail/index?id=visual-0"
+    },
+    {
+      "theme": "paper",
+      "controls": [
+        "留一句话（选填）编辑",
+        "调整计划",
+        "更多操作暂停、归档、删除"
+      ],
+      "colors": [
+        {
+          "selector": ".detail-actions",
+          "background": "rgb(255, 254, 250)"
+        },
+        {
+          "selector": ".note-header",
+          "background": "rgb(255, 254, 250)"
+        },
+        {
+          "selector": ".plan-action",
+          "background": "rgb(255, 254, 250)"
+        },
+        {
+          "selector": ".more-header",
+          "background": "rgb(255, 254, 250)"
+        },
+        {
+          "selector": ".more-group",
+          "background": "rgb(255, 254, 250)"
+        }
+      ],
+      "rects": [
+        {
+          "id": "",
+          "dataset": {},
+          "left": 18,
+          "right": 372,
+          "top": 316.28125,
+          "bottom": 475.28125,
+          "width": 354,
+          "height": 159
+        },
+        {
+          "id": "",
+          "dataset": {},
+          "left": 19,
+          "right": 371,
+          "top": 317.28125,
+          "bottom": 369.28125,
+          "width": 352,
+          "height": 52
+        },
+        {
+          "id": "",
+          "dataset": {},
+          "left": 19,
+          "right": 371,
+          "top": 370.28125,
+          "bottom": 422.28125,
+          "width": 352,
+          "height": 52
+        },
+        {
+          "id": "",
+          "dataset": {},
+          "left": 19,
+          "right": 371,
+          "top": 422.28125,
+          "bottom": 474.28125,
+          "width": 352,
+          "height": 52
+        }
+      ],
+      "noteAndMoreIndependent": true,
+      "editRoute": "/pages/edit/index?id=visual-0",
+      "noTaskRetainsPlanAndMore": true,
+      "progressAdjustmentRemoved": true,
+      "progressCollapseCount": 3,
+      "progressExpandedCount": 4,
+      "habitRoute": "/pages/detail/index?id=visual-0"
+    }
+  ],
+  "screenshots": [
+    "mist-detail-collapsed.png",
+    "mist-detail-note-open.png",
+    "mist-detail-more-open.png",
+    "mist-detail-no-task.png",
+    "mist-progress-collapsed.png",
+    "mist-progress-expanded.png",
+    "paper-detail-collapsed.png",
+    "paper-detail-note-open.png",
+    "paper-detail-more-open.png",
+    "paper-detail-no-task.png",
+    "paper-progress-collapsed.png",
+    "paper-progress-expanded.png"
+  ]
+}

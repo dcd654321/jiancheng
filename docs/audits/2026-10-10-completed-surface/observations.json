@@ -1,0 +1,63 @@
+{
+  "level": "isolated native simulator",
+  "realWrites": 0,
+  "cloudCalls": 0,
+  "checks": [
+    {
+      "theme": "mist",
+      "colors": [
+        {
+          "selector": ".completed-group",
+          "background": "rgb(255, 255, 255)",
+          "radius": null
+        },
+        {
+          "selector": ".completed-header",
+          "background": "rgb(255, 255, 255)",
+          "radius": null
+        },
+        {
+          "selector": ".completed-list",
+          "background": "rgb(255, 255, 255)",
+          "radius": null
+        },
+        {
+          "selector": ".completed-row",
+          "background": "rgb(255, 255, 255)",
+          "radius": null
+        }
+      ]
+    },
+    {
+      "theme": "paper",
+      "colors": [
+        {
+          "selector": ".completed-group",
+          "background": "rgb(255, 254, 250)",
+          "radius": null
+        },
+        {
+          "selector": ".completed-header",
+          "background": "rgb(255, 254, 250)",
+          "radius": null
+        },
+        {
+          "selector": ".completed-list",
+          "background": "rgb(255, 254, 250)",
+          "radius": null
+        },
+        {
+          "selector": ".completed-row",
+          "background": "rgb(255, 254, 250)",
+          "radius": null
+        }
+      ]
+    }
+  ],
+  "screenshots": [
+    "mist-expanded.png",
+    "mist-collapsed.png",
+    "paper-expanded.png",
+    "paper-collapsed.png"
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "date": "2026-10-10",
+  "branch": "dev",
+  "scope": "local repairs and read-only test API source inspection",
+  "checks": [
+    { "command": "npm test", "exitCode": 0, "passed": 440, "failed": 0, "skipped": 0 },
+    { "command": "npm run check", "exitCode": 0, "passed": 347 },
+    { "command": "npm run build:cloud", "exitCode": 0, "files": 52 },
+    { "command": "npm run check:cloud", "exitCode": 0, "files": 52 },
+    { "command": "npm run openspec -- validate --all --strict", "exitCode": 0, "passed": 21 },
+    { "command": "node scripts/check-native.cjs", "exitCode": 0, "wxmlInputs": 15, "wxssInputs": 15 },
+    { "command": "git diff --check", "exitCode": 0 },
+    { "command": "node qa/local/prepare-repair-api.cjs", "exitCode": 0, "candidateFiles": 13, "changedFiles": 5, "preservedBaselineFiles": 8 }
+  ],
+  "notVerified": ["real cloud delete transactions", "startup and check-in wall-clock latency", "two accounts and devices", "simulator screenshots", "real device and user acceptance"],
+  "deployed": false,
+  "realAccountDeleted": false,
+  "committed": false,
+  "merged": false
+}

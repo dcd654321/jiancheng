@@ -4,7 +4,6 @@ const d = require('../miniprogram/core/date');
 const h = require('../miniprogram/core/habits');
 const { createStore, STORAGE_KEY } = require('./legacy/store.cjs');
 const { exportCsv } = require('./legacy/csv.cjs');
-const { validateDraft } = require('../miniprogram/core/ai-contract');
 const DAY = '2026-09-10';
 const plan = overrides => ({ title: '读一会儿', target: 10, minimum: 2, unit: '分钟', weekdays: [1,2,3,4,5,6,7], time: '21:30', ...overrides });
 const create = (state = h.emptyState(), overrides = {}, date = DAY, id = 'read') => h.reduce(state, { type: 'create', id, plan: plan(overrides) }, date);
@@ -177,11 +176,4 @@ test('多轮完成/撤销/简化后统计口径仍一致', () => {
     state = record(state, 'undo'); assert.equal(h.summary(state, DAY, 7).done, 0);
     h.validateState(state);
   }
-});
-test('AI合同使用用户星期/午间时间，不采用模型擅改的安排', () => {
-  const draft = { title: '读一点', target: 5, minimum: 2, unit: '分钟', action: '打开书继续读', reason: '减少启动负担', time: '23:00', weekdays: [7] };
-  const result = validateDraft(draft, { minutes: 5, weekdays: [1,2,3,4,5], time: '12:30' });
-  assert.equal(result.time, '12:30'); assert.deepEqual(result.weekdays, [1,2,3,4,5]);
-  assert.throws(() => validateDraft({ ...draft, target: 15 }, { minutes: 5, weekdays: [1] }));
-  assert.throws(() => validateDraft({ ...draft, action: '<script>bad</script>' }, { minutes: 5, weekdays: [1] }));
 });

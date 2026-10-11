@@ -12,10 +12,10 @@
         <view class="theme-card-head"><text class="theme-name">{{item.name}}</text><text wx:if="{{item.badge}}" class="theme-badge">{{item.badge}}</text></view>
         <view class="sub theme-desc">{{item.desc}}</view>
         <view class="theme-thumb theme-{{item.key}}">
-          <view class="thumb-title">读一会儿</view>
-          <view class="thumb-goal"><text class="thumb-main">平时 30 分钟</text><text class="chip-lime">忙时 10 分钟</text></view>
-          <view class="thumb-btn">按 30 分钟记下</view>
-          <view class="thumb-btn soft">忙时按 10 分钟记下</view>
+          <view class="thumb-title">{{exampleTemplate.title}}</view>
+          <view class="thumb-goal"><text class="thumb-main">平时 {{exampleTemplate.target}} {{exampleTemplate.unit}}</text><text class="chip-lime">忙时 {{exampleTemplate.minimum}} {{exampleTemplate.unit}}</text></view>
+          <view class="thumb-btn">{{exampleTemplate.target}}{{exampleTemplate.unit}} · 打卡</view>
+          <view class="thumb-btn soft">忙时 {{exampleTemplate.minimum}}{{exampleTemplate.unit}} · 打卡</view>
         </view>
       </button>
     </view>

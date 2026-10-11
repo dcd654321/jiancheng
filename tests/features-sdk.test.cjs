@@ -8,8 +8,7 @@ const { COLLECTION }=require('../server/cloudbase-repository');
 const { LIMITS,createLimiter,createLimitRepository }=require('../server/limits');
 const { REMINDERS,createReminderRepository,createRecipientCodec,createReminderApi }=require('../server/reminders');
 const { createReminderWorker }=require('../server/reminder-worker');
-const { REQUESTS:AI_REQUESTS,BUDGET:AI_BUDGET,createAiRepository,createAiApi }=require('../server/ai-plan');
-const inputCore=require('../miniprogram/core/plan-assistant'),catalog=require('../miniprogram/core/ai-catalog');
+const { aiRequestsCollection:AI_REQUESTS,aiBudgetCollection:AI_BUDGET }=require('../miniprogram/config/cloud-resources');
 const { createFeaturesApi,createPublicShareApi }=require('../server/features');
 const { fixture,domain,dates }=require('./helpers/cloud-fixture.cjs');
 const sdkPath=path.resolve(__dirname,'../cloudfunctions/jiancheng_daka_api/node_modules/wx-server-sdk');
@@ -92,13 +91,20 @@ test('feature repositories use installed SDK document transactions, owner-isolat
   await createSidecarCleanup(db,{limitsEnabled:true})(owner,'obsolete');assert.ok(saved.has(LIMITS+':features-'+owner));
   await createSidecarCleanup(db,{limitsEnabled:true})(owner,a.epoch);assert.equal(saved.has(LIMITS+':features-'+owner),false);
   assert.equal((await createLimitRepository(db).transact(async tx=>({ok:true,row:await tx.read('global-features')}))).row.minuteUsed,1);
-  let paid=0;const aiRepo=createAiRepository(db),ai=createAiApi({repository:aiRepo,inputCore,catalog,dates,
-    allowedAppId:f.identity.APPID,allowedSources:['wx_client'],clock:()=>now,budget:{perCall:100,daily:200,monthly:500,perUser:2},
-    provider:async()=>{paid++;return {actionKey:'read-resume',reasonKey:'start-small',target:3,minimum:1};}});
-  const aiRequest={action:'suggest',operationId:'sdk-request',operationDate:f.date,epoch:a.epoch,consent:true,input:{direction:'read',minutes:5,weekdays:[1],time:''}};
-  conflict=true;const generated=await ai(aiRequest,f.identity);assert.equal(generated.ok,true,JSON.stringify(generated));
-  assert.equal((await ai(aiRequest,f.identity)).replayed,true);assert.equal(paid,1);
-  assert.equal((await aiRepo.transact(owner,async tx=>({ok:true,value:await tx.budget()}))).value.dayReserved,100);
-  await createSidecarCleanup(db,{aiEnabled:true})(owner,'obsolete');assert.ok(saved.has(AI_REQUESTS+':'+owner));
-  await createSidecarCleanup(db,{aiEnabled:true})(owner,a.epoch);assert.equal(saved.has(AI_REQUESTS+':'+owner),false);assert.ok(saved.has(AI_BUDGET+':global'));
+  // 功能移除后，只通过旧记录 fixture 验证 SDK 清理合同，不调用生成实现。
+  const requestKey=AI_REQUESTS+':'+owner,budgetKey=AI_BUDGET+':global',otherKey=AI_REQUESTS+':other-owner';
+  const legacyRequest={_id:owner,schemaVersion:1,owner,ownerEpoch:a.epoch,receipts:[{id:'legacy-request',status:'unknown'}]};
+  saved.set(requestKey,JSON.stringify(legacyRequest));
+  saved.set(budgetKey,JSON.stringify({_id:'global',schemaVersion:1,dayReserved:100,monthReserved:100}));
+  saved.set(otherKey,JSON.stringify({_id:'other-owner',owner:'other-owner',ownerEpoch:a.epoch}));
+  const budgetBefore=saved.get(budgetKey),otherBefore=saved.get(otherKey);
+  const cleanup=createSidecarCleanup(db,{aiEnabled:true});
+  await cleanup(owner,'obsolete');assert.ok(saved.has(requestKey));
+  saved.set(requestKey,JSON.stringify({...legacyRequest,ownerEpoch:'new-epoch'}));
+  await cleanup(owner,a.epoch);assert.equal(JSON.parse(saved.get(requestKey)).ownerEpoch,'new-epoch');
+  saved.set(requestKey,JSON.stringify({...legacyRequest,owner:'other-owner'}));
+  await assert.rejects(cleanup(owner,a.epoch),/INVALID_AI_OWNER/);
+  saved.set(requestKey,JSON.stringify(legacyRequest));conflict=true;
+  await cleanup(owner,a.epoch);assert.equal(saved.has(requestKey),false);
+  assert.equal(saved.get(budgetKey),budgetBefore);assert.equal(saved.get(otherKey),otherBefore);
 });

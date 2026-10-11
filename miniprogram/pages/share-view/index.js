@@ -4,7 +4,7 @@ const { APP_NAME } = require('../../config/brand');
 const { themeSnapshot, appearanceController } = require('../../services/appearance');
 const dates = require('../../core/date');
 Page({
-  data: { loading: true, error: '', view: null, mine: false, active: false, busy: false, statusLabel: '', expires: '', shareEnabled: false, theme: 'mist' },
+  data: { loading: true, error: '', view: null, mine: false, active: false, busy: false, adopting: false, adoptError: '', adoptNeedsSync: false, statusLabel: '', expires: '', shareEnabled: false, theme: 'mist' },
   onLoad(options = {}) { this._id = options.id || ''; this.setData({ mine: options.mine === '1' }); },
   bindTheme() {
     const controller = appearanceController();
@@ -29,11 +29,11 @@ Page({
     });
     return this.load();
   },
-  onHide() { this._visible = false; this._version = (this._version || 0) + 1; if (this._unsubscribe) this._unsubscribe(); this._unsubscribe = null; if (this._themeUnsubscribe) this._themeUnsubscribe(); this._themeUnsubscribe = null; this._snapshot = null; this.setData({ view: null, active: false, shareEnabled: false }); },
+  onHide() { this._visible = false; this._version = (this._version || 0) + 1; if (this._unsubscribe) this._unsubscribe(); this._unsubscribe = null; if (this._themeUnsubscribe) this._themeUnsubscribe(); this._themeUnsubscribe = null; this._snapshot = null; this.setData({ view: null, active: false, shareEnabled: false, adopting: false }); },
   onUnload() { this._visible = false; this._gone = true; this._version = (this._version || 0) + 1; if (this._unsubscribe) this._unsubscribe(); this._unsubscribe = null; if (this._themeUnsubscribe) this._themeUnsubscribe(); this._themeUnsubscribe = null; this._snapshot = null; },
   async load() {
     const version = this._version = (this._version || 0) + 1;
-    this.setData({ loading: true, error: '', view: null, active: false, shareEnabled: false });
+    this.setData({ loading: true, error: '', view: null, active: false, shareEnabled: false, adopting: false, adoptError: '', adoptNeedsSync: false });
     if (wx.hideShareMenu) wx.hideShareMenu();
     try {
       const service = features();
@@ -54,13 +54,37 @@ Page({
   },
   onRetry() { return this.load(); },
   onStart() { wx.switchTab({ url: '/pages/today/index', fail: () => this.setData({ error: '请先从微信预览进入小程序，再创建自己的习惯。' }) }); },
-  onCopy() {
+  onAccountStatus() { wx.navigateTo({ url: '/pages/sync/index', fail: () => this.setData({ adoptError: '请从微信会话打开完整小程序后查看账户状态。' }) }); },
+  async onCopy() {
+    if (this.data.adopting) return;
+    const version = this._version, snapshot = this._snapshot;
+    const current = () => this._visible && !this._gone && version === this._version && snapshot === this._snapshot;
+    this.setData({ adopting: true, adoptError: '', adoptNeedsSync: false });
+    let timer, navigating = false;
     try {
-      if (!this._snapshot || !this.data.view || !this.data.view.canCopy) throw Error('请先读取有效的计划');
-      const token = features().handoff(this._snapshot);
+      if (!snapshot || !this.data.view || !this.data.view.canCopy) throw Error('请先读取有效的计划');
+      const app = getApp(), session = app.cloudSession;
+      const prepare = async () => {
+        await Promise.resolve(app.dataReady);
+        if (!current()) return;
+        const status = session && session.status ? session.status() : {};
+        // start会重发已有pending；采用分享不能顺带确认另一笔私有写入。
+        if (status.pending || status.conflict || status.deletionPending) {
+          this.setData({ adoptNeedsSync: true });
+          throw Error('先到云端状态核对已有操作，再回来使用这个计划；公开内容已保留');
+        }
+        if (status.ready === false && session && typeof session.start === 'function') await session.start();
+      };
+      await Promise.race([prepare(), new Promise((_, reject) => { timer = setTimeout(() => reject(Error('账户读取尚未确认，请重试；这份计划仍在本页')), 15000); })]);
+      if (!current()) return;
+      const status = session && session.status ? session.status() : {};
+      if (status.pending || status.conflict || status.deletionPending || status.networkOffline) throw Error('账户暂时不可创建，请恢复云端记录后重试；计划已保留');
+      const token = features().handoff(snapshot);
+      navigating = true;
       wx.navigateTo({ url: '/pages/edit/index?sharedDraft=' + token,
-        fail: () => this.setData({ error: '请先进入完整小程序，再创建这份计划。' }) });
-    } catch (err) { this.setData({ error: err.message }); }
+        fail: () => { if (current()) this.setData({ adopting: false, adoptError: '确认页未打开，请重试。习惯尚未创建。' }); } });
+    } catch (err) { navigating = false; if (current()) this.setData({ adoptError: err.message || '账户暂时无法读取，请重试' }); }
+    finally { clearTimeout(timer); if (current() && !navigating) this.setData({ adopting: false }); }
   },
   onManage(event) {
     if (!this.data.mine || this.data.busy) return;
@@ -87,8 +111,9 @@ Page({
   },
   onShareAppMessage() {
     return this.data.shareEnabled && this.data.view
-      ? { title: this.data.view.title, path: '/pages/share-view/index?id=' + this._id }
-      : { title: APP_NAME, path: '/pages/today/index' };
+      ? { title: this.data.view.canCopy ? this.data.view.title + '：平时' + this.data.view.plan.target + this.data.view.plan.unit + '，忙时' + this.data.view.plan.minimum + this.data.view.plan.unit : this.data.view.title,
+        path: '/pages/share-view/index?id=' + this._id, imageUrl: '/assets/share/cover.png' }
+      : { title: APP_NAME + '：忙的时候，也能做一点', path: '/pages/today/index', imageUrl: '/assets/share/cover.png' };
   },
   onShareTimeline() {
     return this.data.shareEnabled && features().status().timeline && this.data.view

@@ -45,7 +45,7 @@ function taskAt(state, habit, date) {
     id: habit.id, date, title: version.title, unit: version.unit, time: version.time,
     originalTarget: version.target, target, minimum: version.minimum,
     status, done: status !== 'pending', simplified: target < version.target,
-    statusText: status === 'standard' ? '原目标完成' : status === 'minimum' ? '忙时完成' : '未记录',
+    statusText: status === 'standard' ? '原目标打卡' : status === 'minimum' ? '忙时打卡' : '未打卡',
     note: saved ? saved.note : '', versionRevision: version.revision
   };
 }
@@ -79,6 +79,14 @@ function reduce(state, command, nowDate) {
     next.habits.push({ id: command.id, createdDate: nowDate, revision: 1,
       versions: [{ ...plan, effectiveDate: start, status: 'active', revision: 1 }] });
     assertCapacity(next, nowDate);
+  } else if (command.type === 'deleteHabit') {
+    if (!safeId(command.id)) throw Error('习惯标识无效');
+    const habit = findHabit(next, command.id);
+    if (command.baseRevision !== habit.revision) throw Error('计划已更新，请重新查看后确认删除');
+    next.habits = next.habits.filter(h => h.id !== habit.id);
+    Object.keys(next.records).forEach(recordKey => {
+      if (next.records[recordKey].id === habit.id) delete next.records[recordKey];
+    });
   } else if (['edit', 'status', 'cancelFuture'].includes(command.type)) {
     const habit = findHabit(next, command.id);
     if (command.baseRevision !== habit.revision) throw Error('计划已更新，请返回后重新打开');
@@ -99,7 +107,7 @@ function reduce(state, command, nowDate) {
     }
     assertCapacity(next, nowDate);
   } else if (['complete', 'completeMinimum', 'undo', 'simplify', 'restore', 'note'].includes(command.type)) {
-    if (command.date !== nowDate) throw Error('日期已经变化，请刷新后记录今天');
+    if (command.date !== nowDate) throw Error('日期已经变化，请刷新后为今天打卡');
     const habit = findHabit(next, command.id);
     const task = taskAt(next, habit, nowDate);
     if (!task) throw Error('今天没有安排这个习惯');
@@ -116,7 +124,7 @@ function reduce(state, command, nowDate) {
     }
     if (command.type === 'undo') record.status = 'pending';
     if (['simplify', 'restore'].includes(command.type)) {
-      if (record.status !== 'pending') throw Error('请先撤销今天的记录，再调整目标');
+      if (record.status !== 'pending') throw Error('请先撤销今天的打卡，再调整目标');
       const target = command.type === 'restore' ? task.originalTarget : Number(command.target);
       if (!Number.isInteger(target) || target < 1 || target > task.originalTarget || (command.type === 'simplify' && target === task.originalTarget)) throw Error('今天的目标需大于0、小于原目标');
       record.todayTarget = target;
@@ -155,7 +163,7 @@ function summary(state, end, days) {
     return { date, day: Number(date.slice(8)), weekday: '一二三四五六日'[dates.weekday(date) - 1],
       planned: tasks.length, standard, minimum, done, tasks,
       tone: !tasks.length ? 'rest' : !done ? 'pending' : done === tasks.length ? 'full' : 'partial',
-      description: `${dates.label(date)}，${tasks.length ? `记录${done}/${tasks.length}项，原目标${standard}项，忙时${minimum}项` : '休息，无安排'}` };
+      description: `${dates.label(date)}，${tasks.length ? `打卡${done}/${tasks.length}项，原目标${standard}项，忙时${minimum}项` : '休息，无安排'}` };
   });
   const result = { start: cells[0].date, end, days, cells, habits: Object.values(byHabit), planned: 0, standard: 0, minimum: 0 };
   cells.forEach(c => { result.planned += c.planned; result.standard += c.standard; result.minimum += c.minimum; });

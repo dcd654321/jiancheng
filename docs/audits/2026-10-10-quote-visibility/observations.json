@@ -1,0 +1,11 @@
+{
+  "realWrites": 0,
+  "cloudCalls": 0,
+  "level": "isolated native simulator",
+  "scenarios": [
+    "zero completions and return guide: quote visible",
+    "after completion: same quote visible",
+    "user hides quote: quote absent",
+    "no scheduled tasks: quote absent"
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "phase": "before",
+  "level": "F",
+  "realWrites": 0,
+  "screenshots": [
+    "before-01-mine.png",
+    "before-02-rules.png"
+  ],
+  "checks": {
+    "rulePreview": {
+      "target": 5,
+      "minimum": 2
+    },
+    "fixtureCommands": [],
+    "fixturePresentAfterRestore": false
+  },
+  "exceptions": []
+}

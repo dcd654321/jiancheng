@@ -1,0 +1,337 @@
+{
+  "date": "2026-10-09",
+  "level": "F",
+  "screenshots": [
+    {
+      "step": 1,
+      "file": "01-today-mist-F.png",
+      "route": "pages/today/index",
+      "loading": false,
+      "readOnly": false
+    },
+    {
+      "step": 2,
+      "file": "02-progress-mist-F.png",
+      "route": "pages/progress/index",
+      "loading": false,
+      "readOnly": false
+    },
+    {
+      "step": 3,
+      "file": "03-mine-mist-F.png",
+      "route": "pages/mine/index",
+      "loading": false,
+      "readOnly": false
+    },
+    {
+      "step": 4,
+      "file": "04-edit-mist-F.png",
+      "route": "pages/edit/index",
+      "loading": false,
+      "readOnly": false
+    },
+    {
+      "step": 5,
+      "file": "05-detail-mist-F.png",
+      "route": "pages/detail/index",
+      "loading": false,
+      "readOnly": false
+    },
+    {
+      "step": 6,
+      "file": "06-manage-mist-F.png",
+      "route": "pages/manage/index",
+      "loading": false,
+      "readOnly": false
+    },
+    {
+      "step": 7,
+      "file": "07-sync-mist-F.png",
+      "route": "pages/sync/index",
+      "loading": false,
+      "readOnly": false
+    },
+    {
+      "step": 8,
+      "file": "08-data-mist-F.png",
+      "route": "pages/data/index",
+      "loading": false,
+      "readOnly": false
+    },
+    {
+      "step": 9,
+      "file": "09-share-create-mist-F.png",
+      "route": "pages/share-create/index",
+      "loading": false,
+      "readOnly": false
+    },
+    {
+      "step": 10,
+      "file": "10-share-list-mist-F.png",
+      "route": "pages/share-list/index",
+      "loading": false,
+      "readOnly": false
+    },
+    {
+      "step": 11,
+      "file": "11-share-view-mist-F.png",
+      "route": "pages/share-view/index",
+      "loading": false,
+      "readOnly": false
+    },
+    {
+      "step": 12,
+      "file": "12-reminder-mist-F.png",
+      "route": "pages/reminder/index",
+      "loading": false,
+      "readOnly": false
+    },
+    {
+      "step": 13,
+      "file": "13-appearance-mist-F.png",
+      "route": "pages/appearance/index",
+      "loading": false,
+      "readOnly": false
+    },
+    {
+      "step": 14,
+      "file": "14-assistant-mist-F.png",
+      "route": "pages/assistant/index",
+      "loading": false,
+      "readOnly": false
+    },
+    {
+      "step": 15,
+      "file": "15-today-paper-F.png",
+      "route": "pages/today/index",
+      "loading": false,
+      "readOnly": false
+    },
+    {
+      "step": 16,
+      "file": "16-progress-paper-F.png",
+      "route": "pages/progress/index",
+      "loading": false,
+      "readOnly": false
+    },
+    {
+      "step": 17,
+      "file": "17-mine-paper-F.png",
+      "route": "pages/mine/index",
+      "loading": false,
+      "readOnly": false
+    },
+    {
+      "step": 18,
+      "file": "18-edit-paper-F.png",
+      "route": "pages/edit/index",
+      "loading": false,
+      "readOnly": false
+    },
+    {
+      "step": 19,
+      "file": "19-detail-paper-F.png",
+      "route": "pages/detail/index",
+      "loading": false,
+      "readOnly": false
+    },
+    {
+      "step": 20,
+      "file": "20-appearance-paper-F.png",
+      "route": "pages/appearance/index",
+      "loading": false,
+      "readOnly": false
+    },
+    {
+      "step": 21,
+      "file": "21-assistant-paper-F.png",
+      "route": "pages/assistant/index",
+      "loading": false,
+      "readOnly": false
+    },
+    {
+      "step": 22,
+      "file": "22-first-empty-F.png",
+      "route": "pages/today/index",
+      "loading": false,
+      "readOnly": false
+    },
+    {
+      "step": 23,
+      "file": "23-template-confirm-F.png",
+      "route": "pages/edit/index",
+      "loading": false,
+      "readOnly": false
+    },
+    {
+      "step": 24,
+      "file": "24-assistant-entry-F.png",
+      "route": "pages/assistant/index",
+      "loading": false,
+      "readOnly": false
+    },
+    {
+      "step": 25,
+      "file": "25-rule-preview-F.png",
+      "route": "pages/assistant/index",
+      "loading": false,
+      "readOnly": false
+    },
+    {
+      "step": 26,
+      "file": "26-rule-confirm-F.png",
+      "route": "pages/edit/index",
+      "loading": false,
+      "readOnly": false
+    },
+    {
+      "step": 27,
+      "file": "27-recording-F.png",
+      "route": "pages/today/index",
+      "loading": false,
+      "readOnly": false
+    },
+    {
+      "step": 28,
+      "file": "28-record-confirmed-F.png",
+      "route": "pages/today/index",
+      "loading": false,
+      "readOnly": false
+    },
+    {
+      "step": 29,
+      "file": "29-undo-confirmed-F.png",
+      "route": "pages/today/index",
+      "loading": false,
+      "readOnly": false
+    },
+    {
+      "step": 30,
+      "file": "30-offline-readonly-F.png",
+      "route": "pages/today/index",
+      "loading": false,
+      "readOnly": true
+    },
+    {
+      "step": 31,
+      "file": "31-read-unavailable-F.png",
+      "route": "pages/today/index",
+      "loading": false,
+      "readOnly": false
+    },
+    {
+      "step": 32,
+      "file": "32-loading-F.png",
+      "route": "pages/today/index",
+      "loading": true,
+      "readOnly": false
+    },
+    {
+      "step": 33,
+      "file": "33-progress28-F.png",
+      "route": "pages/progress/index",
+      "loading": false,
+      "readOnly": false
+    },
+    {
+      "step": 34,
+      "file": "34-invalid-detail-F.png",
+      "route": "pages/detail/index",
+      "loading": false,
+      "readOnly": false
+    },
+    {
+      "step": 35,
+      "file": "35-sync-count-corrected-F.png",
+      "route": "pages/sync/index",
+      "supplemental": true
+    },
+    {
+      "step": 36,
+      "file": "36-calendar7-F.png",
+      "route": "pages/progress/index",
+      "supplemental": true
+    },
+    {
+      "step": 37,
+      "file": "37-calendar28-F.png",
+      "route": "pages/progress/index",
+      "supplemental": true
+    },
+    {
+      "step": 38,
+      "file": "38-mine-offline-switch-F.png",
+      "route": "pages/mine/index",
+      "supplemental": true
+    },
+    {
+      "step": 39,
+      "file": "39-edit-full-capacity-F.png",
+      "route": "pages/edit/index",
+      "supplemental": true
+    },
+    {
+      "step": 40,
+      "file": "40-edit-tomorrow-capacity-F.png",
+      "route": "pages/edit/index",
+      "supplemental": true
+    }
+  ],
+  "checks": {
+    "fixturePresentAfterRestore": false,
+    "previewAndAdoptionWriteCount": 0,
+    "fixtureCommands": [
+      "completeMinimum",
+      "undo"
+    ],
+    "calendar": [
+      {
+        "id": "",
+        "dataset": {},
+        "left": 18,
+        "right": 372,
+        "top": 1067.375,
+        "bottom": 1376.75,
+        "width": 354,
+        "height": 309.375
+      },
+      {
+        "id": "",
+        "dataset": {},
+        "left": 18,
+        "right": 372,
+        "top": 1067.375,
+        "bottom": 1379.375,
+        "width": 354,
+        "height": 312
+      },
+      {
+        "id": "date-2026-09-12",
+        "dataset": {
+          "date": "2026-09-12"
+        },
+        "left": 18,
+        "right": 64.28125,
+        "top": 1067.375,
+        "bottom": 1140.96875,
+        "width": 46.28125,
+        "height": 73.59375
+      }
+    ],
+    "realWrites": 0,
+    "modelRequests": 0,
+    "capacityScreens": true,
+    "visualFixesRecaptured": [
+      22,
+      32
+    ]
+  },
+  "exceptions": [],
+  "system": {
+    "windowWidth": 390,
+    "windowHeight": 671,
+    "fontSizeSetting": 16,
+    "platform": "devtools",
+    "SDKVersion": "3.17.3"
+  }
+}

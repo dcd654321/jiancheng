@@ -16,13 +16,14 @@ test('feature and public entries are disabled by default without any database ac
     const f=entryFixture(name);assert.equal((await f.main({action:'pull'})).ok,false);assert.equal(f.calls,0);
   }
   const f=entryFixture('jiancheng_daka_features');
-  // 分享/偏好总开关仍必须显式开启：主题默认可用不会连带开放其他动作
+  // 清理与限流确认后，分享/偏好总开关仍必须显式开启。
+  Object.assign(f.env,{HABIT_SIDECAR_CLEANUP_ENABLED:'true',HABIT_LIMITS_VERIFIED:'true'});
   assert.equal((await f.main({action:'getPreferences',epoch:'e'})).code,'NOT_ENABLED');assert.equal(f.calls,0,'share/preference master switch stays strict');
   f.env.HABIT_FEATURES_ENABLED='true';
   const result=await f.main({action:'getPreferences',epoch:'e'});assert.equal(result.code,'SERVICE_UNAVAILABLE');assert.doesNotMatch(JSON.stringify(result),/SDK_PRIVATE/);
-  // 显式 false 仍可恢复“未确认即停服”的严格行为
+  // 满足清理前提后，独立主题开关仍可关闭服务。
   const strict=entryFixture('jiancheng_daka_features');
-  strict.env.HABIT_APPEARANCE_ENABLED='false';
+  Object.assign(strict.env,{HABIT_SIDECAR_CLEANUP_ENABLED:'true',HABIT_LIMITS_VERIFIED:'true',HABIT_APPEARANCE_ENABLED:'false'});
   assert.equal((await strict.main({action:'getAppearance',epoch:'e'})).code,'NOT_ENABLED');
   assert.equal(strict.calls,0);
 });
@@ -33,11 +34,14 @@ test('public entry normalizes SDK faults to the same unavailable result',async()
   assert.deepEqual(await f.main({action:'getPublicShare',shareId:'a'.repeat(64)}),disabled);
 });
 
-test('appearance is on by default; explicit false restores the strict gate; sharing and reminders stay closed',async()=>{
+test('appearance defaults on after cleanup confirmation; explicit false closes it and other capabilities stay closed',async()=>{
   const common={HABIT_IDENTITY_VERIFIED:'true',HABIT_SIDECAR_CLEANUP_ENABLED:'true',HABIT_LIMITS_VERIFIED:'true',HABIT_MINIPROGRAM_ONLY:'true',HABIT_APP_ID:'wx-entry'};
   const getAppearance={action:'getAppearance',epoch:'e'},setAppearance={action:'setAppearance',epoch:'e',operationId:'op',expectedRevision:0,theme:'paper'};
-  // 零配置部署：主题动作进入服务层（限流与回执随之执行），分享/提醒保持关闭
+  // 缺省清理确认时不触库；两项明确开启后，主题动作进入服务层。
   const bare=entryFixture('jiancheng_daka_features');
+  assert.equal((await bare.main(getAppearance)).code,'NOT_ENABLED');
+  assert.equal((await bare.main(setAppearance)).code,'NOT_ENABLED');assert.equal(bare.calls,0);
+  Object.assign(bare.env,{HABIT_SIDECAR_CLEANUP_ENABLED:'true',HABIT_LIMITS_VERIFIED:'true'});
   const entered=await bare.main(getAppearance);
   assert.equal(entered.code,'SERVICE_UNAVAILABLE');assert.doesNotMatch(JSON.stringify(entered),/SDK_PRIVATE/);
   assert.equal((await bare.main({action:'getPreferences',epoch:'e'})).code,'NOT_ENABLED');
@@ -72,6 +76,22 @@ test('appearance is on by default; explicit false restores the strict gate; shar
   }
 });
 
+test('every feature route requires explicit sidecar and quota cleanup confirmation before database access',async()=>{
+  const required=['HABIT_SIDECAR_CLEANUP_ENABLED','HABIT_LIMITS_VERIFIED'];
+  const requests=[{action:'getAppearance',epoch:'e'},
+    {action:'setAppearance',epoch:'e',operationId:'op',expectedRevision:0,theme:'paper'},
+    {action:'getPreferences',epoch:'e'},
+    {action:'createShare',epoch:'e',kind:'invite'},
+    {action:'previewReminder',epoch:'e',slot:'12:30'}];
+  for(const key of required) for(const value of [undefined,'','false','TRUE',' true ','invalid',true]) {
+    const f=entryFixture('jiancheng_daka_features');
+    Object.assign(f.env,{HABIT_SIDECAR_CLEANUP_ENABLED:'true',HABIT_LIMITS_VERIFIED:'true',HABIT_FEATURES_ENABLED:'true',HABIT_REMINDERS_ENABLED:'true'});
+    if(value===undefined)delete f.env[key];else f.env[key]=value;
+    for(const request of requests) assert.equal((await f.main(request)).code,'NOT_ENABLED',key+'='+String(value)+' / '+request.action);
+    assert.equal(f.calls,0,key+'='+String(value));
+  }
+});
+
 test('reminder timer entry is closed by default and forged client timers make no database request',async()=>{
   const f=entryFixture('jiancheng_daka_reminder_tick');assert.equal((await f.main({Type:'Timer'})).code,'NOT_ENABLED');assert.equal(f.calls,0);
   for(const key of ['HABIT_REMINDERS_ENABLED','HABIT_REMINDER_STORAGE_READY','HABIT_TIMER_VERIFIED','HABIT_TEMPLATE_VERIFIED','HABIT_REMINDER_TTL_VERIFIED','HABIT_LIMITS_VERIFIED','HABIT_IDENTITY_VERIFIED','HABIT_SIDECAR_CLEANUP_ENABLED'])f.env[key]='true';
@@ -79,18 +99,16 @@ test('reminder timer entry is closed by default and forged client timers make no
   const response=await f.main({Type:'Timer',TriggerName:f.env.HABIT_TIMER_NAME,Message:f.env.HABIT_TIMER_SECRET});assert.equal(response.code,'UNAUTHORIZED');assert.equal(f.calls,0);
 });
 
-test('AI entry cannot open with missing budget or provider configuration and reveals no configuration details',async()=>{
+test('retired plan entry stays disabled with legacy enabling flags and no database access',async()=>{
   const f=entryFixture('jiancheng_daka_plan');
   for(const key of ['HABIT_AI_ENABLED','HABIT_AI_STORAGE_READY','HABIT_AI_BUDGET_VERIFIED','HABIT_AI_CATALOG_VERIFIED','HABIT_IDENTITY_VERIFIED','HABIT_MINIPROGRAM_ONLY','HABIT_LIMITS_VERIFIED','HABIT_SIDECAR_CLEANUP_ENABLED'])f.env[key]='true';
   f.env.HABIT_APP_ID='wx-entry';f.env.HABIT_AI_PROVIDER='deepseek';
-  const result=await f.main({action:'suggest'});assert.equal(result.code,'AI_UNAVAILABLE');assert.equal(f.calls,0);assert.doesNotMatch(JSON.stringify(result),/KEY|budget|provider/i);
-});
-test('AI defaults open but safety gates and explicit false still reject before database',async()=>{
+  const result=await f.main({action:'suggest'});assert.equal(result.code,'NOT_ENABLED');assert.equal(f.calls,0);assert.doesNotMatch(JSON.stringify(result),/KEY|budget|provider/i);
   const ready={HABIT_APP_ID:'wx-entry',HABIT_AI_PROVIDER:'deepseek',HABIT_AI_MODEL:'fixture',HABIT_AI_API_KEY:'fixture-key-not-a-real-key',
     HABIT_AI_USER_DAILY:'2',HABIT_AI_RESERVATION_MICRO_CNY:'100',HABIT_AI_DAY_MICRO_CNY:'1000',HABIT_AI_MONTH_MICRO_CNY:'10000'};
   const gates=['HABIT_AI_STORAGE_READY','HABIT_AI_BUDGET_VERIFIED','HABIT_AI_CATALOG_VERIFIED','HABIT_IDENTITY_VERIFIED','HABIT_MINIPROGRAM_ONLY','HABIT_LIMITS_VERIFIED','HABIT_SIDECAR_CLEANUP_ENABLED'];
   gates.forEach(k=>{ready[k]='true';});const open=entryFixture('jiancheng_daka_plan');Object.assign(open.env,ready);
-  assert.equal((await open.main({action:'suggest'})).code,'AI_UNAVAILABLE');assert.equal(open.calls,1);
+  assert.equal((await open.main({action:'suggest'})).code,'NOT_ENABLED');assert.equal(open.calls,0);
   for(const key of [...gates,'HABIT_APP_ID']){
     const f=entryFixture('jiancheng_daka_plan');Object.assign(f.env,ready);delete f.env[key];
     assert.equal((await f.main({action:'suggest'})).code,'NOT_ENABLED',key);assert.equal(f.calls,0);

@@ -1,7 +1,7 @@
 'use strict';
 
 // 外观主题的独立云协议客户端。只使用 getAppearance / setAppearance 两个动作，
-// 不触碰分享、提醒与 AI 门控；结果不明时冻结完全相同的请求等待核对，绝不生成第二份写意图。
+// 不触碰分享与提醒门控；结果不明时冻结完全相同的请求等待核对，绝不生成第二份写意图。
 const { createCloudTransport } = require('./cloud-transport');
 const resources = require('../config/cloud-resources');
 const THEME_VALUES = ['mist', 'paper'];

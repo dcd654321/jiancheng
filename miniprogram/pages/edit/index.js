@@ -1,12 +1,11 @@
 const ui = require('../../services/ui');
 const form = require('../../services/plan-form');
 const flow = require('../../services/today-flow');
-const templates = {
-  read: { title: '读一会儿', target: '30', minimum: '10' },
-  walk: { title: '锻炼一会儿', target: '30', minimum: '10' },
-  study: { title: '复习一小段', target: '30', minimum: '10' },
-  tidy: { title: '整理桌面', target: '10', minimum: '3' }
-};
+const { createFormDrafts } = require('../../services/form-drafts');
+const draftFields = ['title', 'target', 'minimum', 'unit', 'time', 'weekdays', 'startOffset', 'addingMinimum'];
+const inputSnapshot = data => draftFields.reduce((result, key) => { result[key] = data[key]; return result; }, {});
+function drafts() { const app = getApp(); return app.formDrafts || (app.formDrafts = createFormDrafts()); }
+const { templatePlan } = require('../../config/habit-templates');
 
 Page(ui.withLifecycle({
   data: { error: '', loading: true, dataUnavailable: false, dataReady: false, dataReadOnly: false,
@@ -14,17 +13,23 @@ Page(ui.withLifecycle({
     editing: false, compact: false, saving: false, title: '', target: '5', minimum: '', unit: '分钟', units: ['分钟', '页', '次'],
     time: '', weekdays: [1, 2, 3, 4, 5, 6, 7], days: [], startOffset: 0, firstLabel: '', effectiveLabel: '', source: '',
     moreOpen: false, frequencyOpen: false, startOpen: false, addingMinimum: false, keyboardOpen: false, focusField: '',
-    canCreateToday: true, capacityNote: '', fieldErrors: {}, titleCount: 0, targetHint: '', frequencyLabel: '', moreSummary: '' },
+    canCreateToday: true, canCreateTomorrow: true, capacityFull: false, confirmedCreate: false, capacityNote: '', fieldErrors: {}, titleCount: 0, targetHint: '', frequencyLabel: '', moreSummary: '', draftDirty: false, draftRestored: false },
   onLoad(options = {}) {
     this._id = options.id || ui.id();
     this._loaded = false;
     this._editContext = ui.contextKey();
-    this._contextBound = !!(options.draft || options.sharedDraft);
-    // 模板、有效助手草稿和有效分享草稿进入紧凑确认；自定义和编辑保留完整表单。
-    const compact = !options.id && !!(options.template || options.draft || options.sharedDraft);
+    this._draftScope = this._editContext + ':' + ui.date.today();
+    this._draftKey = options.id ? 'edit:' + options.id : 'new:' + (options.template || options.sharedDraft || 'custom');
+    this._contextBound = !!options.sharedDraft;
+    // 模板和有效分享草稿进入紧凑确认；自定义和编辑保留完整表单。
+    const compact = !options.id && !!(options.template || options.sharedDraft);
     this.setData({ editing: !!options.id, compact });
     if (!options.id && options.start === 'tomorrow') this.setData({ startOffset: 1 });
-    if (options.sharedDraft) {
+    if (options.draft) {
+      this._invalidDraft = true;
+      this._draftError = '该入口已停用，请返回今日添加习惯';
+      ui.error(this, Error(this._draftError));
+    } else if (options.sharedDraft) {
       try {
         if (options.id || options.draft || options.template) throw Error('分享草稿不能覆盖已有计划或其他草稿');
         const plan = require('../../services/features-client').features().consume(options.sharedDraft);
@@ -32,17 +37,12 @@ Page(ui.withLifecycle({
           addingMinimum: plan.minimum != null, source: '来自公开轻计划 · 请核对后创建自己的习惯' });
       } catch (err) { this._invalidDraft = true; ui.error(this, err); }
     }
-    if (options.draft) {
-      try {
-        if (options.id) throw Error('新计划草稿不能直接覆盖已有习惯');
-        const result = getApp().planAssistant.consume(options.draft, this._editContext);
-        const draft = result.draft;
-        this.setData({ title: draft.title, target: String(draft.target), minimum: draft.minimum == null ? '' : String(draft.minimum),
-          unit: draft.unit, weekdays: draft.weekdays, time: draft.time, addingMinimum: draft.minimum != null,
-          source: (result.source === 'ai' ? 'AI建议 · 请自行核对' : '基础建议 · 本机规则，非AI') + '。' + draft.action });
-      } catch (err) { this._invalidDraft = true; ui.error(this, err); }
+    const template = templatePlan(options.template);
+    if (template) this.setData(template);
+    if (!this._invalidDraft && options.sharedDraft) {
+      // 每次分享草稿令牌不同；同一内容可接续，换计划则使用独立草稿。
+      this._draftKey = 'new:shared:' + JSON.stringify({ input: inputSnapshot(this.data), source: this.data.source });
     }
-    if (templates[options.template]) this.setData({ ...templates[options.template] });
     if (options.id) wx.setNavigationBarTitle({ title: '编辑习惯' });
     else if (compact) wx.setNavigationBarTitle({ title: '确认新习惯' });
     this.refresh();
@@ -50,11 +50,13 @@ Page(ui.withLifecycle({
   refresh() {
     ui.read(this, state => {
       const context = ui.contextKey();
-      if (this._contextBound && this._editContext !== context) {
-        this.setData({ title: '', target: '', minimum: '', weekdays: [], time: '', source: '', fieldErrors: {}, focusField: '' });
+      if (this._contextBound && (this._editContext !== context || this._draftScope !== context + ':' + ui.date.today())) {
+        drafts().read(context + ':' + ui.date.today(), this._draftKey);
+        this._draftInitialized = false; this._invalidDraft = true;
+        this.setData({ title: '', target: '', minimum: '', weekdays: [], time: '', source: '', fieldErrors: {}, focusField: '', draftDirty: false, draftRestored: false });
         throw Error('数据状态已变化，请返回后重新打开表单');
       }
-      if (!this._contextBound) { this._editContext = context; this._contextBound = true; }
+      if (!this._contextBound) { this._editContext = context; this._draftScope = context + ':' + ui.date.today(); this._contextBound = true; }
       if (this.data.editing && !this._loaded) {
         const habit = ui.domain.findHabit(state, this._id);
         const plan = habit.versions[habit.versions.length - 1];
@@ -63,23 +65,78 @@ Page(ui.withLifecycle({
           unit: plan.unit, time: plan.time, weekdays: plan.weekdays, addingMinimum: plan.minimum != null });
         this._loaded = true;
       }
-      if (!this.data.editing) {
-        // 今天容量已满时明确从明天开始，不静默改日期；提交冲突仍由领域层拒绝。
-        const capacity = flow.creationAvailability(state, ui.date.today());
-        const forced = !capacity.today && capacity.tomorrow;
-        this.setData({ canCreateToday: capacity.today,
-          capacityNote: forced ? '今天的 5 个位置已满，这个习惯从明天开始。' : '',
-          startOffset: forced ? 1 : this.data.startOffset });
+      this.updateCapacity(state);
+      if (!this._invalidDraft) {
+        const saved = drafts().read(this._draftScope, this._draftKey);
+        if (!this._draftInitialized || (saved && saved.version > (this._draftVersion || 0))) {
+          if (!this._draftInitialized) this._cleanInput = inputSnapshot(this.data);
+          if (saved) {
+            this._id = saved.value.id; this._baseRevision = saved.value.baseRevision;
+            this._cleanInput = saved.value.clean;
+            this._saveAttempted = saved.value.saveAttempted;
+            this._draftVersion = saved.version;
+            this.setData({ ...saved.value.input, draftRestored: true, draftDirty: true });
+          }
+          this._draftInitialized = true;
+        }
       }
+      // 接续的草稿也按当前容量核对，系统选择可用日期不算用户修改。
+      this.updateCapacity(state);
     });
+    if (this.data.dataReady && this._draftError) ui.error(this, Error(this._draftError));
     this.updateSchedule();
   },
+  updateCapacity(state) {
+    if (this.data.editing) return;
+    const capacity = flow.creationAvailability(state, ui.date.today());
+    const confirmedCreate = state.habits.some(habit => habit.id === this._id);
+    const forced = !confirmedCreate && !capacity.today && capacity.tomorrow;
+    if (forced && this._cleanInput) this._cleanInput.startOffset = 1;
+    this.setData({ canCreateToday: capacity.today, canCreateTomorrow: capacity.tomorrow,
+      capacityFull: !capacity.today && !capacity.tomorrow, confirmedCreate,
+      capacityNote: confirmedCreate ? '这个习惯已创建。核对后可返回今日；修改已有计划请进入习惯详情。'
+        : !capacity.today && !capacity.tomorrow ? '已有 5 个进行中的习惯，调整一个后再创建。'
+        : forced ? '今天的 5 个位置已满，这个习惯从明天开始。' : '',
+      startOffset: forced ? 1 : this.data.startOffset });
+  },
+  onManage() { wx.navigateTo({ url: '/pages/manage/index' }); },
   updateSchedule() {
     const date = ui.date.today();
     const start = ui.date.shift(date, this.data.editing ? 1 : this.data.startOffset);
     const days = [1, 2, 3, 4, 5, 6, 7].map(value => ({ value, label: '一二三四五六日'[value - 1], selected: this.data.weekdays.includes(value) }));
     this.setData({ days, ...form.presentation(this.data), effectiveLabel: ui.date.label(start),
       firstLabel: this.data.weekdays.length ? ui.date.label(ui.domain.firstExecution(this.data, start)) : '至少选择一个星期' });
+    this.keepDraft();
+  },
+  keepDraft() {
+    if (!this._draftInitialized || this._saved || this._invalidDraft || this._gone || this._visible === false || this._draftScope !== ui.contextKey() + ':' + ui.date.today()) return;
+    const saved = drafts().read(this._draftScope, this._draftKey);
+    if (saved && saved.version > (this._draftVersion || 0)) return;
+    const input = inputSnapshot(this.data), dirty = !!this._saveAttempted || JSON.stringify(input) !== JSON.stringify(this._cleanInput);
+    this.setData({ draftDirty: dirty });
+    if (dirty) {
+      const version = drafts().set(this._draftScope, this._draftKey, { input, clean: this._cleanInput, id: this._id, baseRevision: this._baseRevision, saveAttempted: !!this._saveAttempted }, this._draftVersion || 0);
+      if (version != null) this._draftVersion = version;
+    } else {
+      drafts().remove(this._draftScope, this._draftKey, this._draftVersion || 0);
+      this._draftVersion = undefined;
+    }
+  },
+  onHide() { this.keepDraft(); },
+  onUnload() { this.keepDraft(); },
+  onCopyDraft() {
+    if (this._draftScope !== ui.contextKey() + ':' + ui.date.today()) return;
+    const context = ui.contextKey(), showVersion = this._showVersion;
+    wx.setClipboardData({ data: `${this.data.title || '未命名习惯'}\n平时 ${this.data.target || '未填写'} ${this.data.unit}\n忙时 ${this.data.minimum || '未设置'} ${this.data.unit}\n${ui.domain.weekdayText(this.data.weekdays)}${this.data.time ? ' · ' + this.data.time : ''}`,
+      fail: () => { if (ui.isCurrentView(this, context, showVersion)) ui.error(this, Error('复制未完成，输入仍在本页，可以重试')); } });
+  },
+  onDiscardDraft() {
+    if (this.data.saving || !this.data.draftDirty) return;
+    const context = ui.contextKey(), showVersion = this._showVersion, version = this._draftVersion;
+    wx.showModal({ title: '放弃未保存的修改？', content: '恢复进入表单时的内容，已保存的计划不会改变。' + (this._saveAttempted ? '不会撤回已发送的操作；结果请到云端状态核对。' : ''), confirmText: '放弃修改',
+      success: result => { if (result.confirm && ui.isCurrentView(this, context, showVersion) && version === this._draftVersion) {
+        drafts().remove(this._draftScope, this._draftKey, version); this._draftVersion = undefined; this._saveAttempted = false; this.setData({ ...this._cleanInput, draftDirty: false, draftRestored: false, error: '', fieldErrors: {} }); this.refresh();
+      } } });
   },
   onInput(event) {
     if (this.data.saving) return;
@@ -99,7 +156,7 @@ Page(ui.withLifecycle({
   onMore() { if (!this.data.saving) this.setData({ moreOpen: !this.data.moreOpen }); },
   onToggleFrequency() { if (!this.data.saving) this.setData({ frequencyOpen: !this.data.frequencyOpen }); },
   onToggleStart() { if (!this.data.saving) this.setData({ startOpen: !this.data.startOpen }); },
-  onAddMinimum() { if (!this.data.saving) this.setData({ addingMinimum: true }); },
+  onAddMinimum() { if (!this.data.saving) { this.setData({ addingMinimum: true }); this.keepDraft(); } },
   onRemoveMinimum() { if (!this.data.saving) { this.setData({ minimum: '', addingMinimum: false, fieldErrors: { ...this.data.fieldErrors, minimum: '' } }); this.updateSchedule(); } },
   onUnit(event) { if (this.data.saving) return; this.setData({ unit: this.data.units[Number(event.detail.value)] }); this.updateSchedule(); this.validateField('target'); this.validateField('minimum'); },
   onTime(event) { if (this.data.saving) return; this.setData({ time: event.detail.value }); this.updateSchedule(); },
@@ -116,7 +173,12 @@ Page(ui.withLifecycle({
     this.setData({ weekdays: event.currentTarget.dataset.kind === 'work' ? [1, 2, 3, 4, 5] : [1, 2, 3, 4, 5, 6, 7] });
     this.updateSchedule(); this.validateField('weekdays');
   },
-  onStart(event) { if (this.data.saving) return; this.setData({ startOffset: Number(event.currentTarget.dataset.offset) }); this.updateSchedule(); },
+  onStart(event) {
+    if (this.data.saving) return;
+    const offset = Number(event.currentTarget.dataset.offset);
+    if (![0, 1].includes(offset) || (offset === 0 ? !this.data.canCreateToday : !this.data.canCreateTomorrow)) return;
+    this.setData({ startOffset: offset }); this.updateSchedule();
+  },
   onSave() {
     if (this.data.saving) return;
     if (this.data.dataReadOnly) { ui.error(this, Error('暂时无法更新，请连接网络后重试')); return; }
@@ -124,8 +186,13 @@ Page(ui.withLifecycle({
     if (typeof wx.hideKeyboard === 'function') wx.hideKeyboard({ fail() {} });
     this.setData({ saving: true, error: '', keyboardOpen: false });
     const context = ui.contextKey(), showVersion = this._showVersion;
+    this.keepDraft();
+    let draftVersion = this._draftVersion;
+    const draftScope = this._draftScope, draftKey = this._draftKey;
     let firstGuide = null;
     const finish = () => {
+      if (draftVersion != null) drafts().remove(draftScope, draftKey, draftVersion);
+      if (ui.isCurrentView(this, context, showVersion)) this._saved = true;
       if (this._gone) return;
       this.setData({ saving: false });
       if (!ui.isCurrentView(this, context, showVersion)) return;
@@ -138,8 +205,11 @@ Page(ui.withLifecycle({
     };
     const failed = err => { if (!this._gone) this.setData({ saving: false }); if (ui.isCurrentView(this, context, showVersion)) ui.error(this, err); };
     try {
-      if (this._invalidDraft) throw Error('计划草稿已失效，请返回重新预览，未创建任何习惯');
-      if (this._editContext !== ui.contextKey()) throw Error('数据状态已变化，请返回后重新打开表单');
+      if (this._invalidDraft) throw Error(this._draftError || '计划草稿已失效，请返回重新预览，未创建任何习惯');
+      if (this._editContext !== ui.contextKey() || this._draftScope !== ui.contextKey() + ':' + ui.date.today()) {
+        this.refresh();
+        throw Error('数据状态已变化，请返回后重新打开表单');
+      }
       const fieldErrors = form.fields(this.data), first = Object.keys(fieldErrors)[0];
       if (first) {
         this.setData({ fieldErrors, moreOpen: this.data.moreOpen || !!fieldErrors.time,
@@ -167,6 +237,7 @@ Page(ui.withLifecycle({
       const command = this.data.editing
         ? { type: 'edit', id: this._id, baseRevision: this._baseRevision, plan }
         : { type: 'create', id: this._id, startDate, plan };
+      this._saveAttempted = true; this.keepDraft(); draftVersion = this._draftVersion;
       const result = ui.store().dispatch(command);
       if (result && typeof result.then === 'function') return result.then(finish).catch(failed);
       finish();

@@ -2,15 +2,14 @@
 const crypto = require('node:crypto');
 const { ApiError, fail, token, canonical } = require('./protocol');
 const { authenticate } = require('./identity');
+const { readPreferences, SLOTS, THEMES } = require('./preferences');
 const hash = value => crypto.createHash('sha256').update(value).digest('hex');
 const copy = value => JSON.parse(JSON.stringify(value));
 const own = (object, key) => Object.prototype.hasOwnProperty.call(object, key);
 const HEX = /^[a-f0-9]{64}$/;
 const hex = value => typeof value === 'string' && HEX.test(value);
 const CATEGORIES = ['read', 'walk', 'study', 'tidy'];
-const SLOTS = ['08:00', '12:30', '20:30'];
 const CAPTIONS = ['small-steps', 'keep-going', 'busy-still-counts'];
-const THEMES = ['mist', 'paper'];
 const PUBLIC_UNAVAILABLE = { ok: false, code: 'SHARE_UNAVAILABLE', message: '这份分享暂不可用或已失效' };
 function object(value, allowed) {
   if (!value || typeof value !== 'object' || Array.isArray(value) || ![Object.prototype, null].includes(Object.getPrototypeOf(value)) ||
@@ -57,25 +56,6 @@ function validateRequest(event, dates) {
   if (event.action === 'listMyShares' && event.cursor != null && !hex(event.cursor)) fail('INVALID_REQUEST', '分页标识无效');
 }
 
-function newPreferences(owner, epoch, now) {
-  return { schemaVersion: 1, owner, ownerEpoch: epoch, revision: 0, pinnedHabitId: null, reminderSlot: null,
-    updatedAt: now, shareIndex: [], dailyCreates: { date: '', requests: [] }, preferenceReceipts: [] };
-}
-function readPreferences(saved, owner, epoch, now) {
-  if (!saved) return newPreferences(owner, epoch, now);
-  if (saved.schemaVersion !== 1 || saved.owner !== owner || saved.ownerEpoch !== epoch || !Number.isSafeInteger(saved.revision) || saved.revision < 0 ||
-    !Array.isArray(saved.shareIndex) || saved.shareIndex.length > 200 || !Array.isArray(saved.preferenceReceipts) || saved.preferenceReceipts.length > 64 ||
-    !saved.dailyCreates || typeof saved.dailyCreates.date !== 'string' || !Array.isArray(saved.dailyCreates.requests) || saved.dailyCreates.requests.length > 10 ||
-    (saved.pinnedHabitId !== null && !token(saved.pinnedHabitId)) || (saved.reminderSlot !== null && !SLOTS.includes(saved.reminderSlot))) throw Error('PREFERENCES_CORRUPT');
-  if (saved.theme !== undefined && !THEMES.includes(saved.theme)) throw Object.assign(Error('PREFERENCES_CORRUPT'), { code: 'PREFERENCES_CORRUPT' });
-  const unique = new Set();
-  for (const row of saved.shareIndex) {
-    if (!hex(row.id) || unique.has(row.id) || !['active', 'revoked'].includes(row.status) ||
-      !Number.isFinite(Date.parse(row.createdAt)) || !Number.isFinite(Date.parse(row.expiresAt))) throw Error('SHARE_INDEX_CORRUPT');
-    unique.add(row.id);
-  }
-  return saved;
-}
 function preferenceView(p) {
   return { revision: p.revision, pinnedHabitId: p.pinnedHabitId, reminderSlot: p.reminderSlot };
 }

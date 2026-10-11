@@ -1,6 +1,8 @@
 'use strict';
 // Exclusive to 渐成习惯打卡 in a shared environment. No legacy collection fallback.
 const COLLECTION = 'jiancheng_daka_accounts';
+const PREFERENCES = 'jiancheng_daka_preferences';
+const { readPreferences } = require('./preferences');
 
 function isMissingDocument(err) {
   // Fail closed: missing collections, permission errors and outages must never create empty replacement accounts.
@@ -9,6 +11,17 @@ function isMissingDocument(err) {
 
 function createRepository(db) {
   return {
+    async read(owner) {
+      try {
+        const response = await db.collection(COLLECTION).doc(owner).get();
+        if (!response || !Object.prototype.hasOwnProperty.call(response, 'data')) throw Error('ACCOUNT_READ_INVALID');
+        if (Array.isArray(response.data) ? response.data.length > 1 : response.data !== null && typeof response.data !== 'object') throw Error('ACCOUNT_READ_INVALID');
+        const data = Array.isArray(response.data) ? response.data[0] : response.data;
+        if (Array.isArray(response.data) && response.data.length && (!data || typeof data !== 'object' || Array.isArray(data))) throw Error('ACCOUNT_READ_INVALID');
+        if (data && !data.payload) throw Error('ACCOUNT_DOCUMENT_CORRUPT');
+        return data ? data.payload : null;
+      } catch (err) { if (isMissingDocument(err)) return null; throw err; }
+    },
     async transact(owner, operation) {
       const result = await db.runTransaction(async transaction => {
         const ref = transaction.collection(COLLECTION).doc(owner);
@@ -21,7 +34,31 @@ function createRepository(db) {
         } catch (err) { if (!isMissingDocument(err)) throw err; }
         // 清理流程会原地删除标记，须在回调前保留原值以判断是否需要持久化。
         const before = JSON.stringify(saved);
+        const previousEpoch = saved && saved.epoch;
+        const previousIds = saved && saved.state ? saved.state.habits.map(h => h.id) : [];
         const outcome = await operation(saved);
+        // 单项删除保留账户代际；置顶与账户数据必须在同一事务中提交。
+        if (previousEpoch && previousEpoch === outcome.account.epoch) {
+          const remaining = new Set(outcome.account.state.habits.map(h => h.id));
+          const removed = previousIds.filter(id => !remaining.has(id));
+          if (removed.length) {
+            const prefRef = transaction.collection(PREFERENCES).doc(owner);
+            let pref = null;
+            try {
+              const response = await prefRef.get();
+              pref = Array.isArray(response.data) ? response.data[0] : response.data;
+            } catch (err) { if (!isMissingDocument(err)) throw err; }
+            if (pref) {
+              readPreferences(pref, owner, previousEpoch, outcome.account.updatedAt);
+              if (removed.includes(pref.pinnedHabitId)) {
+                if (pref.revision === Number.MAX_SAFE_INTEGER) throw Error('PREFERENCES_REVISION_OVERFLOW');
+                pref.pinnedHabitId = null; pref.revision += 1; pref.updatedAt = outcome.account.updatedAt;
+                const { _id, ...data } = pref;
+                await prefRef.set({ data });
+              }
+            }
+          }
+        }
         if (!saved || before !== JSON.stringify(outcome.account)) {
           await ref.set({ data: { payload: outcome.account } });
         }

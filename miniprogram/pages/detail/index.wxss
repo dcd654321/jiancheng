@@ -1,1 +1,15 @@
 /* pages/detail/index.wxss */
+.note-actions { flex-wrap: wrap; gap: 4px 12px; }
+.detail-actions { margin-top: 12px; overflow: hidden; }
+.action-header { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 52px; padding: 13px 16px; margin: 0; text-align: left; border: 0; border-radius: 0; background: var(--color-surface, #FFFFFF); }
+.action-header.button-hover { background: var(--color-soft, #EEF2EC); }
+.note-section, .plan-action { border-bottom: 1px solid var(--color-line, #DBE2D9); }
+.note-section .note-preview { margin: 0; padding: 0 16px 14px; }
+.note-form { margin-top: 0; padding: 0 16px 12px; }
+.more-group { background: var(--color-surface, #FFFFFF); }
+.more-header.is-expanded { border-bottom: 1px solid var(--color-line, #DBE2D9); }
+.more-content, .more-actions { background: var(--color-surface, #FFFFFF); }
+.more-help { margin: 0; padding: 12px 16px 0; }
+.more-actions { padding: 0 16px; }
+.more-actions .setting-row:last-child { border-bottom: 0; }
+.delete-help { margin: 0; padding: 0 16px 14px; }

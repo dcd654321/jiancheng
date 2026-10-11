@@ -1,6 +1,7 @@
 'use strict';
 const { createNetworkRecovery } = require('./network-recovery');
 const { createNoteDrafts } = require('./note-drafts');
+const { createFormDrafts } = require('./form-drafts');
 
 function createAppLifecycle(dependencies) {
   const d = dependencies;
@@ -22,9 +23,9 @@ function createAppLifecycle(dependencies) {
       if (app.networkRecovery) app.networkRecovery.dispose();
       app.cloudSession = d.createCloudSession(d.wxApi, d.cloudConfig);
       app.noteDrafts = createNoteDrafts();
+      app.formDrafts = createFormDrafts();
       app.store = d.createWorkspaceStore(app.cloudSession, app.noteDrafts);
       app.networkRecovery = createNetworkRecovery(d.wxApi, app.cloudSession);
-      app.planAssistant = d.createPlanAssistant(d.wxApi, d.cloudConfig, d.aiConfig, { session: app.cloudSession });
       app.quoteSession = d.createQuoteSession();
       if (d.createAppearanceClient && d.createAppearanceController) {
         app.appearanceClient = d.createAppearanceClient(d.wxApi, d.cloudConfig, d.appearanceConfig, app.cloudSession,

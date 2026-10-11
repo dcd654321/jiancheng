@@ -22,7 +22,10 @@ test('正式资源清单精确覆盖五函数和七集合，没有其他应用�
   for (const fn of manifest.functions) {
     assert.equal(fn.path, 'cloudfunctions/' + fn.name);
     assert.ok(fs.existsSync(path.join(__dirname, '..', fn.path, 'index.js')));
-    assert.match(fn.enableFlag, /^HABIT_[A-Z_]+_ENABLED$/);
+    if (fn.name === resources.planFunction) {
+      assert.equal(fn.retired, true);
+      assert.equal(fn.enableFlag, undefined);
+    } else assert.match(fn.enableFlag, /^HABIT_[A-Z_]+_ENABLED$/);
   }
 });
 

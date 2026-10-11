@@ -1,0 +1,190 @@
+[
+  {
+    "environment": {
+      "SDKVersion": "3.17.3",
+      "platform": "devtools",
+      "windowWidth": 390,
+      "windowHeight": 671,
+      "date": "2026-10-08"
+    }
+  },
+  {
+    "liveRead": {
+      "ready": true,
+      "phase": "ready",
+      "pending": 0,
+      "count": 4,
+      "lastSyncedAt": "2026-10-07T22:59:21.769Z",
+      "lastError": "",
+      "readOnly": true
+    }
+  },
+  {
+    "file": "01-cloud-read-W.png",
+    "page": "pages/sync/index",
+    "level": "W",
+    "steps": "检查当前已确认的云端读取时间；不执行真实写操作",
+    "health": "已目检：当前已确认云端只读状态",
+    "caption": "2026-10-08改版；状态：当前已确认云端只读状态；操作：检查当前已确认的云端读取时间；不执行真实写操作；边界：lastSyncedAt=2026-10-07T22:59:21.769Z，即北京时间2026-10-08 06:59:21.769；仅此次云读取确认，不证明写入。"
+  },
+  {
+    "file": "02-today-W.png",
+    "page": "pages/today/index",
+    "level": "W",
+    "steps": "改版真实开发账户今日；仅观察原有目标",
+    "health": "已目检：已有账户今日；保留原有目标",
+    "caption": "2026-10-08改版；状态：已有账户今日；保留原有目标；操作：改版真实开发账户今日；仅观察原有目标；边界：已有目标没有被新的模板默认值静默重写。"
+  },
+  {
+    "file": "03-assistant-basic-W.png",
+    "page": "pages/assistant/index",
+    "level": "W",
+    "steps": "基础优先，未展开AI，无供应商请求",
+    "health": "已目检：基础建议优先；AI未展开",
+    "caption": "2026-10-08改版；状态：基础建议优先；AI未展开；操作：基础优先，未展开AI，无供应商请求"
+  },
+  {
+    "file": "04-basic-preview-W.png",
+    "page": "pages/assistant/index",
+    "level": "W",
+    "steps": "基础规则预览，未创建",
+    "health": "已目检：基础规则预览；未创建",
+    "caption": "2026-10-08改版；状态：基础规则预览；未创建；操作：基础规则预览，未创建"
+  },
+  {
+    "file": "05-first-empty-F.png",
+    "page": "pages/today/index",
+    "level": "F",
+    "steps": "模拟空账户；整理3分钟主入口",
+    "health": "已目检：首次空态；整理3/1主入口",
+    "caption": "2026-10-08改版；状态：首次空态；整理3/1主入口；操作：模拟空账户；整理3分钟主入口"
+  },
+  {
+    "file": "06-template-confirm-F.png",
+    "page": "pages/edit/index",
+    "level": "F",
+    "steps": "实际点击整理主入口→3/1确认页；未保存",
+    "health": "已目检：整理3/1模板确认",
+    "caption": "2026-10-08改版；状态：整理3/1模板确认；操作：实际点击整理主入口→3/1确认页；未保存"
+  },
+  {
+    "file": "07-dirty-input-F.png",
+    "page": "pages/edit/index",
+    "level": "F",
+    "steps": "修改名称/目标；会话草稿，无云写入",
+    "health": "已目检：未保存表单与会话草稿",
+    "caption": "2026-10-08改版；状态：未保存表单与会话草稿；操作：修改名称/目标；会话草稿，无云写入"
+  },
+  {
+    "file": "08-draft-reentry-F.png",
+    "page": "pages/edit/index",
+    "level": "F",
+    "steps": "返回后点击相同入口；输入接续成功",
+    "health": "已目检：返回重入后输入接续",
+    "caption": "2026-10-08改版；状态：返回重入后输入接续；操作：返回后点击相同入口；输入接续成功；边界：draftCheck记录名称“整理我的桌面”、target=4、restored=true；仅此会话场景证据。"
+  },
+  {
+    "draftCheck": {
+      "title": "整理我的桌面",
+      "target": "4",
+      "restored": true
+    }
+  },
+  {
+    "file": "09-invalid-target-F.png",
+    "page": "pages/edit/index",
+    "level": "F",
+    "steps": "目标0提交；字段错误与输入保留",
+    "health": "已目检：目标0字段错误与输入保留",
+    "caption": "2026-10-08改版；状态：目标0字段错误与输入保留；操作：目标0提交；字段错误与输入保留"
+  },
+  {
+    "file": "10-creating-F.png",
+    "page": "pages/today/index",
+    "level": "F",
+    "steps": "调用保存事件，内存延迟2200ms等待；未显示成功",
+    "health": "已目检：创建成功后今日与已创建toast",
+    "caption": "2026-10-08改版；状态：创建成功后今日与已创建toast；操作：执行保存后采集时已返回今日并显示“已创建”toast；2200ms等待未被此图捕获；边界：文件名creating及原steps不能代表等待态；真正等待证据是post41。"
+  },
+  {
+    "file": "11-created-F.png",
+    "page": "pages/today/index",
+    "level": "F",
+    "steps": "fixture创建确认后回今日",
+    "health": "已目检：创建确认后今日任务",
+    "caption": "2026-10-08改版；状态：创建确认后今日任务；操作：fixture创建确认后回今日"
+  },
+  {
+    "file": "12-recording-F.png",
+    "page": "pages/today/index",
+    "level": "F",
+    "steps": "调用忙时事件，内存等待2200ms；防连点",
+    "health": "已目检：忙时记录等待；按钮防重复",
+    "caption": "2026-10-08改版；状态：忙时记录等待；按钮防重复；操作：调用忙时事件，内存等待2200ms；防连点；边界：内存模拟2200ms延迟，不是实测云端耗时。"
+  },
+  {
+    "file": "13-feedback-F.png",
+    "page": "pages/today/index",
+    "level": "F",
+    "steps": "确认后已记下＋撤销",
+    "health": "已目检：记录确认短反馈与撤销",
+    "caption": "2026-10-08改版；状态：记录确认短反馈与撤销；操作：确认后已记下＋撤销"
+  },
+  {
+    "file": "14-completed-F.png",
+    "page": "pages/today/index",
+    "level": "F",
+    "steps": "中性本次记录，平时目标保留",
+    "health": "已目检：本次记录中性呈现；平时目标保留",
+    "caption": "2026-10-08改版；状态：本次记录中性呈现；平时目标保留；操作：中性本次记录，平时目标保留"
+  },
+  {
+    "file": "15-undo-F.png",
+    "page": "pages/today/index",
+    "level": "F",
+    "steps": "撤销后显示当前今天目标，不推断调整来源",
+    "health": "已目检：撤销后今天目标呈现",
+    "caption": "2026-10-08改版；状态：撤销后今天目标呈现；操作：撤销后显示当前今天目标，不推断调整来源"
+  },
+  {
+    "file": "16-progress-F.png",
+    "page": "pages/progress/index",
+    "level": "F",
+    "steps": "事实、分母、明日调整",
+    "health": "已目检：进度事实、分母与明日行动",
+    "caption": "2026-10-08改版；状态：进度事实、分母与明日行动；操作：事实、分母、明日调整；边界：390px逻辑窗日期格46.28125×73.59375px。"
+  },
+  {
+    "calendar": {
+      "size": {
+        "width": 46.28125,
+        "height": 73.59375
+      },
+      "runtimeWidth": 390
+    }
+  },
+  {
+    "file": "17-progress-adjust-F.png",
+    "page": "pages/edit/index",
+    "level": "F",
+    "steps": "进度直接到对应习惯明日编辑；不改历史",
+    "health": "已目检：从进度进入对应明日编辑",
+    "caption": "2026-10-08改版；状态：从进度进入对应明日编辑；操作：进度直接到对应习惯明日编辑；不改历史"
+  },
+  {
+    "file": "18-assistant-preview-F.png",
+    "page": "pages/assistant/index",
+    "level": "F",
+    "steps": "基础先行，未发送AI",
+    "health": "已目检：基础建议预览；无AI发送",
+    "caption": "2026-10-08改版；状态：基础建议预览；无AI发送；操作：基础先行，未发送AI"
+  },
+  {
+    "file": "19-ai-opt-in-F.png",
+    "page": "pages/assistant/index",
+    "level": "F",
+    "steps": "主动展开AI，同意未勾选",
+    "health": "已目检：主动展开AI；尚未同意",
+    "caption": "2026-10-08改版；状态：主动展开AI；尚未同意；操作：主动展开AI，同意未勾选"
+  }
+]

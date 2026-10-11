@@ -1,44 +1,28 @@
 const ui = require('../../services/ui');
-const { QUOTES } = require('../../services/quotes');
+const { TODAY_QUOTE } = require('../../services/quotes');
 const { firstReturnTask } = require('../../services/gentle-return');
 const flow = require('../../services/today-flow');
 const { features } = require('../../services/features-client');
+const { HABIT_TEMPLATES } = require('../../config/habit-templates');
 
-// 冷启动等待时的问候与轻松说明：随包发布的静态文案，不读取账户数据、不写任何状态。
-const LOADING_NOTES = ['正在把今天的安排取回来。', '一点一点来，今天就很好。', '忙的时候，做小一点也算数。', '记录保存在云端，换手机也在。'];
-const FEEDBACK_DURATION = 5000;
-function greeting(now = new Date()) {
-  const hour = now.getHours();
-  if (hour < 5) return '夜深了';
-  if (hour < 11) return '早上好';
-  if (hour < 13) return '中午好';
-  if (hour < 18) return '下午好';
-  return '晚上好';
-}
-function loadingNote(now = new Date()) {
-  const day = Math.floor((now.getTime() - now.getTimezoneOffset() * 60000) / 86400000);
-  return LOADING_NOTES[Math.abs(day) % LOADING_NOTES.length];
+function usesLargeFont() {
+  try { return typeof wx.getSystemInfoSync === 'function' && Number(wx.getSystemInfoSync().fontSizeSetting) > 16; }
+  catch (_) { return false; }
 }
 
 Page(ui.withLifecycle({
-  onLoad() { this.setData({ loadingGreeting: greeting(), loadingNote: loadingNote() }); },
   data: { error: '', loading: true, dataUnavailable: false, dataReady: false, dataReadOnly: false,
-    loadingGreeting: '今天好', loadingNote: LOADING_NOTES[0],
     pendingConfirm: false, recoveryLabel: '重新读取',
-    date: '', dateLabel: '', pending: [], completed: [], total: 0, done: 0, minimum: 0, rate: 0,
-    hasHabits: false, hideQuote: false, quote: QUOTES[0], showCompleted: false, chooserOpen: false, completionFeedback: null,
+    date: '', dateLabel: ui.date.label(ui.date.today()), pending: [], completed: [], total: 0, done: 0, minimum: 0, rate: 0,
+    hasHabits: false, hideQuote: false, quote: TODAY_QUOTE, showCompleted: false, chooserOpen: false,
     quickMinimumEnabled: ui.quickMinimumEnabled,
-    firstHabitGuide: '', returnGuide: null, tomorrow: null, canCreateToday: true, canCreateTomorrow: true },
+    firstHabitGuide: '', returnGuide: null, tomorrow: null, canCreateToday: true, canCreateTomorrow: true,
+    templates: HABIT_TEMPLATES, largeFont: false },
   refresh() {
-    const assistant = getApp().planAssistant;
-    this.setData({ aiEnabled: !!(assistant && typeof assistant.status === 'function' && assistant.status().configured) });
     ui.read(this, (state, date) => {
       const feedbackContext = ui.contextKey() + ':' + date;
       if (this._firstGuideContext !== feedbackContext) {
         this._firstGuideId = null; this.setData({ firstHabitGuide: '' }); this._firstGuideContext = feedbackContext;
-      }
-      if (this._feedbackContext !== feedbackContext) {
-        this.clearCompletionFeedback(); this._feedbackContext = feedbackContext;
       }
       if (this._pinContext !== ui.contextKey()) this._visitPinnedId = null;
       this._pinContext = ui.contextKey();
@@ -49,17 +33,13 @@ Page(ui.withLifecycle({
       if (pinned > 0) tasks.unshift(tasks.splice(pinned, 1)[0]);
       const completed = tasks.filter(t => t.done);
       const pending = tasks.filter(t => !t.done);
-      const latest = completed.find(task => task.id === this._feedbackId);
-      if (this._feedbackId && !latest) this.clearCompletionFeedback();
-      const completionFeedback = latest ? { id: latest.id, date, title: latest.title,
-        goal: '已按' + (latest.status === 'minimum' ? '忙时' : '原目标') + latest.target + latest.unit + '记下' } : null;
       const app = getApp();
       const guide = app.firstHabitGuide;
       let firstHabitGuide = this.data.firstHabitGuide;
       if (guide && (!guide.context || guide.context === ui.contextKey()) && state.habits.some(habit => habit.id === guide.id)) {
         const task = pending.find(item => item.id === guide.id);
         if (task) {
-          firstHabitGuide = `已创建「${guide.title}」。做完后，在这里记下。`;
+          firstHabitGuide = `已创建「${guide.title}」。做完后，在这里打卡。`;
         } else if (guide.firstDate > date) {
           const when = guide.firstDate === ui.date.shift(date, 1) ? '明天' : ui.date.label(guide.firstDate);
           firstHabitGuide = `已创建「${guide.title}」。${when}会出现在这里。`;
@@ -76,15 +56,16 @@ Page(ui.withLifecycle({
       // 今天已经留下任何记录后，回归提示不再出现；有同步异常时优先恢复，不叠加提示。
       const returnGuide = (ui.storageInfo().syncAttention || completed.length) ? null : firstReturnTask(state, date, pending);
       const capacity = flow.creationAvailability(state, date);
-      this.setData({ date, dateLabel: ui.date.label(date), pending, completed, firstHabitGuide, returnGuide, completionFeedback,
+      this.setData({ date, dateLabel: ui.date.label(date), pending, completed, firstHabitGuide, returnGuide,
         tomorrow: flow.tomorrowSummary(state, date), canCreateToday: capacity.today, canCreateTomorrow: capacity.tomorrow,
         total: tasks.length, done: completed.length, minimum: completed.filter(t => t.status === 'minimum').length,
         rate: tasks.length ? completed.length / tasks.length * 100 : 0,
         hasHabits: state.habits.length > 0, hideQuote: state.settings.hideQuote,
-        quote: state.settings.hideQuote ? '' : (getApp().quoteSession ? getApp().quoteSession.current() : QUOTES[0]) });
+        quote: state.settings.hideQuote ? '' : TODAY_QUOTE });
     });
   },
   async onShow() {
+    this.setData({ largeFont: usesLargeFont(), dateLabel: ui.date.label(ui.date.today()) });
     const service = features();
     if (!service.status().enabled) return;
     const showVersion = this._showVersion;
@@ -99,35 +80,13 @@ Page(ui.withLifecycle({
       }
     } catch (_) { /* Keep the stable time/ID order when preferences are unavailable. */ }
   },
-  clearCompletionFeedback() {
-    clearTimeout(this._feedbackTimer); this._feedbackTimer = null;
-    this._feedbackId = null;
-    this._feedbackVersion = (this._feedbackVersion || 0) + 1;
-    if (!this._gone) this.setData({ completionFeedback: null });
-  },
-  // 只保留最近一次确认项的短时反馈；长期撤销入口留在已完成分组。
-  onRecorded(command) {
-    if (command.type === 'undo' && command.id === this._feedbackId) this.clearCompletionFeedback();
-    if (!['complete', 'completeMinimum'].includes(command.type) || command.date !== ui.date.today()) return;
-    const context = ui.contextKey() + ':' + command.date;
-    this.clearCompletionFeedback();
-    this._feedbackContext = context;
-    this._feedbackId = command.id;
-    this.setData({ showCompleted: true });
-    const version = this._feedbackVersion;
-    this._feedbackTimer = setTimeout(() => {
-      if (this._feedbackVersion === version) this.clearCompletionFeedback();
-    }, FEEDBACK_DURATION);
-  },
   onHide() {
-    this._visitPinnedId = null; this.clearCompletionFeedback();
-    this.setData({ firstHabitGuide: '', returnGuide: null, chooserOpen: false, showCompleted: false, completionFeedback: null });
+    this._visitPinnedId = null;
+    this.setData({ firstHabitGuide: '', returnGuide: null, chooserOpen: false, showCompleted: false });
     this._firstGuideId = null;
   },
-  onUnload() { this.clearCompletionFeedback(); },
   onDismissGuide() { this.setData({ firstHabitGuide: '' }); this._firstGuideId = null; },
   onToggleChooser() { this.setData({ chooserOpen: !this.data.chooserOpen }); },
-  onAssistant() { this.setData({ chooserOpen: false }); wx.navigateTo({ url: '/pages/assistant/index' }); },
   onCreate(event) {
     try {
       ui.assertContext(this);
@@ -148,11 +107,6 @@ Page(ui.withLifecycle({
   },
   onManage() { wx.navigateTo({ url: '/pages/manage/index' }); },
   onToggleCompleted() { this.setData({ showCompleted: !this.data.showCompleted }); },
-  onViewCompleted() {
-    this.setData({ showCompleted: true }, () => {
-      if (wx.pageScrollTo) wx.pageScrollTo({ selector: '#completed-section', duration: 200 });
-    });
-  },
   onSync() { wx.navigateTo({ url: '/pages/sync/index' }); },
   ...ui.taskActions
 }));

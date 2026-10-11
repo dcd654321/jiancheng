@@ -1,0 +1,492 @@
+{
+  "date": "2026-10-11",
+  "level": "actual native DevTools rendering of current JS/WXML/WXSS with RAM fixture",
+  "actualWindowWidth": 390,
+  "actualSystemInfo": {
+    "brand": "devtools",
+    "model": "iPhone 12/13 (Pro)",
+    "system": "iOS 10.0.1",
+    "platform": "devtools",
+    "benchmarkLevel": -1,
+    "pixelRatio": 3,
+    "screenWidth": 390,
+    "screenHeight": 844,
+    "windowWidth": 390,
+    "windowHeight": 671,
+    "statusBarHeight": 47,
+    "safeArea": {
+      "top": 47,
+      "left": 0,
+      "right": 390,
+      "bottom": 810,
+      "width": 390,
+      "height": 763
+    },
+    "language": "zh_CN",
+    "version": "8.0.5",
+    "fontSizeSetting": 16,
+    "SDKVersion": "3.17.3",
+    "host": {
+      "env": "WeChat"
+    },
+    "enableDebug": false,
+    "mode": "default",
+    "deviceOrientation": "portrait",
+    "bluetoothEnabled": true,
+    "locationEnabled": true,
+    "wifiEnabled": true,
+    "albumAuthorized": true,
+    "cameraAuthorized": true,
+    "locationAuthorized": true,
+    "microphoneAuthorized": true,
+    "notificationAuthorized": true,
+    "notificationAlertAuthorized": true,
+    "notificationBadgeAuthorized": true,
+    "notificationSoundAuthorized": true,
+    "phoneCalendarAuthorized": true,
+    "bluetoothAuthorized": true,
+    "locationReducedAccuracy": true,
+    "devicePixelRatio": 3
+  },
+  "fontEvidence": "Only fontSizeSetting is mocked; current source reads it and scales actual native styles. Device fonts/IME not tested.",
+  "checks": [
+    {
+      "theme": "mist",
+      "fontSizeSetting": 16,
+      "sourceFontScale": 1,
+      "nativeDateFontPx": "17px",
+      "tabs": [
+        {
+          "id": "",
+          "dataset": {
+            "tab": "week"
+          },
+          "left": 22,
+          "right": 136,
+          "top": 69.796875,
+          "bottom": 113.796875,
+          "width": 114,
+          "height": 44
+        },
+        {
+          "id": "",
+          "dataset": {
+            "tab": "month"
+          },
+          "left": 140,
+          "right": 252,
+          "top": 69.796875,
+          "bottom": 113.796875,
+          "width": 112,
+          "height": 44
+        },
+        {
+          "id": "",
+          "dataset": {
+            "tab": "calendar"
+          },
+          "left": 256,
+          "right": 368,
+          "top": 69.796875,
+          "bottom": 113.796875,
+          "width": 112,
+          "height": 44
+        }
+      ],
+      "cellWidth": 54,
+      "gridWidth": 378,
+      "cellMinHeight": 80,
+      "sevenDayCells": 7,
+      "thirtyDayCells": 30,
+      "allHabitCount": 6,
+      "allDayRecords": 7,
+      "renderedWidthIsActual": true
+    },
+    {
+      "theme": "mist",
+      "fontSizeSetting": 24,
+      "sourceFontScale": 1.5,
+      "nativeDateFontPx": "25.5px",
+      "tabs": [
+        {
+          "id": "",
+          "dataset": {
+            "tab": "week"
+          },
+          "left": 22,
+          "right": 136,
+          "top": 86.6875,
+          "bottom": 138.4375,
+          "width": 114,
+          "height": 51.75
+        },
+        {
+          "id": "",
+          "dataset": {
+            "tab": "month"
+          },
+          "left": 140,
+          "right": 252,
+          "top": 86.6875,
+          "bottom": 138.4375,
+          "width": 112,
+          "height": 51.75
+        },
+        {
+          "id": "",
+          "dataset": {
+            "tab": "calendar"
+          },
+          "left": 256,
+          "right": 368,
+          "top": 86.6875,
+          "bottom": 138.4375,
+          "width": 112,
+          "height": 51.75
+        }
+      ],
+      "cellWidth": 54,
+      "gridWidth": 378,
+      "cellMinHeight": 105.6875,
+      "sevenDayCells": 7,
+      "thirtyDayCells": 30,
+      "allHabitCount": 6,
+      "allDayRecords": 7,
+      "renderedWidthIsActual": true
+    },
+    {
+      "theme": "mist",
+      "fontSizeSetting": 32,
+      "sourceFontScale": 2,
+      "nativeDateFontPx": "34px",
+      "tabs": [
+        {
+          "id": "",
+          "dataset": {
+            "tab": "week"
+          },
+          "left": 22,
+          "right": 136,
+          "top": 103.59375,
+          "bottom": 209.59375,
+          "width": 114,
+          "height": 106
+        },
+        {
+          "id": "",
+          "dataset": {
+            "tab": "month"
+          },
+          "left": 140,
+          "right": 252,
+          "top": 103.59375,
+          "bottom": 209.59375,
+          "width": 112,
+          "height": 106
+        },
+        {
+          "id": "",
+          "dataset": {
+            "tab": "calendar"
+          },
+          "left": 256,
+          "right": 368,
+          "top": 103.59375,
+          "bottom": 209.59375,
+          "width": 112,
+          "height": 106
+        }
+      ],
+      "cellWidth": 54,
+      "gridWidth": 378,
+      "cellMinHeight": 135.59375,
+      "sevenDayCells": 7,
+      "thirtyDayCells": 30,
+      "allHabitCount": 6,
+      "allDayRecords": 7,
+      "renderedWidthIsActual": true
+    },
+    {
+      "theme": "paper",
+      "fontSizeSetting": 16,
+      "sourceFontScale": 1,
+      "nativeDateFontPx": "17px",
+      "tabs": [
+        {
+          "id": "",
+          "dataset": {
+            "tab": "week"
+          },
+          "left": 22,
+          "right": 136,
+          "top": 69.796875,
+          "bottom": 113.796875,
+          "width": 114,
+          "height": 44
+        },
+        {
+          "id": "",
+          "dataset": {
+            "tab": "month"
+          },
+          "left": 140,
+          "right": 252,
+          "top": 69.796875,
+          "bottom": 113.796875,
+          "width": 112,
+          "height": 44
+        },
+        {
+          "id": "",
+          "dataset": {
+            "tab": "calendar"
+          },
+          "left": 256,
+          "right": 368,
+          "top": 69.796875,
+          "bottom": 113.796875,
+          "width": 112,
+          "height": 44
+        }
+      ],
+      "cellWidth": 54,
+      "gridWidth": 378,
+      "cellMinHeight": 80,
+      "sevenDayCells": 7,
+      "thirtyDayCells": 30,
+      "allHabitCount": 6,
+      "allDayRecords": 7,
+      "renderedWidthIsActual": true
+    },
+    {
+      "theme": "paper",
+      "fontSizeSetting": 24,
+      "sourceFontScale": 1.5,
+      "nativeDateFontPx": "25.5px",
+      "tabs": [
+        {
+          "id": "",
+          "dataset": {
+            "tab": "week"
+          },
+          "left": 22,
+          "right": 136,
+          "top": 86.6875,
+          "bottom": 138.4375,
+          "width": 114,
+          "height": 51.75
+        },
+        {
+          "id": "",
+          "dataset": {
+            "tab": "month"
+          },
+          "left": 140,
+          "right": 252,
+          "top": 86.6875,
+          "bottom": 138.4375,
+          "width": 112,
+          "height": 51.75
+        },
+        {
+          "id": "",
+          "dataset": {
+            "tab": "calendar"
+          },
+          "left": 256,
+          "right": 368,
+          "top": 86.6875,
+          "bottom": 138.4375,
+          "width": 112,
+          "height": 51.75
+        }
+      ],
+      "cellWidth": 54,
+      "gridWidth": 378,
+      "cellMinHeight": 105.6875,
+      "sevenDayCells": 7,
+      "thirtyDayCells": 30,
+      "allHabitCount": 6,
+      "allDayRecords": 7,
+      "renderedWidthIsActual": true
+    },
+    {
+      "theme": "paper",
+      "fontSizeSetting": 32,
+      "sourceFontScale": 2,
+      "nativeDateFontPx": "34px",
+      "tabs": [
+        {
+          "id": "",
+          "dataset": {
+            "tab": "week"
+          },
+          "left": 22,
+          "right": 136,
+          "top": 103.59375,
+          "bottom": 209.59375,
+          "width": 114,
+          "height": 106
+        },
+        {
+          "id": "",
+          "dataset": {
+            "tab": "month"
+          },
+          "left": 140,
+          "right": 252,
+          "top": 103.59375,
+          "bottom": 209.59375,
+          "width": 112,
+          "height": 106
+        },
+        {
+          "id": "",
+          "dataset": {
+            "tab": "calendar"
+          },
+          "left": 256,
+          "right": 368,
+          "top": 103.59375,
+          "bottom": 209.59375,
+          "width": 112,
+          "height": 106
+        }
+      ],
+      "cellWidth": 54,
+      "gridWidth": 378,
+      "cellMinHeight": 135.59375,
+      "sevenDayCells": 7,
+      "thirtyDayCells": 30,
+      "allHabitCount": 6,
+      "allDayRecords": 7,
+      "renderedWidthIsActual": true
+    },
+    {
+      "actualNativeTap": [
+        "week-to-calendar",
+        "month-previous-next",
+        "back-to-today",
+        "future-cell",
+        "tab-selection-memory"
+      ],
+      "datePickerEventOnly": "Open guard + native picker change event triggered through automator; wheel selection not operated",
+      "historicalNoteAndPlan": true,
+      "monthEndClamp": "2026-01-31 -> 2026-02-28",
+      "earliestBoundary": "2025-12-20",
+      "futureExcludedFromPending": true,
+      "accountReset": true,
+      "midnightTodayFollows": true,
+      "midnightHistoryRetained": true
+    },
+    {
+      "mode": "empty",
+      "dataReady": true,
+      "dataReadOnly": false,
+      "dataUnavailable": false,
+      "loading": false,
+      "pendingConfirm": false,
+      "noFalseZeroProjection": true
+    },
+    {
+      "mode": "loading",
+      "dataReady": false,
+      "dataReadOnly": false,
+      "dataUnavailable": false,
+      "loading": true,
+      "pendingConfirm": false,
+      "noFalseZeroProjection": true
+    },
+    {
+      "mode": "unavailable",
+      "dataReady": false,
+      "dataReadOnly": false,
+      "dataUnavailable": true,
+      "loading": false,
+      "pendingConfirm": false,
+      "noFalseZeroProjection": true
+    },
+    {
+      "mode": "pending",
+      "dataReady": false,
+      "dataReadOnly": false,
+      "dataUnavailable": true,
+      "loading": false,
+      "pendingConfirm": true,
+      "noFalseZeroProjection": true
+    },
+    {
+      "mode": "stale",
+      "dataReady": true,
+      "dataReadOnly": true,
+      "dataUnavailable": false,
+      "loading": false,
+      "pendingConfirm": false,
+      "noFalseZeroProjection": true
+    },
+    {
+      "readOnlyNavigation": true,
+      "todayRoute": "pages/today/index",
+      "habitRoute": "pages/detail/index"
+    }
+  ],
+  "screenshots": [
+    "390-mist-font16-week.png",
+    "390-mist-font16-all-habits.png",
+    "390-mist-font16-month.png",
+    "390-mist-font16-month-trend.png",
+    "390-mist-font16-calendar.png",
+    "390-mist-font16-today-records.png",
+    "390-mist-font24-week.png",
+    "390-mist-font24-all-habits.png",
+    "390-mist-font24-month.png",
+    "390-mist-font24-month-trend.png",
+    "390-mist-font24-calendar.png",
+    "390-mist-font24-today-records.png",
+    "390-mist-font32-week.png",
+    "390-mist-font32-all-habits.png",
+    "390-mist-font32-month.png",
+    "390-mist-font32-month-trend.png",
+    "390-mist-font32-calendar.png",
+    "390-mist-font32-today-records.png",
+    "390-paper-font16-week.png",
+    "390-paper-font16-all-habits.png",
+    "390-paper-font16-month.png",
+    "390-paper-font16-month-trend.png",
+    "390-paper-font16-calendar.png",
+    "390-paper-font16-today-records.png",
+    "390-paper-font24-week.png",
+    "390-paper-font24-all-habits.png",
+    "390-paper-font24-month.png",
+    "390-paper-font24-month-trend.png",
+    "390-paper-font24-calendar.png",
+    "390-paper-font24-today-records.png",
+    "390-paper-font32-week.png",
+    "390-paper-font32-all-habits.png",
+    "390-paper-font32-month.png",
+    "390-paper-font32-month-trend.png",
+    "390-paper-font32-calendar.png",
+    "390-paper-font32-today-records.png",
+    "390-history-name-target-note.png",
+    "390-month-end-february.png",
+    "390-future-readonly.png",
+    "390-state-empty.png",
+    "390-state-empty-calendar.png",
+    "390-state-loading.png",
+    "390-state-unavailable.png",
+    "390-state-pending.png",
+    "390-state-stale.png"
+  ],
+  "exceptions": [],
+  "guards": {
+    "cloudCalls": 0,
+    "storageCalls": 0,
+    "realWrites": 0,
+    "requestCalls": 0
+  },
+  "pageStack": [
+    "pages/progress/index",
+    "pages/detail/index"
+  ],
+  "result": "PASS"
+}

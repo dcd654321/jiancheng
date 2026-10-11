@@ -1,5 +1,6 @@
 const ui = require('../../services/ui');
 const { appearanceController } = require('../../services/appearance');
+const { getHabitTemplate } = require('../../config/habit-templates');
 
 const OPTIONS = [
   { key: 'mist', name: '薄雾绿', desc: '接近自然光的浅灰绿，清爽安静，适合每天短时记录。' },
@@ -19,7 +20,7 @@ Page(ui.withLifecycle({
     enabled: false, theme: 'mist', preview: 'mist', savedTheme: 'mist', hasRevision: false,
     pendingTheme: '', saving: false, saveError: '', offline: false,
     options: optionsFor('mist', 'mist'), primaryLabel: '正在使用', primaryDisabled: true, statusNote: '',
-    quickMinimumEnabled: ui.quickMinimumEnabled },
+    quickMinimumEnabled: ui.quickMinimumEnabled, exampleTemplate: getHabitTemplate('read') },
   onThemeChange() { this.syncView(); },
   onShow() {
     const controller = appearanceController();

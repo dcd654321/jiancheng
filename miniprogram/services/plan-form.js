@@ -15,7 +15,7 @@ function presentation(input) {
   const limit = input.unit === '分钟' ? 120 : 999;
   return { titleCount: Array.from(String(input.title || '')).length,
     // 记录说明在今日页只出现一次；编辑页不再重复同一句话。
-    targetHint: input.compact ? '' : '完成后点「记下」，不会自动计时。',
+    targetHint: input.compact ? '' : '做完后点「打卡」，不会自动计时。',
     targetPlaceholder: `1—${limit}`,
     frequencyLabel: domain.weekdayText(input.weekdays), moreSummary: extras.join(' · ') || '计划时间' };
 }

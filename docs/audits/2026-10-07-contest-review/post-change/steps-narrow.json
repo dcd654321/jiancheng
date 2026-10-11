@@ -1,0 +1,80 @@
+[
+  {
+    "environment": {
+      "date": "2026-10-08",
+      "platform": "devtools",
+      "width": 320,
+      "height": 456,
+      "SDKVersion": "3.17.3"
+    }
+  },
+  {
+    "file": "37-today-320-F.png",
+    "page": "pages/today/index",
+    "level": "F",
+    "steps": "iPhone5逻辑320宽度；双档按钮纵排",
+    "health": "已目检：320px今日；双档纵排",
+    "caption": "2026-10-08改版；状态：320px今日；双档纵排；操作：开发工具iPhone5模拟320px逻辑窗口，观察双档操作纵排；边界：normal/busy各254×68px；仅API逻辑尺寸，非真机手指测试。"
+  },
+  {
+    "actions": {
+      "normal": {
+        "width": 254,
+        "height": 68
+      },
+      "busy": {
+        "width": 254,
+        "height": 68
+      }
+    }
+  },
+  {
+    "file": "38-edit-320-F.png",
+    "page": "pages/edit/index",
+    "level": "F",
+    "steps": "320表单输入与周选择；未保存",
+    "health": "已目检：320px编辑输入与星期选择",
+    "caption": "2026-10-08改版；状态：320px编辑输入与星期选择；操作：320表单输入与周选择；未保存；边界：未验证真实键盘遮挡。"
+  },
+  {
+    "file": "39-calendar-320-F.png",
+    "page": "pages/progress/index",
+    "level": "F",
+    "steps": "320日期顺序，44px最小列宽，scroll-view横滑",
+    "health": "排除：日历裁切，已由42/43替代",
+    "caption": "排除：320px日历被裁切；由42近7天/43近28天替代。原清单80px容器高度保留为修复前测量。"
+  },
+  {
+    "calendar": {
+      "cell": {
+        "width": 44,
+        "height": 73.59375
+      },
+      "container": {
+        "width": 288,
+        "height": 80
+      }
+    }
+  },
+  {
+    "file": "40-first-320-F.png",
+    "page": "pages/today/index",
+    "level": "F",
+    "steps": "320首屏整理入口；列表可纵向滚动",
+    "health": "已目检：320px首次入口",
+    "caption": "2026-10-08改版；状态：320px首次入口；操作：320首屏整理入口；列表可纵向滚动"
+  },
+  {
+    "file": "41-creating-pending-F.png",
+    "page": "pages/edit/index",
+    "level": "F",
+    "steps": "10秒内存等待，创建按钮加载且防重复；不是云端延迟测量",
+    "health": "已目检：创建等待；按钮加载与防重复",
+    "caption": "2026-10-08改版；状态：创建等待；按钮加载与防重复；操作：注入10秒内存等待，观察edit创建按钮加载；未执行真实写入；边界：10秒内存延迟的创建等待；不是云端耗时测量。"
+  },
+  {
+    "realCloudWrites": 0,
+    "realAIRequests": 0,
+    "realMessagesSent": 0
+  }
+]

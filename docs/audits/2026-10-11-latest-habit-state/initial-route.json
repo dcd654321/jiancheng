@@ -1,0 +1,14 @@
+{
+  "pages": [
+    {
+      "route": "pages/detail/index",
+      "title": "走路一会儿",
+      "statusText": "进行中"
+    }
+  ],
+  "guards": {
+    "cloudCalls": 0,
+    "storageCalls": 0,
+    "blockedEvents": 0
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "phase": "before",
+  "level": "F",
+  "realWrites": 0,
+  "screenshots": [
+    "before-01-empty.png",
+    "before-04-loading.png",
+    "before-05-error.png",
+    "before-06-existing.png"
+  ],
+  "exceptions": [],
+  "fixtureCommands": [],
+  "fixturePresentAfterRestore": false
+}

@@ -16,13 +16,13 @@ async function boot({ fail = false } = {}) {
   let release;
   const gate = new Promise(resolve => { release = resolve; });
   const lifecycle = createAppLifecycle({
-    wxApi, cloudConfig: config, aiConfig: {}, createStore, createWorkspaceStore,
+    wxApi, cloudConfig: config, createStore, createWorkspaceStore,
     createCloudSession: (wx, c) => createCloudSession(wx, c, () => async event => {
       await gate;
       if (fail) throw Error('test network unavailable');
       return f.api(event);
     }),
-    createPlanAssistant: () => ({}), createQuoteSession: () => ({ current: () => '测试短句' })
+    createQuoteSession: () => ({ current: () => '测试短句' })
   });
   const app = {}; global.wx = wxApi; global.getApp = () => app;
   lifecycle.onLaunch(app); lifecycle.onShow(app);
@@ -98,8 +98,8 @@ test('a previous show callback cannot refresh a newer visible lifecycle', async 
   p.onHide(); p.onShow();
   assert.equal(refreshes, 1);
   await h.finish();
-  // Cloud loading, acknowledgement and the current show's callback may refresh;
-  // The previous show must still contribute no refresh.
-  assert.equal(refreshes, 4);
+  // Cloud loading and acknowledgement refresh; the settled ready callback
+  // no longer repeats an already delivered subscription projection.
+  assert.equal(refreshes, 3);
   assert.equal(p.data.dataReady, true);
 });

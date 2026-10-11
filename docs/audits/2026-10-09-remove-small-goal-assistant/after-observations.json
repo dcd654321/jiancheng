@@ -1,0 +1,58 @@
+{
+  "phase": "after",
+  "level": "F",
+  "realWrites": 0,
+  "screenshots": [
+    "after-01-mine.png",
+    "after-02-add-templates.png",
+    "after-03-template-form.png",
+    "after-04-custom-form.png",
+    "after-05-retired-link.png"
+  ],
+  "checks": {
+    "customInputRects": [
+      {
+        "id": "title",
+        "dataset": {
+          "field": "title"
+        },
+        "left": 18,
+        "right": 372,
+        "top": 125.796875,
+        "bottom": 173.796875,
+        "width": 354,
+        "height": 48
+      },
+      {
+        "id": "target",
+        "dataset": {
+          "field": "target"
+        },
+        "left": 18,
+        "right": 266,
+        "top": 218.796875,
+        "bottom": 266.796875,
+        "width": 248,
+        "height": 48
+      },
+      {
+        "id": "minimum",
+        "dataset": {
+          "field": "minimum"
+        },
+        "left": 18,
+        "right": 372,
+        "top": 339.796875,
+        "bottom": 387.796875,
+        "width": 354,
+        "height": 48
+      }
+    ],
+    "assistantRouteRemoved": true,
+    "manualAndTemplatesRemain": true,
+    "retiredLinkCannotCreate": true,
+    "fixtureCommands": [],
+    "fixturePresentAfterRestore": false
+  },
+  "exceptions": []
+}

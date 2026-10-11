@@ -9,6 +9,10 @@ const MAX_RECEIPTS = 256;
 
 /** Repository must atomically commit account state and receipts together. Identity is trusted server context, never event fields. */
 function createApi({ repository, domain, dates, clock = () => new Date(), newEpoch = () => crypto.randomUUID(), allowedAppId, allowedSources, cleanup }) {
+  function validateAccount(account) {
+    if (!Number.isSafeInteger(account.revision) || account.revision < 0 || !Array.isArray(account.receipts) || account.receipts.length > MAX_RECEIPTS || !/^[a-zA-Z0-9_-]{1,100}$/.test(account.epoch || '')) throw Error('ACCOUNT_CORRUPT');
+    domain.validateState(account.state);
+  }
   function snapshot(account, owner, serverDate) {
     return { accountId: owner, epoch: account.epoch, revision: account.revision, state: clone(account.state), serverDate };
   }
@@ -20,11 +24,17 @@ function createApi({ repository, domain, dates, clock = () => new Date(), newEpo
       validateEvent(event);
       const now = clock();
       const serverDate = dates.today(now.getTime());
-      const fingerprint = hash(canonical(event));
+      if (event.action === 'pull' && typeof repository.read === 'function') {
+        const account = await repository.read(owner);
+        if (account) {
+          validateAccount(account);
+          if (!account.cleanupPending) return { ok: true, ...snapshot(account, owner, serverDate) };
+        }
+      }
+      const fingerprint = event.action === 'pull' ? null : hash(canonical(event));
       const outcome = await repository.transact(owner, async saved => {
         let account = saved || { epoch: newEpoch(), revision: 0, state: domain.emptyState(), receipts: [], updatedAt: now.toISOString() };
-        if (!Number.isSafeInteger(account.revision) || account.revision < 0 || !Array.isArray(account.receipts) || account.receipts.length > MAX_RECEIPTS || !/^[a-zA-Z0-9_-]{1,100}$/.test(account.epoch || '')) throw Error('ACCOUNT_CORRUPT');
-        domain.validateState(account.state);
+        validateAccount(account);
         const respond = extras => ({ ok: true, ...snapshot(account, owner, serverDate), ...extras });
         const pending = () => ({ ok: false, code: 'DELETE_PENDING', cleanupEpoch: account.epoch, cleanupSourceEpoch: account.cleanupSourceEpoch });
         if (account.cleanupPending) {
@@ -60,7 +70,7 @@ function createApi({ repository, domain, dates, clock = () => new Date(), newEpo
           account = { epoch: newEpoch(), revision: account.revision + 1, state: domain.emptyState(), receipts: [], updatedAt: now.toISOString(),
             ...(cleanup ? { cleanupPending: true, cleanupSourceEpoch: oldEpoch } : {}) };
         } else {
-          const candidate = clone(account);
+          const candidate = { ...account, receipts: account.receipts.slice() };
           try {
             candidate.state = domain.reduce(candidate.state, event.command, isRecord ? event.operationDate : serverDate);
             domain.validateState(candidate.state);

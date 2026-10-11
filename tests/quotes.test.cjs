@@ -1,7 +1,7 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const path = require('node:path');
-const { QUOTES, createQuoteSession } = require('../miniprogram/services/quotes');
+const { TODAY_QUOTE, QUOTES, createQuoteSession } = require('../miniprogram/services/quotes');
 const domain = require('../miniprogram/core/habits');
 
 test('a quote is selected once per running app session without device persistence', () => {
@@ -21,7 +21,7 @@ test('invalid random source cannot block the quote or cloud workspace', () => {
   }
 });
 
-test('hiding quote leaves the session selection untouched and creates no storage write', () => {
+test('today uses the fixed message and respects hiding without sampling the quote session', () => {
   const state = domain.emptyState();
   let writes = 0;
   const quoteSession = createQuoteSession(() => { writes++; return 0; });
@@ -32,7 +32,7 @@ test('hiding quote leaves the session selection untouched and creates no storage
   const file = path.resolve(__dirname, '../miniprogram/pages/today/index.js'); delete require.cache[file]; require(file);
   const page = { ...definition, data: { ...definition.data }, setData(data) { Object.assign(this.data, data); } };
   state.settings.hideQuote = true; page.refresh(); assert.equal(page.data.quote, ''); assert.equal(writes, 0);
-  state.settings.hideQuote = false; page.refresh(); assert.equal(page.data.quote, QUOTES[0]); assert.equal(writes, 1);
+  state.settings.hideQuote = false; page.refresh(); assert.equal(page.data.quote, TODAY_QUOTE); assert.equal(writes, 0);
   state.settings.hideQuote = true; page.refresh();
-  state.settings.hideQuote = false; page.refresh(); assert.equal(page.data.quote, QUOTES[0]); assert.equal(writes, 1);
+  state.settings.hideQuote = false; page.refresh(); assert.equal(page.data.quote, TODAY_QUOTE); assert.equal(writes, 0);
 });

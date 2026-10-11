@@ -1,0 +1,31 @@
+const fs=require('node:fs'),path=require('node:path');
+const automator=require(path.join(process.env.TEMP,'mp-automator/node_modules/miniprogram-automator'));
+const {inject,restore,single}=require('./capture.cjs'),root=path.resolve(__dirname,'../../..');
+const domain=require(path.join(root,'miniprogram/core/habits')),dates=require(path.join(root,'miniprogram/core/date')),{THEMES}=require(path.join(root,'miniprogram/config/theme-tokens'));
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+(async()=>{const mp=await automator.connect({wsEndpoint:'ws://127.0.0.1:9433'}),log=[];let seq=33;
+const shot=async(label,steps,level='F')=>{await sleep(500);const p=await mp.currentPage(),file=String(seq++).padStart(2,'0')+'-'+label+'-'+level+'.png';await mp.screenshot({path:path.join(__dirname,file)});log.push({file,page:p.path,level,steps,health:'待目检'});console.log(file);};
+const route=async(expected)=>{for(let i=0;i<25;i++){let p=await mp.currentPage();if(p.path===expected){await sleep(1200);return p;}await sleep(200);}throw Error('route '+expected)};
+const go=async(name,query='')=>{await mp.reLaunch('/pages/'+name+'/index'+(query?'?'+query:''));return route('pages/'+name+'/index')};
+const tap=async(p,selector,delay=700)=>{const e=await p.$(selector);if(!e)throw Error('missing '+selector);await e.tap();await sleep(delay);return mp.currentPage()};
+const ctl=async(action,value)=>mp.evaluate(p=>globalThis.__contestControl[p.action](p.value),{action,value});
+try{
+ let created=single(),day=dates.today();await mp.evaluate(inject,{state:created,created,theme:'mist',tokens:THEMES.mist});let p=await go('today');await tap(p,'.soft-button',1100);await sleep(5600);if(!(await p.data('showCompleted')))await tap(p,'.disclosure');await shot('minimum-done','真实领域reducer内存完成忙时2分钟；已完成卡');await tap(p,'.undo',1100);await shot('undo-minimum','真实领域reducer撤销；检查今天目标是否保留较小值');
+ await ctl('state',single(4));p=await go('today');await shot('return','多日未记录夹具→轻松回来');
+ let progress=single(6);for(let i=1;i<=5;i++)progress=domain.reduce(progress,{type:i%2?'completeMinimum':'complete',id:'audit-read',date:dates.shift(day,-i)},dates.shift(day,-i));await ctl('state',progress);p=await go('progress');await shot('progress-facts','7天夹具，原目标2次/忙时3次');
+ const cells=await p.$$('.cell');log.push({measurement:{selector:'.cell',size:await cells[0].size(),viewport:390,level:'F'}});await cells[0].tap();await sleep(600);await shot('progress-date','选择首日，查看相应当日记录');
+ p=await go('detail','id=audit-read');await shot('detail','习惯详情');await tap(p,'.disclosure');await shot('note-expanded','展开备注；未提交');
+ p=await go('edit','id=audit-read');await shot('edit-tomorrow','编辑明日计划，未保存');
+ p=await go('today');await p.callMethod('onCreate',{currentTarget:{dataset:{template:'read'}}});p=await route('pages/edit/index');await(await p.$('#title')).input('审查临时文字');await shot('dirty-form','自动化输入未提交草稿');await mp.navigateBack();p=await route('pages/today/index');await p.callMethod('onCreate',{currentTarget:{dataset:{template:'read'}}});p=await route('pages/edit/index');await shot('form-reentry','返回后重开相同模板；核对输入未保留');
+ p=await go('assistant');await shot('assistant-first','默认未同意AI');await(await p.$('checkbox-group')).trigger('change',{value:['agree']});await tap(p,'.generate-button',1100);await shot('ai-preview','模拟AI成功，无供应商请求');
+ await ctl('aiMode','failure');p=await go('assistant');await(await p.$('checkbox-group')).trigger('change',{value:['agree']});await tap(p,'.generate-button',1100);await shot('ai-failure','模拟额度错误');await tap(p,'.rules-button',800);await shot('ai-recovery','错误→基础方案，保留输入');
+ await ctl('mode','loading');p=await go('today');await shot('loading','模拟DATA_LOADING');await ctl('mode','offline');p=await go('today');await shot('read-failure','模拟读取失败，禁止修改');await tap(p,'.primary',800);await shot('read-recovery','重新读取恢复');
+ await ctl('dispatchMode','failure');p=await go('today');await tap(p,'.check-pill',1100);await shot('write-failure','模拟写入未确认，不显示成功');await ctl('dispatchMode','success');
+ await ctl('share','plan');p=await go('share-create','kind=plan');await shot('share-create','内存功能开启，源码开关未改');await p.callMethod('onPreview');await sleep(800);await shot('share-preview','事件方法→模拟脱敏预览');await p.callMethod('onCreate');p=await route('pages/share-view/index');await shot('share-owner','模拟本人分享，不公开真实记录');log.push({shareCallback:await p.callMethod('onShareAppMessage'),level:'F',deliveryVerified:false});
+ p=await go('share-view','id='+ 'a'.repeat(64));await shot('share-receiver-plan','模拟接收者轻计划');await p.callMethod('onCopy');p=await route('pages/edit/index');await shot('share-confirm','复制计划→编辑确认，未保存');
+ await ctl('share','invite');p=await go('share-view','id='+ 'a'.repeat(64));await shot('share-invite','模拟邀请，检查开始入口');await ctl('share','weekly');p=await go('share-view','id='+ 'a'.repeat(64));await shot('share-weekly','模拟周进展，检查开始入口');
+ await ctl('share','plan');await ctl('mode','loading');p=await go('share-view','id='+ 'a'.repeat(64));await p.callMethod('onCopy');await sleep(450);await shot('share-account-loading','公开内容成功、私有账户未就绪，采用报错');await ctl('mode','ready');p=await go('detail','id=missing');await shot('invalid-detail','无效链接，有今日出口');
+ log.push({fixtureStats:await mp.evaluate(()=>globalThis.__contestControl.stats()),realCloudWrites:0,realAIRequests:0,realMessagesSent:0});
+}finally{fs.writeFileSync(path.join(__dirname,'steps-remaining.json'),JSON.stringify(log,null,2));await mp.evaluate(restore);await mp.reLaunch('/pages/today/index');await sleep(1700);console.log(JSON.stringify(await mp.evaluate(()=>({fixtureRestored:!globalThis.__contestOriginal,source:getApp().store.info().source}))));await mp.disconnect();}
+process.exit(0);
+})().catch(e=>{console.error(e.stack);process.exit(1)});

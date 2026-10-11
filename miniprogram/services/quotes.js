@@ -1,4 +1,5 @@
 // 自编短句，随包发布；不读取习惯内容、不联网，也不写本机存储。
+const TODAY_QUOTE = '让打卡轻一点，让开始容易一点。';
 const QUOTES = Object.freeze([
   '一点，也算向前。',
   '今天的小事，今天慢慢做。',
@@ -9,7 +10,7 @@ const QUOTES = Object.freeze([
   '休息也是安排的一部分。',
   '适合自己的节奏，才值得留下。',
   '不必每次都做很多。',
-  '让小事轻一点，让开始容易一点。'
+  TODAY_QUOTE
 ]);
 function createQuoteSession(random = Math.random) {
   let selected;
@@ -26,4 +27,4 @@ function createQuoteSession(random = Math.random) {
   };
 }
 
-module.exports = { QUOTES, createQuoteSession };
+module.exports = { TODAY_QUOTE, QUOTES, createQuoteSession };

@@ -76,46 +76,54 @@ test('progress empty state offers creation without calendar scaffolding', () => 
   assert.equal(page.data.stats.planned, 0);
   assert.equal(page.data.advice, '');
   const markup = mini('pages/progress/index.wxml');
-  assert.match(markup, /记下第一次，进展就会出现在这里/);
+  assert.match(markup, /第一次打卡后，进展就会出现在这里/);
   assert.match(markup, /bindtap="onCreate">创建习惯/);
   assert.match(markup, /bindtap="onToday">回今日看看/);
   assert.match(markup, /<view wx:else class="empty">/);
   assert.match(markup, /legend-mark rest/);
-  assert.match(markup, /未记录/);
+  assert.match(markup, /未打卡/);
 });
 
-test('cold-start loading view greets, animates softly and states the real reason', () => {
+test('cold start opens today directly and shows a brief reading state without a welcome screen', () => {
   const markup = mini('pages/today/index.wxml');
-  assert.match(markup, /class="loading-hero"/);
-  assert.match(markup, /loading-bars/);
-  assert.match(markup, /\{\{loadingGreeting\}\}/);
-  assert.match(markup, /\{\{loadingNote\}\}/);
-  assert.match(markup, /正在读取云端记录/);
-  assert.match(markup, /skeleton skeleton-card/, '保留占位卡，加载后布局不跳');
-  pageHarness(domain.emptyState());
-  const page = loadPage('today');
-  assert.match(page.data.loadingGreeting, /^(早上好|中午好|下午好|晚上好|夜深了)$/);
-  assert.ok(page.data.loadingNote && page.data.loadingNote.length >= 6);
-  const wxss = mini('pages/today/index.wxss');
-  assert.match(wxss, /@keyframes bar-grow/);
-});
-test('first-run empty state exposes value, dual-tier templates and a clear secondary entry', () => {
-  const markup = mini('pages/today/index.wxml');
-  assert.match(markup, /忙的时候，也能做一点/);
-  assert.match(markup, /给习惯准备平时和忙时两个目标，做完再记下。/);
-  for (const tpl of ['read', 'walk', 'study', 'tidy']) assert.match(markup, new RegExp('data-template="' + tpl + '"'));
-  assert.match(markup, /自己设一个/);
-  assert.match(markup, /wx:if="\{\{aiEnabled\}\}".*bindtap="onAssistant"/, 'AI开启时在创建区域提供入口');
-  assert.match(markup, /<button wx:if="\{\{hasHabits\}\}" class="add-button"/);
-  assert.match(markup, /skeleton skeleton-card/);
+  const loading = markup.match(/<view wx:if="\{\{loading\}\}"[\s\S]*?(?=<view wx:elif="\{\{dataUnavailable\}\}")/);
+  assert.ok(loading, '等待、读取失败和账户就绪仍是不同状态');
+  assert.match(loading[0], /正在读取/);
+  assert.doesNotMatch(loading[0], /loadingGreeting|loadingNote|loading-hero|loading-bars|loading-example|bindtap="onCreate"|bindtap="onAssistant"/);
+  assert.match(markup, /wx:elif="\{\{dataReady\}\}"/);
   assert.match(markup, /暂时没能读取记录/);
+  assert.match(markup, /bindtap="onDataRetry"/);
+  assert.equal((markup.match(/heading heading-xl">今日<\/view>/g) || []).length, 1);
+  assert.ok(markup.indexOf('<view class="page-header">') < markup.indexOf('wx:if="{{loading}}"'), '今日标题直接显示，不等待读取完成');
+  assert.equal(JSON.parse(mini('app.json')).pages[0], 'pages/today/index');
+  assert.doesNotMatch(mini('pages/today/index.js'), /LOADING_NOTES|loadingGreeting|loadingNote/);
+  assert.doesNotMatch(mini('pages/today/index.wxss'), /loading-bars|@keyframes bar-grow/);
+});
+test('today empty state centers one add entry and retains existing task lists', () => {
+  const markup = mini('pages/today/index.wxml');
+  const empty = markup.match(/<view wx:else class="today-empty">([\s\S]*?)<\/view>/);
+  assert.ok(empty, '零项安排使用统一空态，不区分首次账户和已有习惯的休息日');
+  assert.equal((empty[1].match(/<button\b/g) || []).length, 1);
+  assert.match(empty[1], /disabled="\{\{dataReadOnly\}\}" data-template="" bindtap="onCreate">添加习惯<\/button>/);
+  assert.doesNotMatch(empty[1], /模板|推荐|整理|onAssistant|onToggleChooser|onManage/);
+  assert.match(markup, /<block wx:if="\{\{total\}\}">[\s\S]*wx:for="\{\{pending\}\}"[\s\S]*wx:for="\{\{completed\}\}"[\s\S]*<\/block>\s*<view wx:else class="today-empty">/);
+  assert.match(markup, /<button wx:if="\{\{dataReady && total\}\}" class="add-button"/);
+  assert.match(markup, /wx:if="\{\{total && chooserOpen\}\}"/);
+  assert.match(markup, /wx:if="\{\{total && !pending.length && tomorrow\}\}"/);
+  assert.doesNotMatch(markup, /hero-title|starterTemplate|starter-options|忙的时候，也能做一点/);
+  const pageStyle = mini('pages/today/index.wxss');
+  assert.match(pageStyle, /\.today-empty\s*\{[^}]*align-items:\s*center[^}]*justify-content:\s*center/);
+});
+
+test('task controls keep their recording labels and shared theme styling', () => {
   const task = mini('templates/task.wxml');
   assert.match(task, /check-pill/);
   assert.match(task, /chip-lime/);
-  assert.match(task, /忙时完成/);
-  assert.match(task, /按忙时/);
+  assert.match(task, /本次打卡/);
+  assert.match(task, /record-action-goal">忙时 {{task.minimum}}{{task.unit}}/);
+  assert.match(task, /record-action-label">打卡/);
   const wxss = mini('app.wxss').toLowerCase();
-  for (const token of ['#f7f8f5', '#edf1e2', '.card {', '.check-pill', '.soft-button', '.stamp-in', '.skeleton']) assert.ok(wxss.includes(token), token);
+  for (const token of ['#f6f7f2', '#edf2e3', '.card {', '.check-pill', '.soft-button', '.stamp-in', '.skeleton']) assert.ok(wxss.includes(token), token);
   assert.ok(wxss.includes('@import "styles/theme.wxss"'), 'app.wxss 引入主题作用域');
 });
 

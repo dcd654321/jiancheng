@@ -28,10 +28,8 @@ test('launch creates services once and foreground waits for bootstrap', async ()
   const lifecycle = createAppLifecycle({
     wxApi: {},
     cloudConfig: {},
-    aiConfig: {},
     createCloudSession: () => session,
     createWorkspaceStore: (current, drafts) => ({ current, drafts }),
-    createPlanAssistant: () => ({ kind: 'assistant' }),
     createQuoteSession: () => ({ kind: 'quotes' })
   });
   const app = {};

@@ -163,7 +163,7 @@ test('真实页面控制器：模板创建不会自动打卡；今日勾选、�
   const task = today.data.pending[0];
   today.onComplete(event({ id: task.id, date: task.date, done: false }));
   assert.equal(today.data.completed.length, 1);
-  assert.equal(app.toasts.at(-1).title, '已完成 · 第一次');
+  assert.equal(app.toasts.at(-1).title, '打卡成功');
   const progress = app.page('progress'); assert.equal(progress.data.stats.done, 1);
   today.onComplete(event({ id: task.id, date: task.date, done: true }));
   progress.refresh(); assert.equal(progress.data.stats.done, 0);
@@ -180,11 +180,11 @@ test('真实页面控制器：简化确认只是改目标，完成后单独统�
 test('首次行动反馈只在没有既有完成记录时出现', () => {
   const app = harness(), firstId = seed(app), today = app.page('today'), day = ui.date.today();
   today.onComplete(event({ id: firstId, date: day, done: false }));
-  assert.equal(app.toasts.at(-1).title, '已完成 · 第一次');
+  assert.equal(app.toasts.at(-1).title, '打卡成功');
   app.store.dispatch({ type: 'create', id: 'later', startDate: day,
     plan: { title: '再做一件', target: 1, minimum: null, unit: '次', time: '', weekdays: [1, 2, 3, 4, 5, 6, 7] } });
   today.refresh(); today.onComplete(event({ id: 'later', date: day, done: false }));
-  assert.equal(app.toasts.at(-1).title, '已完成');
+  assert.equal(app.toasts.at(-1).title, '打卡成功');
 });
 test('真实页面控制器：跨日后旧按钮报错，不写到新日期', () => {
   const app = harness(); seed(app); const today = app.page('today');
@@ -209,20 +209,23 @@ test('真实页面控制器：已有计划编辑更新同一个ID，使用原生
 test('真实页面控制器：统计切换后区间、日期格和选中详情一致', () => {
   const app = harness(); seed(app); const progress = app.page('progress');
   assert.equal(progress.data.stats.cells.length, 7);
-  progress.onPeriod(event({ days: 28 }));
-  assert.equal(progress.data.stats.cells.length, 28);
-  const first = progress.data.stats.cells[0]; progress.onDate(event({ date: first.date }));
+  progress.onPeriod(event({ days: 30 }));
+  assert.equal(progress.data.stats.cells.length, 30);
+  assert.equal(progress.data.activeTab, 'month');
+  const first = progress.data.stats.cells.find(cell => cell.date >= progress.data.calendar.minDate);
+  progress.onDate(event({ date: first.date }));
   assert.equal(progress.data.selected.date, first.date);
+  assert.equal(progress.data.activeTab, 'calendar');
   progress.onPeriod(event({ days: 7 }));
   assert.ok(progress.data.selected.date >= progress.data.stats.start);
 });
-test('真实页面控制器：暂停要确认且保留今日安排，可撤销待生效版本', () => {
+test('真实页面控制器：暂停要确认且保留今日安排，恢复保留其他计划', () => {
   const app = harness(), id = seed(app), detail = app.page('detail', { id });
   detail.onStatus(event({ status: 'paused' }));
   app.modals.pop().success({ confirm: false }); assert.equal(app.store.read().habits[0].revision, 1);
   detail.onStatus(event({ status: 'paused' })); app.modals.pop().success({ confirm: true });
   assert.ok(detail.data.task); assert.equal(detail.data.future.status, 'paused');
-  detail.onCancelFuture(); assert.equal(detail.data.future, null);
+  detail.onResume(); assert.equal(detail.data.future, null);
 });
 test('活动数据页没有设备文件导出入口', () => {
   const app = harness(), mine = app.page('mine'), data = app.page('data');

@@ -29,8 +29,8 @@ test('渐成打卡所有新云资源使用同一专属前缀，构建目录与�
   const legacyFunction = path.resolve(__dirname, '../cloudfunctions/habitApi');
   assert.equal(fs.existsSync(path.join(legacyFunction, 'index.js')), false);
   assert.equal(fs.existsSync(path.join(legacyFunction, 'package.json')), false);
-  assert.equal(require('../miniprogram/config/ai').functionName, names.planFunction);
-  assert.equal(require('../miniprogram/config/ai').enabled, true);
+  assert.equal(fs.existsSync(path.resolve(__dirname, '../miniprogram/config/ai.js')), false);
+  assert.deepEqual(require(path.resolve(__dirname, '../cloudfunctions', names.planFunction, 'package.json')).dependencies || {}, {});
 });
 
 test('目标按版本解析：开发/体验连共享测试环境，正式连共享正式环境，缓存范围独立', () => {
@@ -95,6 +95,7 @@ test('共享云配置和目标错误在任何业务调用前拒绝', async () =>
     { ...good, enabled: false },
     { ...good, envId: '' }, { ...good, resourceAppid: '' },
     { ...good, resourceAppid: 'wx-bad' }, { ...good, functionName: 'habitApi' },
+    { ...good, functionName: 'jiancheng_daka_plan' },
     { ...good, mode: 'typo' }
   ]) assert.throws(() => createCloudTransport(wx, config));
   assert.equal(instances, 0);

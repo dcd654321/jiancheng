@@ -54,7 +54,7 @@ function read(page, callback) {
     else unavailable(err);
   }
 }
-function taskStatusLabel(task) { return task.status === 'minimum' ? '忙时完成' : task.statusText; }
+function taskStatusLabel(task) { return task.status === 'minimum' ? '忙时打卡' : task.statusText; }
 // 写操作前置：云会话明确给出不可写状态时先给出原因，而不是让按钮看起来可用。
 // 没有云信息接口的旧测试夹具不做此判断，写结果仍由 dispatch 与其自身校验负责。
 function assertWritable() {
@@ -63,46 +63,46 @@ function assertWritable() {
   const info = s.info();
   if (info && info.ready === false) throw Error('暂时无法更新，请连接网络后重试');
 }
-function mutate(page, command, message, options = {}) {
+function mutate(page, command, message) {
   if (page._mutating) return false;
   const mutationContext = contextKey();
   const showVersion = page._showVersion;
   const mutationDate = date.today();
-  const previousOrder = (page.data.pending || []).map(task => task.id);
-  const clearRecording = () => { if (!page._gone && typeof page.setData === 'function') page.setData({ recordingId: '', recordingType: '', recordingLabel: '', writeBusy: false, writeStatus: '' }); };
+  const clearRecording = () => { page._recordingView = null; if (!page._gone && typeof page.setData === 'function') page.setData({ recordingId: '', recordingType: '', recordingLabel: '', writeBusy: false, writeStatus: '' }); };
   const finish = () => {
     page._mutating = false;
     clearRecording();
     if (!isCurrentView(page, mutationContext, showVersion)) return true;
     if (mutationDate !== date.today()) { page.refresh(); return true; }
-    if (page.onRecorded) page.onRecorded(command, previousOrder);
     page.refresh();
     const completion = ['complete', 'completeMinimum'].includes(command.type);
-    // 完成确认用带成功图标的小弹窗“已完成”；首次/回归加短后缀；撤销与调整沿用文字提示。
-    const toast = command.type === 'undo' ? { title: '已撤销这次记录', icon: 'none' }
-      : options.firstCompletion && completion ? { title: '已完成 · 第一次', icon: 'success' }
-      : options.returnCompletion && completion ? { title: '已完成 · 接上了', icon: 'success' }
-      : completion ? { title: '已完成', icon: 'success' }
+    // 只在云端确认用户自报打卡后显示单个成功提示。
+    const toast = command.type === 'undo' ? { title: '已撤销打卡', icon: 'none' }
+      : completion ? { title: '打卡成功', icon: 'success' }
       : message ? { title: message, icon: 'none' } : null;
-    if (toast) wx.showToast(toast);
+    if (toast) wx.showToast(completion ? { ...toast, duration: 1200 } : toast);
     return true;
   };
   const failed = err => {
     page._mutating = false; clearRecording();
     if (isCurrentView(page, mutationContext, showVersion)) {
       if (mutationDate !== date.today()) page.refresh();
-      else error(page, err);
+      else { page.refresh(); error(page, err); }
     }
     return false;
   };
   try {
     assertContext(page); assertWritable(); page._mutating = true;
-    // 进行中的按钮显示“正在记录…”，串行锁禁重复写，页面其余内容仍可阅读。
+    if (['complete', 'completeMinimum', 'undo'].includes(command.type)) page._recordingView = { context: mutationContext, showVersion };
+    // 同次有效打卡访问在回执后投影一次；其他页面和新访问继续接收订阅。
     const recordingLabel = command.type === 'undo' ? '正在撤销…'
+      : command.type === 'deleteHabit' ? '正在删除…'
       : command.type === 'restore' ? '正在恢复…'
-      : ['complete', 'completeMinimum'].includes(command.type) ? '正在记录…' : '正在保存…';
+      : ['complete', 'completeMinimum'].includes(command.type) ? '正在打卡…' : '正在保存…';
     if (typeof page.setData === 'function') page.setData({ recordingId: command.id, recordingType: command.type, recordingLabel, writeBusy: true,
-      error: '', writeStatus: command.type === 'undo' ? '正在确认撤销，请稍候。' : '正在确认这次操作，请稍候。' });
+      error: '', writeStatus: command.type === 'undo' ? '正在撤销打卡，请稍候。'
+        : ['complete', 'completeMinimum'].includes(command.type) ? '正在确认打卡，请稍候。'
+        : command.type === 'deleteHabit' ? '正在确认删除，请稍候。' : '正在确认这次操作，请稍候。' });
     const result = store().dispatch(command);
     return result && typeof result.then === 'function' ? result.then(finish).catch(failed) : finish();
   } catch (err) { return failed(err); }
@@ -147,9 +147,13 @@ function withLifecycle(definition, { watchDate = true } = {}) {
       if (onShow) onShow.call(this);
       if (this._unsubscribeSync) this._unsubscribeSync();
       const session = getApp().cloudSession;
+      const needsReadyRefresh = this.data.loading || !this.data.dataReady;
+      let didSyncRefresh = false;
       if (session && typeof session.subscribe === 'function') {
         this._unsubscribeSync = session.subscribe(() => {
           if (this._gone || !this._visible || this._showVersion !== showVersion) return;
+          if (this._mutating && this._recordingView && isCurrentView(this, this._recordingView.context, this._recordingView.showVersion)) return;
+          didSyncRefresh = true;
           this._syncRefreshing = true;
           try { if (this.refresh) this.refresh(); }
           catch (err) { error(this, err); }
@@ -169,6 +173,7 @@ function withLifecycle(definition, { watchDate = true } = {}) {
       if (ready && typeof ready.then === 'function') {
         const refreshReady = () => {
           if (this._gone || !this._visible || this._showVersion !== showVersion) return;
+          if (didSyncRefresh || !needsReadyRefresh) return;
           try { if (this.refresh) this.refresh(); }
           catch (err) { error(this, err); }
         };
@@ -221,17 +226,7 @@ const taskActions = {
   },
   recordCompletion(id, taskDate, type) {
     if (this._mutating) return false;
-    let firstCompletion = false;
-    if (type !== 'undo') {
-      try {
-        assertWritable();
-        firstCompletion = !Object.values(store().read().records).some(record => record.status !== 'pending');
-      }
-      catch (err) { error(this, err); return false; }
-    }
-    const guide = this.data.returnGuide;
-    const returnCompletion = type !== 'undo' && guide && guide.id === id && guide.date === taskDate;
-    return mutate(this, { type, id, date: taskDate }, '', { firstCompletion, returnCompletion });
+    return mutate(this, { type, id, date: taskDate });
   },
   onSimplify(event) {
     if (this._mutating) return false;
@@ -239,12 +234,12 @@ const taskActions = {
     try {
       const state = store().read();
       const task = domain.taskAt(state, domain.findHabit(state, id), taskDate);
-      if (!task || task.done) throw Error('请先撤销今天的记录，再调整目标');
+      if (!task || task.done) throw Error('请先撤销今天的打卡，再调整目标');
       if (task.originalTarget <= 1) throw Error('这个目标已经是最小的了，改小请编辑计划');
       if (taskDate !== date.today()) throw Error('日期已变化，请刷新');
       const context = contextKey(), showVersion = this._showVersion;
       wx.showModal({
-        title: '只调整今天目标（不记录）',
+        title: '只调整今天目标（不打卡）',
         content: task.minimum ? String(task.minimum) : '', editable: true,
         placeholderText: `原目标${task.originalTarget}${task.unit}，输入更小的整数`,
         confirmText: '只改今天', confirmColor: primaryColor(),

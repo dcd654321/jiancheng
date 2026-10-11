@@ -49,6 +49,22 @@ test('public limit has no identity and global exhaustion rejects cached without 
   assert.deepEqual([...f.saved.keys()],['global-public']);assert.equal(f.saved.get('global-public').owner,undefined);
   await assert.rejects(limit('a','e'),/OWNER/);
 });
+
+test('private cached denial stays with its epoch after account deletion and rebuild',async()=>{
+  const f=fixture(),limit=f.limit('features',{minute:10,day:10,userMinute:2,userDay:1});
+  await limit('a','e');await assert.rejects(limit('a','e'),e=>e.code==='RATE_LIMITED');
+  const cachedCalls=f.calls;
+  await assert.rejects(limit('a','e'),e=>e.code==='RATE_LIMITED');assert.equal(f.calls,cachedCalls);
+  f.accounts.set('a',{epoch:'new'});f.saved.delete('features-a');
+  await limit('a','new');
+  assert.equal(f.saved.get('features-a').ownerEpoch,'new');
+  assert.equal(f.saved.get('features-a').dayUsed,1);
+  assert.equal(f.saved.get('global-features').dayUsed,2);
+  const rebuilt=structuredClone([...f.saved]),rebuiltCalls=f.calls;
+  await assert.rejects(limit('a','e'),e=>e.code==='RATE_LIMITED');assert.equal(f.calls,rebuiltCalls);
+  assert.deepEqual([...f.saved],rebuilt);
+  await assert.rejects(limit('a','new'),e=>e.code==='RATE_LIMITED');assert.deepEqual([...f.saved],rebuilt);
+});
 test('quota failures, stale epochs and backwards clocks cannot overwrite counters or recreate deleted user documents',async()=>{
   const f=fixture(),limit=f.limit();await limit('a','e');const before=structuredClone([...f.saved]);
   f.time-=60000;await assert.rejects(f.limit()('a','e'),e=>e.code==='RATE_LIMITED');assert.deepEqual([...f.saved],before);

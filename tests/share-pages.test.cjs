@@ -31,6 +31,8 @@ test('real share-create page previews without writing, creates once and routes o
   assert.equal(p.data.enabled,true);await p.onPreview();assert.equal(h.f.shares.size,0);assert.equal(p.data.preview.kind,'invite');
   const work=p.onCreate();p.onCreate();await work;assert.equal(h.f.shares.size,1);
   assert.match(h.nav.at(-1),/^\/pages\/share-view\/index\?id=[a-f0-9]{64}&mine=1$/);
+  assert.equal(p.data.opening,true);p.onKind(e({kind:'plan'}));assert.equal(p.data.kind,'invite');
+  p.onHide();await p.onShow();
   p.onKind(e({kind:'plan'}));assert.equal(p.data.preview,null);assert.equal(p._preview,null);
   await p.onPreview();assert.equal(p.data.preview.title,'读一会儿');assert.doesNotMatch(JSON.stringify(p.data.preview),/private note/);
 });
@@ -40,7 +42,7 @@ test('share page hooks expose public id only and recipient adoption requires an 
   assert.equal(p.data.view.title,'复习一小段');assert.equal(p.data.shareEnabled,true);
   assert.equal(p.onShareAppMessage().path,'/pages/share-view/index?id='+share.shareId);
   assert.equal(p.onShareTimeline().query,'id='+share.shareId);assert.doesNotMatch(JSON.stringify(p.onShareAppMessage()),/mine|epoch|owner/);
-  p.onCopy();const token=h.nav.at(-1).split('sharedDraft=')[1];assert.ok(token);assert.equal(h.store.read().habits.length,1);
+  await p.onCopy();const token=h.nav.at(-1).split('sharedDraft=')[1];assert.ok(token);assert.equal(h.store.read().habits.length,1);
   const edit=await h.page('edit',{sharedDraft:token});assert.equal(edit.data.title,'复习一小段');assert.equal(edit.data.target,'5');
   assert.equal(h.store.read().habits.length,1);await edit.onSave();assert.equal(h.store.read().habits.length,2);
   const original=h.store.read().habits.find(item=>item.id==='read');assert.equal(original.versions[0].title,'读一会儿');
@@ -94,4 +96,61 @@ test('static app invitation does not create a public snapshot and all new page e
     const p=await h.page(name);const markup=fs.readFileSync(path.resolve(__dirname,'../miniprogram/pages/'+name+'/index.wxml'),'utf8');
     for(const match of markup.matchAll(/bind(?:tap|change)="(\w+)"/g))assert.equal(typeof p[match[1]],'function',name+':'+match[1]);
   }
+});
+
+test('recipient waits for account, suppresses duplicate adoption and never creates before confirmation',async t=>{
+  const h=await setup(t),share=await h.client.create(await h.client.preview({kind:'plan',sourceHabitId:'read',categoryKey:'read',includeWeekdays:false}));
+  const p=await h.page('share-view',{id:share.shareId});let resolve;
+  h.app.dataReady=new Promise(r=>{resolve=r;});
+  const request=p.onCopy();await p.onCopy();assert.equal(p.data.adopting,true);assert.equal(h.nav.length,0);
+  resolve();await request;assert.equal(p.data.adopting,true);assert.equal(h.nav.length,1);assert.equal(h.store.read().habits.length,1);
+  await p.onCopy();assert.equal(h.nav.length,1,'navigation wait keeps adoption locked');
+});
+
+test('recipient recovery retains public value and a stale ready result cannot navigate after reentry',async t=>{
+  const h=await setup(t),share=await h.client.create(await h.client.preview({kind:'plan',sourceHabitId:'read',categoryKey:'read',includeWeekdays:false}));
+  const p=await h.page('share-view',{id:share.shareId});let resolve;
+  h.app.dataReady=new Promise(r=>{resolve=r;});const request=p.onCopy();p.onHide();await p.onShow();resolve();await request;
+  assert.equal(h.nav.length,0);assert.equal(p.data.adopting,false);assert.ok(p.data.view);
+  h.status.ready=false;h.app.cloudSession.start=async()=>{throw Error('离线，请重试');};
+  await p.onCopy();assert.match(p.data.adoptError,/离线/);assert.ok(p.data.view);assert.equal(h.nav.length,0);
+  h.status.ready=true;await p.onCopy();assert.match(h.nav[0],/sharedDraft/);assert.equal(p.data.adoptError,'');
+});
+
+test('detail plan entry selects its source and invitation/week progress offer a first-value entry',async t=>{
+  const h=await setup(t);
+  await h.f.mutate({type:'create',id:'walk',startDate:h.f.date,plan:{title:'走路',target:10,minimum:3,unit:'分钟',time:'',weekdays:[1,2,3,4,5,6,7]}});
+  const p=await h.page('share-create',{kind:'plan',habitId:'walk'});assert.equal(p.data.plans[p.data.planIndex].id,'walk');
+  const markup=fs.readFileSync(path.resolve(__dirname,'../miniprogram/pages/share-view/index.wxml'),'utf8');
+  assert.match(markup,/!view.canCopy[\s\S]*?bindtap="onStart">选一个小目标试试/);
+});
+
+test('recipient adoption never replays a pending private mutation through account start',async t=>{
+  const h=await setup(t),share=await h.client.create(await h.client.preview({kind:'plan',sourceHabitId:'read',categoryKey:'read',includeWeekdays:false}));
+  const p=await h.page('share-view',{id:share.shareId});let starts=0;
+  h.status.ready=false;h.status.pending=1;h.app.cloudSession.start=async()=>{starts++;};
+  await p.onCopy();assert.equal(starts,0);assert.equal(p.data.adoptNeedsSync,true);assert.match(p.data.adoptError,/核对已有操作/);
+  assert.equal(h.nav.length,0);assert.ok(p.data.view);
+});
+
+test('recipient navigation stays locked until failure, and an old failure cannot affect reentry',async t=>{
+  const h=await setup(t),share=await h.client.create(await h.client.preview({kind:'plan',sourceHabitId:'read',categoryKey:'read',includeWeekdays:false}));
+  const p=await h.page('share-view',{id:share.shareId}),navigations=[];
+  h.wx.navigateTo=options=>navigations.push(options);
+  await p.onCopy();await p.onCopy();assert.equal(navigations.length,1);assert.equal(p.data.adopting,true);
+  navigations[0].fail();assert.equal(p.data.adopting,false);assert.match(p.data.adoptError,/确认页未打开/);
+  await p.onCopy();assert.equal(navigations.length,2);assert.equal(p.data.adopting,true);
+  p.onHide();await p.onShow();await p.onCopy();assert.equal(navigations.length,3);
+  navigations[1].fail();assert.equal(p.data.adopting,true);assert.equal(p.data.adoptError,'');
+  assert.equal(h.store.read().habits.length,1);
+});
+
+test('created share navigation suppresses repeated creation and keeps the same receipt for retry',async t=>{
+  const h=await setup(t),p=await h.page('share-create'),navigations=[];
+  h.wx.navigateTo=options=>navigations.push(options);
+  await p.onPreview();await p.onCreate();await p.onCreate();
+  assert.equal(h.f.shares.size,1);assert.equal(navigations.length,1);assert.equal(p.data.opening,true);
+  navigations[0].fail();assert.equal(p.data.opening,false);assert.match(p.data.error,/已创建/);
+  await p.onCreate();assert.equal(h.f.shares.size,1);assert.equal(navigations.length,2);
+  p.onHide();await p.onShow();navigations[1].fail();assert.equal(p.data.opening,false);assert.equal(p.data.error,'');
 });

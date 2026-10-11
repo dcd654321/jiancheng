@@ -6,16 +6,16 @@
   <view wx:elif="{{dataUnavailable}}" class="empty"><view class="heading">暂时没能读取记录</view><view class="sub">{{error || '分享需要先恢复云端同步，不影响打卡。'}}</view><button class="primary spaced" bindtap="onDataRetry">{{recoveryLabel || '重新读取'}}</button></view>
   <block wx:elif="{{dataReady}}">
     <view class="sub">只公开下方预览。私人名称、备注和身份不会分享。</view>
-    <view class="template-row spaced"><button class="secondary" disabled="{{busy}}" data-kind="invite" bindtap="onKind" aria-pressed="{{kind === 'invite'}}">{{kind === 'invite' ? '✓ ' : ''}}邀请使用</button><button class="secondary" disabled="{{busy}}" data-kind="plan" bindtap="onKind" aria-pressed="{{kind === 'plan'}}">{{kind === 'plan' ? '✓ ' : ''}}轻计划</button><button class="secondary" disabled="{{busy}}" data-kind="weekly" bindtap="onKind" aria-pressed="{{kind === 'weekly'}}">{{kind === 'weekly' ? '✓ ' : ''}}一周进展</button></view>
+    <view class="template-row spaced"><button class="secondary" disabled="{{busy || opening}}" data-kind="invite" bindtap="onKind" aria-pressed="{{kind === 'invite'}}">{{kind === 'invite' ? '✓ ' : ''}}邀请使用</button><button class="secondary" disabled="{{busy || opening}}" data-kind="plan" bindtap="onKind" aria-pressed="{{kind === 'plan'}}">{{kind === 'plan' ? '✓ ' : ''}}轻计划</button><button class="secondary" disabled="{{busy || opening}}" data-kind="weekly" bindtap="onKind" aria-pressed="{{kind === 'weekly'}}">{{kind === 'weekly' ? '✓ ' : ''}}一周进展</button></view>
     <block wx:if="{{kind === 'plan'}}">
       <view wx:if="{{!plans.length}}" class="notice">先为进行中的习惯设置忙时目标，再分享轻计划。</view>
-      <picker wx:else range="{{plans}}" range-key="title" value="{{planIndex}}" disabled="{{busy}}" data-field="planIndex" bindchange="onChoice"><view class="setting-row">选择自己的习惯：{{plans[planIndex].title}}<view class="chevron" /></view></picker>
-      <picker range="{{categories}}" value="{{categoryIndex}}" disabled="{{busy}}" data-field="categoryIndex" bindchange="onChoice"><view class="setting-row">公开类别：{{categories[categoryIndex]}}<view class="chevron" /></view></picker>
-      <view class="setting-row"><text class="grow">公开每周执行日期</text><switch checked="{{includeWeekdays}}" disabled="{{busy}}" color="{{primary}}" bindchange="onWeekdays" aria-label="公开每周执行日期" /></view>
+      <picker wx:else range="{{plans}}" range-key="title" value="{{planIndex}}" disabled="{{busy || opening}}" data-field="planIndex" bindchange="onChoice"><view class="setting-row">选择自己的习惯：{{plans[planIndex].title}}<view class="chevron" /></view></picker>
+      <picker range="{{categories}}" value="{{categoryIndex}}" disabled="{{busy || opening}}" data-field="categoryIndex" bindchange="onChoice"><view class="setting-row">公开类别：{{categories[categoryIndex]}}<view class="chevron" /></view></picker>
+      <view class="setting-row"><text class="grow">公开每周执行日期</text><switch checked="{{includeWeekdays}}" disabled="{{busy || opening}}" color="{{primary}}" bindchange="onWeekdays" aria-label="公开每周执行日期" /></view>
     </block>
-    <picker wx:if="{{kind === 'weekly'}}" range="{{captions}}" value="{{captionIndex}}" disabled="{{busy}}" data-field="captionIndex" bindchange="onChoice"><view class="setting-row">{{captions[captionIndex]}}<view class="chevron" /></view></picker>
+    <picker wx:if="{{kind === 'weekly'}}" range="{{captions}}" value="{{captionIndex}}" disabled="{{busy || opening}}" data-field="captionIndex" bindchange="onChoice"><view class="setting-row">{{captions[captionIndex]}}<view class="chevron" /></view></picker>
     <view wx:if="{{error}}" class="error spaced">{{error}}</view>
-    <button class="secondary spaced" disabled="{{busy || (kind === 'plan' && !plans.length)}}" loading="{{busy && !preview}}" bindtap="onPreview">{{preview ? '重新预览' : '预览公开内容'}}</button>
-    <block wx:if="{{preview}}"><template is="share-content" data="{{view: preview}}" /><view class="sub spaced">创建后内容固定，有效期 90 天。你可以在“我的分享”撤回。创建不会自动发送给别人。</view><button class="primary spaced" disabled="{{busy}}" loading="{{busy}}" bindtap="onCreate">确认创建这份分享</button></block>
+    <button class="secondary spaced" disabled="{{busy || opening || (kind === 'plan' && !plans.length)}}" loading="{{busy && !preview}}" bindtap="onPreview">{{preview ? '重新预览' : '预览公开内容'}}</button>
+    <block wx:if="{{preview}}"><template is="share-content" data="{{view: preview}}" /><view class="sub spaced">创建后内容固定，有效期 90 天。你可以在“我的分享”撤回。创建不会自动发送给别人。</view><button class="primary spaced" disabled="{{busy || opening}}" loading="{{busy || opening}}" bindtap="onCreate">{{opening ? '正在打开分享…' : '确认创建这份分享'}}</button></block>
   </block>
 </view>

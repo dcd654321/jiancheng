@@ -46,7 +46,7 @@ test('return prompt completes today through the task row without touching missed
   assert.deepEqual(before, {});
   assert.deepEqual(h.navigation, []);
   assert.equal(h.page.data.returnGuide, null);
-  assert.equal(h.toasts.at(-1).title, '已完成 · 第一次');
+  assert.equal(h.toasts.at(-1).title, '打卡成功');
 });
 
 test('busy-goal return completes as minimum through the task row without a modal', t => {
@@ -62,7 +62,7 @@ test('busy-goal return completes as minimum through the task row without a modal
   assert.equal(record.todayTarget, 2);
   assert.equal(h.modals.length, 0);
   assert.deepEqual(h.navigation, []);
-  assert.equal(h.toasts.at(-1).title, '已完成 · 接上了');
+  assert.equal(h.toasts.at(-1).title, '打卡成功');
 });
 
 test('smaller target reuses confirmation and does not complete or fill missed days; original restores today', t => {
@@ -114,7 +114,7 @@ test('completion removes prompt after cloud acknowledgement; failure never claim
   h.page.onComplete(event('read', h.today));
   assert.equal(h.page.data.returnGuide, null);
   assert.equal(h.page.data.done, 1);
-  assert.equal(h.toasts.at(-1).title, '已完成 · 接上了');
+  assert.equal(h.toasts.at(-1).title, '打卡成功');
 
   const pending = harness(t, [['read', {}]]);
   pending.storage[STORAGE_KEY] = JSON.stringify(domain.reduce(pending.store.read(),
@@ -157,12 +157,13 @@ test('failed completion does not report success or remove the return state', t =
   assert.match(h.page.data.error, /保存失败/);
 });
 
-test('native markup shows one prompt line next to the task without duplicating actions', () => {
+test('native markup shows one shared message before the tasks without duplicating actions', () => {
   const root = path.resolve(__dirname, '../miniprogram');
   const markup = fs.readFileSync(path.join(root, 'pages/today/index.wxml'), 'utf8');
-  assert.match(markup, /wx:if="\{\{returnGuide && item\.id === returnGuide\.id\}\}"/);
-  assert.match(markup, /回来就从今天的一点开始。/);
-  assert.match(markup, /wx:if="\{\{!hideQuote && !returnGuide && total\}\}" class="sub quote"/);
+  assert.doesNotMatch(markup, /回来就从今天的一点开始。|return-line/);
+  assert.match(markup, /wx:if="\{\{!hideQuote && total\}\}" class="sub quote"/);
+  assert.equal((markup.match(/class="sub quote"/g) || []).length, 1);
+  assert.ok(markup.indexOf('class="sub quote"') < markup.indexOf('wx:for="{{pending}}"'));
   const template = fs.readFileSync(path.join(root, 'templates/task.wxml'), 'utf8');
   assert.doesNotMatch(markup, /onReturnOriginal|onReturnMinimum|onReturnSmall|return-actions/);
   assert.match(template, /bindtap="onComplete"/);

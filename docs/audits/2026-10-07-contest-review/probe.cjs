@@ -1,0 +1,2 @@
+const a=require(require('node:path').join(process.env.TEMP,'mp-automator/node_modules/miniprogram-automator'));
+(async()=>{const m=await a.connect({wsEndpoint:'ws://127.0.0.1:9433'});try{console.log(JSON.stringify(await m.evaluate(()=>{const out={};for(const path of ['core/habits.js','/core/habits.js']){try{out[path]=typeof require(path).reduce;}catch(e){out[path]=e.message}}return out;})));}finally{await m.disconnect();process.exit(0)}})().catch(e=>{console.error(e.message);process.exit(1)});

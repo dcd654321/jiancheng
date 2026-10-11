@@ -1,0 +1,999 @@
+{
+  "level": "isolated native simulator fixture projection",
+  "project": "D:\\codex\\coding\\jiancheng-miniprogram\\qa\\local\\detail-status-20261011\\project",
+  "copies": {
+    "app.wxss": "dd1a73655a39c57060aac973935aa58ec0e7bf27381a63012fe9c332c121ddee",
+    "styles/theme.wxss": "bd4301841b42be864f1ffa0db9f2fbe10046054cd148024085024b6794e65669",
+    "templates/task-summary.wxml": "77df3e3a366a588f9e27344f4c0d6994a31eb5e491be1df882eafec90e7d44a2",
+    "pages/detail/index.wxml": "eaea3a8bbf71ee664abdad9f835e9e94d81f804f5738f2e47b2b069b5cfe3834",
+    "pages/detail/index.wxss": "a2b3b0d291854bcc33735db4b56dc5a8bc6d3775bcc3feac2d94b09391ce3b04"
+  },
+  "sourceHandlers": [
+    "onMore() { this.setData({ moreOpen: !this.data.moreOpen }); }",
+    "onToggleNote() { this.setData({ noteOpen: !this.data.noteOpen }); }",
+    "onEdit() { wx.navigateTo({ url: '/pages/edit/index?id=' + this._id }); }"
+  ],
+  "blockedHandlers": [
+    "onDataRetry",
+    "onManage",
+    "onPin",
+    "onNote",
+    "onNoteFocus",
+    "onNoteBlur",
+    "onSaveNote",
+    "onCopyNote",
+    "onDiscardNote",
+    "onCancelFuture",
+    "onCancelPause",
+    "onStatus",
+    "onCancelArchive",
+    "onDeleteHabit",
+    "onSharePlan",
+    "onToggleHistory"
+  ],
+  "fixtureDate": "2026-10-11",
+  "projected": {
+    "active-pending": {
+      "theme": "mist",
+      "primary": "#355E4C",
+      "loading": false,
+      "dataReady": true,
+      "dataUnavailable": false,
+      "invalid": false,
+      "dataReadOnly": false,
+      "error": "",
+      "title": "走路一会儿",
+      "current": {
+        "title": "走路一会儿",
+        "target": 10,
+        "minimum": 3,
+        "unit": "分钟",
+        "weekdays": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "time": "",
+        "effectiveDate": "2026-10-10",
+        "status": "active",
+        "revision": 1
+      },
+      "future": null,
+      "task": {
+        "id": "visual-habit",
+        "date": "2026-10-11",
+        "title": "走路一会儿",
+        "unit": "分钟",
+        "time": "",
+        "originalTarget": 10,
+        "target": 10,
+        "minimum": 3,
+        "status": "pending",
+        "done": false,
+        "simplified": false,
+        "statusText": "未打卡",
+        "note": "",
+        "versionRevision": 1
+      },
+      "date": "2026-10-11",
+      "history": [
+        {
+          "date": "2026-10-11",
+          "status": "未打卡",
+          "goal": "10 分钟"
+        },
+        {
+          "date": "2026-10-10",
+          "status": "未打卡",
+          "goal": "10 分钟"
+        }
+      ],
+      "visibleHistory": [
+        {
+          "date": "2026-10-11",
+          "status": "未打卡",
+          "goal": "10 分钟"
+        },
+        {
+          "date": "2026-10-10",
+          "status": "未打卡",
+          "goal": "10 分钟"
+        }
+      ],
+      "plannedStatus": "active",
+      "pausePending": false,
+      "archivePending": false,
+      "statusText": "进行中",
+      "nextStatusText": "进行中",
+      "schedule": "每天",
+      "featuresEnabled": false,
+      "pinned": false,
+      "pinning": false,
+      "writeBusy": false,
+      "noteOpen": false,
+      "noteDirty": false,
+      "noteExpired": false,
+      "note": "",
+      "noteDate": "2026-10-11",
+      "moreOpen": false,
+      "showHistory": false,
+      "largeFont": false,
+      "focusNote": false,
+      "deleteConfirming": false
+    },
+    "active-done": {
+      "theme": "mist",
+      "primary": "#355E4C",
+      "loading": false,
+      "dataReady": true,
+      "dataUnavailable": false,
+      "invalid": false,
+      "dataReadOnly": false,
+      "error": "",
+      "title": "走路一会儿",
+      "current": {
+        "title": "走路一会儿",
+        "target": 10,
+        "minimum": 3,
+        "unit": "分钟",
+        "weekdays": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "time": "",
+        "effectiveDate": "2026-10-10",
+        "status": "active",
+        "revision": 1
+      },
+      "future": null,
+      "task": {
+        "id": "visual-habit",
+        "date": "2026-10-11",
+        "title": "走路一会儿",
+        "unit": "分钟",
+        "time": "",
+        "originalTarget": 10,
+        "target": 10,
+        "minimum": 3,
+        "status": "standard",
+        "done": true,
+        "simplified": false,
+        "statusText": "原目标打卡",
+        "note": "",
+        "versionRevision": 1
+      },
+      "date": "2026-10-11",
+      "history": [
+        {
+          "date": "2026-10-11",
+          "status": "原目标打卡",
+          "goal": "10 分钟"
+        },
+        {
+          "date": "2026-10-10",
+          "status": "未打卡",
+          "goal": "10 分钟"
+        }
+      ],
+      "visibleHistory": [
+        {
+          "date": "2026-10-11",
+          "status": "原目标打卡",
+          "goal": "10 分钟"
+        },
+        {
+          "date": "2026-10-10",
+          "status": "未打卡",
+          "goal": "10 分钟"
+        }
+      ],
+      "plannedStatus": "active",
+      "pausePending": false,
+      "archivePending": false,
+      "statusText": "进行中",
+      "nextStatusText": "进行中",
+      "schedule": "每天",
+      "featuresEnabled": false,
+      "pinned": false,
+      "pinning": false,
+      "writeBusy": false,
+      "noteOpen": false,
+      "noteDirty": false,
+      "noteExpired": false,
+      "note": "",
+      "noteDate": "2026-10-11",
+      "moreOpen": false,
+      "showHistory": false,
+      "largeFont": false,
+      "focusNote": false,
+      "deleteConfirming": false
+    },
+    "pause-pending": {
+      "theme": "mist",
+      "primary": "#355E4C",
+      "loading": false,
+      "dataReady": true,
+      "dataUnavailable": false,
+      "invalid": false,
+      "dataReadOnly": false,
+      "error": "",
+      "title": "走路一会儿",
+      "current": {
+        "title": "走路一会儿",
+        "target": 10,
+        "minimum": 3,
+        "unit": "分钟",
+        "weekdays": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "time": "",
+        "effectiveDate": "2026-10-10",
+        "status": "active",
+        "revision": 1
+      },
+      "future": {
+        "title": "走路一会儿",
+        "target": 10,
+        "minimum": 3,
+        "unit": "分钟",
+        "weekdays": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "time": "",
+        "effectiveDate": "2026-10-12",
+        "status": "paused",
+        "revision": 2
+      },
+      "task": {
+        "id": "visual-habit",
+        "date": "2026-10-11",
+        "title": "走路一会儿",
+        "unit": "分钟",
+        "time": "",
+        "originalTarget": 10,
+        "target": 10,
+        "minimum": 3,
+        "status": "pending",
+        "done": false,
+        "simplified": false,
+        "statusText": "未打卡",
+        "note": "",
+        "versionRevision": 1
+      },
+      "date": "2026-10-11",
+      "history": [
+        {
+          "date": "2026-10-11",
+          "status": "未打卡",
+          "goal": "10 分钟"
+        },
+        {
+          "date": "2026-10-10",
+          "status": "未打卡",
+          "goal": "10 分钟"
+        }
+      ],
+      "visibleHistory": [
+        {
+          "date": "2026-10-11",
+          "status": "未打卡",
+          "goal": "10 分钟"
+        },
+        {
+          "date": "2026-10-10",
+          "status": "未打卡",
+          "goal": "10 分钟"
+        }
+      ],
+      "plannedStatus": "paused",
+      "pausePending": true,
+      "archivePending": false,
+      "statusText": "进行中",
+      "nextStatusText": "暂停",
+      "schedule": "每天",
+      "featuresEnabled": false,
+      "pinned": false,
+      "pinning": false,
+      "writeBusy": false,
+      "noteOpen": false,
+      "noteDirty": false,
+      "noteExpired": false,
+      "note": "",
+      "noteDate": "2026-10-11",
+      "moreOpen": false,
+      "showHistory": false,
+      "largeFont": false,
+      "focusNote": false,
+      "deleteConfirming": false
+    },
+    "paused": {
+      "theme": "mist",
+      "primary": "#355E4C",
+      "loading": false,
+      "dataReady": true,
+      "dataUnavailable": false,
+      "invalid": false,
+      "dataReadOnly": false,
+      "error": "",
+      "title": "走路一会儿",
+      "current": {
+        "title": "走路一会儿",
+        "target": 10,
+        "minimum": 3,
+        "unit": "分钟",
+        "weekdays": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "time": "",
+        "effectiveDate": "2026-10-11",
+        "status": "paused",
+        "revision": 2
+      },
+      "future": null,
+      "task": null,
+      "date": "2026-10-11",
+      "history": [
+        {
+          "date": "2026-10-10",
+          "status": "未打卡",
+          "goal": "10 分钟"
+        }
+      ],
+      "visibleHistory": [
+        {
+          "date": "2026-10-10",
+          "status": "未打卡",
+          "goal": "10 分钟"
+        }
+      ],
+      "plannedStatus": "paused",
+      "pausePending": false,
+      "archivePending": false,
+      "statusText": "已暂停",
+      "nextStatusText": "暂停",
+      "schedule": "每天",
+      "featuresEnabled": false,
+      "pinned": false,
+      "pinning": false,
+      "writeBusy": false,
+      "noteOpen": false,
+      "noteDirty": false,
+      "noteExpired": false,
+      "note": "",
+      "noteDate": "2026-10-11",
+      "moreOpen": false,
+      "showHistory": false,
+      "largeFont": false,
+      "focusNote": false,
+      "deleteConfirming": false
+    },
+    "archive-pending": {
+      "theme": "mist",
+      "primary": "#355E4C",
+      "loading": false,
+      "dataReady": true,
+      "dataUnavailable": false,
+      "invalid": false,
+      "dataReadOnly": false,
+      "error": "",
+      "title": "走路一会儿",
+      "current": {
+        "title": "走路一会儿",
+        "target": 10,
+        "minimum": 3,
+        "unit": "分钟",
+        "weekdays": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "time": "",
+        "effectiveDate": "2026-10-10",
+        "status": "active",
+        "revision": 1
+      },
+      "future": {
+        "title": "走路一会儿",
+        "target": 10,
+        "minimum": 3,
+        "unit": "分钟",
+        "weekdays": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "time": "",
+        "effectiveDate": "2026-10-12",
+        "status": "archived",
+        "revision": 2
+      },
+      "task": {
+        "id": "visual-habit",
+        "date": "2026-10-11",
+        "title": "走路一会儿",
+        "unit": "分钟",
+        "time": "",
+        "originalTarget": 10,
+        "target": 10,
+        "minimum": 3,
+        "status": "standard",
+        "done": true,
+        "simplified": false,
+        "statusText": "原目标打卡",
+        "note": "",
+        "versionRevision": 1
+      },
+      "date": "2026-10-11",
+      "history": [
+        {
+          "date": "2026-10-11",
+          "status": "原目标打卡",
+          "goal": "10 分钟"
+        },
+        {
+          "date": "2026-10-10",
+          "status": "未打卡",
+          "goal": "10 分钟"
+        }
+      ],
+      "visibleHistory": [
+        {
+          "date": "2026-10-11",
+          "status": "原目标打卡",
+          "goal": "10 分钟"
+        },
+        {
+          "date": "2026-10-10",
+          "status": "未打卡",
+          "goal": "10 分钟"
+        }
+      ],
+      "plannedStatus": "archived",
+      "pausePending": false,
+      "archivePending": true,
+      "statusText": "进行中",
+      "nextStatusText": "归档",
+      "schedule": "每天",
+      "featuresEnabled": false,
+      "pinned": false,
+      "pinning": false,
+      "writeBusy": false,
+      "noteOpen": false,
+      "noteDirty": false,
+      "noteExpired": false,
+      "note": "",
+      "noteDate": "2026-10-11",
+      "moreOpen": false,
+      "showHistory": false,
+      "largeFont": false,
+      "focusNote": false,
+      "deleteConfirming": false
+    },
+    "paused-archive-pending": {
+      "theme": "mist",
+      "primary": "#355E4C",
+      "loading": false,
+      "dataReady": true,
+      "dataUnavailable": false,
+      "invalid": false,
+      "dataReadOnly": false,
+      "error": "",
+      "title": "走路一会儿",
+      "current": {
+        "title": "走路一会儿",
+        "target": 10,
+        "minimum": 3,
+        "unit": "分钟",
+        "weekdays": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "time": "",
+        "effectiveDate": "2026-10-11",
+        "status": "paused",
+        "revision": 2
+      },
+      "future": {
+        "title": "走路一会儿",
+        "target": 10,
+        "minimum": 3,
+        "unit": "分钟",
+        "weekdays": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "time": "",
+        "effectiveDate": "2026-10-12",
+        "status": "archived",
+        "revision": 3
+      },
+      "task": null,
+      "date": "2026-10-11",
+      "history": [
+        {
+          "date": "2026-10-10",
+          "status": "未打卡",
+          "goal": "10 分钟"
+        }
+      ],
+      "visibleHistory": [
+        {
+          "date": "2026-10-10",
+          "status": "未打卡",
+          "goal": "10 分钟"
+        }
+      ],
+      "plannedStatus": "archived",
+      "pausePending": false,
+      "archivePending": true,
+      "statusText": "已暂停",
+      "nextStatusText": "归档",
+      "schedule": "每天",
+      "featuresEnabled": false,
+      "pinned": false,
+      "pinning": false,
+      "writeBusy": false,
+      "noteOpen": false,
+      "noteDirty": false,
+      "noteExpired": false,
+      "note": "",
+      "noteDate": "2026-10-11",
+      "moreOpen": false,
+      "showHistory": false,
+      "largeFont": false,
+      "focusNote": false,
+      "deleteConfirming": false
+    },
+    "archived": {
+      "theme": "mist",
+      "primary": "#355E4C",
+      "loading": false,
+      "dataReady": true,
+      "dataUnavailable": false,
+      "invalid": false,
+      "dataReadOnly": false,
+      "error": "",
+      "title": "走路一会儿",
+      "current": {
+        "title": "走路一会儿",
+        "target": 10,
+        "minimum": 3,
+        "unit": "分钟",
+        "weekdays": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "time": "",
+        "effectiveDate": "2026-10-11",
+        "status": "archived",
+        "revision": 2
+      },
+      "future": null,
+      "task": null,
+      "date": "2026-10-11",
+      "history": [
+        {
+          "date": "2026-10-10",
+          "status": "未打卡",
+          "goal": "10 分钟"
+        }
+      ],
+      "visibleHistory": [
+        {
+          "date": "2026-10-10",
+          "status": "未打卡",
+          "goal": "10 分钟"
+        }
+      ],
+      "plannedStatus": "archived",
+      "pausePending": false,
+      "archivePending": false,
+      "statusText": "已归档",
+      "nextStatusText": "归档",
+      "schedule": "每天",
+      "featuresEnabled": false,
+      "pinned": false,
+      "pinning": false,
+      "writeBusy": false,
+      "noteOpen": false,
+      "noteDirty": false,
+      "noteExpired": false,
+      "note": "",
+      "noteDate": "2026-10-11",
+      "moreOpen": false,
+      "showHistory": false,
+      "largeFont": false,
+      "focusNote": false,
+      "deleteConfirming": false
+    },
+    "future-edit": {
+      "theme": "mist",
+      "primary": "#355E4C",
+      "loading": false,
+      "dataReady": true,
+      "dataUnavailable": false,
+      "invalid": false,
+      "dataReadOnly": false,
+      "error": "",
+      "title": "走路一会儿",
+      "current": {
+        "title": "走路一会儿",
+        "target": 10,
+        "minimum": 3,
+        "unit": "分钟",
+        "weekdays": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "time": "",
+        "effectiveDate": "2026-10-10",
+        "status": "active",
+        "revision": 1
+      },
+      "future": {
+        "title": "明天走久一点",
+        "target": 15,
+        "minimum": 3,
+        "unit": "分钟",
+        "weekdays": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "time": "",
+        "effectiveDate": "2026-10-12",
+        "status": "active",
+        "revision": 2
+      },
+      "task": {
+        "id": "visual-habit",
+        "date": "2026-10-11",
+        "title": "走路一会儿",
+        "unit": "分钟",
+        "time": "",
+        "originalTarget": 10,
+        "target": 10,
+        "minimum": 3,
+        "status": "standard",
+        "done": true,
+        "simplified": false,
+        "statusText": "原目标打卡",
+        "note": "",
+        "versionRevision": 1
+      },
+      "date": "2026-10-11",
+      "history": [
+        {
+          "date": "2026-10-11",
+          "status": "原目标打卡",
+          "goal": "10 分钟"
+        },
+        {
+          "date": "2026-10-10",
+          "status": "未打卡",
+          "goal": "10 分钟"
+        }
+      ],
+      "visibleHistory": [
+        {
+          "date": "2026-10-11",
+          "status": "原目标打卡",
+          "goal": "10 分钟"
+        },
+        {
+          "date": "2026-10-10",
+          "status": "未打卡",
+          "goal": "10 分钟"
+        }
+      ],
+      "plannedStatus": "active",
+      "pausePending": false,
+      "archivePending": false,
+      "statusText": "进行中",
+      "nextStatusText": "进行中",
+      "schedule": "每天",
+      "featuresEnabled": false,
+      "pinned": false,
+      "pinning": false,
+      "writeBusy": false,
+      "noteOpen": false,
+      "noteDirty": false,
+      "noteExpired": false,
+      "note": "",
+      "noteDate": "2026-10-11",
+      "moreOpen": false,
+      "showHistory": false,
+      "largeFont": false,
+      "focusNote": false,
+      "deleteConfirming": false
+    },
+    "resume-pending": {
+      "theme": "mist",
+      "primary": "#355E4C",
+      "loading": false,
+      "dataReady": true,
+      "dataUnavailable": false,
+      "invalid": false,
+      "dataReadOnly": false,
+      "error": "",
+      "title": "走路一会儿",
+      "current": {
+        "title": "走路一会儿",
+        "target": 10,
+        "minimum": 3,
+        "unit": "分钟",
+        "weekdays": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "time": "",
+        "effectiveDate": "2026-10-11",
+        "status": "paused",
+        "revision": 2
+      },
+      "future": {
+        "title": "走路一会儿",
+        "target": 10,
+        "minimum": 3,
+        "unit": "分钟",
+        "weekdays": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "time": "",
+        "effectiveDate": "2026-10-12",
+        "status": "active",
+        "revision": 3
+      },
+      "task": null,
+      "date": "2026-10-11",
+      "history": [
+        {
+          "date": "2026-10-10",
+          "status": "未打卡",
+          "goal": "10 分钟"
+        }
+      ],
+      "visibleHistory": [
+        {
+          "date": "2026-10-10",
+          "status": "未打卡",
+          "goal": "10 分钟"
+        }
+      ],
+      "plannedStatus": "active",
+      "pausePending": false,
+      "archivePending": false,
+      "statusText": "已暂停",
+      "nextStatusText": "进行中",
+      "schedule": "每天",
+      "featuresEnabled": false,
+      "pinned": false,
+      "pinning": false,
+      "writeBusy": false,
+      "noteOpen": false,
+      "noteDirty": false,
+      "noteExpired": false,
+      "note": "",
+      "noteDate": "2026-10-11",
+      "moreOpen": false,
+      "showHistory": false,
+      "largeFont": false,
+      "focusNote": false,
+      "deleteConfirming": false
+    },
+    "unarchive-pending": {
+      "theme": "mist",
+      "primary": "#355E4C",
+      "loading": false,
+      "dataReady": true,
+      "dataUnavailable": false,
+      "invalid": false,
+      "dataReadOnly": false,
+      "error": "",
+      "title": "走路一会儿",
+      "current": {
+        "title": "走路一会儿",
+        "target": 10,
+        "minimum": 3,
+        "unit": "分钟",
+        "weekdays": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "time": "",
+        "effectiveDate": "2026-10-11",
+        "status": "archived",
+        "revision": 2
+      },
+      "future": {
+        "title": "走路一会儿",
+        "target": 10,
+        "minimum": 3,
+        "unit": "分钟",
+        "weekdays": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "time": "",
+        "effectiveDate": "2026-10-12",
+        "status": "active",
+        "revision": 3
+      },
+      "task": null,
+      "date": "2026-10-11",
+      "history": [
+        {
+          "date": "2026-10-10",
+          "status": "未打卡",
+          "goal": "10 分钟"
+        }
+      ],
+      "visibleHistory": [
+        {
+          "date": "2026-10-10",
+          "status": "未打卡",
+          "goal": "10 分钟"
+        }
+      ],
+      "plannedStatus": "active",
+      "pausePending": false,
+      "archivePending": false,
+      "statusText": "已归档",
+      "nextStatusText": "进行中",
+      "schedule": "每天",
+      "featuresEnabled": false,
+      "pinned": false,
+      "pinning": false,
+      "writeBusy": false,
+      "noteOpen": false,
+      "noteDirty": false,
+      "noteExpired": false,
+      "note": "",
+      "noteDate": "2026-10-11",
+      "moreOpen": false,
+      "showHistory": false,
+      "largeFont": false,
+      "focusNote": false,
+      "deleteConfirming": false
+    },
+    "future-only": {
+      "theme": "mist",
+      "primary": "#355E4C",
+      "loading": false,
+      "dataReady": true,
+      "dataUnavailable": false,
+      "invalid": false,
+      "dataReadOnly": false,
+      "error": "",
+      "title": "走路一会儿",
+      "current": null,
+      "future": {
+        "title": "走路一会儿",
+        "target": 10,
+        "minimum": 3,
+        "unit": "分钟",
+        "weekdays": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "time": "",
+        "effectiveDate": "2026-10-12",
+        "status": "active",
+        "revision": 1
+      },
+      "task": null,
+      "date": "2026-10-11",
+      "history": [],
+      "visibleHistory": [],
+      "plannedStatus": "active",
+      "pausePending": false,
+      "archivePending": false,
+      "statusText": "尚未开始",
+      "nextStatusText": "进行中",
+      "schedule": "每天",
+      "featuresEnabled": false,
+      "pinned": false,
+      "pinning": false,
+      "writeBusy": false,
+      "noteOpen": false,
+      "noteDirty": false,
+      "noteExpired": false,
+      "note": "",
+      "noteDate": "2026-10-11",
+      "moreOpen": false,
+      "showHistory": false,
+      "largeFont": false,
+      "focusNote": false,
+      "deleteConfirming": false
+    }
+  },
+  "realWrites": 0,
+  "cloudCalls": 0,
+  "storageCalls": 0,
+  "boundary": "setData renders fixture states; status and note writes are blocked. This evidence does not prove real cloud saves, device keyboard behavior, or production acceptance."
+}

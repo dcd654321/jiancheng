@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="800" viewBox="0 0 1000 800">
+  <title>渐成：忙的时候，也能做一点</title>
+  <desc>平时目标加忙时目标的通用价值封面，不包含私人信息或动态数量。</desc>
+  <rect width="1000" height="800" fill="#F6F7F2"/>
+  <rect x="48" y="48" width="904" height="704" rx="32" fill="#FFFFFF" stroke="#DBE2D9" stroke-width="2"/>
+  <g font-family="Microsoft YaHei, PingFang SC, Noto Sans CJK SC, sans-serif">
+    <rect x="88" y="104" width="44" height="5" rx="2.5" fill="#355E4C"/>
+    <text x="88" y="177" fill="#355E4C" font-size="44" font-weight="600">渐成</text>
+    <text x="88" y="308" fill="#25352D" font-size="76" font-weight="600">忙的时候，</text>
+    <text x="88" y="408" fill="#25352D" font-size="76" font-weight="600">也能做一点</text>
+    <rect x="88" y="518" width="356" height="142" rx="20" fill="#EEF2EC"/>
+    <rect x="524" y="518" width="356" height="142" rx="20" fill="#EDF2E3"/>
+    <text x="266" y="607" fill="#25352D" font-size="40" font-weight="500" text-anchor="middle">平时目标</text>
+    <text x="484" y="607" fill="#5F6C63" font-size="42" font-weight="400" text-anchor="middle">+</text>
+    <text x="702" y="607" fill="#4D6040" font-size="40" font-weight="500" text-anchor="middle">忙时目标</text>
+  </g>
+</svg>

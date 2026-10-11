@@ -1,0 +1,45 @@
+{
+  "realWrites": 0,
+  "cloudCalls": 0,
+  "level": "isolated native simulator",
+  "quote": "让打卡轻一点，让开始容易一点。",
+  "scenarios": [
+    {
+      "theme": "mist",
+      "zeroCompleted": true,
+      "oneMessage": true,
+      "aboveTask": true,
+      "messagePosition": {
+        "left": 18,
+        "top": 131.796875
+      },
+      "taskPosition": {
+        "left": 18,
+        "top": 160.796875
+      },
+      "screenshot": "mist-zero-completed.png"
+    },
+    {
+      "theme": "paper",
+      "zeroCompleted": true,
+      "oneMessage": true,
+      "aboveTask": true,
+      "messagePosition": {
+        "left": 18,
+        "top": 131.796875
+      },
+      "taskPosition": {
+        "left": 18,
+        "top": 160.796875
+      },
+      "screenshot": "paper-zero-completed.png"
+    },
+    {
+      "afterOneCompletion": true,
+      "sameSingleMessage": true
+    },
+    {
+      "hidingStillWorks": true
+    }
+  ]
+}

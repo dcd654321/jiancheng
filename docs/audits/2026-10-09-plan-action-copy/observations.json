@@ -1,0 +1,11 @@
+{
+  "level": "F",
+  "realWrites": 0,
+  "checks": {
+    "progressTapEditsHabit": true,
+    "detailActionConsistent": true,
+    "fixtureCommands": [],
+    "fixturePresentAfterRestore": false
+  },
+  "exceptions": []
+}

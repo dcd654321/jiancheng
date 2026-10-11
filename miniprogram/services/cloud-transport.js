@@ -1,4 +1,6 @@
-const { apiFunction, featuresFunction, publicShareFunction, planFunction } = require('../config/cloud-resources');
+const { apiFunction, featuresFunction, publicShareFunction } = require('../config/cloud-resources');
+// Only initialized SDK connections are reused in memory; no account data is cached here.
+const sharedConnections = new WeakMap();
 
 /** Cloud-authoritative workspace transport; identity comes only from the server context. */
 function createCloudTransport(wxApi, { enabled, envId, functionName = apiFunction, mode = 'default', resourceAppid } = {}) {
@@ -9,14 +11,18 @@ function createCloudTransport(wxApi, { enabled, envId, functionName = apiFunctio
   if (mode === 'shared') {
     if (typeof resourceAppid !== 'string' || !/^wx[a-f0-9]{16}$/.test(resourceAppid)) throw Error('共享云资源方 AppID 无效');
     if (!/^[a-zA-Z0-9_-]{1,100}$/.test(envId) || envId.startsWith('YOUR_')) throw Error('共享云环境标识无效');
-    if (![apiFunction, featuresFunction, publicShareFunction, planFunction].includes(functionName)) throw Error('共享云仅允许调用本项目专属函数');
+    if (![apiFunction, featuresFunction, publicShareFunction].includes(functionName)) throw Error('共享云仅允许调用本项目专属函数');
     if (typeof wxApi.cloud.Cloud !== 'function') throw Error('当前环境不支持共享云实例');
-    let initPromise = null;
     function ready() {
-      if (!initPromise) {
+      let targets = sharedConnections.get(wxApi.cloud);
+      if (!targets) { targets = new Map(); sharedConnections.set(wxApi.cloud, targets); }
+      const key = resourceAppid + ':' + envId;
+      let entry = targets.get(key);
+      if (!entry) {
         const instance = new wxApi.cloud.Cloud({ resourceAppid, resourceEnv: envId });
         if (typeof instance.init !== 'function' || typeof instance.callFunction !== 'function') throw Error('共享云实例接口不可用');
-        initPromise = Promise.resolve().then(() => instance.init()).then(result => {
+        entry = {};
+        entry.work = Promise.resolve().then(() => instance.init()).then(result => {
           // Some shared authorization failures resolve instead of rejecting.
           // Do not mask that failure with a later "cloud not initialized" error.
           if (result && typeof result === 'object' && 'errCode' in result && result.errCode !== 0) {
@@ -27,11 +33,12 @@ function createCloudTransport(wxApi, { enabled, envId, functionName = apiFunctio
           }
           return instance;
         }).catch(error => {
-          initPromise = null;
+          if (targets.get(key) === entry) targets.delete(key);
           throw error;
         });
+        targets.set(key, entry);
       }
-      return initPromise;
+      return entry.work;
     }
     return async event => {
       const instance = await ready();

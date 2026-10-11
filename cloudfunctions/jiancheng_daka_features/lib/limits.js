@@ -51,10 +51,13 @@ function createLimiter({ repository, scope, limits, clock = Date.now }) {
     if (!Number.isSafeInteger(minute) || now < 0) throw Error('LIMIT_CLOCK_INVALID');
     const globalId = 'global-' + scope;
     const userId = owner ? scope + '-' + owner : null;
+    // A deleted account gets a new epoch and cleared private quota document.
+    // Warm instances must not apply the deleted epoch's cached denial to it.
+    const userBlockKey = userId ? userId + ':' + epoch : null;
     if (PRIVATE_SCOPES.includes(scope) && (!owner || !epoch)) fail('UNAUTHORIZED', '账户身份无效');
     if (!PRIVATE_SCOPES.includes(scope) && owner) throw Error('PUBLIC_LIMIT_HAS_OWNER');
     for (const [key, until] of blocked) if (until <= now) blocked.delete(key);
-    if (blocked.has(globalId) || (userId && blocked.has(userId))) denied();
+    if (blocked.has(globalId) || (userBlockKey && blocked.has(userBlockKey))) denied();
     const result = await repository.transact(async tx => {
       if (userId) {
         const account = await tx.account(owner);
@@ -69,7 +72,7 @@ function createLimiter({ repository, scope, limits, clock = Date.now }) {
         const saved = await tx.read(userId);
         if (saved && (saved.owner !== owner || saved.ownerEpoch !== epoch)) throw Error('LIMIT_OWNER_MISMATCH');
         user = bucket(saved, minute, day, limits.userMinute, limits.userDay);
-        if (!user.next) return { ok: false, key: userId, until: user.until };
+        if (!user.next) return { ok: false, key: userBlockKey, until: user.until };
       }
       await tx.put(globalId, global.next);
       if (userId) await tx.put(userId, { ...user.next, owner, ownerEpoch: epoch });

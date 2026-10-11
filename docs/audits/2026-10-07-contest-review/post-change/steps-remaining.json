@@ -1,0 +1,158 @@
+[
+  {
+    "file": "20-ai-fixture-preview-F.png",
+    "page": "pages/assistant/index",
+    "level": "F",
+    "steps": "调用AI事件，模拟成功；无供应商请求",
+    "health": "已目检：模拟AI成功预览",
+    "caption": "2026-10-08改版；状态：模拟AI成功预览；操作：调用AI事件，模拟成功；无供应商请求"
+  },
+  {
+    "file": "21-ai-failure-F.png",
+    "page": "pages/assistant/index",
+    "level": "F",
+    "steps": "模拟额度失败；保留选择",
+    "health": "已目检：模拟额度失败；选择保留",
+    "caption": "2026-10-08改版；状态：模拟额度失败；选择保留；操作：模拟额度失败；保留选择"
+  },
+  {
+    "file": "22-ai-recovery-F.png",
+    "page": "pages/assistant/index",
+    "level": "F",
+    "steps": "错误后本机基础方案仍可预览",
+    "health": "已目检：AI错误后基础预览恢复",
+    "caption": "2026-10-08改版；状态：AI错误后基础预览恢复；操作：错误后本机基础方案仍可预览"
+  },
+  {
+    "file": "23-loading-F.png",
+    "page": "pages/today/index",
+    "level": "F",
+    "steps": "DATA_LOADING，价值与示例仍可读",
+    "health": "已目检：读取中价值与示例仍可读",
+    "caption": "2026-10-08改版；状态：读取中价值与示例仍可读；操作：DATA_LOADING，价值与示例仍可读；边界：示例非账户记录，不能离线修改。"
+  },
+  {
+    "file": "24-read-failure-F.png",
+    "page": "pages/today/index",
+    "level": "F",
+    "steps": "模拟无记录可读，禁止更新",
+    "health": "已目检：读取失败；禁止更新",
+    "caption": "2026-10-08改版；状态：读取失败；禁止更新；操作：模拟无记录可读，禁止更新"
+  },
+  {
+    "file": "25-read-recovery-F.png",
+    "page": "pages/today/index",
+    "level": "F",
+    "steps": "模拟读取重试恢复",
+    "health": "已目检：读取重试恢复",
+    "caption": "2026-10-08改版；状态：读取重试恢复；操作：模拟读取重试恢复"
+  },
+  {
+    "file": "26-write-failure-F.png",
+    "page": "pages/today/index",
+    "level": "F",
+    "steps": "写入未确认，无成功标记，可核对",
+    "health": "已目检：写入结果未知；可核对",
+    "caption": "2026-10-08改版；状态：写入结果未知；可核对；操作：写入未确认，无成功标记，可核对；边界：未知保存结果，不能说明确失败或成功。"
+  },
+  {
+    "file": "27-share-source-F.png",
+    "page": "pages/share-create/index",
+    "level": "F",
+    "steps": "详情→预选来源；源码开关仍关闭",
+    "health": "已目检：轻计划来源已预选",
+    "caption": "2026-10-08改版；状态：轻计划来源已预选；操作：详情→预选来源；源码开关仍关闭；边界：公开能力仅内存开启，源码门禁仍关闭。"
+  },
+  {
+    "file": "28-share-preview-F.png",
+    "page": "pages/share-create/index",
+    "level": "F",
+    "steps": "模拟脱敏预览，不公开真实数据",
+    "health": "已目检：匿名公开内容预览",
+    "caption": "2026-10-08改版；状态：匿名公开内容预览；操作：模拟脱敏预览，不公开真实数据；边界：演示计划5/2分钟不等于新模板默认值；两个目标共用分钟unit。"
+  },
+  {
+    "file": "29-share-owner-F.png",
+    "page": "pages/share-view/index",
+    "level": "F",
+    "steps": "分享者发送主按钮；不发送",
+    "health": "已目检：本人分享页；发送为主动作",
+    "caption": "2026-10-08改版；状态：本人分享页；发送为主动作；操作：分享者发送主按钮；不发送；边界：回调title/path/imageUrl不等于发送或送达；delivered=false。"
+  },
+  {
+    "callback": {
+      "title": "读一会儿：平时5分钟，忙时2分钟",
+      "path": "/pages/share-view/index?id=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "imageUrl": "/assets/share/cover.png"
+    },
+    "level": "F",
+    "delivered": false
+  },
+  {
+    "file": "30-share-receiver-F.png",
+    "page": "pages/share-view/index",
+    "level": "F",
+    "steps": "接收者主按钮用计划开始",
+    "health": "已目检：接收者采用为主动作",
+    "caption": "2026-10-08改版；状态：接收者采用为主动作；操作：接收者主按钮用计划开始"
+  },
+  {
+    "file": "31-share-confirm-F.png",
+    "page": "pages/edit/index",
+    "level": "F",
+    "steps": "准备账户后到确认页，尚未创建",
+    "health": "已目检：采用后编辑确认；尚未创建",
+    "caption": "2026-10-08改版；状态：采用后编辑确认；尚未创建；操作：准备账户后到确认页，尚未创建"
+  },
+  {
+    "file": "32-invite-F.png",
+    "page": "pages/share-view/index",
+    "level": "F",
+    "steps": "邀请接收者有选择小目标入口",
+    "health": "已目检：邀请接收者的小目标入口",
+    "caption": "2026-10-08改版；状态：邀请接收者的小目标入口；操作：邀请接收者有选择小目标入口"
+  },
+  {
+    "file": "33-weekly-F.png",
+    "page": "pages/share-view/index",
+    "level": "F",
+    "steps": "周记接收者有选择小目标入口",
+    "health": "已目检：周进展接收者的小目标入口",
+    "caption": "2026-10-08改版；状态：周进展接收者的小目标入口；操作：周记接收者有选择小目标入口"
+  },
+  {
+    "file": "34-account-wait-F.png",
+    "page": "pages/share-view/index",
+    "level": "F",
+    "steps": "公开内容保留，私有账户准备中且按钮防重复",
+    "health": "已目检：公开内容保留；账户准备中",
+    "caption": "2026-10-08改版；状态：公开内容保留；账户准备中；操作：公开内容保留，私有账户准备中且按钮防重复"
+  },
+  {
+    "file": "35-account-failure-F.png",
+    "page": "pages/share-view/index",
+    "level": "F",
+    "steps": "账户失败保留公开内容与采用重试",
+    "health": "已目检：账户失败；内容与重试保留",
+    "caption": "2026-10-08改版；状态：账户失败；内容与重试保留；操作：账户失败保留公开内容与采用重试"
+  },
+  {
+    "file": "36-account-recovery-F.png",
+    "page": "pages/edit/index",
+    "level": "F",
+    "steps": "恢复后仍需显式创建，未自动写入",
+    "health": "已目检：账户恢复后仍需明确创建",
+    "caption": "2026-10-08改版；状态：账户恢复后仍需明确创建；操作：恢复后仍需显式创建，未自动写入"
+  },
+  {
+    "fixtureStats": {
+      "dispatchCount": 1,
+      "genCount": 2,
+      "mode": "ready",
+      "shareEnabled": true
+    },
+    "realCloudWrites": 0,
+    "realAIRequests": 0,
+    "realMessagesSent": 0
+  }
+]

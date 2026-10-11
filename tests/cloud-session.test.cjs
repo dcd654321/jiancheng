@@ -48,6 +48,107 @@ test('failed read and offline status hide prior in-memory snapshot instead of sh
   assert.equal(h.session.status().ready, true);
 });
 
+test('a late pull receipt cannot make the page writable after an offline notification', async () => {
+  const gate = deferred(); let delay = true;
+  const h = await setup(async (event, f) => {
+    const result = await f.api(event);
+    if (delay) await gate.promise;
+    return result;
+  });
+  const work = h.session.start();
+  await new Promise(setImmediate);
+  h.session.setNetworkAvailable(false);
+  gate.resolve(); await work;
+  const store = require('../miniprogram/services/workspace-store').createWorkspaceStore(h.session);
+  assert.equal(h.session.status().networkOffline, true);
+  assert.equal(h.session.status().phase, 'offline');
+  assert.equal(store.info().ready, false);
+  assert.equal(store.stale().habits[0].id, 'read', '合法回执保留为会话内只读数据');
+  assert.throws(() => store.read(), /无网络/);
+  assert.throws(() => store.dispatch({ type: 'complete', id: 'read', date: h.f.date }), /无网络/);
+  assert.equal(h.calls.length, 1, '断网后未发出新写入');
+  delay = false; h.session.setNetworkAvailable(true);
+  await h.session.recoverConnection();
+  assert.equal(store.info().ready, true, '联网恢复重新读取后正常解锁');
+  assert.equal(store.read().habits[0].id, 'read');
+});
+
+test('a late matching write receipt confirms the operation but keeps the snapshot read-only while offline', async () => {
+  const gate = deferred();
+  const h = await setup(async (event, f) => {
+    const result = await f.api(event);
+    if (event.action === 'mutate') await gate.promise;
+    return result;
+  });
+  await h.session.start();
+  const work = h.session.dispatch({ type: 'complete', id: 'read', date: h.f.date });
+  await new Promise(setImmediate);
+  h.session.setNetworkAvailable(false);
+  gate.resolve(); await work;
+  assert.equal(h.session.status().pending, 0, '匹配回执确认完成，不能保留未知结果');
+  assert.equal(h.session.status().ready, false);
+  assert.equal(h.session.status().phase, 'offline');
+  assert.equal(h.session.staleRead().records[`read@${h.f.date}`].status, 'standard');
+  assert.throws(() => h.session.dispatch({ type: 'undo', id: 'read', date: h.f.date }), /无网络/);
+  h.session.setNetworkAvailable(true);
+  await h.session.recoverConnection();
+  assert.equal(h.session.status().ready, true);
+  assert.equal(h.session.read().records[`read@${h.f.date}`].status, 'standard');
+  assert.equal(h.calls.filter(call => call.action === 'mutate').length, 1, '恢复读取不重复已确认写入');
+});
+
+test('a late conflict snapshot remains authoritative without overriding the offline state', async () => {
+  const gate = deferred();
+  const h = await setup(async (event, f) => {
+    const result = await f.api(event);
+    if (event.action === 'mutate') await gate.promise;
+    return result;
+  });
+  await h.session.start();
+  await h.f.mutate({ type: 'note', id: 'read', date: h.f.date, note: '另一设备的新备注' });
+  const work = h.session.dispatch({ type: 'complete', id: 'read', date: h.f.date });
+  const rejected = assert.rejects(work, /另一设备/);
+  await new Promise(setImmediate);
+  h.session.setNetworkAvailable(false);
+  gate.resolve(); await rejected;
+  assert.equal(h.session.status().pending, 0);
+  assert.equal(h.session.status().ready, false);
+  assert.equal(h.session.status().phase, 'offline');
+  const record = h.session.staleRead().records[`read@${h.f.date}`];
+  assert.equal(record.note, '另一设备的新备注');
+  assert.equal(record.status, 'pending', '拒绝的本次打卡不能被显示为保存');
+  h.session.setNetworkAvailable(true);
+  await h.session.recoverConnection();
+  assert.equal(h.session.status().ready, true);
+});
+
+test('a late explicit refusal without snapshot keeps confirmed data visible and read-only while offline', async () => {
+  const gate = deferred();
+  const h = await setup(async (event, f) => {
+    if (event.action !== 'mutate') return f.api(event);
+    await gate.promise;
+    return { ok: false, code: 'RECONFIRM_REQUIRED', message: '日期已变更，请重新确认' };
+  });
+  await h.session.start();
+  const work = h.session.dispatch({ type: 'complete', id: 'read', date: h.f.date });
+  const rejected = assert.rejects(work, /日期已变更/);
+  await new Promise(setImmediate);
+  h.session.setNetworkAvailable(false);
+  gate.resolve(); await rejected;
+  const info = h.session.status();
+  assert.equal(info.pending, 0, '明确拒绝后无需重复发送该操作');
+  assert.equal(info.ready, false);
+  assert.equal(info.phase, 'offline');
+  assert.equal(info.stale, true, '已有已确认快照仍可只读呈现');
+  assert.equal(h.session.staleRead().habits[0].id, 'read');
+  assert.equal(h.session.staleRead().records[`read@${h.f.date}`], undefined);
+  assert.throws(() => h.session.read(), /日期已变更/);
+  h.session.setNetworkAvailable(true);
+  await h.session.recoverConnection();
+  assert.equal(h.session.status().ready, true);
+  assert.equal(h.calls.filter(call => call.action === 'mutate').length, 1);
+});
+
 test('direct mutation is not displayed until matching cloud receipt; only one mutation may be in flight', async () => {
   const gate = deferred(); let seen;
   const h = await setup(async (event, f) => {

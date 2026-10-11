@@ -1,0 +1,51 @@
+[
+  {
+    "environment": {
+      "date": "2026-10-08",
+      "platform": "devtools",
+      "width": 320,
+      "height": 456,
+      "SDKVersion": "3.17.3"
+    }
+  },
+  {
+    "file": "42-calendar-320-fixed-F.png",
+    "page": "pages/progress/index",
+    "level": "F",
+    "steps": "320宽度，近7天，按真实网格测量横滑高度；选中日期滚入视口；未写云",
+    "selectedDate": "2026-10-08",
+    "size": {
+      "cell": {
+        "width": 44,
+        "height": 73.59375
+      },
+      "container": {
+        "width": 288,
+        "height": 76
+      }
+    },
+    "height": 76,
+    "health": "已目检：320px近7天日历；完整且选中日期可见",
+    "caption": "2026-10-08改版；状态：320px近7天日历；完整且选中日期可见；操作：320宽度，近7天，按真实网格测量横滑高度；选中日期滚入视口；未写云；边界：API已断言320px逻辑窗口；日期格44×73.59375px，容器288×76px；选中的2026-10-08格在横滑视口右侧完整可见；替代裁切post39。"
+  },
+  {
+    "file": "43-calendar28-320-fixed-F.png",
+    "page": "pages/progress/index",
+    "level": "F",
+    "steps": "320宽度，近28天，按真实网格测量横滑高度；选中日期滚入视口；未写云",
+    "selectedDate": "2026-10-08",
+    "size": {
+      "cell": {
+        "width": 44,
+        "height": 73.59375
+      },
+      "container": {
+        "width": 288,
+        "height": 312
+      }
+    },
+    "height": 312,
+    "health": "已目检：320px近28天日历；完整且选中日期可见",
+    "caption": "2026-10-08改版；状态：320px近28天日历；完整且选中日期可见；操作：320宽度，近28天，按真实网格测量横滑高度；选中日期滚入视口；未写云；边界：API已断言320px逻辑窗口；日期格44×73.59375px，容器288×312px；选中的2026-10-08格在横滑视口右侧完整可见；替代裁切post39。"
+  }
+]

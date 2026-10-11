@@ -1,0 +1,57 @@
+{
+  "level": "F",
+  "realWrites": 0,
+  "screenshots": [
+    "01-empty.png",
+    "02-new-form.png",
+    "03-no-tasks.png",
+    "04-pending.png",
+    "05-all-completed.png",
+    "06-loading.png",
+    "07-error.png",
+    "08-paper.png"
+  ],
+  "checks": {
+    "rects": [
+      {
+        "id": "",
+        "dataset": {},
+        "left": 0,
+        "right": 390,
+        "top": 0,
+        "bottom": 671,
+        "width": 390,
+        "height": 671
+      },
+      {
+        "id": "",
+        "dataset": {},
+        "left": 18,
+        "right": 372,
+        "top": 92.796875,
+        "bottom": 609,
+        "width": 354,
+        "height": 516.203125
+      },
+      {
+        "id": "",
+        "dataset": {
+          "template": ""
+        },
+        "left": 117,
+        "right": 273,
+        "top": 326.890625,
+        "bottom": 374.890625,
+        "width": 156,
+        "height": 48
+      }
+    ],
+    "busyGoalVisibleByDefaultAndAfterClear": true,
+    "addOpensCustomFormWithoutWrites": true,
+    "restDayShowsAdd": true,
+    "existingTasksRetained": true,
+    "fixtureCommands": [],
+    "fixturePresentAfterRestore": false
+  },
+  "exceptions": []
+}

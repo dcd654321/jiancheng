@@ -1,0 +1,259 @@
+{
+  "level": "isolated native simulator fixture projection",
+  "project": "D:\\codex\\coding\\jiancheng-miniprogram\\qa\\local\\latest-habit-state-20261011\\project",
+  "realWrites": 0,
+  "exceptions": [],
+  "checks": [
+    {
+      "page": "detail",
+      "theme": "mist",
+      "fixture": "future-edit",
+      "statusText": "进行中 · 每天",
+      "actions": [
+        "暂停",
+        "归档",
+        "删除习惯"
+      ],
+      "removedGenericUndo": true,
+      "zeroTaskButtons": true,
+      "moreToggled": true
+    },
+    {
+      "page": "detail",
+      "theme": "mist",
+      "fixture": "pause-pending",
+      "statusText": "已暂停 · 每天",
+      "actions": [
+        "恢复",
+        "归档",
+        "删除习惯"
+      ],
+      "removedGenericUndo": true,
+      "zeroTaskButtons": true,
+      "moreToggled": true
+    },
+    {
+      "page": "detail",
+      "theme": "mist",
+      "fixture": "paused",
+      "statusText": "已暂停 · 每天",
+      "actions": [
+        "恢复",
+        "归档",
+        "删除习惯"
+      ],
+      "removedGenericUndo": true,
+      "zeroTaskButtons": true,
+      "moreToggled": true
+    },
+    {
+      "page": "detail",
+      "theme": "mist",
+      "fixture": "archive-pending",
+      "statusText": "已归档 · 每天",
+      "actions": [
+        "取消归档",
+        "删除习惯"
+      ],
+      "removedGenericUndo": true,
+      "zeroTaskButtons": true,
+      "moreToggled": true
+    },
+    {
+      "page": "detail",
+      "theme": "mist",
+      "fixture": "archived",
+      "statusText": "已归档 · 每天",
+      "actions": [
+        "取消归档",
+        "删除习惯"
+      ],
+      "removedGenericUndo": true,
+      "zeroTaskButtons": true,
+      "moreToggled": true
+    },
+    {
+      "page": "detail",
+      "theme": "mist",
+      "fixture": "resume-pending",
+      "statusText": "进行中 · 每天",
+      "actions": [
+        "暂停",
+        "归档",
+        "删除习惯"
+      ],
+      "removedGenericUndo": true,
+      "zeroTaskButtons": true,
+      "moreToggled": true
+    },
+    {
+      "page": "detail",
+      "theme": "paper",
+      "fixture": "future-edit",
+      "statusText": "进行中 · 每天",
+      "actions": [
+        "暂停",
+        "归档",
+        "删除习惯"
+      ],
+      "removedGenericUndo": true,
+      "zeroTaskButtons": true,
+      "moreToggled": true
+    },
+    {
+      "page": "detail",
+      "theme": "paper",
+      "fixture": "pause-pending",
+      "statusText": "已暂停 · 每天",
+      "actions": [
+        "恢复",
+        "归档",
+        "删除习惯"
+      ],
+      "removedGenericUndo": true,
+      "zeroTaskButtons": true,
+      "moreToggled": true
+    },
+    {
+      "page": "detail",
+      "theme": "paper",
+      "fixture": "paused",
+      "statusText": "已暂停 · 每天",
+      "actions": [
+        "恢复",
+        "归档",
+        "删除习惯"
+      ],
+      "removedGenericUndo": true,
+      "zeroTaskButtons": true,
+      "moreToggled": true
+    },
+    {
+      "page": "detail",
+      "theme": "paper",
+      "fixture": "archive-pending",
+      "statusText": "已归档 · 每天",
+      "actions": [
+        "取消归档",
+        "删除习惯"
+      ],
+      "removedGenericUndo": true,
+      "zeroTaskButtons": true,
+      "moreToggled": true
+    },
+    {
+      "page": "detail",
+      "theme": "paper",
+      "fixture": "archived",
+      "statusText": "已归档 · 每天",
+      "actions": [
+        "取消归档",
+        "删除习惯"
+      ],
+      "removedGenericUndo": true,
+      "zeroTaskButtons": true,
+      "moreToggled": true
+    },
+    {
+      "page": "detail",
+      "theme": "paper",
+      "fixture": "resume-pending",
+      "statusText": "进行中 · 每天",
+      "actions": [
+        "暂停",
+        "归档",
+        "删除习惯"
+      ],
+      "removedGenericUndo": true,
+      "zeroTaskButtons": true,
+      "moreToggled": true
+    },
+    {
+      "page": "manage",
+      "theme": "mist",
+      "statuses": [
+        "进行中",
+        "已暂停",
+        "已归档"
+      ],
+      "concretePendingChange": true
+    },
+    {
+      "page": "manage",
+      "theme": "paper",
+      "statuses": [
+        "进行中",
+        "已暂停",
+        "已归档"
+      ],
+      "concretePendingChange": true
+    }
+  ],
+  "screenshots": [
+    "mist-future-edit.png",
+    "mist-pause-pending.png",
+    "mist-paused.png",
+    "mist-archive-pending.png",
+    "mist-archived.png",
+    "mist-resume-pending.png",
+    "paper-future-edit.png",
+    "paper-pause-pending.png",
+    "paper-paused.png",
+    "paper-archive-pending.png",
+    "paper-archived.png",
+    "paper-resume-pending.png",
+    "mist-manage.png",
+    "paper-manage.png"
+  ],
+  "boundary": "Current templates rendered with current controller fixture projections. Status writes are blocked; no real cloud or device acceptance.",
+  "systemInfo": {
+    "brand": "devtools",
+    "model": "iPhone 12/13 (Pro)",
+    "system": "iOS 10.0.1",
+    "platform": "devtools",
+    "benchmarkLevel": -1,
+    "pixelRatio": 3,
+    "screenWidth": 390,
+    "screenHeight": 844,
+    "windowWidth": 390,
+    "windowHeight": 753,
+    "statusBarHeight": 47,
+    "safeArea": {
+      "top": 47,
+      "left": 0,
+      "right": 390,
+      "bottom": 810,
+      "width": 390,
+      "height": 763
+    },
+    "language": "zh_CN",
+    "version": "8.0.5",
+    "fontSizeSetting": 16,
+    "SDKVersion": "3.17.3",
+    "host": {
+      "env": "WeChat"
+    },
+    "enableDebug": false,
+    "mode": "default",
+    "deviceOrientation": "portrait",
+    "bluetoothEnabled": true,
+    "locationEnabled": true,
+    "wifiEnabled": true,
+    "albumAuthorized": true,
+    "cameraAuthorized": true,
+    "locationAuthorized": true,
+    "microphoneAuthorized": true,
+    "notificationAuthorized": true,
+    "notificationAlertAuthorized": true,
+    "notificationBadgeAuthorized": true,
+    "notificationSoundAuthorized": true,
+    "phoneCalendarAuthorized": true,
+    "bluetoothAuthorized": true,
+    "locationReducedAccuracy": true,
+    "devicePixelRatio": 3
+  },
+  "cloudCalls": 0,
+  "storageCalls": 0,
+  "blockedEvents": 0,
+  "status": "passed"
+}

@@ -1,0 +1,59 @@
+{
+  "level": "isolated native simulator",
+  "realWrites": 0,
+  "cloudCalls": 0,
+  "checks": [
+    {
+      "theme": "mist",
+      "colors": [
+        {
+          "selector": ".more-group",
+          "background": "rgb(255, 255, 255)"
+        },
+        {
+          "selector": ".more-header",
+          "background": "rgb(255, 255, 255)"
+        },
+        {
+          "selector": ".more-content",
+          "background": "rgb(255, 255, 255)"
+        },
+        {
+          "selector": ".more-actions",
+          "background": "rgb(255, 255, 255)"
+        }
+      ],
+      "collapseAndReopen": true,
+      "pendingPauseAndResumeLabels": true
+    },
+    {
+      "theme": "paper",
+      "colors": [
+        {
+          "selector": ".more-group",
+          "background": "rgb(255, 254, 250)"
+        },
+        {
+          "selector": ".more-header",
+          "background": "rgb(255, 254, 250)"
+        },
+        {
+          "selector": ".more-content",
+          "background": "rgb(255, 254, 250)"
+        },
+        {
+          "selector": ".more-actions",
+          "background": "rgb(255, 254, 250)"
+        }
+      ],
+      "collapseAndReopen": true,
+      "pendingPauseAndResumeLabels": true
+    }
+  ],
+  "screenshots": [
+    "mist-expanded.png",
+    "mist-collapsed.png",
+    "paper-expanded.png",
+    "paper-collapsed.png"
+  ]
+}

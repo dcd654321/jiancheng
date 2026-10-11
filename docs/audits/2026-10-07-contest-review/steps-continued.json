@@ -1,0 +1,82 @@
+[
+  {
+    "file": "23-template-stable-W.png",
+    "page": "pages/edit/index",
+    "level": "W",
+    "steps": "真实模板按钮点击，确认route后等待渲染；未保存",
+    "health": "已目检：阅读模板可编辑确认",
+    "caption": "2026-10-07基线；状态：阅读模板可编辑确认；操作：真实模板按钮点击，确认route后等待渲染；未保存"
+  },
+  {
+    "file": "24-template-back-W.png",
+    "page": "pages/today/index",
+    "level": "W",
+    "steps": "原生返回→今日，未创建",
+    "health": "未纳入：不在本次已目检选择",
+    "caption": "仅保留原采集记录，不在本次已目检选择中，不入画廊。"
+  },
+  {
+    "file": "25-manage-stable-W.png",
+    "page": "pages/manage/index",
+    "level": "W",
+    "steps": "真实习惯管理，只读",
+    "health": "已目检：习惯管理列表",
+    "caption": "2026-10-07基线；状态：习惯管理列表；操作：真实习惯管理，只读"
+  },
+  {
+    "file": "26-first-empty-F.png",
+    "page": "pages/today/index",
+    "level": "F",
+    "steps": "空账户夹具；真实页面",
+    "health": "未纳入：不在本次已目检选择",
+    "caption": "仅保留原采集记录，不在本次已目检选择中，不入画廊。"
+  },
+  {
+    "file": "27-first-confirm-F.png",
+    "page": "pages/edit/index",
+    "level": "F",
+    "steps": "点击第一张阅读模板→可编辑确认",
+    "health": "已目检：首次模板确认页",
+    "caption": "2026-10-07基线；状态：首次模板确认页；操作：点击第一张阅读模板→可编辑确认"
+  },
+  {
+    "file": "28-invalid-target-F.png",
+    "page": "pages/edit/index",
+    "level": "F",
+    "steps": "自动化输入0；不能证明真机键盘",
+    "health": "已目检：非法目标提交后的错误提示",
+    "caption": "2026-10-07基线；状态：非法目标提交后的错误提示；操作：自动化输入0；不能证明真机键盘；边界：自动化写值不证明真机键盘、焦点或遮挡。"
+  },
+  {
+    "file": "29-first-created-F.png",
+    "page": "pages/today/index",
+    "level": "F",
+    "steps": "内存确认创建成功返回今日；未写云",
+    "health": "已目检：内存创建确认后返回今日",
+    "caption": "2026-10-07基线；状态：内存创建确认后返回今日；操作：内存确认创建成功返回今日；未写云"
+  },
+  {
+    "file": "30-busy-completed-F.png",
+    "page": "pages/today/index",
+    "level": "F",
+    "steps": "点击忙时目标，内存确认；可撤销",
+    "health": "已目检：忙时记录确认反馈与撤销入口",
+    "caption": "2026-10-07基线；状态：忙时记录确认反馈与撤销入口；操作：点击忙时目标，内存确认；可撤销"
+  },
+  {
+    "file": "31-completion-settled-F.png",
+    "page": "pages/today/index",
+    "level": "F",
+    "steps": "成功反馈自动收起后",
+    "health": "已目检：短反馈自动收起后的完成内容",
+    "caption": "2026-10-07基线；状态：短反馈自动收起后的完成内容；操作：成功反馈自动收起后"
+  },
+  {
+    "file": "32-completed-expanded-F.png",
+    "page": "pages/today/index",
+    "level": "F",
+    "steps": "展开已完成；撤销仍可用",
+    "health": "已目检：完成分组收起；可见查看入口",
+    "caption": "2026-10-07基线；状态：完成分组收起；可见查看入口；操作：确认记录后观察完成分组收起；未取得本图展开/持续撤销证据；边界：文件名含expanded，实际分组收起；不证明展开或持续撤销。原steps描述由本caption纠正。"
+  }
+]

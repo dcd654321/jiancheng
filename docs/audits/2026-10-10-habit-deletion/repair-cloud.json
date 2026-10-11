@@ -1,0 +1,59 @@
+{
+  "date": "2026-10-10",
+  "environment": "cloud1-d8gopnalv908bb47a",
+  "function": "jiancheng_daka_api",
+  "remoteInspection": {
+    "mode": "download source only; no invocation or account data reads",
+    "deleteProtocol": false,
+    "deleteReducer": false,
+    "hashes": {
+      "index.js": "61da8d76561b37e7e9a38691392af158d0f7d8fa0a4a0b12904d2c571f2c6a63",
+      "lib/protocol.js": "b5a4fe18c3e2c18cff6a298f4a6663b6f4e2adb018a5c1a58cf979883cb551be",
+      "lib/handler.js": "53f728d84eb56475dd1e611d1dff0da0143551f461df4e85eb17f0f2b872899d",
+      "shared/habits.js": "fd18e8d12524902c939a316d08d41e7753e6e40e72e790628f442ac0737b3ed8"
+    }
+  },
+  "candidate": {
+    "directory": "qa/local/repair-api-deploy/jiancheng_daka_api",
+    "changedFiles": [
+      "lib/cloudbase-repository.js",
+      "lib/handler.js",
+      "lib/protocol.js",
+      "lib/preferences.js",
+      "shared/habits.js"
+    ],
+    "preservedFiles": [
+      "index.js",
+      "package.json",
+      "package-lock.json",
+      "lib/identity.js",
+      "lib/features-repository.js",
+      "lib/sidecar-cleanup.js",
+      "lib/limits.js",
+      "shared/date.js"
+    ],
+    "hashes": {
+      "index.js": "61da8d76561b37e7e9a38691392af158d0f7d8fa0a4a0b12904d2c571f2c6a63",
+      "package.json": "3cddde3d04a3f5c4132ed0c079b26052212e5d6d8a5af54855a3df7f4e1f5fd1",
+      "package-lock.json": "0dfeb9a815979a394b835c8f1886f283fdb2d6a0501fb77958498e46aaac7b24",
+      "lib/cloudbase-repository.js": "906056ccb85a1d5df2c5eb83cc0a7795bc2571a7efce30673fb75767385043f1",
+      "lib/handler.js": "34e989884143c7bea5d4694beb80d535016626821ecd408d6acd73668fdc9061",
+      "lib/identity.js": "0af3612c9219e5b4259f314da90a33aa04c9f277db8ea19e5fb394ba92076df4",
+      "lib/protocol.js": "4b9ec65ec9a1d60f4c4e74437a49abd545d7cda4e58fe1cf017dc20ca6951002",
+      "lib/features-repository.js": "5e61e7772dc131ea855a79d86a10d58b581c91231ac1eb5abb27c4aecbf73a42",
+      "lib/sidecar-cleanup.js": "da6f1302a6cc23edde32e8970f5d27af2647f9890736751157dc9fc57e0185cb",
+      "lib/limits.js": "ebd50b733faa203bee7c7b03511ee2eac4e55da889a04dadd442df829e88e7de",
+      "shared/date.js": "c2d2e5acda0239db0df2b70addd6d1bde167ed225fb439d87a490579ccab83da",
+      "shared/habits.js": "15e86a8ceb23844534d57cda5ad62ef414a4540bddfdfb9a19dc080494324128",
+      "lib/preferences.js": "85e076d719cd13f80eb2f7a6e43fd1d9ec3f08a8a67ffc9717ed931c9ba512d6"
+    },
+    "verification": [
+      "syntax checks",
+      "modified files equal generated source",
+      "other files equal downloaded baseline",
+      "local pull/delete/replay smoke; no network"
+    ]
+  },
+  "deployed": false,
+  "realAccountDeleted": false
+}

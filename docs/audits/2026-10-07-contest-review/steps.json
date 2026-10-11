@@ -1,0 +1,173 @@
+[
+  {
+    "environment": {
+      "SDKVersion": "3.17.3",
+      "windowWidth": 390,
+      "windowHeight": 671,
+      "screenWidth": 390,
+      "screenHeight": 844,
+      "platform": "devtools",
+      "date": "2026-10-07"
+    }
+  },
+  {
+    "file": "01-today-W.png",
+    "page": "pages/today/index",
+    "level": "W",
+    "steps": "重入今日；真实开发版账户，只读",
+    "health": "已目检：已有今日安排；双档记录操作",
+    "caption": "2026-10-07基线；状态：已有今日安排；双档记录操作；操作：重入今日；真实开发版账户，只读；边界：基线W初始显示上次云确认在10/04，不证明10/07实时云读取。"
+  },
+  {
+    "file": "02-chooser-W.png",
+    "page": "pages/today/index",
+    "level": "W",
+    "steps": "今日→添加习惯",
+    "health": "已目检：添加习惯的方向选择",
+    "caption": "2026-10-07基线；状态：添加习惯的方向选择；操作：今日→添加习惯"
+  },
+  {
+    "file": "03-template-confirm-W.png",
+    "page": "pages/edit/index",
+    "level": "W",
+    "steps": "模板阅读→确认表单；未创建",
+    "health": "排除：未到达目标edit确认页，后以23替代",
+    "caption": "排除：未到达目标edit确认页，后以23替代；page/steps保留原采集历史，不证明目标页到达。"
+  },
+  {
+    "file": "04-template-cancel-W.png",
+    "page": "pages/today/index",
+    "level": "W",
+    "steps": "原生返回；未提交",
+    "health": "未纳入：不在本次已目检选择",
+    "caption": "仅保留原采集记录，不在本次已目检选择中，不入画廊。"
+  },
+  {
+    "file": "05-progress-W.png",
+    "page": "pages/progress/index",
+    "level": "W",
+    "steps": "切换进度近7天",
+    "health": "已目检：近7天进度",
+    "caption": "2026-10-07基线；状态：近7天进度；操作：切换进度近7天"
+  },
+  {
+    "file": "06-progress28-W.png",
+    "page": "pages/progress/index",
+    "level": "W",
+    "steps": "近28天；未修改记录",
+    "health": "已目检：近28天进度",
+    "caption": "2026-10-07基线；状态：近28天进度；操作：近28天；未修改记录"
+  },
+  {
+    "file": "07-mine-W.png",
+    "page": "pages/mine/index",
+    "level": "W",
+    "steps": "我的；核对当前已开放入口",
+    "health": "已目检：我的导航与能力入口",
+    "caption": "2026-10-07基线；状态：我的导航与能力入口；操作：我的；核对当前已开放入口"
+  },
+  {
+    "file": "08-assistant-W.png",
+    "page": "pages/assistant/index",
+    "level": "W",
+    "steps": "我的→AI助手；未申请AI",
+    "health": "已目检：助手输入；未请求AI",
+    "caption": "2026-10-07基线；状态：助手输入；未请求AI；操作：我的→AI助手；未申请AI"
+  },
+  {
+    "file": "09-rules-preview-W.png",
+    "page": "pages/assistant/index",
+    "level": "W",
+    "steps": "点击查看基础方案；本机规则",
+    "health": "已目检：本机规则建议预览",
+    "caption": "2026-10-07基线；状态：本机规则建议预览；操作：点击查看基础方案；本机规则"
+  },
+  {
+    "file": "10-rules-confirm-W.png",
+    "page": "pages/assistant/index",
+    "level": "W",
+    "steps": "基础方案→确认表单；未保存",
+    "health": "排除：未到目标edit确认页，仍在assistant",
+    "caption": "排除：未到目标edit确认页，仍在assistant；page/steps保留原采集历史，不证明目标页到达。"
+  },
+  {
+    "file": "11-manage-W.png",
+    "page": "pages/edit/index",
+    "level": "W",
+    "steps": "直接进入路由，仅观察；未清除、保存或订阅",
+    "health": "排除：未到目标manage，仍在edit，后以25替代",
+    "caption": "排除：未到目标manage，仍在edit，后以25替代；page/steps保留原采集历史，不证明目标页到达。"
+  },
+  {
+    "file": "12-sync-W.png",
+    "page": "pages/sync/index",
+    "level": "W",
+    "steps": "直接进入路由，仅观察；未清除、保存或订阅",
+    "health": "已目检：同步与账户只读状态",
+    "caption": "2026-10-07基线；状态：同步与账户只读状态；操作：直接进入路由，仅观察；未清除、保存或订阅；边界：此基线同步时间为历史已确认时间，不是当前云确认。"
+  },
+  {
+    "file": "13-data-W.png",
+    "page": "pages/data/index",
+    "level": "W",
+    "steps": "直接进入路由，仅观察；未清除、保存或订阅",
+    "health": "未纳入：不在本次已目检选择",
+    "caption": "仅保留原采集记录，不在本次已目检选择中，不入画廊。"
+  },
+  {
+    "file": "14-appearance-W.png",
+    "page": "pages/appearance/index",
+    "level": "W",
+    "steps": "直接进入路由，仅观察；未清除、保存或订阅",
+    "health": "已目检：外观主题选择与预览",
+    "caption": "2026-10-07基线；状态：外观主题选择与预览；操作：直接进入路由，仅观察；未清除、保存或订阅"
+  },
+  {
+    "file": "15-share-create-W.png",
+    "page": "pages/share-create/index",
+    "level": "W",
+    "steps": "直接进入路由，仅观察；未清除、保存或订阅",
+    "health": "未纳入：不在本次已目检选择",
+    "caption": "仅保留原采集记录，不在本次已目检选择中，不入画廊。"
+  },
+  {
+    "file": "16-share-list-W.png",
+    "page": "pages/share-list/index",
+    "level": "W",
+    "steps": "直接进入路由，仅观察；未清除、保存或订阅",
+    "health": "未纳入：不在本次已目检选择",
+    "caption": "仅保留原采集记录，不在本次已目检选择中，不入画廊。"
+  },
+  {
+    "file": "17-share-view-W.png",
+    "page": "pages/share-view/index",
+    "level": "W",
+    "steps": "直接进入路由，仅观察；未清除、保存或订阅",
+    "health": "未纳入：不在本次已目检选择",
+    "caption": "仅保留原采集记录，不在本次已目检选择中，不入画廊。"
+  },
+  {
+    "file": "18-reminder-W.png",
+    "page": "pages/reminder/index",
+    "level": "W",
+    "steps": "直接进入路由，仅观察；未清除、保存或订阅",
+    "health": "未纳入：不在本次已目检选择",
+    "caption": "仅保留原采集记录，不在本次已目检选择中，不入画廊。"
+  },
+  {
+    "file": "19-first-empty-F.png",
+    "page": "pages/today/index",
+    "level": "F",
+    "steps": "注入空账户→今日首次入口",
+    "health": "未纳入：不在本次已目检选择",
+    "caption": "仅保留原采集记录，不在本次已目检选择中，不入画廊。"
+  },
+  {
+    "file": "20-first-template-F.png",
+    "page": "pages/today/index",
+    "level": "F",
+    "steps": "点击阅读模板→预填双档确认",
+    "health": "排除：未到目标edit确认页，仍在today，后以27替代",
+    "caption": "排除：未到目标edit确认页，仍在today，后以27替代；page/steps保留原采集历史，不证明目标页到达。"
+  }
+]

@@ -15,6 +15,7 @@ const RECORD_TYPES = ['complete', 'completeMinimum', 'undo', 'simplify', 'restor
 const COMMAND_FIELDS = {
   create: ['type', 'id', 'startDate', 'plan'], edit: ['type', 'id', 'baseRevision', 'plan'],
   status: ['type', 'id', 'baseRevision', 'status'], cancelFuture: ['type', 'id', 'baseRevision'],
+  deleteHabit: ['type', 'id', 'baseRevision'],
   complete: ['type', 'id', 'date'], completeMinimum: ['type', 'id', 'date'], undo: ['type', 'id', 'date'],
   simplify: ['type', 'id', 'date', 'target'], restore: ['type', 'id', 'date'],
   note: ['type', 'id', 'date', 'note'], settings: ['type', 'hideQuote']
@@ -23,7 +24,7 @@ function validateCommand(command) {
   if (!command || !own(COMMAND_FIELDS, command.type)) fail('INVALID_REQUEST', '不支持的操作');
   object(command, COMMAND_FIELDS[command.type]);
   if (command.type !== 'settings' && !token(command.id)) fail('INVALID_REQUEST', '习惯标识无效');
-  if (['edit', 'status', 'cancelFuture'].includes(command.type) && (!Number.isSafeInteger(command.baseRevision) || command.baseRevision < 1)) fail('INVALID_REQUEST', '计划版本无效');
+  if (['edit', 'status', 'cancelFuture', 'deleteHabit'].includes(command.type) && (!Number.isSafeInteger(command.baseRevision) || command.baseRevision < 1)) fail('INVALID_REQUEST', '计划版本无效');
   if (['create', 'edit'].includes(command.type)) {
     object(command.plan, ['title', 'target', 'minimum', 'unit', 'weekdays', 'time']);
     if (typeof command.plan.title !== 'string' || !Number.isInteger(command.plan.target) || (command.plan.minimum != null && !Number.isInteger(command.plan.minimum))) fail('INVALID_REQUEST', '目标字段类型无效');

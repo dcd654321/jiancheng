@@ -11,6 +11,11 @@ function stateError(status) {
 
 function createWorkspaceStore(session, noteDrafts) {
   let generation = 0;
+  if (noteDrafts && typeof noteDrafts.remove === 'function' && typeof session.subscribeConfirmed === 'function') {
+    session.subscribeConfirmed(({ accountId, epoch, command }) => {
+      if (command && command.type === 'deleteHabit') noteDrafts.remove(`cloud:${accountId}:${epoch}:${generation}`, command.id);
+    });
+  }
   function ready() {
     const status = session.status();
     if (!status.ready) throw stateError(status);

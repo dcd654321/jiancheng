@@ -1,0 +1,248 @@
+[
+  {
+    "file": "33-minimum-done-F.png",
+    "page": "pages/today/index",
+    "level": "F",
+    "steps": "真实领域reducer内存完成忙时2分钟；已完成卡",
+    "health": "已目检：忙时2分钟结果语义",
+    "caption": "2026-10-07基线；状态：忙时2分钟结果语义；操作：真实领域reducer内存完成忙时2分钟；已完成卡；边界：出现“今天已调小”，支持记录/调整语义问题；长期习惯目标未因此改写。"
+  },
+  {
+    "file": "34-undo-minimum-F.png",
+    "page": "pages/today/index",
+    "level": "F",
+    "steps": "真实领域reducer撤销；检查今天目标是否保留较小值",
+    "health": "已目检：撤销后当天小目标保留",
+    "caption": "2026-10-07基线；状态：撤销后当天小目标保留；操作：真实领域reducer撤销；检查今天目标是否保留较小值；边界：与33配对可见小目标保留；非云端撤销证明。"
+  },
+  {
+    "file": "35-return-F.png",
+    "page": "pages/today/index",
+    "level": "F",
+    "steps": "多日未记录夹具→轻松回来",
+    "health": "已目检：轻松回来提示",
+    "caption": "2026-10-07基线；状态：轻松回来提示；操作：多日未记录夹具→轻松回来"
+  },
+  {
+    "file": "36-progress-facts-F.png",
+    "page": "pages/progress/index",
+    "level": "F",
+    "steps": "7天夹具，原目标2次/忙时3次",
+    "health": "已目检：进度事实：原目标2次/忙时3次",
+    "caption": "2026-10-07基线；状态：进度事实：原目标2次/忙时3次；操作：7天夹具，原目标2次/忙时3次；边界：390px逻辑窗实测日期格46.28125×73.59375px，不能推及320px。"
+  },
+  {
+    "measurement": {
+      "selector": ".cell",
+      "size": {
+        "width": 46.28125,
+        "height": 73.59375
+      },
+      "viewport": 390,
+      "level": "F"
+    }
+  },
+  {
+    "file": "37-progress-date-F.png",
+    "page": "pages/progress/index",
+    "level": "F",
+    "steps": "选择首日，查看相应当日记录",
+    "health": "未纳入：不在本次已目检选择",
+    "caption": "仅保留原采集记录，不在本次已目检选择中，不入画廊。"
+  },
+  {
+    "file": "38-detail-F.png",
+    "page": "pages/detail/index",
+    "level": "F",
+    "steps": "习惯详情",
+    "health": "已目检：习惯详情与安排",
+    "caption": "2026-10-07基线；状态：习惯详情与安排；操作：习惯详情"
+  },
+  {
+    "file": "39-note-expanded-F.png",
+    "page": "pages/detail/index",
+    "level": "F",
+    "steps": "展开备注；未提交",
+    "health": "已目检：备注编辑展开；尚未保存",
+    "caption": "2026-10-07基线；状态：备注编辑展开；尚未保存；操作：展开备注；未提交"
+  },
+  {
+    "file": "40-edit-tomorrow-F.png",
+    "page": "pages/edit/index",
+    "level": "F",
+    "steps": "编辑明日计划，未保存",
+    "health": "未纳入：不在本次已目检选择",
+    "caption": "仅保留原采集记录，不在本次已目检选择中，不入画廊。"
+  },
+  {
+    "file": "41-dirty-form-F.png",
+    "page": "pages/edit/index",
+    "level": "F",
+    "steps": "自动化输入未提交草稿",
+    "health": "已目检：未保存的表单输入",
+    "caption": "2026-10-07基线；状态：未保存的表单输入；操作：自动化输入未提交草稿；边界：与42配对审查会话输入返回；非真机键盘证据。"
+  },
+  {
+    "file": "42-form-reentry-F.png",
+    "page": "pages/edit/index",
+    "level": "F",
+    "steps": "返回后重开相同模板；核对输入未保留",
+    "health": "已目检：返回重入后重新初始化",
+    "caption": "2026-10-07基线；状态：返回重入后重新初始化；操作：返回后重开相同模板；核对输入未保留"
+  },
+  {
+    "file": "43-assistant-first-F.png",
+    "page": "pages/assistant/index",
+    "level": "F",
+    "steps": "默认未同意AI",
+    "health": "未纳入：不在本次已目检选择",
+    "caption": "仅保留原采集记录，不在本次已目检选择中，不入画廊。"
+  },
+  {
+    "file": "44-ai-preview-F.png",
+    "page": "pages/assistant/index",
+    "level": "F",
+    "steps": "模拟AI成功，无供应商请求",
+    "health": "已目检：模拟AI成功建议",
+    "caption": "2026-10-07基线；状态：模拟AI成功建议；操作：模拟AI成功，无供应商请求"
+  },
+  {
+    "file": "45-ai-failure-F.png",
+    "page": "pages/assistant/index",
+    "level": "F",
+    "steps": "模拟额度错误",
+    "health": "已目检：模拟AI额度错误",
+    "caption": "2026-10-07基线；状态：模拟AI额度错误；操作：模拟额度错误"
+  },
+  {
+    "file": "46-ai-recovery-F.png",
+    "page": "pages/assistant/index",
+    "level": "F",
+    "steps": "错误→基础方案，保留输入",
+    "health": "未纳入：不在本次已目检选择",
+    "caption": "仅保留原采集记录，不在本次已目检选择中，不入画廊。"
+  },
+  {
+    "file": "47-loading-F.png",
+    "page": "pages/today/index",
+    "level": "F",
+    "steps": "模拟DATA_LOADING",
+    "health": "已目检：今日云数据读取中",
+    "caption": "2026-10-07基线；状态：今日云数据读取中；操作：模拟DATA_LOADING"
+  },
+  {
+    "file": "48-read-failure-F.png",
+    "page": "pages/today/index",
+    "level": "F",
+    "steps": "模拟读取失败，禁止修改",
+    "health": "已目检：读取失败；修改受限",
+    "caption": "2026-10-07基线；状态：读取失败；修改受限；操作：模拟读取失败，禁止修改"
+  },
+  {
+    "file": "49-read-recovery-F.png",
+    "page": "pages/today/index",
+    "level": "F",
+    "steps": "重新读取恢复",
+    "health": "未纳入：不在本次已目检选择",
+    "caption": "仅保留原采集记录，不在本次已目检选择中，不入画廊。"
+  },
+  {
+    "file": "50-write-failure-F.png",
+    "page": "pages/today/index",
+    "level": "F",
+    "steps": "模拟写入未确认，不显示成功",
+    "health": "未纳入：不在本次已目检选择",
+    "caption": "仅保留原采集记录，不在本次已目检选择中，不入画廊。"
+  },
+  {
+    "file": "51-share-create-F.png",
+    "page": "pages/share-create/index",
+    "level": "F",
+    "steps": "内存功能开启，源码开关未改",
+    "health": "未纳入：不在本次已目检选择",
+    "caption": "仅保留原采集记录，不在本次已目检选择中，不入画廊。"
+  },
+  {
+    "file": "52-share-preview-F.png",
+    "page": "pages/share-create/index",
+    "level": "F",
+    "steps": "事件方法→模拟脱敏预览",
+    "health": "未纳入：不在本次已目检选择",
+    "caption": "仅保留原采集记录，不在本次已目检选择中，不入画廊。"
+  },
+  {
+    "file": "53-share-owner-F.png",
+    "page": "pages/share-view/index",
+    "level": "F",
+    "steps": "模拟本人分享，不公开真实记录",
+    "health": "未纳入：不在本次已目检选择",
+    "caption": "仅保留原采集记录，不在本次已目检选择中，不入画廊。"
+  },
+  {
+    "shareCallback": {
+      "title": "读一会儿",
+      "path": "/pages/share-view/index?id=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    "level": "F",
+    "deliveryVerified": false
+  },
+  {
+    "file": "54-share-receiver-plan-F.png",
+    "page": "pages/share-view/index",
+    "level": "F",
+    "steps": "模拟接收者轻计划",
+    "health": "已目检：接收轻计划；再分享为主操作",
+    "caption": "2026-10-07基线；状态：接收轻计划；再分享为主操作；操作：模拟接收者轻计划"
+  },
+  {
+    "file": "55-share-confirm-F.png",
+    "page": "pages/edit/index",
+    "level": "F",
+    "steps": "复制计划→编辑确认，未保存",
+    "health": "未纳入：不在本次已目检选择",
+    "caption": "仅保留原采集记录，不在本次已目检选择中，不入画廊。"
+  },
+  {
+    "file": "56-share-invite-F.png",
+    "page": "pages/share-view/index",
+    "level": "F",
+    "steps": "模拟邀请，检查开始入口",
+    "health": "已目检：邀请接收页",
+    "caption": "2026-10-07基线；状态：邀请接收页；操作：模拟邀请，检查开始入口"
+  },
+  {
+    "file": "57-share-weekly-F.png",
+    "page": "pages/share-view/index",
+    "level": "F",
+    "steps": "模拟周进展，检查开始入口",
+    "health": "未纳入：不在本次已目检选择",
+    "caption": "仅保留原采集记录，不在本次已目检选择中，不入画廊。"
+  },
+  {
+    "file": "58-share-account-loading-F.png",
+    "page": "pages/share-view/index",
+    "level": "F",
+    "steps": "公开内容成功、私有账户未就绪，采用报错",
+    "health": "已目检：公开已读；私人账户未就绪时采用报错",
+    "caption": "2026-10-07基线；状态：公开已读；私人账户未就绪时采用报错；操作：公开内容成功、私有账户未就绪，采用报错"
+  },
+  {
+    "file": "59-invalid-detail-F.png",
+    "page": "pages/detail/index",
+    "level": "F",
+    "steps": "无效链接，有今日出口",
+    "health": "未纳入：不在本次已目检选择",
+    "caption": "仅保留原采集记录，不在本次已目检选择中，不入画廊。"
+  },
+  {
+    "fixtureStats": {
+      "dispatchCount": 3,
+      "genCount": 2,
+      "mode": "ready",
+      "shareEnabled": true
+    },
+    "realCloudWrites": 0,
+    "realAIRequests": 0,
+    "realMessagesSent": 0
+  }
+]

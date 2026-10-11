@@ -80,7 +80,9 @@
 
 ### 4.3 门禁
 
-基础门禁：`HABIT_FEATURES_ENABLED`、`HABIT_IDENTITY_VERIFIED`、`HABIT_SIDECAR_CLEANUP_ENABLED`、`HABIT_LIMITS_VERIFIED`、`HABIT_MINIPROGRAM_ONLY`、`HABIT_APP_ID`。
+所有动作均要求 `HABIT_SIDECAR_CLEANUP_ENABLED=true`、`HABIT_LIMITS_VERIFIED=true`；缺省、空值或其他值返回 `NOT_ENABLED`，门控前不访问数据库。核心 API 的同名配置也须明确开启，使删除账户时一并清理偏好与私有限流文档，旧账户 epoch 不影响重建后的账户。
+
+`HABIT_IDENTITY_VERIFIED`、`HABIT_MINIPROGRAM_ONLY` 显式为 `false` 时关闭服务；身份与来源始终通过平台上下文及 `wx_client` / `wx_devtools` 白名单校验。未配置 `HABIT_APP_ID` 时使用本小程序的内置 AppID。外观动作 `getAppearance` / `setAppearance` 默认开启，`HABIT_APPEARANCE_ENABLED=false` 可关闭；偏好、分享与提醒动作另需 `HABIT_FEATURES_ENABLED=true`。
 提醒动作**另需**：`HABIT_REMINDERS_ENABLED`、`HABIT_REMINDER_STORAGE_READY`、`HABIT_TEMPLATE_VERIFIED`、`HABIT_TIMER_VERIFIED`、`HABIT_REMINDER_TTL_VERIFIED`，并配置 `HABIT_REMINDER_KEY`（AES-GCM 密钥）、`HABIT_REMINDER_TEMPLATE`。
 
 ## 5. 公开分享 `jiancheng_daka_public_share`

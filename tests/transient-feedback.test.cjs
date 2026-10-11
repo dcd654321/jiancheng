@@ -44,46 +44,44 @@ function harness(t) {
   return { app, store, day, page, seed, toasts, modals, navigation, delayDispatch, context: value => { context = value; } };
 }
 
-test('confirmed feedback expires after five seconds and refresh cannot resurrect it', t => {
-  t.mock.timers.enable({ apis: ['setTimeout'] });
+test('confirmed check-in has one native 1.2 second toast and refresh never repeats it', t => {
   const h = harness(t); h.seed(); const p = h.page('today');
   p.onCompleteMinimum(event({ id: 'read', date: h.day }));
-  t.mock.timers.tick(4999); assert.equal(p.data.completionFeedback.id, 'read');
-  p.refresh(); t.mock.timers.tick(1); assert.equal(p.data.completionFeedback, null);
-  p.refresh(); assert.equal(p.data.completionFeedback, null);
-  assert.equal(p.data.completed.length, 1); assert.equal(p.data.showCompleted, true);
+  assert.equal(h.toasts.length, 1); assert.equal(h.toasts[0].title, '打卡成功');
+  assert.equal(h.toasts.at(-1).duration, 1200);
+  p.refresh(); p.refresh(); assert.equal(h.toasts.length, 1); assert.equal(p.data.completionFeedback, undefined);
+  assert.equal(p.data.completed.length, 1); assert.equal(p.data.showCompleted, false);
+  p.onToggleCompleted(); assert.equal(p.data.showCompleted, true);
   p.onComplete(event({ id: 'read', date: h.day, done: true }));
   assert.equal(p.data.done, 0); assert.equal(p.data.pending[0].target, 2);
+  assert.equal(h.toasts.length, 2); assert.equal(h.toasts[1].title, '已撤销打卡');
 });
 
-test('each new confirmed completion gets a full five seconds without old feedback resurfacing on undo', t => {
-  t.mock.timers.enable({ apis: ['setTimeout'] });
+test('consecutive confirmations produce one toast each and retain the user list choice', t => {
   const h = harness(t); h.seed(); h.seed('walk'); const p = h.page('today');
-  p.onComplete(event({ id: 'read', date: h.day })); t.mock.timers.tick(4000);
-  p.onCompleteMinimum(event({ id: 'walk', date: h.day })); t.mock.timers.tick(1000);
-  assert.equal(p.data.completionFeedback.id, 'walk');
-  t.mock.timers.tick(3999); assert.equal(p.data.completionFeedback.id, 'walk');
+  p.onComplete(event({ id: 'read', date: h.day })); p.onToggleCompleted();
+  p.onCompleteMinimum(event({ id: 'walk', date: h.day }));
+  assert.equal(h.toasts.length, 2); assert.ok(h.toasts.every(toast => toast.duration === 1200));
+  assert.equal(p.data.showCompleted, true); assert.equal(p.data.completed.length, 2);
   p.onComplete(event({ id: 'walk', date: h.day, done: true }));
-  assert.equal(p.data.completionFeedback, null); p.refresh(); assert.equal(p.data.completionFeedback, null);
-  assert.equal(p.data.done, 1); t.mock.timers.tick(1); assert.equal(p.data.completionFeedback, null);
+  assert.equal(h.toasts.length, 3); p.refresh(); assert.equal(h.toasts.length, 3);
+  assert.equal(p.data.done, 1); assert.equal(p.data.completionFeedback, undefined);
 });
 
-test('hide, unload, date and context changes cancel the feedback timer', t => {
-  t.mock.timers.enable({ apis: ['setTimeout'] });
+test('hide, unload, date and context changes retain no second feedback or timer', t => {
   const h = harness(t); h.seed(); const p = h.page('today');
   p.onComplete(event({ id: 'read', date: h.day })); p.onHide();
-  assert.equal(p.data.completionFeedback, null); assert.equal(p._feedbackTimer, null);
+  assert.equal(p.data.completionFeedback, undefined); assert.equal(p._feedbackTimer, undefined);
   p.onShow(); p.onComplete(event({ id: 'read', date: h.day, done: true }));
   p.onComplete(event({ id: 'read', date: h.day })); h.context('account-b'); p.refresh();
-  assert.equal(p.data.completionFeedback, null); assert.equal(p._feedbackTimer, null);
+  assert.equal(p.data.completionFeedback, undefined); assert.equal(p._feedbackTimer, undefined);
   p.onComplete(event({ id: 'read', date: h.day, done: true })); p.onComplete(event({ id: 'read', date: h.day }));
   const today = dates.today; dates.today = () => dates.shift(h.day, 1);
-  try { p.refresh(); assert.equal(p.data.completionFeedback, null); assert.equal(p._feedbackTimer, null); }
+  try { p.refresh(); assert.equal(p.data.completionFeedback, undefined); assert.equal(p._feedbackTimer, undefined); }
   finally { dates.today = today; }
   p.refresh(); p.onComplete(event({ id: 'read', date: h.day, done: true }));
   p.onComplete(event({ id: 'read', date: h.day }));
-  p.onUnload(); assert.equal(p._feedbackTimer, null);
-  p.setData = () => { throw Error('updated unloaded page'); }; t.mock.timers.tick(5000);
+  p.onUnload(); assert.equal(p._feedbackTimer, undefined);
 });
 
 for (const outcome of ['finish', 'fail']) for (const returned of [false, true]) {
@@ -91,7 +89,7 @@ for (const outcome of ['finish', 'fail']) for (const returned of [false, true]) 
     const h = harness(t); h.seed(); const p = h.page('today'), deferred = h.delayDispatch();
     const work = p.onComplete(event({ id: 'read', date: h.day })); p.onHide(); if (returned) p.onShow();
     deferred[outcome](); await work;
-    assert.equal(h.toasts.length, 0); assert.equal(p.data.completionFeedback, null);
+    assert.equal(h.toasts.length, 0); assert.equal(p.data.completionFeedback, undefined);
     assert.equal(p.data.error, ''); assert.equal(p.data.writeBusy, false); assert.equal(p._mutating, false);
     p.refresh(); assert.equal(p.data.done, outcome === 'finish' ? 1 : 0);
   });
@@ -111,7 +109,7 @@ for (const outcome of ['finish', 'fail']) {
     const original = dates.today; dates.today = () => dates.shift(h.day, 1);
     try {
       deferred[outcome](); await work;
-      assert.equal(h.toasts.length, 0); assert.equal(p.data.completionFeedback, null);
+      assert.equal(h.toasts.length, 0); assert.equal(p.data.completionFeedback, undefined);
       assert.equal(p.data.error, ''); assert.equal(p.data.date, dates.today());
       assert.equal(p.data.done, 0); assert.equal(p.data.writeBusy, false);
     } finally { dates.today = original; }
@@ -131,15 +129,18 @@ for (const outcome of ['finish', 'fail']) {
 }
 
 test('confirmation dialogs cannot submit a previous visit or account intent', t => {
-  const h = harness(t); h.seed(); const p = h.page('detail', { id: 'read' });
+  const h = harness(t); h.seed(); const today = h.page('today'), p = h.page('detail', { id: 'read' });
   const before = structuredClone(h.store.read());
-  p.onSimplify(event({ id: 'read', date: h.day })); const simplify = h.modals.pop();
-  p.onHide(); p.onShow(); simplify.success({ confirm: true, content: '2' });
+  today.onSimplify(event({ id: 'read', date: h.day })); const simplify = h.modals.pop();
+  today.onHide(); today.onShow(); simplify.success({ confirm: true, content: '2' });
   assert.deepEqual(h.store.read(), before);
+  today.onSimplify(event({ id: 'read', date: h.day })); const oldSimplifyAccount = h.modals.pop();
+  h.context('account-b'); today.refresh(); oldSimplifyAccount.success({ confirm: true, content: '2' });
+  assert.deepEqual(h.store.read(), before); p.refresh();
   p.onStatus(event({ status: 'paused' })); const status = h.modals.pop();
   p.onHide(); p.onShow(); status.success({ confirm: true }); assert.deepEqual(h.store.read(), before);
   p.onStatus(event({ status: 'paused' })); const oldAccount = h.modals.pop();
-  h.context('account-b'); p.refresh(); oldAccount.success({ confirm: true }); assert.deepEqual(h.store.read(), before);
+  h.context('account-c'); p.refresh(); oldAccount.success({ confirm: true }); assert.deepEqual(h.store.read(), before);
   const data = h.page('data'); data.onDelete(); const first = h.modals.pop();
   data.onHide(); data.onShow(); first.success({ confirm: true });
   assert.equal(h.modals.length, 0); assert.equal(data.data.deleting, false);

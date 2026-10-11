@@ -1,0 +1,18 @@
+{
+  "phase": "after",
+  "level": "F",
+  "realWrites": 0,
+  "screenshots": [
+    "after-01-empty.png",
+    "after-02-more.png",
+    "after-03-template-edit.png",
+    "after-04-loading.png",
+    "after-05-error.png",
+    "after-06-existing.png",
+    "after-07-paper.png",
+    "after-08-primary-edit.png"
+  ],
+  "exceptions": [],
+  "fixtureCommands": [],
+  "fixturePresentAfterRestore": false
+}

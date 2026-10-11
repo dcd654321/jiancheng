@@ -1,0 +1,8 @@
+{
+  "date": "2026-10-10",
+  "mode": "isolated DevTools RAM fixture; no cloud or device storage",
+  "screenshots": [],
+  "checks": {},
+  "exceptions": [],
+  "failure": "Cannot destructure property 'rawPath' of 't.getPageMetaByWebviewId(...)' as it is null."
+}

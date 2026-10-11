@@ -1,0 +1,104 @@
+{
+  "date": "2026-10-10",
+  "branch": "dev",
+  "scope": "pause recovery, single check-in feedback, compact completed list, check-in copy and projection reduction",
+  "checks": [
+    {
+      "command": "npm test",
+      "exitCode": 0,
+      "passed": 446,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "command": "npm run check",
+      "exitCode": 0,
+      "passed": 349
+    },
+    {
+      "command": "npm run check:cloud",
+      "exitCode": 0,
+      "files": 52
+    },
+    {
+      "command": "npm run openspec -- validate --all --strict",
+      "exitCode": 0,
+      "passed": 21
+    },
+    {
+      "command": "node scripts/check-native.cjs [installed WeChat DevTools directory]",
+      "exitCode": 0,
+      "wxmlInputs": 15,
+      "wxssInputs": 15,
+      "wccOutputBytes": 164217,
+      "wcscOutputBytes": 33051
+    },
+    {
+      "command": "node qa/local/prepare-repair-api.cjs",
+      "exitCode": 0,
+      "candidateFiles": 13,
+      "changedFiles": 5,
+      "preservedBaselineFiles": 8
+    },
+    {
+      "command": "git diff --check",
+      "exitCode": 0
+    },
+    {
+      "command": "current mini-program check-in copy and duplicate-feedback scan",
+      "matches": 0
+    },
+    {
+      "command": "npm run openspec -- validate repair-delete-and-reduce-wait --strict",
+      "exitCode": 0,
+      "stage": "after task and evidence updates"
+    }
+  ],
+  "regression": {
+    "file": "tests/checkin-recovery.test.cjs",
+    "passed": 6,
+    "scenarios": [
+      "cancel pending pause",
+      "preserve other scheduled target edits when cancelling pause",
+      "resume an effective pause tomorrow without history changes",
+      "capacity refusal and old-date confirmation isolation",
+      "one write request and one own-page projection per check-in or undo",
+      "other pages receive updates",
+      "conflict snapshot refresh with no success toast",
+      "late receipt updates new visit with no old success toast"
+    ],
+    "feedbackFile": "tests/transient-feedback.test.cjs",
+    "nativeSuccessToastDurationMs": 1200,
+    "completionFeedbackCardRemoved": true,
+    "preservesUserExpandedChoice": true
+  },
+  "visualVerification": {
+    "nativeCompilationPassed": true,
+    "screenshotCaptured": false,
+    "attempts": [
+      "WeChat tool read approval timed out",
+      "in-app browser could not access loopback HTML/CSS preview",
+      "Chrome browser unavailable",
+      "inline preview blocked by browser URL policy; no bypass attempted"
+    ],
+    "verifiedRendering": false,
+    "pending": [
+      "WeChat simulator and real device layout",
+      "long Chinese and unbroken Latin names",
+      "large font",
+      "both themes",
+      "detail and undo tap behaviour"
+    ]
+  },
+  "notVerified": [
+    "real cloud transactions and deletion",
+    "startup/check-in/undo wall-clock latency",
+    "two accounts and devices",
+    "native toast disappearance on device",
+    "user acceptance"
+  ],
+  "deployed": false,
+  "realAccountDeleted": false,
+  "committed": false,
+  "merged": false
+}

@@ -2,7 +2,6 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs'), path = require('node:path');
 const { createFeaturesClient } = require('../miniprogram/services/features-client');
-const { createPlanAssistant } = require('../miniprogram/services/plan-assistant');
 const domain = require('../miniprogram/core/habits');
 test('every registered page opens without writes or model requests and resolves its event handlers', async t => {
   const pages = [], requests = [], writes = [];
@@ -14,8 +13,7 @@ test('every registered page opens without writes or model requests and resolves 
   const app = { cloudSession: session, dataReady: Promise.resolve(),
     store: { read: () => domain.emptyState(), info: () => ({ ...status, source: 'cloud' }),
       contextKey: () => status.accountId + ':' + status.epoch, dispatch: command => writes.push(command) },
-    featuresClient: createFeaturesClient(wx, cloud, { enabled: false }, session, { transportFactory }),
-    planAssistant: createPlanAssistant(wx, cloud, { enabled: true, functionName: 'jiancheng_daka_plan' }, { session, transportFactory }) };
+    featuresClient: createFeaturesClient(wx, cloud, { enabled: false }, session, { transportFactory }) };
   global.getApp = () => app; global.wx = wx;
   t.after(() => pages.forEach(p => p.onUnload && p.onUnload()));
   for (const route of require('../miniprogram/app.json').pages) {
@@ -37,5 +35,5 @@ test('every registered page opens without writes or model requests and resolves 
       }
     }
   }
-  assert.equal(pages.length, 14); assert.equal(requests.length, 0); assert.equal(writes.length, 0);
+  assert.equal(pages.length, 13); assert.equal(requests.length, 0); assert.equal(writes.length, 0);
 });

@@ -1,0 +1,39 @@
+{
+  "date": "2026-10-11",
+  "project": "D:\\codex\\coding\\jiancheng-miniprogram\\qa\\local\\progress-tabs-20261011\\project",
+  "copies": {
+    "app.wxss": "dd1a73655a39c57060aac973935aa58ec0e7bf27381a63012fe9c332c121ddee",
+    "styles/theme.wxss": "bd4301841b42be864f1ffa0db9f2fbe10046054cd148024085024b6794e65669",
+    "pages/progress/index.js": "d62ff4b7df333cdb4f8d7ae268f9d94749f994da214ff3e7172704b271b86b0e",
+    "pages/progress/index.wxml": "ef97d45bf202b293eff0144fd591c0590ebf7ca96f3d792bddd9243f20e9e421",
+    "pages/progress/index.wxss": "fab462bf9a8da5f051316902e098790736e75269148f78d3dda7d3ba7787f5e3",
+    "pages/progress/index.json": "15747c37cf2e988cf35084c5d4a8c7ee8646459faa705cefda72125a78855906",
+    "services/ui.js": "4c3cdd69180452512d8daaabb51de2ad16206d441f125e16d8c8949db7a69160",
+    "services/appearance.js": "4211fbb7a5641e2b4afbd1ef7f98acad9a939e02d22f0903da0ee770947ea7ba",
+    "core/habits.js": "15e86a8ceb23844534d57cda5ad62ef414a4540bddfdfb9a19dc080494324128",
+    "core/date.js": "c2d2e5acda0239db0df2b70addd6d1bde167ed225fb439d87a490579ccab83da",
+    "core/progress-advice.js": "2c48859fe934a328479a330ab235d8a6c6073ab373decc813b376a52f4c61e31",
+    "config/theme-tokens.js": "8a57f5cd41535cdeddf7c6ce60dc19bb8af9152c75ec4da80ae13a5ae9203355",
+    "config/cloud-resources.js": "7ccde1b961b084a5cdc7732cc74b5e5d45d4e1a6e16a26c0cc7ec0f85bb7cc8a",
+    "core/progress-review.js": "929b41d123ff03b20e67e95297ecb2fcc7e43a57d5732b1c385783182e9d2fca",
+    "core/lunar-date.js": "946620e3d136e9c0961200e4f703e0b304cd4c4b89e00acc3cd52ed9d5af9f93",
+    "assets/tabbar/mine-selected-paper.png": "810a55418f48ec883551fb09f11e429272e845288d5c3e12ea256538c4c12dcb",
+    "assets/tabbar/mine-selected.png": "c9c1bc5560ccd0de8e0fb370b83321ba348a6c33dc98ae71b9e8cede16e97774",
+    "assets/tabbar/mine.png": "885d15d324372f7cc85c42d3a58dbb09df81766a3a560528d61aa682e0959093",
+    "assets/tabbar/progress-selected-paper.png": "abbdc73057d5355e377f4698f7d0163c63b476b738f7d058ee62857826f155ed",
+    "assets/tabbar/progress-selected.png": "34fc630d7294f4a804b5e29ca45b8779bd262bcd774a01ee39ef049eb9eeb4be",
+    "assets/tabbar/progress.png": "254a05f39c70fb10e3ba758cd08fc7aeb0d2b2f99e3560e61a6d2d41a9f0d3de",
+    "assets/tabbar/today-selected-paper.png": "d9dd430e1523f6bb818af3deebe1ba250a7dfbe07bbb859e2ec8d9abe132d2b9",
+    "assets/tabbar/today-selected.png": "e85af0ca15e4bdf5fd3d306071947784065395ca493cd10915e96192d1b40b2a",
+    "assets/tabbar/today.png": "88b01449d44ccec99ad1c48a483b1e1304843e02d334cc6ba49dc1b9089af77b"
+  },
+  "mode": "actual current progress page JS/WXML/WXSS and pure modules in isolated touristappid project",
+  "blocked": [
+    "cloud",
+    "storage",
+    "network",
+    "store dispatch"
+  ],
+  "sourceCount": 24,
+  "fixtureAccounts": true
+}

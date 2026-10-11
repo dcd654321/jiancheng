@@ -1,0 +1,16 @@
+<template name="task-summary">
+  <view class="task {{task.done ? 'done' : ''}} {{largeFont ? 'large-font' : ''}}">
+    <view class="task-top">
+      <view class="task-open">
+        <view class="task-title">{{task.title}}</view>
+        <view class="task-goal">
+          <text wx:if="{{task.time}}" class="goal-time">{{task.time}}</text>
+          <text class="goal-main">{{task.done ? '本次打卡 ' + task.target + task.unit : task.simplified ? '今天目标 ' + task.target + task.unit : '平时目标 ' + task.originalTarget + task.unit}}</text>
+          <text wx:if="{{task.done || task.simplified}}" class="sub">平时目标 {{task.originalTarget}}{{task.unit}}</text>
+          <text wx:elif="{{task.minimum}}" class="chip-lime">忙时 {{task.minimum}}{{task.unit}}</text>
+        </view>
+      </view>
+      <view wx:if="{{task.done}}" class="done-tag"><icon type="success" size="20" color="{{taskIconColor}}" /><text>{{task.status === 'minimum' ? '忙时打卡' : '原目标打卡'}}</text></view>
+    </view>
+  </view>
+</template>

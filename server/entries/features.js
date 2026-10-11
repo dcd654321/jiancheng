@@ -12,10 +12,11 @@ cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV });
 // 本小程序 AppID（公开值，非密钥）：未配置 HABIT_APP_ID 时的默认绑定。
 // 身份仍只来自受信平台上下文（FROM_APPID/FROM_OPENID/SOURCE），客户端字段不参与认证。
 const DEFAULT_APP_ID = 'wx58e61dffcbfa4249';
-// 共同安全前提默认视为已就绪（身份、来源、限流、旁路清理在代码层无条件执行）；
-// 这些开关只用于部署期回退——显式设为 'false' 即恢复“未确认即停服”。
-// 分享/提醒/AI 的开关保持必填且默认关闭：打开主题不会连带开放其他能力。
-const COMMON_GATES = ['HABIT_IDENTITY_VERIFIED', 'HABIT_SIDECAR_CLEANUP_ENABLED', 'HABIT_LIMITS_VERIFIED', 'HABIT_MINIPROGRAM_ONLY'];
+// 删除偏好与私有限流数据依赖核心 API 的显式清理配置；两端均须确认开启。
+const REQUIRED_CLEANUP_GATES = ['HABIT_SIDECAR_CLEANUP_ENABLED', 'HABIT_LIMITS_VERIFIED'];
+// 身份与来源仍按受信上下文校验；显式 false 用于部署期回退。
+const COMMON_GATES = ['HABIT_IDENTITY_VERIFIED', 'HABIT_MINIPROGRAM_ONLY'];
+// 分享和提醒开关保持必填且默认关闭：打开主题不会连带开放其他能力。
 const APPEARANCE_ACTIONS = ['getAppearance', 'setAppearance'];
 const disabled = key => process.env[key] === 'false';
 // features 函数限流默认值（代码内置，部署无需配置数字；HABIT_FEATURES_LIMIT_* 仍可覆盖）：
@@ -24,7 +25,9 @@ const FEATURES_LIMIT_DEFAULTS = Object.freeze({ minute: 60, day: 2000, userMinut
 let limiter;
 let reminderLimiter;
 exports.main = async event => {
-  if (COMMON_GATES.some(disabled)) return { ok: false, code: 'NOT_ENABLED', message: '服务尚未开放' };
+  if (REQUIRED_CLEANUP_GATES.some(key => process.env[key] !== 'true') || COMMON_GATES.some(disabled)) {
+    return { ok: false, code: 'NOT_ENABLED', message: '服务尚未开放' };
+  }
   try {
     const request = businessEvent(event);
     if (request && APPEARANCE_ACTIONS.includes(request.action)) {
