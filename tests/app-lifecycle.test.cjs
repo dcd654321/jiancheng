@@ -42,3 +42,26 @@ test('launch creates services once and foreground waits for bootstrap', async ()
   assert.equal(foregrounds, 1);
   assert.equal(app.store.current, session);
 });
+
+test('monitor setup and sync/async hooks cannot interrupt core account lifecycle', async () => {
+  for (const factoryFails of [true, false]) {
+    let starts = 0, foregrounds = 0, metadata;
+    const session = { start: async () => { starts++; return { phase: 'ready' }; },
+      onForeground: async () => { foregrounds++; return { phase: 'ready' }; }, status: () => ({ phase: 'ready' }), subscribe: () => () => {} };
+    const lifecycle = createAppLifecycle({ wxApi: {}, cloudConfig: {},
+      createCloudSession: (_wx, _config, _transport, options) => { metadata = options; return session; },
+      createWorkspaceStore: () => ({ original: true }), createQuoteSession: () => ({}),
+      createOperationsMonitor() {
+        if (factoryFails) throw Error('monitor unavailable');
+        return { onShow() { throw Error('monitor start failed'); }, onReady: () => Promise.reject(Error('monitor ready failed')),
+          onHide() { throw Error('monitor end failed'); }, capture() { throw Error('monitor capture failed'); } };
+      }
+    });
+    const app = {};
+    assert.deepEqual(await lifecycle.onLaunch(app), { phase: 'ready' });
+    assert.deepEqual(await lifecycle.onShow(app), { phase: 'ready' });
+    assert.doesNotThrow(() => lifecycle.onHide(app)); assert.equal(metadata.sessionId(), undefined);
+    assert.equal(starts, 1); assert.equal(foregrounds, 1); assert.equal(app.store.original, true);
+    await new Promise(resolve => setImmediate(resolve));
+  }
+});

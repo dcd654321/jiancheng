@@ -4,6 +4,7 @@ const { apiFunction, featuresFunction, publicShareFunction, reminderTickFunction
 const root = path.resolve(__dirname, '..');
 const files = [
   ['server/handler.js', 'lib/handler.js'],
+  ['server/operations-monitor.js', 'lib/operations-monitor.js'],
   ['server/identity.js', 'lib/identity.js'],
   ['server/protocol.js', 'lib/protocol.js'],
   ['server/preferences.js', 'lib/preferences.js'],

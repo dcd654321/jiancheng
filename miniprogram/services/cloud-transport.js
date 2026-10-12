@@ -1,6 +1,31 @@
-const { apiFunction, featuresFunction, publicShareFunction } = require('../config/cloud-resources');
+const { apiFunction, featuresFunction, publicShareFunction, monitorFunction } = require('../config/cloud-resources');
 // Only initialized SDK connections are reused in memory; no account data is cached here.
 const sharedConnections = new WeakMap();
+const telemetryObservers = new WeakMap();
+
+function setCloudTelemetryObserver(wxApi, observer) {
+  if (!wxApi || (typeof wxApi !== 'object' && typeof wxApi !== 'function')) return () => {};
+  telemetryObservers.set(wxApi, observer);
+  return () => { if (telemetryObservers.get(wxApi) === observer) telemetryObservers.delete(wxApi); };
+}
+
+function measured(wxApi, functionName, invoke) {
+  if (functionName === monitorFunction) return invoke;
+  return async event => {
+    const observer = telemetryObservers.get(wxApi);
+    let context;
+    try { context = observer && observer.capture(); } catch (_) { /* Monitoring cannot interrupt business calls. */ }
+    const startedAt = Date.now();
+    let code = 'CLOUD_CALL_FAILED';
+    try {
+      const result = await invoke(event);
+      code = result.ok ? 'OK' : typeof result.code === 'string' && /^[A-Z0-9_]{1,64}$/.test(result.code) ? result.code : 'CLOUD_REJECTED';
+      return result;
+    } finally {
+      try { if (observer) observer.recordPerformance(context, functionName, Math.max(0, Date.now() - startedAt), code); } catch (_) { /* Best effort only. */ }
+    }
+  };
+}
 
 /** Cloud-authoritative workspace transport; identity comes only from the server context. */
 function createCloudTransport(wxApi, { enabled, envId, functionName = apiFunction, mode = 'default', resourceAppid } = {}) {
@@ -11,7 +36,7 @@ function createCloudTransport(wxApi, { enabled, envId, functionName = apiFunctio
   if (mode === 'shared') {
     if (typeof resourceAppid !== 'string' || !/^wx[a-f0-9]{16}$/.test(resourceAppid)) throw Error('共享云资源方 AppID 无效');
     if (!/^[a-zA-Z0-9_-]{1,100}$/.test(envId) || envId.startsWith('YOUR_')) throw Error('共享云环境标识无效');
-    if (![apiFunction, featuresFunction, publicShareFunction].includes(functionName)) throw Error('共享云仅允许调用本项目专属函数');
+    if (![apiFunction, featuresFunction, publicShareFunction, monitorFunction].includes(functionName)) throw Error('共享云仅允许调用本项目专属函数与运营监控函数');
     if (typeof wxApi.cloud.Cloud !== 'function') throw Error('当前环境不支持共享云实例');
     function ready() {
       let targets = sharedConnections.get(wxApi.cloud);
@@ -40,16 +65,16 @@ function createCloudTransport(wxApi, { enabled, envId, functionName = apiFunctio
       }
       return entry.work;
     }
-    return async event => {
+    return measured(wxApi, functionName, async event => {
       const instance = await ready();
       const response = await instance.callFunction({ name: functionName, data: event });
       if (!response || !response.result || typeof response.result.ok !== 'boolean') throw Error('云端响应格式错误，操作结果未确认，请重试');
       return response.result;
-    };
+    });
   }
   if (typeof wxApi.cloud.callFunction !== 'function') throw Error('当前环境不支持微信云开发');
   let initialized = false;
-  return async event => {
+  return measured(wxApi, functionName, async event => {
     if (!initialized) {
       wxApi.cloud.init({ env: envId, traceUser: false });
       initialized = true;
@@ -57,6 +82,6 @@ function createCloudTransport(wxApi, { enabled, envId, functionName = apiFunctio
     const response = await wxApi.cloud.callFunction({ name: functionName, data: event, config: { env: envId } });
     if (!response || !response.result || typeof response.result.ok !== 'boolean') throw Error('云端响应格式错误，操作结果未确认，请重试');
     return response.result;
-  };
+  });
 }
-module.exports = { createCloudTransport };
+module.exports = { createCloudTransport, setCloudTelemetryObserver };

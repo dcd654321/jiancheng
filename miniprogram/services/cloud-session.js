@@ -218,8 +218,13 @@ function createCloudSession(wxApi, config, transportFactory = createCloudTranspo
     }
     const operationId = newId();
     if (!EPOCH.test(operationId)) throw Error('操作标识无效');
+    let sessionId;
+    if (command && snapshot.capabilities && snapshot.capabilities.monitorSessionMetadata === true && typeof options.sessionId === 'function') {
+      try { sessionId = options.sessionId(); } catch (_) { /* Optional telemetry must not prevent a business intent. */ }
+    }
     return { action, operationId, epoch: snapshot.epoch, expectedRevision: snapshot.revision,
-      operationDate, ...(command ? { command: clone(command) } : { confirmation }) };
+      operationDate, ...(command ? { command: clone(command) } : { confirmation }),
+      ...(typeof sessionId === 'string' && EPOCH.test(sessionId) ? { sessionId } : {}) };
   }
 
   async function start() {

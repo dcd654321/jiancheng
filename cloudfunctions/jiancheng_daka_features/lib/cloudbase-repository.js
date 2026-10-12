@@ -26,10 +26,12 @@ function createRepository(db) {
       const result = await db.runTransaction(async transaction => {
         const ref = transaction.collection(COLLECTION).doc(owner);
         let saved = null;
+        let _monitorFence;
         try {
           const response = await ref.get();
           const data = Array.isArray(response.data) ? response.data[0] : response.data;
           if (data) saved = data.payload;
+          if (data) _monitorFence = data._monitorFence;
           if (data && !saved) throw Error('ACCOUNT_DOCUMENT_CORRUPT');
         } catch (err) { if (!isMissingDocument(err)) throw err; }
         // 清理流程会原地删除标记，须在回调前保留原值以判断是否需要持久化。
@@ -60,7 +62,7 @@ function createRepository(db) {
           }
         }
         if (!saved || before !== JSON.stringify(outcome.account)) {
-          await ref.set({ data: { payload: outcome.account } });
+          await ref.set({ data: { payload: outcome.account, ...(_monitorFence === undefined ? {} : { _monitorFence }) } });
         }
         return outcome.result;
       });

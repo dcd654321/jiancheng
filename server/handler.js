@@ -2,19 +2,21 @@
 const crypto = require('node:crypto');
 const { ApiError, fail, validateEvent, canonical, RECORD_TYPES } = require('./protocol');
 const { authenticate } = require('./identity');
+const { confirmedMetric, settleMonitoring } = require('./operations-monitor');
 const hash = value => crypto.createHash('sha256').update(value).digest('hex');
 const clone = value => JSON.parse(JSON.stringify(value));
 const MAX_ACCOUNT_BYTES = 700 * 1024;
 const MAX_RECEIPTS = 256;
 
 /** Repository must atomically commit account state and receipts together. Identity is trusted server context, never event fields. */
-function createApi({ repository, domain, dates, clock = () => new Date(), newEpoch = () => crypto.randomUUID(), allowedAppId, allowedSources, cleanup }) {
+function createApi({ repository, domain, dates, clock = () => new Date(), newEpoch = () => crypto.randomUUID(), allowedAppId, allowedSources, cleanup, reportOperations, monitorLogger = () => {} }) {
   function validateAccount(account) {
     if (!Number.isSafeInteger(account.revision) || account.revision < 0 || !Array.isArray(account.receipts) || account.receipts.length > MAX_RECEIPTS || !/^[a-zA-Z0-9_-]{1,100}$/.test(account.epoch || '')) throw Error('ACCOUNT_CORRUPT');
     domain.validateState(account.state);
   }
   function snapshot(account, owner, serverDate) {
-    return { accountId: owner, epoch: account.epoch, revision: account.revision, state: clone(account.state), serverDate };
+    return { accountId: owner, epoch: account.epoch, revision: account.revision, state: clone(account.state), serverDate,
+      capabilities: { monitorSessionMetadata: true } };
   }
   return async function handle(event, identity) {
     try {
@@ -32,7 +34,9 @@ function createApi({ repository, domain, dates, clock = () => new Date(), newEpo
         }
       }
       const fingerprint = event.action === 'pull' ? null : hash(canonical(event));
+      let metric = null;
       const outcome = await repository.transact(owner, async saved => {
+        metric = null;
         let account = saved || { epoch: newEpoch(), revision: 0, state: domain.emptyState(), receipts: [], updatedAt: now.toISOString() };
         validateAccount(account);
         const respond = extras => ({ ok: true, ...snapshot(account, owner, serverDate), ...extras });
@@ -70,6 +74,7 @@ function createApi({ repository, domain, dates, clock = () => new Date(), newEpo
           account = { epoch: newEpoch(), revision: account.revision + 1, state: domain.emptyState(), receipts: [], updatedAt: now.toISOString(),
             ...(cleanup ? { cleanupPending: true, cleanupSourceEpoch: oldEpoch } : {}) };
         } else {
+          const beforeState = account.state;
           const candidate = { ...account, receipts: account.receipts.slice() };
           try {
             candidate.state = domain.reduce(candidate.state, event.command, isRecord ? event.operationDate : serverDate);
@@ -85,18 +90,23 @@ function createApi({ repository, domain, dates, clock = () => new Date(), newEpo
             }
           }
           candidate.revision += 1; candidate.updatedAt = now.toISOString(); account = candidate;
+          try { metric = confirmedMetric(beforeState, candidate.state, event); }
+          catch (_) { metric = null; }
         }
         account.receipts.push({ id: event.operationId, fingerprint, revision: account.revision });
         account.receipts = account.receipts.slice(-MAX_RECEIPTS);
         if (Buffer.byteLength(JSON.stringify(account), 'utf8') > MAX_ACCOUNT_BYTES) fail('CAPACITY_LIMIT', '云端账户容量已达上限，请联系开发者');
         return { account, result: account.cleanupPending ? pending() : respond({ operationId: event.operationId, appliedRevision: account.revision, replayed: false }) };
       });
+      if (outcome.ok && !outcome.replayed && metric && typeof reportOperations === 'function') {
+        await settleMonitoring(() => reportOperations(metric, identity, now), monitorLogger);
+      }
       if (outcome.code !== 'DELETE_PENDING' || !outcome.cleanupEpoch) return outcome;
       // Cleanup is outside the account transaction and ONLY targets the deleted epoch.
       // Concurrent retries must never delete sidecars created under the new epoch.
       try {
         if (typeof cleanup !== 'function' || !outcome.cleanupSourceEpoch) throw Error('CLEANUP_NOT_CONFIGURED');
-        await cleanup(owner, outcome.cleanupSourceEpoch);
+        await cleanup(owner, outcome.cleanupSourceEpoch, identity);
         return await repository.transact(owner, async account => {
           if (!account || account.epoch !== outcome.cleanupEpoch) throw Error('CLEANUP_EPOCH_CHANGED');
           const receipt = event.action === 'pull' ? null : account.receipts.find(item => item.id === event.operationId && item.fingerprint === fingerprint);

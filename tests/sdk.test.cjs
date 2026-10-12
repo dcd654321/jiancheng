@@ -7,6 +7,58 @@ const { createApi } = require('../server/handler');
 const { domain, dates, plan } = require('./helpers/cloud-fixture.cjs');
 const sdkPath = path.resolve(__dirname, '../cloudfunctions/jiancheng_daka_api/node_modules/wx-server-sdk');
 
+test('已安装真实SDK合同：运营事件先读账户与事件，再update/inc栅栏并幂等写入',
+  { skip: !fs.existsSync(sdkPath) && '先安装锁定云函数依赖' }, async t => {
+    const http = require('node:http'), https = require('node:https');
+    const previous = { http: http.request, https: https.request, fetch: global.fetch };
+    const deny = () => { throw Error('SDK_CONTRACT_NETWORK_FORBIDDEN'); };
+    http.request = https.request = global.fetch = deny;
+    t.after(() => { http.request = previous.http; https.request = previous.https; global.fetch = previous.fetch; });
+    const cloud = require(sdkPath);
+    cloud.init({ env: 'local-sdk-contract-only' });
+    const db = cloud.database(), Db = db._db.constructor, original = Db.reqClass;
+    const calls = [], identity = { APPID: 'wx58e61dffcbfa4249', OPENID: 'sdk-monitor-user', SOURCE: 'wx_client' };
+    let transactionId = 0, conflict = true;
+    Db.reqClass = class {
+      async send(action, params = {}) {
+        calls.push({ action, params });
+        if (action === 'database.startTransaction') return { transactionId: 'monitor-tx-' + (++transactionId) };
+        assert.ok(params.transactionId);
+        if (action === 'database.abortTransaction') return { ok: 1 };
+        if (action === 'database.commitTransaction') {
+          if (conflict) { conflict = false; return { code: 'DATABASE_TRANSACTION_CONFLICT', message: 'write conflict' }; }
+          return { ok: 1 };
+        }
+        assert.ok(['jiancheng_daka_accounts', 'monitor_events'].includes(params.collectionName));
+        if (action === 'database.getDocument') return { data: { list: params.collectionName === 'jiancheng_daka_accounts'
+          ? [JSON.stringify({ payload: { epoch: 'sdk-epoch' }, _monitorFence: 4 })] : [] } };
+        if (action === 'database.modifyDocument') {
+          if (params.collectionName === 'jiancheng_daka_accounts') {
+            assert.equal(params.merge, true);
+            const patch = JSON.parse(params.data, (_, value) => value && typeof value === 'object' && '$numberInt' in value ? Number(value.$numberInt) : value);
+            assert.deepEqual(patch, { $inc: { _monitorFence: 1 } });
+          } else {
+            assert.equal(params.upsert, true); assert.equal(params.merge, false);
+            const event = JSON.parse(params.data);
+            assert.equal(event.appId, 'jiancheng'); assert.equal(event.type, 'habit_created');
+            assert.equal(event.payload.secret, undefined);
+          }
+          return { data: { updated: 1 } };
+        }
+        throw Error('Unexpected SDK action: ' + action);
+      }
+    };
+    t.after(() => { Db.reqClass = original; });
+    const { createOperationsReporter } = require('../server/operations-monitor');
+    const result = await createOperationsReporter(db)({ type: 'habit_created', eventId: 'sdk-monitor-event', accountGeneration: 'sdk-epoch', payload: {} }, identity, new Date('2026-10-12T00:00:00Z'));
+    assert.equal(result, true);
+    assert.equal(transactionId, 2, 'write conflict retries with a fresh transaction');
+    for (const id of ['monitor-tx-1', 'monitor-tx-2']) {
+      assert.deepEqual(calls.filter(call => call.params.transactionId === id && call.action !== 'database.abortTransaction').map(call => call.action),
+        ['database.getDocument', 'database.getDocument', 'database.modifyDocument', 'database.modifyDocument', 'database.commitTransaction']);
+    }
+  });
+
 test('已安装真实wx-server-sdk合同：事务、序列化、错误、幂等（仅底层请求模拟，无网络）',
   { skip: !fs.existsSync(sdkPath) && '先在cloudfunctions/jiancheng_daka_api安装锁定依赖' }, async t => {
     // Tripwires ensure an accidental transport fallback cannot use host credentials/network.

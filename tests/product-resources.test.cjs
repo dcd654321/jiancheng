@@ -11,7 +11,7 @@ test('正式资源清单精确覆盖五函数和七集合，没有其他应用�
   assert.equal(manifest.resourceAppid, product.resourceAppid);
   assert.equal(manifest.consumerAppid, require('../project.config.json').appid);
   for (const [kind, suffix] of [['functions', 'Function'], ['collections', 'Collection']]) {
-    const expected = Object.entries(resources).filter(([key]) => key.endsWith(suffix)).map(([, value]) => value).sort();
+    const expected = Object.entries(resources).filter(([key]) => key.endsWith(suffix) && key !== 'monitorFunction').map(([, value]) => value).sort();
     const actual = manifest[kind].map(item => item.name).sort();
     assert.deepEqual(actual, expected);
     assert.equal(new Set(actual).size, actual.length);
@@ -19,6 +19,11 @@ test('正式资源清单精确覆盖五函数和七集合，没有其他应用�
   }
   assert.equal(manifest.functions.length, 5);
   assert.equal(manifest.collections.length, 7);
+  assert.equal(manifest.externalDependencies.operationsMonitor.functionName, resources.monitorFunction);
+  assert.equal(manifest.externalDependencies.operationsMonitor.managedBy, 'miniProgramMonitor');
+  assert.equal(manifest.externalDependencies.operationsMonitor.deployBeforeClient, true);
+  assert.deepEqual(manifest.externalDependencies.operationsMonitor.requiredCollections,
+    ['monitor_users', 'monitor_usage_daily', 'monitor_usage_sessions', 'monitor_events', 'monitor_meta']);
   for (const fn of manifest.functions) {
     assert.equal(fn.path, 'cloudfunctions/' + fn.name);
     assert.ok(fs.existsSync(path.join(__dirname, '..', fn.path, 'index.js')));

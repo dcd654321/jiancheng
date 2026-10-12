@@ -13,7 +13,7 @@ module.exports = {
     const reminderNotice = require('./features-client').features().status().reminders
       ? '申请提醒时，服务端加密保存用于本次发送的微信用户标识；处理结束清除接收标识，提醒状态在计划时间14天后进入到期清理。删除个人数据会清理提醒，已在途消息无法撤回。' : '';
     wx.showModal({ title: '隐私与数据说明', showCancel: false,
-      content: '习惯名称、目标、执行日期、打卡数量和你填写的备注直接保存到微信云开发环境，用于换机找回。不会获取手机号、头像、昵称、联系人或位置。断网时不能读取或修改打卡记录。' + featureNotice + reminderNotice + '你可以在这里清除全部云端数据，删除时一并清理本账户的历史功能记录。' });
+      content: '习惯名称、目标、执行日期、打卡数量和你填写的备注直接保存到微信云开发环境，用于换机找回。不会获取手机号、头像、昵称、联系人或位置。断网时不能读取或修改打卡记录。' + featureNotice + reminderNotice + '为了解使用情况和排查故障，还会保存前台使用时长、页面路径、固定错误代码，以及习惯创建和打卡完成次数；不包含习惯名称、备注或原始错误。你可以在这里清除全部云端数据，删除时一并清理本账户的历史功能记录和上述使用记录。' });
   },
   onDelete() {
     if (this._deleting) return;

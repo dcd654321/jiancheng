@@ -2,6 +2,7 @@
 module.exports = {
   prefix: 'jiancheng_daka_',
   apiFunction: 'jiancheng_daka_api',
+  monitorFunction: 'monitorApi',
   planFunction: 'jiancheng_daka_plan',
   featuresFunction: 'jiancheng_daka_features',
   publicShareFunction: 'jiancheng_daka_public_share',

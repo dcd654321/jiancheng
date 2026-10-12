@@ -34,7 +34,7 @@ function validateCommand(command) {
   return command;
 }
 function validateEvent(event) {
-  object(event, ['action', 'operationId', 'expectedRevision', 'epoch', 'operationDate', 'command', 'confirmation']);
+  object(event, ['action', 'operationId', 'expectedRevision', 'epoch', 'operationDate', 'command', 'confirmation', 'sessionId']);
   if (!['pull', 'mutate', 'purge'].includes(event.action)) fail('INVALID_REQUEST', '不支持的请求');
   if (event.action === 'pull') {
     if (Object.keys(event).length !== 1) fail('INVALID_REQUEST', '读取请求不接受用户身份或筛选条件');
@@ -44,8 +44,9 @@ function validateEvent(event) {
   if (!string(event.operationDate, 10, 10)) fail('INVALID_REQUEST', '操作日期无效');
   if (event.action === 'mutate') {
     if (own(event, 'confirmation')) fail('INVALID_REQUEST', '操作字段无效');
+    if (own(event, 'sessionId') && !token(event.sessionId)) fail('INVALID_REQUEST', '会话标识无效');
     validateCommand(event.command);
-  } else if (event.confirmation !== 'DELETE_MY_DATA' || own(event, 'command')) fail('CONFIRMATION_REQUIRED', '删除数据需要明确确认');
+  } else if (event.confirmation !== 'DELETE_MY_DATA' || own(event, 'command') || own(event, 'sessionId')) fail('CONFIRMATION_REQUIRED', '删除数据需要明确确认');
   return event;
 }
 function canonical(value) {

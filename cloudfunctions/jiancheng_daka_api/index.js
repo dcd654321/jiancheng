@@ -4,6 +4,7 @@ const { createApi } = require('./lib/handler');
 const { createRepository } = require('./lib/cloudbase-repository');
 const { createSidecarCleanup } = require('./lib/sidecar-cleanup');
 const { businessEvent } = require('./lib/identity');
+const { createOperationsReporter, createOperationsCleanup } = require('./lib/operations-monitor');
 const domain = require('./shared/habits');
 const dates = require('./shared/date');
 cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV });
@@ -15,9 +16,15 @@ exports.main = async event => {
   }
   try {
     const db = cloud.database();
+    const sidecarCleanup = process.env.HABIT_SIDECAR_CLEANUP_ENABLED === 'true'
+      ? createSidecarCleanup(db, { remindersEnabled: process.env.HABIT_REMINDER_STORAGE_READY === 'true', limitsEnabled: process.env.HABIT_LIMITS_VERIFIED === 'true', aiEnabled: process.env.HABIT_AI_STORAGE_READY === 'true' }) : null;
+    const operationsCleanup = createOperationsCleanup(db);
     const handle = createApi({ repository: createRepository(db), domain, dates,
-      cleanup: process.env.HABIT_SIDECAR_CLEANUP_ENABLED === 'true'
-        ? createSidecarCleanup(db, { remindersEnabled: process.env.HABIT_REMINDER_STORAGE_READY === 'true', limitsEnabled: process.env.HABIT_LIMITS_VERIFIED === 'true', aiEnabled: process.env.HABIT_AI_STORAGE_READY === 'true' }) : undefined,
+      reportOperations: createOperationsReporter(db), monitorLogger: code => console.warn(code),
+      cleanup: async (owner, epoch, identity) => {
+        if (sidecarCleanup) await sidecarCleanup(owner, epoch);
+        await operationsCleanup(owner, epoch, identity);
+      },
       allowedAppId: process.env.HABIT_APP_ID, allowedSources: ['wx_client', 'wx_devtools'] });
     // Ignore platform transport metadata, never treating it as authenticated identity.
     // Preserve malformed inputs and unknown business fields for strict validation.

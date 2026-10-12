@@ -4,6 +4,14 @@
   "resourceAppid": "wx7ad85943fe81e095",
   "consumerAppid": "wx58e61dffcbfa4249",
   "prefix": "jiancheng_daka_",
+  "externalDependencies": {
+    "operationsMonitor": {
+      "functionName": "monitorApi",
+      "managedBy": "miniProgramMonitor",
+      "requiredCollections": ["monitor_users", "monitor_usage_daily", "monitor_usage_sessions", "monitor_events", "monitor_meta"],
+      "deployBeforeClient": true
+    }
+  },
   "functions": [
     { "name": "jiancheng_daka_api", "path": "cloudfunctions/jiancheng_daka_api", "purpose": "账户、习惯、打卡、同步、删除关联数据", "enableFlag": "HABIT_API_ENABLED" },
     { "name": "jiancheng_daka_features", "path": "cloudfunctions/jiancheng_daka_features", "purpose": "偏好、置顶、私人分享管理、提醒申请与取消", "enableFlag": "HABIT_FEATURES_ENABLED" },

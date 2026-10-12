@@ -6,6 +6,7 @@ const { createQuoteSession } = require('./services/quotes');
 const { createAppLifecycle } = require('./services/app-lifecycle');
 const { createAppearanceClient } = require('./services/appearance-client');
 const { createAppearanceController } = require('./services/appearance');
+const { createOperationsMonitor } = require('./services/operations-monitor');
 
 const lifecycle = createAppLifecycle({
   wxApi: wx,
@@ -15,7 +16,8 @@ const lifecycle = createAppLifecycle({
   createWorkspaceStore,
   createQuoteSession,
   createAppearanceClient,
-  createAppearanceController
+  createAppearanceController,
+  createOperationsMonitor
 });
 
 App({
