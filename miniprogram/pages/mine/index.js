@@ -3,20 +3,22 @@ const actions = require('../../services/data-actions');
 const { features } = require('../../services/features-client');
 const { themeSnapshot } = require('../../services/appearance');
 const { APP_NAME } = require('../../config/brand');
+const { supervision } = require('../../services/supervision-client');
 Page(ui.withLifecycle({
   ...actions,
-  data: { ...actions.data, sharingEnabled: false, remindersEnabled: false,
+  data: { ...actions.data, sharingEnabled: false, remindersEnabled: false, supervisionEnabled: false,
     appearanceEnabled: false, appearanceLabel: '', appearancePending: false },
   refresh() {
     actions.refresh.call(this);
     const theme = themeSnapshot();
-    this.setData({ sharingEnabled: features().status().enabled, remindersEnabled: features().status().reminders,
+    this.setData({ sharingEnabled: features().status().publicShares, remindersEnabled: features().status().reminders, supervisionEnabled: supervision().status().enabled,
       appearanceEnabled: theme.enabled, appearancePending: !!theme.pendingTheme,
       appearanceLabel: theme.pendingTheme ? '主题保存结果待核对' : theme.themeName });
   },
   onAppearance() { wx.navigateTo({ url: '/pages/appearance/index' }); },
   onReminders() { wx.navigateTo({url:'/pages/reminder/index'}); },
   onShares() { wx.navigateTo({ url: '/pages/share-list/index' }); },
+  onSupervisions() { wx.navigateTo({ url: '/pages/supervision/index' }); },
   onShareAppMessage() { return { title: APP_NAME + '：忙的时候，也能做一点', path: '/pages/today/index', imageUrl: '/assets/share/cover.png' }; },
   onData() { wx.navigateTo({ url: '/pages/data/index' }); },
   onHelp() {

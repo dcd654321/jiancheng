@@ -10,8 +10,8 @@ const { createRepository } = require('../server/cloudbase-repository');
 const { domain, dates, plan, copy } = require('./helpers/cloud-fixture.cjs');
 const tick = async () => { for (let i = 0; i < 8; i++) await Promise.resolve(); };
 
-function clientFixture() {
-  let now = 0, scope = 'account:epoch-a', serial = 0, listener;
+function clientFixture({ initialNow = 0 } = {}) {
+  let now = initialNow, scope = 'account:epoch-a', serial = 0, listener;
   const calls = [], scheduled = new Map(), listeners = {};
   const f = { calls, scheduled, fail: false, wxApi: {
     onError(fn) { listeners.error = fn; }, offError(fn) { if (listeners.error === fn) delete listeners.error; },
@@ -23,7 +23,10 @@ function clientFixture() {
     timers: { setTimeout(fn, delay) { const id = ++serial; scheduled.set(id, { fn, at: now + delay }); return id; }, clearTimeout(id) { scheduled.delete(id); } },
     subscribe(fn) { listener = fn; return () => { listener = null; }; },
     route: () => 'pages/today/index', envVersion: () => 'release',
-    transportFactory: () => async event => { calls.push(copy(event)); if (f.fail) throw Error('private-sentinel'); return { ok: true }; }
+    transportFactory: () => async event => {
+      calls.push(copy(event)); if (f.fail) throw Error('private-sentinel');
+      return f.respond ? f.respond(copy(event), now) : { ok: true };
+    }
   });
   f.monitor = monitor;
   f.scope = value => { scope = value; if (listener) listener(); };
@@ -54,11 +57,102 @@ test('前台计时每60秒累计，离开停止，重新前台生成新会话且
   f.monitor.dispose(); assert.equal(f.scheduled.size, 0);
 });
 
-test('初次账户加载等待绑定，累计计时从监控启动确认开始', async () => {
+test('初次账户加载等待绑定，累计计时从绑定后的监控启动请求开始', async () => {
   const f = clientFixture(); f.scope(''); f.monitor.onShow(); await f.advance(12000);
   assert.equal(f.calls.length, 0);
   f.scope('account:epoch-a'); await tick(); assert.equal(f.calls.length, 2);
   await f.advance(1000); f.monitor.onHide(); await tick(); assert.equal(f.calls[2].elapsedMs, 1000);
+  f.monitor.dispose();
+});
+
+test('启动回包等待计入前台时间，旧监控接口缺少服务端锚点时也不重置到ACK时刻', async () => {
+  for (const legacy of [false, true]) {
+    const f = clientFixture(); let acknowledge;
+    f.respond = event => event.action === 'trackUsage' && event.eventType === 'start'
+      ? new Promise(resolve => { acknowledge = () => resolve({ ok: true, ...(legacy ? {} : { data: {
+        startedAtMs: Date.parse('2026-10-13T01:00:00Z'), observedAtMs: Date.parse('2026-10-13T01:00:00Z'), elapsedMs: 0
+      } }) }); }) : { ok: true };
+    f.monitor.onShow(); await tick(); await f.advance(12000); acknowledge(); await tick();
+    await f.advance(1000); f.monitor.onHide(); await tick();
+    assert.equal(f.calls.find(event => event.eventType === 'end').elapsedMs, 13000);
+    f.monitor.dispose();
+  }
+});
+
+test('服务端锚点字段无效或会话年龄超限时回退到请求发起时刻', async () => {
+  const startedAtMs = Date.parse('2026-10-13T01:00:00Z');
+  for (const data of [
+    { startedAtMs, observedAtMs: startedAtMs + 5000, elapsedMs: '0' },
+    { startedAtMs, observedAtMs: startedAtMs + 5000, elapsedMs: -1 },
+    { startedAtMs, observedAtMs: startedAtMs + 36 * 60 * 60 * 1000 + 1, elapsedMs: 0 },
+    { startedAtMs, observedAtMs: startedAtMs - 1, elapsedMs: 0 }
+  ]) {
+    const f = clientFixture();
+    f.respond = () => ({ ok: true, data });
+    f.monitor.onShow(); await tick(); await f.advance(1000); f.monitor.onHide(); await tick();
+    assert.equal(f.calls.find(event => event.eventType === 'end').elapsedMs, 1000);
+    f.monitor.dispose();
+  }
+});
+
+test('启动两次失败后下一心跳恢复同一会话，后续前台时间继续上报', async () => {
+  const f = clientFixture(); f.fail = true; f.monitor.onShow(); await tick(); await f.advance(1000);
+  const originalSession = f.calls[0].sessionId;
+  f.fail = false; await f.advance(59000);
+  const starts = f.calls.filter(event => event.action === 'trackUsage' && event.eventType === 'start');
+  assert.equal(starts.length, 3); assert.ok(starts.every(event => event.sessionId === originalSession));
+  assert.equal(f.calls.find(event => event.eventType === 'heartbeat').elapsedMs, 0);
+  await f.advance(10000); f.monitor.onHide(); await tick();
+  assert.equal(f.calls.find(event => event.eventType === 'end').elapsedMs, 10000);
+  f.monitor.dispose();
+});
+
+test('启动已入库但两次ACK丢失，跨午夜恢复使用原服务端锚点且不依赖本机绝对时钟', async () => {
+  for (const initialNow of [0, Date.parse('2036-04-01T02:00:00Z')]) {
+    const f = clientFixture({ initialNow });
+    const serverStart = Date.parse('2026-10-12T23:59:55+08:00');
+    let starts = 0, serverVisits = 0;
+    f.respond = (event, observedLocal) => {
+      if (event.action !== 'trackUsage' || event.eventType !== 'start') return { ok: true };
+      if (++starts === 1) serverVisits += 1;
+      if (starts <= 2) throw Error('lost acknowledgment');
+      return { ok: true, data: { startedAtMs: serverStart, observedAtMs: serverStart + observedLocal - initialNow, elapsedMs: 0 } };
+    };
+    f.monitor.onShow(); await tick(); await f.advance(60000);
+    const heartbeat = f.calls.find(event => event.eventType === 'heartbeat');
+    assert.equal(serverVisits, 1); assert.equal(heartbeat.elapsedMs, 60000);
+    assert.equal(new Date(serverStart + heartbeat.elapsedMs + 8 * 3600000).toISOString().slice(0, 10), '2026-10-13');
+    await f.advance(10000); f.monitor.onHide(); await tick();
+    assert.equal(f.calls.find(event => event.eventType === 'end').elapsedMs, 70000);
+    f.monitor.dispose();
+  }
+});
+
+test('后台期间启动ACK才返回时，末次时长只算到冻结的离开前台时刻', async () => {
+  const f = clientFixture(); let acknowledge;
+  f.respond = event => event.action === 'trackUsage' && event.eventType === 'start'
+    ? new Promise(resolve => { acknowledge = () => resolve({ ok: true, data: {
+      startedAtMs: Date.parse('2026-10-13T01:00:00Z'), observedAtMs: Date.parse('2026-10-13T01:00:00Z'), elapsedMs: 0
+    } }); }) : { ok: true };
+  f.monitor.onShow(); await tick(); await f.advance(5000); f.monitor.onHide();
+  await f.advance(20000); acknowledge(); await tick();
+  assert.equal(f.calls.find(event => event.eventType === 'end').elapsedMs, 5000);
+  assert.equal(f.calls.filter(event => event.eventType === 'heartbeat').length, 0);
+  f.monitor.dispose();
+});
+
+test('下一心跳前离开前台也可重试未确认启动，复用会话并上报冻结结束时长', async () => {
+  const f = clientFixture(); let attempts = 0;
+  const serverStart = Date.parse('2026-10-13T01:00:00Z');
+  f.respond = (event, observedLocal) => {
+    if (event.action !== 'trackUsage' || event.eventType !== 'start') return { ok: true };
+    if (++attempts <= 2) throw Error('lost acknowledgment');
+    return { ok: true, data: { startedAtMs: serverStart, observedAtMs: serverStart + observedLocal, elapsedMs: 0 } };
+  };
+  f.monitor.onShow(); await tick(); await f.advance(1000); await f.advance(4000); f.monitor.onHide(); await tick();
+  const starts = f.calls.filter(event => event.action === 'trackUsage' && event.eventType === 'start');
+  assert.equal(starts.length, 3); assert.ok(starts.every(event => event.sessionId === starts[0].sessionId));
+  assert.equal(f.calls.find(event => event.eventType === 'end').elapsedMs, 5000);
   f.monitor.dispose();
 });
 
@@ -182,7 +276,7 @@ test('服务端运营写入按可信来源身份派生ID且只保存白名单与
   await assert.rejects(() => reporter(metric, { ...identity, FROM_APPID: 'another_app' }, now));
 });
 
-function monitorDatabase() {
+function monitorDatabase({ singleInflight = false } = {}) {
   const rows = new Map();
   const db = { rows, command: { inc: value => ({ increment: value }) }, failRemove: false, collection(name) { return {
     doc(id) { return {
@@ -192,9 +286,49 @@ function monitorDatabase() {
       async remove() { if (db.failRemove) throw Error('private-remove-error'); rows.delete(name + ':' + id); }
     }; },
     where(query) { return { limit(count) { return { async get() { return { data: [...rows].filter(([key, row]) => key.startsWith(name + ':') && Object.entries(query).every(([field, value]) => row[field] === value)).slice(0, count).map(([key, row]) => ({ ...row, _id: key.slice(name.length + 1) })) }; } }; } }; }
-  }; }, async runTransaction(work) { if (db.beforeTransaction) await db.beforeTransaction(); return work(db); } };
+  }; }, async runTransaction(work) {
+    if (db.beforeTransaction) await db.beforeTransaction();
+    if (!singleInflight) return work(db);
+    let busy = false;
+    return work({ collection(name) { return { doc(id) {
+      const reference = db.collection(name).doc(id);
+      return Object.fromEntries(['get', 'set', 'update', 'remove'].map(method => [method, async (...args) => {
+        if (busy) throw Error('ResourceUnavailable.TransactionBusy');
+        busy = true;
+        try { await new Promise(resolve => setImmediate(resolve)); return await reference[method](...args); }
+        finally { busy = false; }
+      }]));
+    } }; } });
+  } };
   return db;
 }
+
+test('业务事件和多文档遥测清理在同一事务内逐项等待，保留幂等、栅栏及个人范围', async () => {
+  const db = monitorDatabase({ singleInflight: true });
+  const identity = { APPID: 'wx58e61dffcbfa4249', OPENID: 'trusted_user', SOURCE: 'wx_client' };
+  const owner = crypto.createHash('sha256').update(identity.APPID + ':' + identity.OPENID).digest('hex');
+  const userId = 'user_' + crypto.createHash('sha256').update(identity.APPID + '|' + identity.OPENID).digest('hex').slice(0, 24);
+  const account = { payload: { epoch: 'epoch-a' }, _monitorFence: 3 };
+  db.rows.set('jiancheng_daka_accounts:' + owner, account);
+  const reporter = createOperationsReporter(db);
+  const metric = { type: 'habit_created', eventId: 'sequential-event', accountGeneration: 'epoch-a', payload: {} };
+  assert.equal(await reporter(metric, identity, new Date('2026-10-13T01:00:00Z')), true);
+  assert.equal(await reporter(metric, identity, new Date('2026-10-13T01:00:01Z')), false);
+  assert.equal(account._monitorFence, 4);
+  Object.assign(account.payload, { epoch: 'epoch-b', cleanupPending: true, cleanupSourceEpoch: 'epoch-a' });
+  for (const [name, field] of [['monitor_users', 'userId'], ['monitor_usage_daily', 'userId'], ['monitor_usage_sessions', 'userId'], ['monitor_events', 'sourceUserId']]) {
+    for (let index = 0; index < 3; index++) db.rows.set(name + ':own-' + index, { appId: 'jiancheng', [field]: userId });
+    db.rows.set(name + ':other-user', { appId: 'jiancheng', [field]: 'user_other' });
+    db.rows.set(name + ':other-app', { appId: 'linggan', [field]: userId });
+  }
+  await createOperationsCleanup(db)(owner, 'epoch-a', identity);
+  for (const name of ['monitor_users', 'monitor_usage_daily', 'monitor_usage_sessions', 'monitor_events']) {
+    assert.equal([...db.rows.keys()].filter(key => key.startsWith(name + ':')).length, 2);
+    assert.equal(db.rows.has(name + ':other-user'), true);
+    assert.equal(db.rows.has(name + ':other-app'), true);
+  }
+  assert.ok(account._monitorFence > 4);
+});
 
 test('未创建运营集合时删除全部数据仍成功，权限错误和模糊缺失错误继续待处理', async () => {
   for (const code of [-502005, 'DATABASE_COLLECTION_NOT_EXIST', 'PERMISSION_DENIED', 'UNKNOWN']) {

@@ -45,8 +45,9 @@
   <view class="completed-row {{largeFont ? 'large-font' : ''}} {{writeBusy && !readOnly ? 'task-writing' : ''}}">
     <button class="completed-open" data-id="{{task.id}}" bindtap="onOpen" aria-label="{{task.title}}，已按{{task.status === 'minimum' ? '忙时' : '平时'}}目标{{task.target}}{{task.unit}}打卡，查看详情">
       <view class="completed-icon"><icon type="success" size="18" color="{{taskIconColor}}" /></view>
-      <view class="completed-copy"><view class="completed-title">{{task.title}}</view><view class="completed-goal">{{task.status === 'minimum' ? '忙时目标' : '平时目标'}} {{task.target}}{{task.unit}}</view></view>
+      <view class="completed-copy"><view class="completed-title">{{task.title}}</view><view class="completed-goal">{{task.status === 'minimum' ? '忙时目标' : '平时目标'}} {{task.target}}{{task.unit}}</view><view wx:if="{{task.photosPending || task.photosUnavailable}}" class="sub">{{task.photosUnavailable ? '照片暂不可用，请更换' : '已打卡 · 照片处理中'}}</view></view>
     </button>
     <button class="text-button completed-undo" disabled="{{readOnly || writeBusy}}" data-id="{{task.id}}" data-date="{{task.date}}" data-done="{{true}}" bindtap="onComplete" aria-label="撤销{{task.title}}今天的打卡">{{recordingId === task.id && recordingType === 'undo' ? recordingLabel : '撤销打卡'}}</button>
+    <button wx:if="{{photoEnabled}}" class="text-button completed-undo" disabled="{{readOnly || writeBusy}}" data-id="{{task.id}}" data-date="{{task.date}}" bindtap="onPhotoRecord">{{task.photoCount ? '看照片' : '添照片'}}</button>
   </view>
 </template>

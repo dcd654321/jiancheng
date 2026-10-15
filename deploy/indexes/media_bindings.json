@@ -1,0 +1,20 @@
+{
+  "CreateIndexes": [
+    {
+      "IndexName": "jiancheng_daka_media_binding_owner_epoch",
+      "MgoKeySchema": {
+        "MgoIsUnique": false,
+        "MgoIndexKeys": [
+          {
+            "Name": "owner",
+            "Direction": "1"
+          },
+          {
+            "Name": "ownerEpoch",
+            "Direction": "1"
+          }
+        ]
+      }
+    }
+  ]
+}

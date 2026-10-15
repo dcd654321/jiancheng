@@ -18,6 +18,19 @@ function storageInfo() { return store().info ? store().info() : { source: 'cloud
 function error(page, err) {
   page.setData({ error: err.message || '操作失败，请重试' });
 }
+function readState(page, phase, err) {
+  if (typeof page.onDataReadState !== 'function') return;
+  try { page.onDataReadState({ phase, error: err, info: storageInfo() }); }
+  catch (_) { /* Loading feedback cannot interrupt confirmed account data. */ }
+}
+function coreContentRendered(page, isReady = () => page.data.dataReady || page.data.ready) {
+  const version = page._showVersion, context = contextKey();
+  return () => {
+    if (!isCurrentView(page, context, version) || !isReady() || page.data.dataReadOnly) return;
+    const app = getApp();
+    if (typeof app.onCoreContentRendered === 'function' && app.cloudSession && app.cloudSession.status().ready) app.onCoreContentRendered();
+  };
+}
 // 读取分三态：就绪、首次读取中、不可用。会话里已有本账户已确认数据时
 // （刷新失败但内存快照仍可信）保留可读内容并标为只读，不再清空页面。
 function read(page, callback) {
@@ -25,7 +38,9 @@ function read(page, callback) {
     const pending = storageInfo().pending > 0;
     page.setData({ loading: false, dataUnavailable: true, dataReady: false, dataReadOnly: false,
       pendingConfirm: pending, recoveryLabel: pending ? '重新核对' : '重新读取',
+      readRefreshing: false,
       error: pending ? '正在核对这次记录：' + (err.message || '结果未确认') : (err.message || '暂时无法读取记录') });
+    readState(page, 'unavailable', err);
   };
   try {
     const state = store().read();
@@ -34,10 +49,14 @@ function read(page, callback) {
     const info = storageInfo();
     page.setData({ loading: false, dataUnavailable: false, dataReady: true, dataReadOnly: false, pendingConfirm: false,
       dataSource: info.source, syncText: info.syncText, syncAttention: !!info.syncAttention,
-      error: page._syncRefreshing && page.data.dataReady ? page.data.error : '' });
+      readRefreshing: !!info.busy && !info.pending && !page._mutating,
+      error: page._syncRefreshing && page.data.dataReady ? page.data.error : '' }, coreContentRendered(page));
+    readState(page, 'ready');
   } catch (err) {
-    if (err.code === 'DATA_LOADING') page.setData({ loading: true,
-      dataUnavailable: false, dataReady: false, error: '' });
+    if (err.code === 'DATA_LOADING') {
+      page.setData({ loading: true, readRefreshing: false, dataUnavailable: false, dataReady: false, error: '' });
+      readState(page, 'loading');
+    }
     else if (err.code === 'DATA_UNAVAILABLE') {
       const info = storageInfo();
       const stale = store().stale ? store().stale() : null;
@@ -47,7 +66,8 @@ function read(page, callback) {
           callback(stale, date.today());
           page.setData({ loading: false, dataUnavailable: false, dataReady: true, dataReadOnly: true, pendingConfirm: false,
             dataSource: info.source, syncText: info.syncText, syncAttention: true,
-            error: '暂时无法更新，请连接网络后重试' });
+            readRefreshing: false, error: '暂时无法更新，请连接网络后重试' });
+          readState(page, 'ready');
         } catch (projectionError) { unavailable(projectionError); }
       } else unavailable(err);
     }
@@ -87,7 +107,7 @@ function mutate(page, command, message) {
     page._mutating = false; clearRecording();
     if (isCurrentView(page, mutationContext, showVersion)) {
       if (mutationDate !== date.today()) page.refresh();
-      else { page.refresh(); error(page, err); }
+      else { page.refresh(); error(page, err); if (typeof page.onMutationFailure === 'function') page.onMutationFailure(err, command); }
     }
     return false;
   };
@@ -120,12 +140,17 @@ const recoveryActions = {
     this._retrying = true;
     this.setData({ loading: true, dataUnavailable: false, error: '' });
     try {
-      if (session && typeof session.start === 'function') await session.start();
+      if (session && typeof session.start === 'function') {
+        const work = session.start();
+        if (this.refresh) this.refresh();
+        await work;
+      }
       if (isCurrentView(this, context, showVersion)) this.refresh();
     } catch (err) {
       if (isCurrentView(this, context, showVersion)) {
         error(this, err);
         this.setData({ loading: false, dataUnavailable: true, dataReady: false });
+        readState(this, 'unavailable', err);
       }
     } finally { this._retrying = false; }
   }
@@ -226,8 +251,13 @@ const taskActions = {
   },
   recordCompletion(id, taskDate, type) {
     if (this._mutating) return false;
+    if (['complete', 'completeMinimum'].includes(type) && this.data.photoEnabled && typeof this.openPhotoCheckin === 'function') {
+      const task = (this.data.pending || []).find(item => item.id === id && item.date === taskDate);
+      if (task && task.photoRequired) { this.openPhotoCheckin(task, type); return false; }
+    }
     return mutate(this, { type, id, date: taskDate });
   },
+  onPhotoRecord(event) { const { id, date: taskDate } = event.currentTarget.dataset; wx.navigateTo({ url: '/pages/photo-record/index?habitId=' + encodeURIComponent(id) + '&date=' + taskDate }); },
   onSimplify(event) {
     if (this._mutating) return false;
     const { id, date: taskDate } = event.currentTarget.dataset;
@@ -253,4 +283,4 @@ const taskActions = {
   }
 };
 
-module.exports = { date, domain, store, read, mutate, error, id, contextKey, isCurrentView, assertContext, assertWritable, storageInfo, primaryColor, taskStatusLabel, quickMinimumEnabled, withLifecycle, taskActions, recoveryActions };
+module.exports = { date, domain, store, read, mutate, error, id, contextKey, isCurrentView, assertContext, assertWritable, storageInfo, primaryColor, taskStatusLabel, quickMinimumEnabled, withLifecycle, taskActions, recoveryActions, coreContentRendered };

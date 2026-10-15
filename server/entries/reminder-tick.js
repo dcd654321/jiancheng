@@ -4,6 +4,7 @@ const {createReminderRepository,createRecipientCodec}=require('./lib/reminders')
 const {authorizeTimer,createReminderWorker,createSender}=require('./lib/reminder-worker');
 const {configuration,createLimitRepository,createLimiter}=require('./lib/limits');
 const domain=require('./shared/habits'),dates=require('./shared/date');
+const {recordGuardReady,supervisorReminderReady,supervisorReminderConfiguration}=require('./lib/supervision-gates');
 cloud.init({env:cloud.DYNAMIC_CURRENT_ENV});
 let limiter;
 exports.main=async event=>{
@@ -13,8 +14,10 @@ exports.main=async event=>{
   try {
     if(!authorizeTimer(event,cloud.getWXContext(),env.HABIT_TIMER_SECRET,env.HABIT_TIMER_NAME))return {ok:false,code:'UNAUTHORIZED'};
     const codec=createRecipientCodec(env.HABIT_REMINDER_KEY),fields=JSON.parse(env.HABIT_REMINDER_FIELDS||'null');
-    const send=createSender(cloud,{templateId:env.HABIT_REMINDER_TEMPLATE,fields,state:env.HABIT_MESSAGE_STATE});
+    const supervisor=supervisorReminderReady(env)?supervisorReminderConfiguration(env):null;
+    const templateIds={self:env.HABIT_REMINDER_TEMPLATE,...(supervisor?{supervisor:supervisor.templateId}:{})};
+    const send=createSender(cloud,{appId:env.HABIT_APP_ID||'wx58e61dffcbfa4249',templateIds,fieldsByType:{self:fields,...(supervisor?{supervisor:supervisor.fields}:{})},state:env.HABIT_MESSAGE_STATE});
     if(!limiter)limiter=createLimiter({repository:createLimitRepository(cloud.database()),scope:'reminder-send',limits:configuration(env,'HABIT_SEND_LIMIT',false)});
-    return await createReminderWorker({repository:createReminderRepository(cloud.database()),domain,dates,codec,send,limiter,templateId:env.HABIT_REMINDER_TEMPLATE})();
+    return await createReminderWorker({repository:createReminderRepository(cloud.database(),{supervisionEnabled:recordGuardReady()}),domain,dates,codec,send,limiter,templateIds})();
   } catch(_){return {ok:false,code:'SERVICE_UNAVAILABLE'};}
 };

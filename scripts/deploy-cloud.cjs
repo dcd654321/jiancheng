@@ -3,8 +3,8 @@
 // 区别只在 --env 传哪个环境。避免"手点在控制台里传错环境/漏传函数"。
 //
 // 用法：
-//   npm run deploy:cloud -- --env test                 部署全部 5 个函数到共享测试环境
-//   npm run deploy:cloud -- --env product              部署全部 5 个函数到共享正式环境
+//   npm run deploy:cloud -- --env test                 部署全部 7 个函数到共享测试环境
+//   npm run deploy:cloud -- --env product              部署全部 7 个函数到共享正式环境
 //   npm run deploy:cloud -- --env test --names jiancheng_daka_api
 //   npm run deploy:cloud -- --env test --dry-run       只打印将要执行的命令
 //   （--env 也接受原始环境 ID；不传环境一律拒绝，没有默认值）
@@ -15,11 +15,12 @@
 
 const { spawnSync } = require('node:child_process');
 const path = require('node:path');
-const { apiFunction, featuresFunction, publicShareFunction, planFunction, reminderTickFunction } = require('../miniprogram/config/cloud-resources');
+const { apiFunction, featuresFunction, publicShareFunction, planFunction, reminderTickFunction, mediaCallbackFunction, mediaTickFunction } = require('../miniprogram/config/cloud-resources');
+const { TARGETS } = require('../miniprogram/config/cloud');
 
 const ENV_ALIASES = { test: 'cloud1-d8gopnalv908bb47a', product: 'product-d2g59zty74d7d1ec1' };
 const DEFAULT_CLI = 'E:\\weixinDevTool\\微信web开发者工具\\cli.bat';
-const ALL_FUNCTIONS = [apiFunction, featuresFunction, publicShareFunction, planFunction, reminderTickFunction];
+const ALL_FUNCTIONS = [apiFunction, featuresFunction, publicShareFunction, planFunction, reminderTickFunction, mediaCallbackFunction, mediaTickFunction];
 
 function parseArgs(argv) {
   const options = { env: '', names: [], dryRun: false };
@@ -47,7 +48,7 @@ function main() {
     process.exit(1);
   }
   const cli = process.env.WECHAT_DEVTOOLS_CLI || DEFAULT_CLI;
-  const args = ['cloud', 'functions', 'deploy', '--project', root, '--env', envId, '--names', ...names, '--remote-npm-install'];
+  const args = deploymentArgs(root, envId, names);
   console.log('环境：' + envId + (envId === ENV_ALIASES.product ? '（正式环境）' : '（共享测试环境）'));
   console.log('函数：' + names.join(', '));
   const command = [cli, ...args].map(part => /[\s"]/.test(part) ? '"' + part.replace(/"/g, '\\"') + '"' : part).join(' ');
@@ -57,14 +58,30 @@ function main() {
     return;
   }
   console.log('执行：' + command);
+  const io = { encoding: 'utf8', maxBuffer: 8 * 1024 * 1024 };
   const result = process.platform === 'win32'
-    ? spawnSync('cmd.exe', ['/d', '/s', '/c', command], { stdio: 'inherit' })
-    : spawnSync(cli, args, { stdio: 'inherit' });
+    ? spawnSync('cmd.exe', ['/d', '/s', '/c', command], io)
+    : spawnSync(cli, args, io);
+  if (result.stdout) process.stdout.write(result.stdout);
+  if (result.stderr) process.stderr.write(result.stderr);
   if (result.error) {
     console.error('无法调用开发者工具命令行：' + result.error.message + '（可用 WECHAT_DEVTOOLS_CLI 指定 cli.bat 路径）');
     process.exit(1);
   }
-  process.exit(result.status === null ? 1 : result.status);
+  process.exit(cliFailed(result) ? result.status || 1 : 0);
 }
 
-try { main(); } catch (error) { console.error(String(error.message || error)); process.exit(1); }
+function deploymentArgs(root, envId, names) {
+  const target = Object.values(TARGETS).find(item => item.envId === envId);
+  const appId = target && target.mode === 'shared' ? target.resourceAppid : require('../project.config.json').appid;
+  // --project overrides --appid in DevTools. Shared resources must use --appid + --paths.
+  return ['cloud', 'functions', 'deploy', '--appid', appId, '--env', envId, '--paths',
+    ...names.map(name => path.join(root, 'cloudfunctions', name)), '--remote-npm-install'];
+}
+function cliFailed(result) {
+  const output = String(result.stdout || '') + '\n' + String(result.stderr || '');
+  const plain = output.replace(/\u001b\[[0-9;]*m/g, '');
+  return !!result.error || result.status !== 0 || /^\s*(?:\[error\]|×\s)/m.test(plain);
+}
+module.exports = { parseArgs, deploymentArgs, cliFailed };
+if (require.main === module) try { main(); } catch (error) { console.error(String(error.message || error)); process.exit(1); }

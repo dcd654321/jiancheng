@@ -1,0 +1,14 @@
+<view class="page theme-{{theme}}"><view class="heading">打卡照片</view>
+  <view wx:if="{{!enabled}}" class="notice spaced">打卡照片尚未开放。</view><view wx:elif="{{loading}}" class="sub spaced">正在读取照片…</view>
+  <view wx:elif="{{dataUnavailable}}" class="empty"><view>{{error}}</view><button class="primary spaced" bindtap="onDataRetry">重新读取</button></view>
+  <block wx:elif="{{dataReady}}"><view class="sub spaced">{{date}}</view><view wx:if="{{error}}" class="error spaced">{{error}}</view><button class="text-button" disabled="{{busy || photoBusy}}" bindtap="onRefresh">刷新照片状态</button>
+    <view wx:if="{{record.processingCount}}" class="notice spaced">{{record.processingCount}} 张照片处理中，完成状态不受影响。</view>
+    <view wx:if="{{record.unavailableCount}}" class="notice spaced">{{record.unavailableCount}} 张照片暂不可用{{editable ? '，请更换' : ''}}。</view>
+    <view wx:if="{{record.recordStatus === 'pending'}}" class="notice spaced">本次还未打卡，回到今日完成后可添加照片。<button class="text-button" bindtap="onToday">回到今日</button></view>
+    <view wx:if="{{record && !images.length}}" class="sub spaced">暂时没有可展示的照片。</view>
+    <view class="photo-grid spaced"><view wx:for="{{images}}" wx:key="mediaId" class="photo-cell {{item.removed ? 'removed' : ''}}"><button wx:if="{{item.url}}" class="photo-preview" data-id="{{item.mediaId}}" bindtap="onPreviewPhoto"><image class="photo-image" src="{{item.url}}" mode="aspectFill" /></button><view class="sub photo-label">{{item.label}}</view><button wx:if="{{editable}}" class="text-button" disabled="{{busy || photoBusy}}" data-id="{{item.mediaId}}" bindtap="onTogglePhoto">{{item.removed ? '保留这张' : '删除这张'}}</button></view></view>
+    <block wx:if="{{editable}}"><view class="section-title spaced">补充或更换照片</view><view class="sub">最多3张；照片选好并上传后，点击保存。</view><view class="photo-grid spaced"><view wx:for="{{photoItems}}" wx:key="localId" class="photo-cell"><image class="photo-image" src="{{item.path}}" mode="aspectFill" /><view class="sub">{{item.status === 'ready' ? '上传已确认' : item.status === 'failed' ? '上传失败' : '正在上传'}}</view><button class="text-button" disabled="{{photoBusy}}" data-id="{{item.localId}}" bindtap="onRemoveNew">移除</button></view></view>
+      <button class="secondary spaced" disabled="{{busy || photoBusy || selectedIds.length + photoItems.length >= 3}}" bindtap="onChoosePhotos">拍照或从相册选取</button><view wx:if="{{photoError}}" class="error spaced">{{photoError}}</view><button wx:if="{{photoItems.length && !photoCanSubmit}}" class="text-button" disabled="{{photoBusy}}" bindtap="onRetryPhotos">重试上传</button><button wx:if="{{photoItems.length}}" class="primary spaced" disabled="{{busy || !photoCanSubmit}}" loading="{{photoBusy}}" bindtap="onSavePhotos">保存照片</button><button wx:elif="{{selectedIds.length !== images.length}}" class="primary spaced" disabled="{{busy}}" loading="{{busy}}" bindtap="onSaveRemoval">保存删除</button>
+    </block>
+  </block>
+</view>

@@ -4,6 +4,8 @@ const { features } = require('../../services/features-client');
 const { themeSnapshot } = require('../../services/appearance');
 const { THEMES } = require('../../config/theme-tokens');
 const PIN_READ_ERROR = '暂时未读取到置顶设置，打卡不受影响';
+const { media } = require('../../services/media-client');
+const { supervision } = require('../../services/supervision-client');
 
 function drafts() {
   const app = getApp();
@@ -17,7 +19,7 @@ Page(ui.withLifecycle({
     title: '', schedule: '', current: null, future: null, task: null, history: [], note: '',
     noteDirty: false, noteExpired: false, noteDate: '', date: '', statusText: '',
     noteOpen: false, moreOpen: false, showHistory: false, visibleHistory: [], focusNote: false, deleteConfirming: false, plannedStatus: '',
-    quickMinimumEnabled: ui.quickMinimumEnabled, featuresEnabled: false, pinned: false, pinning: false, pinError: '' },
+    quickMinimumEnabled: ui.quickMinimumEnabled, featuresEnabled: false, sharingEnabled: false, photoEnabled: false, supervisionEnabled: false, pinned: false, pinning: false, pinError: '' },
   onLoad(options) { this._id = options.id; this.refresh(); },
   async onShow() {
     let largeFont = false;
@@ -73,11 +75,12 @@ Page(ui.withLifecycle({
       const preferences = features().cachedPreferences();
       const history = ui.date.range(date, 28).reverse().map(day => {
         const record = ui.domain.taskAt(state, habit, day);
-        return record ? { date: day, status: ui.taskStatusLabel(record), goal: `${record.target} ${record.unit}` } : null;
+        return record ? { date: day, status: ui.taskStatusLabel(record), goal: `${record.target} ${record.unit}`, done: record.done } : null;
       }).filter(Boolean);
       this.setData({ title: display.title, current, future, task, history, date,
         plannedStatus: last.status,
         featuresEnabled: features().status().enabled, pinned: !!preferences && preferences.pinnedHabitId === this._id,
+        sharingEnabled: features().status().publicShares, photoEnabled: media().status().enabled, supervisionEnabled: supervision().status().enabled,
         visibleHistory: this.data.showHistory ? history : history.slice(0, 7),
         note: draft ? draft.text : task ? task.note : '', noteDirty: !!draft,
         noteDate: draft ? draft.date : date, noteExpired: !!draft && (draft.date !== date || !task),
@@ -89,6 +92,8 @@ Page(ui.withLifecycle({
   },
   onEdit() { wx.navigateTo({ url: '/pages/edit/index?id=' + this._id }); },
   onSharePlan() { wx.navigateTo({ url: '/pages/share-create/index?kind=plan&habitId=' + this._id }); },
+  onInviteSupervision() { wx.navigateTo({ url: '/pages/supervision-invite/index?habitId=' + this._id }); },
+  onPhotoRecord(event) { wx.navigateTo({ url: '/pages/photo-record/index?habitId=' + this._id + '&date=' + event.currentTarget.dataset.date }); },
   async onPin() {
     if (this._pinning || this._mutating) return;
     const key = ui.contextKey();

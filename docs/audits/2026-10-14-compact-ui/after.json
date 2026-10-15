@@ -1,0 +1,577 @@
+{
+  "label": "after",
+  "level": "isolated-native-fixture",
+  "screenshots": [
+    {
+      "file": "after-today-mist.png",
+      "route": "pages/today/index"
+    },
+    {
+      "file": "after-progress-mist.png",
+      "route": "pages/progress/index"
+    },
+    {
+      "file": "after-mine-mist.png",
+      "route": "pages/mine/index"
+    },
+    {
+      "file": "after-edit-mist.png",
+      "route": "pages/edit/index"
+    },
+    {
+      "file": "after-detail-mist.png",
+      "route": "pages/detail/index?id=habit-read"
+    },
+    {
+      "file": "after-appearance-mist.png",
+      "route": "pages/appearance/index"
+    },
+    {
+      "file": "after-manage-mist.png",
+      "route": "pages/manage/index"
+    },
+    {
+      "file": "after-sync-mist.png",
+      "route": "pages/sync/index"
+    },
+    {
+      "file": "after-reminder-mist.png",
+      "route": "pages/reminder/index"
+    },
+    {
+      "file": "after-supervision-mist.png",
+      "route": "pages/supervision/index"
+    },
+    {
+      "file": "after-empty-mist.png",
+      "route": "pages/today/index"
+    },
+    {
+      "file": "after-today-paper.png",
+      "route": "pages/today/index"
+    },
+    {
+      "file": "after-progress-paper.png",
+      "route": "pages/progress/index"
+    },
+    {
+      "file": "after-mine-paper.png",
+      "route": "pages/mine/index"
+    },
+    {
+      "file": "after-edit-paper.png",
+      "route": "pages/edit/index"
+    },
+    {
+      "file": "after-detail-paper.png",
+      "route": "pages/detail/index?id=habit-read"
+    },
+    {
+      "file": "after-appearance-paper.png",
+      "route": "pages/appearance/index"
+    },
+    {
+      "file": "after-manage-paper.png",
+      "route": "pages/manage/index"
+    },
+    {
+      "file": "after-sync-paper.png",
+      "route": "pages/sync/index"
+    },
+    {
+      "file": "after-reminder-paper.png",
+      "route": "pages/reminder/index"
+    },
+    {
+      "file": "after-supervision-paper.png",
+      "route": "pages/supervision/index"
+    },
+    {
+      "file": "after-empty-paper.png",
+      "route": "pages/today/index"
+    }
+  ],
+  "measurements": [
+    {
+      "name": "today-mist",
+      "selectors": [
+        ".heading",
+        ".task",
+        ".task-title",
+        ".check-pill"
+      ],
+      "rects": [
+        {
+          "width": 86.34375,
+          "height": 28.59375,
+          "fontSize": "22px"
+        },
+        {
+          "width": 358,
+          "height": 137.890625,
+          "fontSize": "15px"
+        },
+        {
+          "width": 328,
+          "height": 22.390625,
+          "fontSize": "16px"
+        },
+        {
+          "width": 160,
+          "height": 52,
+          "fontSize": "13px"
+        }
+      ]
+    },
+    {
+      "name": "progress-mist",
+      "selectors": [
+        ".heading",
+        ".metric",
+        ".trend-day",
+        ".segment"
+      ],
+      "rects": [
+        {
+          "width": 358,
+          "height": 28.59375,
+          "fontSize": "22px"
+        },
+        {
+          "width": 328,
+          "height": 40.796875,
+          "fontSize": "34px"
+        },
+        {
+          "width": 54.5625,
+          "height": 127.5,
+          "fontSize": "15px"
+        },
+        {
+          "width": 116,
+          "height": 44,
+          "fontSize": "14px"
+        }
+      ]
+    },
+    {
+      "name": "mine-mist",
+      "selectors": [
+        ".heading",
+        ".setting-row"
+      ],
+      "rects": [
+        {
+          "width": 358,
+          "height": 28.59375,
+          "fontSize": "22px"
+        },
+        {
+          "width": 328,
+          "height": 48,
+          "fontSize": "15px"
+        }
+      ]
+    },
+    {
+      "name": "edit-mist",
+      "selectors": [
+        ".heading",
+        ".input",
+        ".day-option",
+        ".primary"
+      ],
+      "rects": [
+        {
+          "width": 358,
+          "height": 28.59375,
+          "fontSize": "22px"
+        },
+        {
+          "width": 358,
+          "height": 44,
+          "fontSize": "15px"
+        },
+        {
+          "width": 83.5,
+          "height": 44,
+          "fontSize": "15px"
+        },
+        {
+          "width": 358,
+          "height": 44,
+          "fontSize": "15px"
+        }
+      ]
+    },
+    {
+      "name": "detail-mist",
+      "selectors": [
+        ".heading",
+        ".task-title"
+      ],
+      "rects": [
+        {
+          "width": 358,
+          "height": 28.59375,
+          "fontSize": "22px"
+        },
+        {
+          "width": 328,
+          "height": 22.390625,
+          "fontSize": "16px"
+        }
+      ]
+    },
+    {
+      "name": "appearance-mist",
+      "selectors": [
+        ".theme-name",
+        ".theme-card",
+        ".primary"
+      ],
+      "rects": [
+        {
+          "width": 48,
+          "height": 24,
+          "fontSize": "16px"
+        },
+        {
+          "width": 358,
+          "height": 245.5,
+          "fontSize": "15px"
+        },
+        {
+          "width": 358,
+          "height": 44,
+          "fontSize": "15px"
+        }
+      ]
+    },
+    {
+      "name": "manage-mist",
+      "selectors": [
+        ".heading",
+        ".task-title"
+      ],
+      "rects": [
+        {
+          "width": 358,
+          "height": 28.59375,
+          "fontSize": "22px"
+        },
+        null
+      ]
+    },
+    {
+      "name": "sync-mist",
+      "selectors": [
+        ".heading",
+        ".status-title"
+      ],
+      "rects": [
+        {
+          "width": 358,
+          "height": 28.59375,
+          "fontSize": "22px"
+        },
+        {
+          "width": 328,
+          "height": 24,
+          "fontSize": "16px"
+        }
+      ]
+    },
+    {
+      "name": "reminder-mist",
+      "selectors": [
+        ".heading"
+      ],
+      "rects": [
+        {
+          "width": 358,
+          "height": 28.59375,
+          "fontSize": "22px"
+        }
+      ]
+    },
+    {
+      "name": "supervision-mist",
+      "selectors": [
+        ".heading"
+      ],
+      "rects": [
+        {
+          "width": 358,
+          "height": 28.59375,
+          "fontSize": "22px"
+        }
+      ]
+    },
+    {
+      "name": "empty-mist",
+      "selectors": [
+        ".today-empty",
+        ".empty-create"
+      ],
+      "rects": [
+        {
+          "width": 358,
+          "height": 534.90625,
+          "fontSize": "15px"
+        },
+        {
+          "width": 144,
+          "height": 44,
+          "fontSize": "15px"
+        }
+      ]
+    },
+    {
+      "name": "today-paper",
+      "selectors": [
+        ".heading",
+        ".task",
+        ".task-title",
+        ".check-pill"
+      ],
+      "rects": [
+        {
+          "width": 86.34375,
+          "height": 28.59375,
+          "fontSize": "22px"
+        },
+        {
+          "width": 358,
+          "height": 137.890625,
+          "fontSize": "15px"
+        },
+        {
+          "width": 328,
+          "height": 22.390625,
+          "fontSize": "16px"
+        },
+        {
+          "width": 160,
+          "height": 52,
+          "fontSize": "13px"
+        }
+      ]
+    },
+    {
+      "name": "progress-paper",
+      "selectors": [
+        ".heading",
+        ".metric",
+        ".trend-day",
+        ".segment"
+      ],
+      "rects": [
+        {
+          "width": 358,
+          "height": 28.59375,
+          "fontSize": "22px"
+        },
+        {
+          "width": 328,
+          "height": 40.796875,
+          "fontSize": "34px"
+        },
+        {
+          "width": 54.5625,
+          "height": 127.5,
+          "fontSize": "15px"
+        },
+        {
+          "width": 116,
+          "height": 44,
+          "fontSize": "14px"
+        }
+      ]
+    },
+    {
+      "name": "mine-paper",
+      "selectors": [
+        ".heading",
+        ".setting-row"
+      ],
+      "rects": [
+        {
+          "width": 358,
+          "height": 28.59375,
+          "fontSize": "22px"
+        },
+        {
+          "width": 328,
+          "height": 48,
+          "fontSize": "15px"
+        }
+      ]
+    },
+    {
+      "name": "edit-paper",
+      "selectors": [
+        ".heading",
+        ".input",
+        ".day-option",
+        ".primary"
+      ],
+      "rects": [
+        {
+          "width": 358,
+          "height": 28.59375,
+          "fontSize": "22px"
+        },
+        {
+          "width": 358,
+          "height": 44,
+          "fontSize": "15px"
+        },
+        {
+          "width": 83.5,
+          "height": 44,
+          "fontSize": "15px"
+        },
+        {
+          "width": 358,
+          "height": 44,
+          "fontSize": "15px"
+        }
+      ]
+    },
+    {
+      "name": "detail-paper",
+      "selectors": [
+        ".heading",
+        ".task-title"
+      ],
+      "rects": [
+        {
+          "width": 358,
+          "height": 28.59375,
+          "fontSize": "22px"
+        },
+        {
+          "width": 328,
+          "height": 22.390625,
+          "fontSize": "16px"
+        }
+      ]
+    },
+    {
+      "name": "appearance-paper",
+      "selectors": [
+        ".theme-name",
+        ".theme-card",
+        ".primary"
+      ],
+      "rects": [
+        {
+          "width": 48,
+          "height": 24,
+          "fontSize": "16px"
+        },
+        {
+          "width": 358,
+          "height": 245.5,
+          "fontSize": "15px"
+        },
+        {
+          "width": 358,
+          "height": 44,
+          "fontSize": "15px"
+        }
+      ]
+    },
+    {
+      "name": "manage-paper",
+      "selectors": [
+        ".heading",
+        ".task-title"
+      ],
+      "rects": [
+        {
+          "width": 358,
+          "height": 28.59375,
+          "fontSize": "22px"
+        },
+        null
+      ]
+    },
+    {
+      "name": "sync-paper",
+      "selectors": [
+        ".heading",
+        ".status-title"
+      ],
+      "rects": [
+        {
+          "width": 358,
+          "height": 28.59375,
+          "fontSize": "22px"
+        },
+        {
+          "width": 328,
+          "height": 24,
+          "fontSize": "16px"
+        }
+      ]
+    },
+    {
+      "name": "reminder-paper",
+      "selectors": [
+        ".heading"
+      ],
+      "rects": [
+        {
+          "width": 358,
+          "height": 28.59375,
+          "fontSize": "22px"
+        }
+      ]
+    },
+    {
+      "name": "supervision-paper",
+      "selectors": [
+        ".heading"
+      ],
+      "rects": [
+        {
+          "width": 358,
+          "height": 28.59375,
+          "fontSize": "22px"
+        }
+      ]
+    },
+    {
+      "name": "empty-paper",
+      "selectors": [
+        ".today-empty",
+        ".empty-create"
+      ],
+      "rects": [
+        {
+          "width": 358,
+          "height": 534.90625,
+          "fontSize": "15px"
+        },
+        {
+          "width": 144,
+          "height": 44,
+          "fontSize": "15px"
+        }
+      ]
+    }
+  ],
+  "exceptions": [],
+  "viewport": {
+    "windowWidth": 390,
+    "windowHeight": 671,
+    "fontSizeSetting": 16
+  },
+  "guard": {
+    "cloudCalls": 0,
+    "storageWrites": 0,
+    "businessWrites": 0
+  }
+}

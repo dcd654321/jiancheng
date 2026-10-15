@@ -1,0 +1,6 @@
+.photo-grid { display: flex; flex-wrap: wrap; gap: 12px; }
+.photo-cell { width: calc(50% - 6px); min-width: 100px; overflow-wrap: anywhere; }
+.photo-image { width: 100%; height: 140px; border-radius: 12px; background: var(--color-soft); }
+.photo-preview { display: block; padding: 0; width: 100%; }
+.photo-cell.removed { opacity: .5; }
+.photo-label { margin-top: 8px; }

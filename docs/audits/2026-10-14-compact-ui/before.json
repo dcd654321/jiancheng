@@ -1,0 +1,425 @@
+{
+  "label": "before",
+  "level": "isolated-native-fixture",
+  "screenshots": [
+    {
+      "file": "before-today-mist.png",
+      "route": "pages/today/index"
+    },
+    {
+      "file": "before-progress-mist.png",
+      "route": "pages/progress/index"
+    },
+    {
+      "file": "before-mine-mist.png",
+      "route": "pages/mine/index"
+    },
+    {
+      "file": "before-edit-mist.png",
+      "route": "pages/edit/index"
+    },
+    {
+      "file": "before-detail-mist.png",
+      "route": "pages/detail/index?id=habit-read"
+    },
+    {
+      "file": "before-appearance-mist.png",
+      "route": "pages/appearance/index"
+    },
+    {
+      "file": "before-empty-mist.png",
+      "route": "pages/today/index"
+    },
+    {
+      "file": "before-today-paper.png",
+      "route": "pages/today/index"
+    },
+    {
+      "file": "before-progress-paper.png",
+      "route": "pages/progress/index"
+    },
+    {
+      "file": "before-mine-paper.png",
+      "route": "pages/mine/index"
+    },
+    {
+      "file": "before-edit-paper.png",
+      "route": "pages/edit/index"
+    },
+    {
+      "file": "before-detail-paper.png",
+      "route": "pages/detail/index?id=habit-read"
+    },
+    {
+      "file": "before-appearance-paper.png",
+      "route": "pages/appearance/index"
+    },
+    {
+      "file": "before-empty-paper.png",
+      "route": "pages/today/index"
+    }
+  ],
+  "measurements": [
+    {
+      "name": "today-mist",
+      "selectors": [
+        ".heading",
+        ".task",
+        ".task-title",
+        ".check-pill"
+      ],
+      "rects": [
+        {
+          "width": 92.984375,
+          "height": 33.796875,
+          "fontSize": "26px"
+        },
+        {
+          "width": 354,
+          "height": 160.390625,
+          "fontSize": "16px"
+        },
+        {
+          "width": 320,
+          "height": 23.390625,
+          "fontSize": "18px"
+        },
+        {
+          "width": 156,
+          "height": 64,
+          "fontSize": "14px"
+        }
+      ]
+    },
+    {
+      "name": "progress-mist",
+      "selectors": [
+        ".heading",
+        ".metric",
+        ".trend-day",
+        ".segment"
+      ],
+      "rects": [
+        {
+          "width": 354,
+          "height": 33.796875,
+          "fontSize": "26px"
+        },
+        {
+          "width": 320,
+          "height": 50.390625,
+          "fontSize": "42px"
+        },
+        {
+          "width": 54,
+          "height": 145,
+          "fontSize": "16px"
+        },
+        {
+          "width": 114,
+          "height": 44,
+          "fontSize": "15px"
+        }
+      ]
+    },
+    {
+      "name": "mine-mist",
+      "selectors": [
+        ".heading",
+        ".setting-row"
+      ],
+      "rects": [
+        {
+          "width": 354,
+          "height": 33.796875,
+          "fontSize": "26px"
+        },
+        {
+          "width": 320,
+          "height": 56,
+          "fontSize": "16px"
+        }
+      ]
+    },
+    {
+      "name": "edit-mist",
+      "selectors": [
+        ".heading",
+        ".input",
+        ".day-option",
+        ".primary"
+      ],
+      "rects": [
+        {
+          "width": 354,
+          "height": 33.796875,
+          "fontSize": "26px"
+        },
+        {
+          "width": 354,
+          "height": 48,
+          "fontSize": "16px"
+        },
+        {
+          "width": 82.5,
+          "height": 48,
+          "fontSize": "16px"
+        },
+        {
+          "width": 354,
+          "height": 48,
+          "fontSize": "16px"
+        }
+      ]
+    },
+    {
+      "name": "detail-mist",
+      "selectors": [
+        ".heading",
+        ".task-title"
+      ],
+      "rects": [
+        {
+          "width": 354,
+          "height": 33.796875,
+          "fontSize": "26px"
+        },
+        {
+          "width": 320,
+          "height": 23.390625,
+          "fontSize": "18px"
+        }
+      ]
+    },
+    {
+      "name": "appearance-mist",
+      "selectors": [
+        ".theme-name",
+        ".theme-card",
+        ".primary"
+      ],
+      "rects": [
+        {
+          "width": 54,
+          "height": 27,
+          "fontSize": "18px"
+        },
+        {
+          "width": 354,
+          "height": 282,
+          "fontSize": "16px"
+        },
+        {
+          "width": 354,
+          "height": 48,
+          "fontSize": "16px"
+        }
+      ]
+    },
+    {
+      "name": "empty-mist",
+      "selectors": [
+        ".today-empty",
+        ".empty-create"
+      ],
+      "rects": [
+        {
+          "width": 354,
+          "height": 516.203125,
+          "fontSize": "16px"
+        },
+        {
+          "width": 156,
+          "height": 48,
+          "fontSize": "16px"
+        }
+      ]
+    },
+    {
+      "name": "today-paper",
+      "selectors": [
+        ".heading",
+        ".task",
+        ".task-title",
+        ".check-pill"
+      ],
+      "rects": [
+        {
+          "width": 92.984375,
+          "height": 33.796875,
+          "fontSize": "26px"
+        },
+        {
+          "width": 354,
+          "height": 160.390625,
+          "fontSize": "16px"
+        },
+        {
+          "width": 320,
+          "height": 23.390625,
+          "fontSize": "18px"
+        },
+        {
+          "width": 156,
+          "height": 64,
+          "fontSize": "14px"
+        }
+      ]
+    },
+    {
+      "name": "progress-paper",
+      "selectors": [
+        ".heading",
+        ".metric",
+        ".trend-day",
+        ".segment"
+      ],
+      "rects": [
+        {
+          "width": 354,
+          "height": 33.796875,
+          "fontSize": "26px"
+        },
+        {
+          "width": 320,
+          "height": 50.390625,
+          "fontSize": "42px"
+        },
+        {
+          "width": 54,
+          "height": 145,
+          "fontSize": "16px"
+        },
+        {
+          "width": 114,
+          "height": 44,
+          "fontSize": "15px"
+        }
+      ]
+    },
+    {
+      "name": "mine-paper",
+      "selectors": [
+        ".heading",
+        ".setting-row"
+      ],
+      "rects": [
+        {
+          "width": 354,
+          "height": 33.796875,
+          "fontSize": "26px"
+        },
+        {
+          "width": 320,
+          "height": 56,
+          "fontSize": "16px"
+        }
+      ]
+    },
+    {
+      "name": "edit-paper",
+      "selectors": [
+        ".heading",
+        ".input",
+        ".day-option",
+        ".primary"
+      ],
+      "rects": [
+        {
+          "width": 354,
+          "height": 33.796875,
+          "fontSize": "26px"
+        },
+        {
+          "width": 354,
+          "height": 48,
+          "fontSize": "16px"
+        },
+        {
+          "width": 82.5,
+          "height": 48,
+          "fontSize": "16px"
+        },
+        {
+          "width": 354,
+          "height": 48,
+          "fontSize": "16px"
+        }
+      ]
+    },
+    {
+      "name": "detail-paper",
+      "selectors": [
+        ".heading",
+        ".task-title"
+      ],
+      "rects": [
+        {
+          "width": 354,
+          "height": 33.796875,
+          "fontSize": "26px"
+        },
+        {
+          "width": 320,
+          "height": 23.390625,
+          "fontSize": "18px"
+        }
+      ]
+    },
+    {
+      "name": "appearance-paper",
+      "selectors": [
+        ".theme-name",
+        ".theme-card",
+        ".primary"
+      ],
+      "rects": [
+        {
+          "width": 54,
+          "height": 27,
+          "fontSize": "18px"
+        },
+        {
+          "width": 354,
+          "height": 282,
+          "fontSize": "16px"
+        },
+        {
+          "width": 354,
+          "height": 48,
+          "fontSize": "16px"
+        }
+      ]
+    },
+    {
+      "name": "empty-paper",
+      "selectors": [
+        ".today-empty",
+        ".empty-create"
+      ],
+      "rects": [
+        {
+          "width": 354,
+          "height": 516.203125,
+          "fontSize": "16px"
+        },
+        {
+          "width": 156,
+          "height": 48,
+          "fontSize": "16px"
+        }
+      ]
+    }
+  ],
+  "exceptions": [],
+  "viewport": {
+    "windowWidth": 390,
+    "windowHeight": 671,
+    "fontSizeSetting": 16
+  },
+  "guard": {
+    "cloudCalls": 0,
+    "storageWrites": 0,
+    "businessWrites": 0
+  }
+}

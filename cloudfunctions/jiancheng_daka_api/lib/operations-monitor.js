@@ -58,9 +58,10 @@ function createOperationsReporter(db) {
     return db.runTransaction(async tx => {
       const accountRef = tx.collection('jiancheng_daka_accounts').doc(owner);
       const reference = tx.collection('monitor_events').doc(id);
-      const [account, previous] = await Promise.all([
-        optionalDocument(accountRef), optionalDocument(reference)
-      ]);
+      // CloudBase transaction requests share one transaction ID; await each
+      // request so the service never receives overlapping operations.
+      const account = await optionalDocument(accountRef);
+      const previous = await optionalDocument(reference);
       if (!account || !account.payload || account.payload.epoch !== metric.accountGeneration || account.payload.cleanupPending || previous) return false;
       // Snapshot reads alone do not conflict with purge. Write the same account
       // so a concurrent epoch change forces a retry and a fresh barrier check.
@@ -100,13 +101,14 @@ function createOperationsCleanup(db) {
           const accountRef = tx.collection('jiancheng_daka_accounts').doc(owner);
           const current = await optionalDocument(accountRef);
           if (!current || !current.payload || !current.payload.cleanupPending || current.payload.cleanupSourceEpoch !== oldEpoch) return false;
-          const targets = await Promise.all(response.data.map(async row => {
+          const targets = [];
+          for (const row of response.data) {
             const ref = tx.collection(name).doc(row._id), data = await optionalDocument(ref);
             if (data && (data.appId !== 'jiancheng' || data[identityField] !== actor.userId)) throw Error('MONITOR_CLEANUP_ROW_INVALID');
-            return data ? ref : null;
-          }));
+            if (data) targets.push(ref);
+          }
           await accountRef.update({ data: { _monitorFence: db.command.inc(1) } });
-          for (const ref of targets.filter(Boolean)) await ref.remove();
+          for (const ref of targets) await ref.remove();
           return true;
         });
         if ((deleting && Object.prototype.hasOwnProperty.call(deleting, 'result') ? deleting.result : deleting) === false) return;

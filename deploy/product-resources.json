@@ -14,10 +14,12 @@
   },
   "functions": [
     { "name": "jiancheng_daka_api", "path": "cloudfunctions/jiancheng_daka_api", "purpose": "账户、习惯、打卡、同步、删除关联数据", "enableFlag": "HABIT_API_ENABLED" },
-    { "name": "jiancheng_daka_features", "path": "cloudfunctions/jiancheng_daka_features", "purpose": "偏好、置顶、私人分享管理、提醒申请与取消", "enableFlag": "HABIT_FEATURES_ENABLED" },
+    { "name": "jiancheng_daka_features", "path": "cloudfunctions/jiancheng_daka_features", "purpose": "偏好、置顶、好友监督、照片与两类预约提醒；各能力独立开关", "enableFlags": ["HABIT_FEATURES_ENABLED", "HABIT_REMINDERS_ENABLED"], "codeConfiguration": "server/supervision-config.js" },
     { "name": "jiancheng_daka_public_share", "path": "cloudfunctions/jiancheng_daka_public_share", "purpose": "公开分享白名单读取", "enableFlag": "HABIT_PUBLIC_SHARES_ENABLED" },
     { "name": "jiancheng_daka_plan", "path": "cloudfunctions/jiancheng_daka_plan", "purpose": "旧模型建议接口的固定停用回执", "retired": true },
-    { "name": "jiancheng_daka_reminder_tick", "path": "cloudfunctions/jiancheng_daka_reminder_tick", "purpose": "仅由受信定时器触发的提醒执行", "enableFlag": "HABIT_REMINDERS_ENABLED" }
+    { "name": "jiancheng_daka_reminder_tick", "path": "cloudfunctions/jiancheng_daka_reminder_tick", "purpose": "仅由受信定时器触发的本人及监督人预约提醒", "enableFlag": "HABIT_REMINDERS_ENABLED" },
+    { "name": "jiancheng_daka_media_callback", "path": "cloudfunctions/jiancheng_daka_media_callback", "purpose": "验证平台加密签名并接收图片检查结果", "codeConfiguration": "server/supervision-config.js" },
+    { "name": "jiancheng_daka_media_tick", "path": "cloudfunctions/jiancheng_daka_media_tick", "purpose": "受信定时器提交图片检查及清理孤立附件", "codeConfiguration": "server/supervision-config.js", "timerName": "jiancheng_daka_media_tick", "timerMessage": "HMAC-SHA256(callback AES key, jiancheng_daka_media_tick:timer-auth:v1)" }
   ],
   "collections": [
     { "name": "jiancheng_daka_accounts", "purpose": "账户快照、习惯、打卡、代际与幂等回执", "clientRules": { "read": false, "write": false }, "indexes": [] },
@@ -32,8 +34,36 @@
       { "name": "jiancheng_daka_reminder_claimed", "unique": false, "keys": [{ "name": "status", "direction": "1" }, { "name": "claimedAt", "direction": "1" }] }
     ], "ttlRequirement": { "field": "expiresAt", "fieldType": "Date", "expireAfterSeconds": 0, "deadline": "dueAt 后 14 天", "deployment": "需先核实平台 TTL 接口，不当作普通索引已创建" } },
     { "name": "jiancheng_daka_ai_requests", "purpose": "历史 AI 请求回执，仅保留账户隔离删除清理", "clientRules": { "read": false, "write": false }, "indexes": [] },
-    { "name": "jiancheng_daka_ai_budget", "purpose": "历史全局 AI 预算记录，停用版本不读写", "clientRules": { "read": false, "write": false }, "indexes": [] }
+    { "name": "jiancheng_daka_ai_budget", "purpose": "历史全局 AI 预算记录，停用版本不读写", "clientRules": { "read": false, "write": false }, "indexes": [] },
+    { "name": "jiancheng_daka_supervision_invites", "purpose": "48小时邀请、申请人、确认结果及有界幂等回执", "clientRules": { "read": false, "write": false }, "indexes": [] },
+    { "name": "jiancheng_daka_supervisions", "purpose": "单习惯约定、双方账户代际、生效范围及次日规则版本", "clientRules": { "read": false, "write": false }, "indexes": [] },
+    { "name": "jiancheng_daka_supervision_indexes", "purpose": "各账户监督及邀请的私有有界索引", "clientRules": { "read": false, "write": false }, "indexes": [] },
+    { "name": "jiancheng_daka_media", "purpose": "照片暂存、冻结校验、系统检查及清理状态", "clientRules": { "read": false, "write": false }, "indexes": [
+      { "name": "jiancheng_daka_media_owner_epoch", "unique": false, "keys": [{ "name": "owner", "direction": "1" }, { "name": "ownerEpoch", "direction": "1" }] },
+      { "name": "jiancheng_daka_media_pending", "unique": false, "keys": [{ "name": "status", "direction": "1" }, { "name": "checkState", "direction": "1" }] },
+      { "name": "jiancheng_daka_media_stalled", "unique": false, "keys": [{ "name": "status", "direction": "1" }, { "name": "checkStartedAt", "direction": "1" }] },
+      { "name": "jiancheng_daka_media_bound_scan", "unique": false, "keys": [{ "name": "bound", "direction": "1" }, { "name": "validatedAt", "direction": "1" }] },
+      { "name": "jiancheng_daka_media_prepared", "unique": false, "keys": [{ "name": "status", "direction": "1" }, { "name": "createdAt", "direction": "1" }] },
+      { "name": "jiancheng_daka_media_orphan", "unique": false, "keys": [{ "name": "orphanedAt", "direction": "1" }] },
+      { "name": "jiancheng_daka_media_delete", "unique": false, "keys": [{ "name": "deleteRequested", "direction": "1" }] }
+    ] },
+    { "name": "jiancheng_daka_media_bindings", "purpose": "本人记录与已验证照片的事务绑定", "clientRules": { "read": false, "write": false }, "indexes": [
+      { "name": "jiancheng_daka_media_binding_owner_epoch", "unique": false, "keys": [{ "name": "owner", "direction": "1" }, { "name": "ownerEpoch", "direction": "1" }] }
+    ] },
+    { "name": "jiancheng_daka_media_traces", "purpose": "服务端图片检查trace与媒体范围关联", "clientRules": { "read": false, "write": false }, "indexes": [
+      { "name": "jiancheng_daka_media_trace_owner_epoch", "unique": false, "keys": [{ "name": "owner", "direction": "1" }, { "name": "ownerEpoch", "direction": "1" }] }
+    ] }
   ],
+  "storage": {
+    "draftPrefix": "jiancheng_daka_media/uploads/",
+    "sealedPrefix": "jiancheng_daka_media/records/",
+    "clientRead": false,
+    "clientWrite": "仅暂存路径且上传创建者身份匹配，冻结路径仅服务端写入",
+    "supervisorLinkMaxAgeSeconds": 300,
+    "orphanMaxAgeHours": 24,
+    "rulesTemplate": "deploy/media-storage-rules.json",
+    "applyRulesAutomatically": false
+  },
   "boundaries": {
     "seedBusinessData": false,
     "createTimerBeforeAcceptance": false,

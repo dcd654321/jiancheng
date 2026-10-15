@@ -1,0 +1,108 @@
+{
+  "CreateIndexes": [
+    {
+      "IndexName": "jiancheng_daka_media_owner_epoch",
+      "MgoKeySchema": {
+        "MgoIsUnique": false,
+        "MgoIndexKeys": [
+          {
+            "Name": "owner",
+            "Direction": "1"
+          },
+          {
+            "Name": "ownerEpoch",
+            "Direction": "1"
+          }
+        ]
+      }
+    },
+    {
+      "IndexName": "jiancheng_daka_media_pending",
+      "MgoKeySchema": {
+        "MgoIsUnique": false,
+        "MgoIndexKeys": [
+          {
+            "Name": "status",
+            "Direction": "1"
+          },
+          {
+            "Name": "checkState",
+            "Direction": "1"
+          }
+        ]
+      }
+    },
+    {
+      "IndexName": "jiancheng_daka_media_stalled",
+      "MgoKeySchema": {
+        "MgoIsUnique": false,
+        "MgoIndexKeys": [
+          {
+            "Name": "status",
+            "Direction": "1"
+          },
+          {
+            "Name": "checkStartedAt",
+            "Direction": "1"
+          }
+        ]
+      }
+    },
+    {
+      "IndexName": "jiancheng_daka_media_bound_scan",
+      "MgoKeySchema": {
+        "MgoIsUnique": false,
+        "MgoIndexKeys": [
+          {
+            "Name": "bound",
+            "Direction": "1"
+          },
+          {
+            "Name": "validatedAt",
+            "Direction": "1"
+          }
+        ]
+      }
+    },
+    {
+      "IndexName": "jiancheng_daka_media_prepared",
+      "MgoKeySchema": {
+        "MgoIsUnique": false,
+        "MgoIndexKeys": [
+          {
+            "Name": "status",
+            "Direction": "1"
+          },
+          {
+            "Name": "createdAt",
+            "Direction": "1"
+          }
+        ]
+      }
+    },
+    {
+      "IndexName": "jiancheng_daka_media_orphan",
+      "MgoKeySchema": {
+        "MgoIsUnique": false,
+        "MgoIndexKeys": [
+          {
+            "Name": "orphanedAt",
+            "Direction": "1"
+          }
+        ]
+      }
+    },
+    {
+      "IndexName": "jiancheng_daka_media_delete",
+      "MgoKeySchema": {
+        "MgoIsUnique": false,
+        "MgoIndexKeys": [
+          {
+            "Name": "deleteRequested",
+            "Direction": "1"
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -4,9 +4,7 @@ const appearanceConfig = require('./config/appearance');
 const { createWorkspaceStore } = require('./services/workspace-store');
 const { createQuoteSession } = require('./services/quotes');
 const { createAppLifecycle } = require('./services/app-lifecycle');
-const { createAppearanceClient } = require('./services/appearance-client');
-const { createAppearanceController } = require('./services/appearance');
-const { createOperationsMonitor } = require('./services/operations-monitor');
+const { prepareCloudConnection } = require('./services/cloud-transport');
 
 const lifecycle = createAppLifecycle({
   wxApi: wx,
@@ -15,9 +13,11 @@ const lifecycle = createAppLifecycle({
   createCloudSession,
   createWorkspaceStore,
   createQuoteSession,
-  createAppearanceClient,
-  createAppearanceController,
-  createOperationsMonitor
+  prepareCloudConnection,
+  createAppearanceClient(...args) { return require('./services/appearance-client').createAppearanceClient(...args); },
+  createAppearanceController(...args) { return require('./services/appearance').createAppearanceController(...args); },
+  createOperationsMonitor(...args) { return require('./services/operations-monitor').createOperationsMonitor(...args); },
+  onStartupTiming(sample) { console.info('[jiancheng-startup]', JSON.stringify(sample)); }
 });
 
 App({

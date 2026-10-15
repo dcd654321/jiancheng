@@ -16,7 +16,7 @@ const COMMAND_FIELDS = {
   create: ['type', 'id', 'startDate', 'plan'], edit: ['type', 'id', 'baseRevision', 'plan'],
   status: ['type', 'id', 'baseRevision', 'status'], cancelFuture: ['type', 'id', 'baseRevision'],
   deleteHabit: ['type', 'id', 'baseRevision'],
-  complete: ['type', 'id', 'date'], completeMinimum: ['type', 'id', 'date'], undo: ['type', 'id', 'date'],
+  complete: ['type', 'id', 'date', 'mediaIds'], completeMinimum: ['type', 'id', 'date', 'mediaIds'], undo: ['type', 'id', 'date'],
   simplify: ['type', 'id', 'date', 'target'], restore: ['type', 'id', 'date'],
   note: ['type', 'id', 'date', 'note'], settings: ['type', 'hideQuote']
 };
@@ -31,6 +31,10 @@ function validateCommand(command) {
   }
   if (command.type === 'simplify' && !Number.isInteger(command.target)) fail('INVALID_REQUEST', '目标需为整数');
   if (command.type === 'note' && !string(command.note, 0, 280)) fail('INVALID_REQUEST', '备注长度无效');
+  if (own(command, 'mediaIds') && (!Array.isArray(command.mediaIds) || command.mediaIds.length > 3 ||
+    command.mediaIds.some(id => !token(id)) || new Set(command.mediaIds).size !== command.mediaIds.length)) {
+    fail('INVALID_REQUEST', '请选择最多3张本次打卡照片');
+  }
   return command;
 }
 function validateEvent(event) {

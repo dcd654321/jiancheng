@@ -6,7 +6,7 @@ const manifest = require('../deploy/product-resources.json');
 const resources = require('../miniprogram/config/cloud-resources');
 const product = require('../miniprogram/config/cloud').TARGETS.product;
 
-test('正式资源清单精确覆盖五函数和七集合，没有其他应用或重复名称', () => {
+test('正式资源清单精确覆盖七函数和十三集合，没有其他应用或重复名称', () => {
   assert.equal(manifest.environment, product.envId);
   assert.equal(manifest.resourceAppid, product.resourceAppid);
   assert.equal(manifest.consumerAppid, require('../project.config.json').appid);
@@ -17,8 +17,8 @@ test('正式资源清单精确覆盖五函数和七集合，没有其他应用�
     assert.equal(new Set(actual).size, actual.length);
     assert.ok(actual.every(name => name.startsWith('jiancheng_daka_')));
   }
-  assert.equal(manifest.functions.length, 5);
-  assert.equal(manifest.collections.length, 7);
+  assert.equal(manifest.functions.length, 7);
+  assert.equal(manifest.collections.length, 13);
   assert.equal(manifest.externalDependencies.operationsMonitor.functionName, resources.monitorFunction);
   assert.equal(manifest.externalDependencies.operationsMonitor.managedBy, 'miniProgramMonitor');
   assert.equal(manifest.externalDependencies.operationsMonitor.deployBeforeClient, true);
@@ -30,13 +30,15 @@ test('正式资源清单精确覆盖五函数和七集合，没有其他应用�
     if (fn.name === resources.planFunction) {
       assert.equal(fn.retired, true);
       assert.equal(fn.enableFlag, undefined);
-    } else assert.match(fn.enableFlag, /^HABIT_[A-Z_]+_ENABLED$/);
+    } else if (fn.enableFlags) assert.ok(fn.enableFlags.every(flag => /^HABIT_[A-Z_]+_ENABLED$/.test(flag)));
+    else if (fn.codeConfiguration) assert.equal(fn.codeConfiguration, 'server/supervision-config.js');
+    else assert.match(fn.enableFlag, /^HABIT_[A-Z_]+_(?:ENABLED|VERIFIED)$/);
   }
 });
 
-test('索引上传参数与清单一致，仅包含四个非唯一业务索引且绝不包含删除', () => {
+test('索引上传参数与清单一致，业务索引均非唯一且绝不包含删除', () => {
   let count = 0;
-  for (const suffix of ['shares', 'reminders']) {
+  for (const suffix of ['shares', 'reminders', 'media', 'media_bindings', 'media_traces']) {
     const payload = require('../deploy/indexes/' + suffix + '.json');
     const collection = manifest.collections.find(item => item.name === 'jiancheng_daka_' + suffix);
     assert.deepEqual(Object.keys(payload), ['CreateIndexes']);
@@ -47,7 +49,7 @@ test('索引上传参数与清单一致，仅包含四个非唯一业务索引�
     assert.ok(payload.CreateIndexes.every(index => index.MgoKeySchema.MgoIsUnique === false));
     count += payload.CreateIndexes.length;
   }
-  assert.equal(count, 4);
+  assert.equal(count, 13);
 });
 
 test('所有集合拒绝客户端直读写，只有提醒有TTL要求，不创建假数据或提前启用服务', () => {
@@ -63,4 +65,18 @@ test('所有集合拒绝客户端直读写，只有提醒有TTL要求，不创�
   for (const key of ['seedBusinessData', 'createTimerBeforeAcceptance', 'enableFeaturesBeforeAcceptance', 'manageOtherApps', 'sharedAuthManagedHere']) {
     assert.equal(manifest.boundaries[key], false);
   }
+});
+
+test('照片存储清单拒绝客户端直读和冻结区写入，短时授权与孤儿清理范围明确',()=>{
+  assert.equal(manifest.storage.clientRead,false);
+  assert.equal(manifest.storage.applyRulesAutomatically,false);
+  assert.equal(manifest.storage.supervisorLinkMaxAgeSeconds,300);
+  assert.equal(manifest.storage.orphanMaxAgeHours,24);
+  const rules=require('../deploy/media-storage-rules.json');
+  assert.equal(rules.read,false);
+  assert.ok(rules.write.includes('auth != null')&&rules.write.includes('resource.openid == auth.openid'));
+  const regex=/^jiancheng_daka_media\/uploads\//;
+  assert.equal(regex.test('jiancheng_daka_media/records/private.jpg'),false);
+  assert.equal(regex.test('another_app/uploads/private.jpg'),false);
+  assert.equal(regex.test('jiancheng_daka_media/uploads/a.jpg'),true);
 });

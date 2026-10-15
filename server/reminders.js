@@ -7,12 +7,13 @@ const { COLLECTION } = require('./cloudbase-repository');
 const REMINDERS = 'jiancheng_daka_reminders';
 const SLOTS = ['08:00','12:30','20:30'];
 const STATES = ['pending','claimed','sent','cancelled','failed','unknown'];
-const FIELDS = { previewReminder:['slot'], scheduleReminder:['slot','businessDate','dueAt','sourceRevision','generation','operationId','subscriptionResult'],
-  getReminders:[], cancelReminder:['businessDate','generation'] };
+const FIELDS = { previewReminder:['slot','type','businessDate','habitIds','relationIds'], scheduleReminder:['slot','businessDate','dueAt','sourceRevision','generation','operationId','subscriptionResult','type','habitIds','relationIds','scopeFingerprint'],
+  getReminders:['includeTypes'], cancelReminder:['businessDate','generation','type'] };
 const hash = text => crypto.createHash('sha256').update(text).digest('hex');
-const reminderId = (owner, epoch, date) => hash(owner + ':' + epoch + ':' + date);
+const reminderId = (owner, epoch, date, type = 'self') => hash(owner + ':' + epoch + ':' + date + (type === 'self' ? '' : ':' + type));
 const own = (object, key) => Object.prototype.hasOwnProperty.call(object, key);
 function view(doc) {
+  if (doc && doc.schemaVersion === 2) return require('./next-reminders').nextView(doc);
   if (!doc || doc.schemaVersion !== 1 || !STATES.includes(doc.status) || !SLOTS.includes(doc.slot) || !Number.isInteger(doc.generation)) throw Error('REMINDER_CORRUPT');
   return { businessDate: doc.businessDate, slot: doc.slot, dueAt: doc.dueAt, generation: doc.generation,
     status: doc.status, updatedAt: doc.updatedAt };
@@ -52,11 +53,13 @@ function createRecipientCodec(hexKey) {
   };
 }
 const recipientAAD = doc => doc._id + ':' + doc.owner + ':' + doc.ownerEpoch;
-function createReminderRepository(db) {
+function createReminderRepository(db, { supervisionEnabled = false } = {}) {
   return {
     transact(owner, work) {
       return db.runTransaction(tx=>work({
+        ...(supervisionEnabled ? require('./supervision-repository').createSupervisionTx(tx, owner) : {}),
         account:()=>readAccount(tx.collection(COLLECTION).doc(owner)),
+        subjectAccount:subjectOwner=>readAccount(tx.collection(COLLECTION).doc(subjectOwner)),
         reminder:id=>read(tx.collection(REMINDERS).doc(id)),
         put:doc=>{const {_id,expiresAt,...data}=doc;return tx.collection(REMINDERS).doc(_id).set({data:{...data,expiresAt:new Date(expiresAt)}});}
       })).then(outcome=>outcome && typeof outcome.ok==='boolean'?outcome:outcome.result);
@@ -65,8 +68,11 @@ function createReminderRepository(db) {
     async stale(now,limit=20) {const r=await db.collection(REMINDERS).where({status:'claimed',claimedAt:db.command.lte(new Date(now.getTime()-300000).toISOString())}).orderBy('claimedAt','asc').limit(limit).get();return r.data;}
   };
 }
-function createReminderApi({repository,domain,dates,allowedAppId,allowedSources,templateId,codec,limiter,clock=()=>new Date()}) {
+function createReminderApi(options) {
+  const {repository,domain,dates,allowedAppId,allowedSources,templateId,codec,limiter,clock=()=>new Date()} = options;
+  const nextApi = require('./next-reminders').createNextReminderApi(options);
   return async (event,identity)=>{
+    if (event && (event.type !== undefined || event.includeTypes !== undefined)) return nextApi(event, identity);
     try {
       const owner=authenticate(identity,allowedAppId,allowedSources);validate(event,dates);
       if (!codec || typeof templateId!=='string' || !/^[a-zA-Z0-9_-]{10,128}$/.test(templateId)) fail('NOT_ENABLED','提醒服务尚未开放');

@@ -5,13 +5,15 @@ const path = require('node:path');
 const { createRequire } = require('node:module');
 const { plan } = require('./helpers/cloud-fixture.cjs');
 
-function entryFixture() {
+function entryFixture(options = {}) {
   const entry = path.resolve(__dirname, '../cloudfunctions/jiancheng_daka_api/index.js');
   const realRequire = createRequire(entry), saved = new Map();
-  const f = { identity: { APPID: 'wx-entry-test', OPENID: 'trusted-user', SOURCE: 'wx_devtools' }, transactions: 0 };
+  const f = { identity: { APPID: 'wx-entry-test', OPENID: 'trusted-user', SOURCE: 'wx_devtools' }, transactions: 0,
+    mediaLoads: 0, guardCommands: [], cleanupCalls: [] };
+  const adapter = { transaction: 'fixture' };
   const repository = { async transact(owner, operation) {
     f.transactions++;
-    const outcome = await operation(saved.has(owner) ? structuredClone(saved.get(owner)) : null);
+    const outcome = await operation(saved.has(owner) ? structuredClone(saved.get(owner)) : null, adapter);
     saved.set(owner, structuredClone(outcome.account));
     return outcome.result;
   } };
@@ -24,11 +26,70 @@ function entryFixture() {
   } };
   const env = { HABIT_APP_ID: 'wx-entry-test', HABIT_MINIPROGRAM_ONLY: 'true', HABIT_API_ENABLED: 'true' };
   const exports = {};
-  const requireStub = name => name === 'wx-server-sdk' ? sdk :
-    name === './lib/cloudbase-repository' ? { createRepository: () => repository } : realRequire(name);
+  const cleanup = kind => async (_owner, epoch) => {
+    f.cleanupCalls.push({ kind, epoch });
+    if (f.failCleanup === kind) throw Error('PRIVATE_CLEANUP_FAILURE');
+  };
+  const requireStub = name => {
+    if (name === 'wx-server-sdk') return sdk;
+    if (name === './lib/cloudbase-repository') return { createRepository: () => repository };
+    if (options.guardReady && name === './lib/supervision-gates') return { recordGuardReady: () => true, mediaConfiguration: () => ({}) };
+    if (options.guardReady && name === './lib/media') {
+      f.mediaLoads++;
+      if (f.failGuardLoad) throw Error('PRIVATE_GUARD_LOAD_FAILURE');
+      return { createRecordMutationGuard: () => async (tx, account, command) => {
+        assert.equal(tx, adapter); assert.ok(account.epoch); f.guardCommands.push(command.type);
+      } };
+    }
+    if (options.mockCleanup && name === './lib/sidecar-cleanup') return { createSidecarCleanup: () => cleanup('sidecar') };
+    if (options.mockCleanup && name === './lib/media-provider') return { createMediaProvider: () => ({}) };
+    if (options.mockCleanup && name === './lib/media-worker') return { createSupervisionCleanup: () => cleanup('supervision') };
+    if (options.mockCleanup && name === './lib/operations-monitor') return {
+      createOperationsReporter: () => async () => true, createOperationsCleanup: () => cleanup('operations')
+    };
+    return realRequire(name);
+  };
   new Function('require', 'exports', 'process', fs.readFileSync(entry, 'utf8'))(requireStub, exports, { env });
   return Object.assign(f, { main: exports.main, env });
 }
+
+test('API entry lazily loads the required guard for mutations and fails closed if its module cannot load', async () => {
+  for (const failGuardLoad of [false, true]) {
+    const f = entryFixture({ guardReady: true }), before = await f.main({ action: 'pull' });
+    assert.equal(f.mediaLoads, 0);
+    f.failGuardLoad = failGuardLoad;
+    const result = await f.main({ action: 'mutate', operationId: 'guard-create', epoch: before.epoch,
+      expectedRevision: before.revision, operationDate: before.serverDate,
+      command: { type: 'create', id: 'read', startDate: before.serverDate, plan: plan() } });
+    assert.equal(f.mediaLoads, 1);
+    const after = await f.main({ action: 'pull' });
+    if (failGuardLoad) {
+      assert.equal(result.code, 'SERVICE_UNAVAILABLE'); assert.equal(after.state.habits.length, 0);
+      assert.doesNotMatch(JSON.stringify(result), /PRIVATE_GUARD/);
+    } else {
+      assert.equal(result.ok, true); assert.deepEqual(f.guardCommands, ['create']); assert.equal(after.state.habits.length, 1);
+    }
+  }
+});
+
+test('lazy entry cleanup preserves its order, original epoch and retry after a cleanup failure', async () => {
+  const f = entryFixture({ guardReady: true, mockCleanup: true });
+  f.env.HABIT_SIDECAR_CLEANUP_ENABLED = 'true';
+  const before = await f.main({ action: 'pull' });
+  assert.equal(f.cleanupCalls.length, 0); assert.equal(f.mediaLoads, 0);
+  const request = { action: 'purge', operationId: 'lazy-purge', epoch: before.epoch, expectedRevision: before.revision,
+    operationDate: before.serverDate, confirmation: 'DELETE_MY_DATA' };
+  f.failCleanup = 'supervision';
+  const pending = await f.main(request);
+  assert.equal(pending.code, 'DELETE_PENDING');
+  assert.deepEqual(f.cleanupCalls.map(call => call.kind), ['sidecar', 'supervision']);
+  f.failCleanup = '';
+  const result = await f.main(request);
+  assert.equal(result.ok, true);
+  assert.deepEqual(f.cleanupCalls.map(call => call.kind), ['sidecar', 'supervision', 'sidecar', 'supervision', 'operations']);
+  assert.ok(f.cleanupCalls.every(call => call.epoch === before.epoch));
+  assert.deepEqual(f.guardCommands, ['purge'], 'retry preserves the original deletion intent');
+});
 
 test('真实入口忽略微信附带的userInfo和tcbContext，账户身份只取可信上下文', async () => {
   const f = entryFixture();

@@ -100,7 +100,7 @@ B019补充：无确认缓存时，手动`refresh()`复用`start()`重新初始�
 
 1. 项目AppID已配置；先取得product实际环境ID和资源所属AppID（如为跨小程序共享），确认访问授权与真实身份语义。AppSecret不进入工程或前端包。
 2. 本地通过 `npm test`、`scripts/check.cjs`、`scripts/build-cloud.cjs --check`、原生编译和Node 16兼容检查。
-3. 逐个部署本项目 5 个专属函数，核对 Active/运行时/云包完整；逐一创建 7 个集合并核对索引，先检查同名资源是否已有数据或属于其他用途，禁止覆盖。新函数默认关闭，验收前不配置启用变量。
+3. 按当前 `deploy/product-resources.json` 逐个部署本项目 7 个专属函数，核对 Active/运行时/云包完整；逐一核对 13 个集合及索引，先检查同名资源是否已有数据或属于其他用途，禁止覆盖。新函数默认关闭，验收前不配置启用变量。新增监督、图片回调/清理、私有存储与两类提醒的配置和验收顺序见 [好友监督实施记录](friend-supervision-rollout.md)。
 4. 确认集合规则为客户端不可直接读写，并用真实小程序入口复核 APPID、OPENID、SOURCE；仅允许 `wx_client` 和 `wx_devtools`。
 5. 评估 `wx-server-sdk 4.0.2` 依赖告警；未知SDK错误必须停止服务，不能写入假空账户。
 6. 仅在`jiancheng_daka_api`配置`HABIT_APP_ID=wx58e61dffcbfa4249`、`HABIT_MINIPROGRAM_ONLY=true`；集合及权限验证后再启用`HABIT_API_ENABLED=true`，不改其他函数变量或共享认证配置。

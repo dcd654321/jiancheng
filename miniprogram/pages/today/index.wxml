@@ -4,16 +4,21 @@
     <view><view class="heading heading-xl">今日</view><view class="sub">{{dateLabel}}</view></view>
     <button wx:if="{{dataReady && total}}" class="add-button" bindtap="onToggleChooser" aria-expanded="{{chooserOpen}}">{{chooserOpen ? '收起' : '添加习惯'}}</button>
   </view>
-  <view wx:if="{{loading}}" class="loading-state" role="status">
-    <view class="sub">正在读取云端记录…</view>
+  <view wx:if="{{loading}}" class="loading-state" aria-busy="true">
+    <view class="loading-status sub" role="status">{{startupLoadingText}}</view>
+    <view class="startup-skeleton" aria-hidden="true">
+      <view class="skeleton-card"><view class="skeleton-line skeleton-title" /><view class="skeleton-line skeleton-detail" /><view class="skeleton-line skeleton-footer" /></view>
+      <view class="skeleton-card"><view class="skeleton-line skeleton-title" /><view class="skeleton-line skeleton-detail" /><view class="skeleton-line skeleton-footer" /></view>
+    </view>
   </view>
   <view wx:elif="{{dataUnavailable}}" class="empty">
-    <view class="heading">暂时没能读取记录</view>
+    <view class="heading">{{startupUnavailableTitle || '暂时没能读取记录'}}</view>
     <view class="sub">{{error || '数据没有丢失。检查网络后重试。'}}</view>
     <button class="primary spaced" disabled="{{loading}}" bindtap="onDataRetry">{{recoveryLabel || '重新读取'}}</button>
   </view>
   <block wx:elif="{{dataReady}}">
     <view wx:if="{{error}}" class="error">{{error}}</view>
+    <view wx:if="{{readRefreshing && !writeBusy}}" class="sub read-status" role="status">正在更新今日习惯</view>
     <button wx:if="{{syncAttention}}" class="notice text-button" bindtap="onSync">{{syncText}} · 查看</button>
     <view wx:if="{{firstHabitGuide}}" class="notice first-guide"><text class="grow">{{firstHabitGuide}}</text><button class="text-button" bindtap="onDismissGuide">知道了</button></view>
     <block wx:if="{{total && chooserOpen}}">
@@ -28,6 +33,7 @@
         <text class="sub">待做 {{pending.length}} 项</text>
       </view>
       <view wx:if="{{minimum}}" class="sub summary-busy">其中 {{minimum}} 项按忙时目标打卡</view>
+      <button wx:if="{{supervisionEnabled && supervisionCount}}" class="text-button supervision-entry" bindtap="onSupervisions">我监督的 · {{supervisionOverdue ? supervisionOverdue + ' 项已过截止时间' : supervisionCount + ' 项约定'}}<view class="chevron" /></button>
       <view wx:if="{{writeBusy}}" class="sub write-status">{{writeStatus}}</view>
       <view wx:if="{{!hideQuote && total}}" class="sub quote">{{quote}}</view>
       <block wx:for="{{pending}}" wx:key="id">
@@ -35,8 +41,9 @@
       </block>
       <view wx:if="{{!pending.length}}" class="sub spaced">今天安排的都已打卡。</view>
       <view wx:if="{{completed.length}}" class="completed-group spaced">
+        <button wx:if="{{remindersEnabled}}" class="text-button" bindtap="onNextReminder">预约下一次提醒</button>
         <button id="completed-section" class="completed-header {{showCompleted ? 'is-expanded' : ''}}" bindtap="onToggleCompleted" aria-expanded="{{showCompleted}}"><text class="grow completed-heading">今日已打卡（{{completed.length}}）</text><text class="sub">{{showCompleted ? '收起' : '展开'}}</text><view class="chevron {{showCompleted ? 'up' : 'down'}}" /></button>
-        <view wx:if="{{showCompleted}}" class="completed-list"><block wx:for="{{completed}}" wx:key="id"><template is="completed-task" data="{{task: item, readOnly: dataReadOnly, writeBusy: writeBusy, taskIconColor: primary, recordingId: recordingId, recordingLabel: recordingLabel, recordingType: recordingType, largeFont: largeFont}}" /></block></view>
+        <view wx:if="{{showCompleted}}" class="completed-list"><block wx:for="{{completed}}" wx:key="id"><template is="completed-task" data="{{task: item, readOnly: dataReadOnly, writeBusy: writeBusy, taskIconColor: primary, recordingId: recordingId, recordingLabel: recordingLabel, recordingType: recordingType, largeFont: largeFont, photoEnabled: photoEnabled}}" /></block></view>
       </view>
     </block>
     <view wx:else class="today-empty">
@@ -49,4 +56,5 @@
       <button class="text-button" bindtap="onManage">{{tomorrow.remaining ? '还有 ' + tomorrow.remaining + ' 项 · 查看安排' : '管理习惯安排'}}</button>
     </view>
   </block>
+  <view wx:if="{{photoOpen}}" class="photo-backdrop" catchtap="onPhotoClose"><view class="photo-panel" catchtap="onPhotoBackdrop"><view class="row"><view class="section-title grow">{{photoTitle}}</view><button class="text-button" disabled="{{photoBusy}}" bindtap="onPhotoClose">收起</button></view><view class="sub">按约定至少一张照片 · 最多3张，每张压缩后不超过2MiB</view><view class="photo-grid spaced"><view wx:for="{{photoItems}}" wx:key="localId" class="photo-cell"><image class="photo-image" src="{{item.path}}" mode="aspectFill" /><view class="sub">{{item.status === 'ready' ? '上传已确认' : item.status === 'failed' ? '上传失败' : '正在上传'}}</view><button class="text-button" disabled="{{photoBusy || photoPending}}" data-id="{{item.localId}}" bindtap="onPhotoRemove">移除</button></view></view><button class="secondary spaced" disabled="{{photoBusy || photoPending || photoItems.length >= 3}}" bindtap="onPhotoChoose">拍照或从相册选取</button><view wx:if="{{photoError}}" class="error spaced">{{photoError}}</view><button wx:if="{{photoItems.length && !photoCanSubmit && !photoPending}}" class="text-button" disabled="{{photoBusy}}" bindtap="onPhotoRetry">重试上传</button><button class="primary spaced" disabled="{{!photoCanSubmit}}" loading="{{photoBusy}}" bindtap="onPhotoSubmit">{{photoPending ? '核对这次打卡' : '提交并打卡'}}</button><view class="sub spaced">确认上传后即可打卡。照片检查期间，监督人会看到处理中。</view></view></view>
 </view>

@@ -1,0 +1,24 @@
+<view class="page theme-{{theme}}">
+  <view class="heading">{{invite ? '好友监督约定' : '请一位熟人陪你坚持'}}</view>
+  <view wx:if="{{!enabled}}" class="notice spaced">好友监督尚未开放。</view>
+  <view wx:elif="{{loading}}" class="sub spaced">正在读取…</view>
+  <view wx:elif="{{dataUnavailable}}" class="empty"><view>{{error}}</view><button class="primary spaced" bindtap="onDataRetry">重新读取</button></view>
+  <block wx:elif="{{dataReady}}">
+    <view wx:if="{{error}}" class="error spaced">{{error}}</view>
+    <view wx:if="{{invite}}" class="card spaced"><view class="task-title">{{invite.habit.title}}</view><view class="sub spaced">平时 {{invite.habit.target}}{{invite.habit.unit}}<text wx:if="{{invite.habit.minimum}}"> · 忙时 {{invite.habit.minimum}}{{invite.habit.unit}}</text></view><view class="spaced">约定 {{invite.rules.durationDays}} 天 · {{invite.rules.deadline}} 前完成</view><view class="sub">照片{{invite.rules.photoRequired ? '至少一张' : '选填'}} · 私人备注不向监督人展示</view><view class="sub spaced">邀请48小时内有效；双方可随时结束，到期不会自动续约。</view></view>
+    <block wx:else>
+      <view class="form-field"><view class="field-label">想让好友监督哪个习惯</view><picker range="{{habits}}" range-key="title" value="{{habitIndex}}" disabled="{{busy || !habits.length}}" bindchange="onHabit"><view class="picker picker-select">{{habits.length ? habits[habitIndex].title : '还没有进行中的习惯'}}<view class="chevron down" /></view></picker></view>
+      <view class="field-label spaced">先约多久</view><view class="segments"><button wx:for="{{[7,14,30]}}" wx:key="*this" class="segment {{durationDays === item ? 'selected' : ''}}" data-days="{{item}}" disabled="{{busy}}" bindtap="onDuration">{{item}} 天</button></view>
+      <picker mode="time" value="{{deadline}}" disabled="{{busy}}" bindchange="onTime"><view class="setting-row spaced"><text class="grow">约定截止时间</text>{{deadline}}<view class="chevron down" /></view></picker>
+      <view class="setting-row"><view class="grow">至少上传一张照片<view class="sub">选填时，仍可一键打卡。</view></view><switch checked="{{photoRequired}}" disabled="{{busy}}" color="{{primary}}" bindchange="onPhoto" /></view>
+    </block>
+    <view wx:if="{{!invite || canApply}}" class="form-field"><label class="field-label" for="display-name">对方怎么称呼你（选填）</label><input id="display-name" class="input" maxlength="12" value="{{displayName}}" disabled="{{busy}}" bindinput="onName" placeholder="不填也能继续" /></view>
+    <button wx:if="{{!invite}}" class="primary spaced" disabled="{{busy || !habitId}}" loading="{{busy}}" bindtap="onCreate">生成邀请</button>
+    <button wx:elif="{{canApply}}" class="primary spaced" disabled="{{busy}}" loading="{{busy}}" bindtap="onApply">愿意陪你坚持 · 申请监督</button>
+    <block wx:elif="{{canConfirm}}"><view class="notice spaced">{{invite.applicant.displayName || '好友'}}申请监督这项习惯。确认后，对方可查看生效后的完成状态和允许展示的照片。</view><button class="primary spaced" disabled="{{busy}}" loading="{{busy}}" bindtap="onConfirm">确认这位监督人</button></block>
+    <view wx:elif="{{applied}}" class="notice spaced">已申请，等待对方确认。确认前看不到记录和照片。</view>
+    <button wx:elif="{{invite.status === 'open' || !invite.status}}" class="primary spaced" open-type="share">发给一位好友</button>
+    <view wx:else class="notice spaced">{{invite.status === 'expired' ? '邀请已过期，可重新生成邀请。' : '这份邀请已关闭。'}}</view>
+    <view wx:if="{{invite}}" class="row spaced"><button class="text-button" disabled="{{busy}}" bindtap="onRefresh">刷新申请状态</button><button class="text-button" bindtap="onList">查看好友监督</button></view>
+  </block>
+</view>

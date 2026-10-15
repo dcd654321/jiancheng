@@ -9,7 +9,7 @@ function isMissingDocument(err) {
   return /document.*(?:does not exist|not exist)/i.test(String(err && (err.errMsg || err.message))) && !/collection|permission/i.test(String(err && (err.errMsg || err.message)));
 }
 
-function createRepository(db) {
+function createRepository(db, { supervisionEnabled = false } = {}) {
   return {
     async read(owner) {
       try {
@@ -38,7 +38,10 @@ function createRepository(db) {
         const before = JSON.stringify(saved);
         const previousEpoch = saved && saved.epoch;
         const previousIds = saved && saved.state ? saved.state.habits.map(h => h.id) : [];
-        const outcome = await operation(saved);
+        // The guard and account snapshot share this native database transaction.
+        // Keep this adapter enabled after closing new invitations if records exist.
+        const adapter = supervisionEnabled ? require('./supervision-repository').createSupervisionTx(transaction, owner) : undefined;
+        const outcome = await operation(saved, adapter);
         // 单项删除保留账户代际；置顶与账户数据必须在同一事务中提交。
         if (previousEpoch && previousEpoch === outcome.account.epoch) {
           const remaining = new Set(outcome.account.state.habits.map(h => h.id));

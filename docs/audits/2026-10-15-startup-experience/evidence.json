@@ -1,0 +1,888 @@
+{
+  "level": "isolated-native-fixture",
+  "source": "D:\\codex\\coding\\jiancheng-miniprogram",
+  "fixtureRoot": "D:\\codex\\coding\\audit\\jiancheng-startup-fixture-20261015",
+  "endpoint": "ws://127.0.0.1:9438",
+  "screenshots": [
+    {
+      "file": "mist-skeleton.png",
+      "theme": "mist",
+      "state": "skeleton"
+    },
+    {
+      "file": "mist-slow.png",
+      "theme": "mist",
+      "state": "slow"
+    },
+    {
+      "file": "mist-timeout.png",
+      "theme": "mist",
+      "state": "timeout"
+    },
+    {
+      "file": "mist-retry-ready.png",
+      "theme": "mist",
+      "state": "retry-ready"
+    },
+    {
+      "file": "mist-warm-return.png",
+      "theme": "mist",
+      "state": "warm-return"
+    },
+    {
+      "file": "paper-skeleton.png",
+      "theme": "paper",
+      "state": "skeleton"
+    },
+    {
+      "file": "paper-slow.png",
+      "theme": "paper",
+      "state": "slow"
+    },
+    {
+      "file": "paper-timeout.png",
+      "theme": "paper",
+      "state": "timeout"
+    },
+    {
+      "file": "paper-retry-ready.png",
+      "theme": "paper",
+      "state": "retry-ready"
+    },
+    {
+      "file": "paper-warm-return.png",
+      "theme": "paper",
+      "state": "warm-return"
+    }
+  ],
+  "states": [
+    {
+      "theme": "mist",
+      "state": "skeleton",
+      "stack": [
+        "pages/today/index"
+      ],
+      "data": {
+        "loading": true,
+        "dataReady": false,
+        "dataUnavailable": false,
+        "startupLoadingText": "正在读取今日习惯",
+        "startupUnavailableTitle": "",
+        "readRefreshing": false,
+        "total": 0
+      },
+      "elements": {
+        ".empty .primary": null,
+        ".task": null,
+        ".read-status": null,
+        ".startup-skeleton": {
+          "size": {
+            "width": 358,
+            "height": 232
+          },
+          "text": ""
+        },
+        ".skeleton-card": {
+          "size": {
+            "width": 358,
+            "height": 110
+          },
+          "text": ""
+        },
+        ".loading-status": {
+          "size": {
+            "width": 358,
+            "height": 20
+          },
+          "text": "正在读取今日习惯"
+        }
+      },
+      "skeletonBounds": [
+        {
+          "size": {
+            "width": 358,
+            "height": 110
+          },
+          "offset": {
+            "left": 16,
+            "top": 114.09375
+          },
+          "footerSize": {
+            "width": 90.71875,
+            "height": 12
+          },
+          "footerOffset": {
+            "left": 33,
+            "top": 195.09375
+          }
+        },
+        {
+          "size": {
+            "width": 358,
+            "height": 110
+          },
+          "offset": {
+            "left": 16,
+            "top": 236.09375
+          },
+          "footerSize": {
+            "width": 90.71875,
+            "height": 12
+          },
+          "footerOffset": {
+            "left": 33,
+            "top": 317.09375
+          }
+        }
+      ],
+      "elapsedMs": 2996,
+      "session": {
+        "configured": true,
+        "connected": false,
+        "ready": false,
+        "stale": false,
+        "phase": "loading",
+        "busy": true,
+        "networkOffline": false,
+        "accountId": "",
+        "epoch": "",
+        "accountLabel": "",
+        "pending": 0,
+        "deletionPending": false,
+        "count": 0,
+        "conflict": null,
+        "lastError": "",
+        "lastErrorCode": "",
+        "lastSyncedAt": "",
+        "lastAttemptAt": 1792071454345
+      },
+      "timings": []
+    },
+    {
+      "theme": "mist",
+      "state": "slow",
+      "stack": [
+        "pages/today/index"
+      ],
+      "data": {
+        "loading": true,
+        "dataReady": false,
+        "dataUnavailable": false,
+        "startupLoadingText": "连接有些慢，正在读取今日习惯",
+        "startupUnavailableTitle": "",
+        "readRefreshing": false,
+        "total": 0
+      },
+      "elements": {
+        ".empty .primary": null,
+        ".task": null,
+        ".read-status": null,
+        ".startup-skeleton": {
+          "size": {
+            "width": 358,
+            "height": 232
+          },
+          "text": ""
+        },
+        ".skeleton-card": {
+          "size": {
+            "width": 358,
+            "height": 110
+          },
+          "text": ""
+        },
+        ".loading-status": {
+          "size": {
+            "width": 358,
+            "height": 20
+          },
+          "text": "连接有些慢，正在读取今日习惯"
+        }
+      },
+      "skeletonBounds": [
+        {
+          "size": {
+            "width": 358,
+            "height": 110
+          },
+          "offset": {
+            "left": 16,
+            "top": 114.09375
+          },
+          "footerSize": {
+            "width": 90.71875,
+            "height": 12
+          },
+          "footerOffset": {
+            "left": 33,
+            "top": 195.09375
+          }
+        },
+        {
+          "size": {
+            "width": 358,
+            "height": 110
+          },
+          "offset": {
+            "left": 16,
+            "top": 236.09375
+          },
+          "footerSize": {
+            "width": 90.71875,
+            "height": 12
+          },
+          "footerOffset": {
+            "left": 33,
+            "top": 317.09375
+          }
+        }
+      ],
+      "elapsedMs": 4032,
+      "session": {
+        "configured": true,
+        "connected": false,
+        "ready": false,
+        "stale": false,
+        "phase": "loading",
+        "busy": true,
+        "networkOffline": false,
+        "accountId": "",
+        "epoch": "",
+        "accountLabel": "",
+        "pending": 0,
+        "deletionPending": false,
+        "count": 0,
+        "conflict": null,
+        "lastError": "",
+        "lastErrorCode": "",
+        "lastSyncedAt": "",
+        "lastAttemptAt": 1792071454345
+      },
+      "timings": []
+    },
+    {
+      "theme": "mist",
+      "state": "timeout",
+      "stack": [
+        "pages/today/index"
+      ],
+      "data": {
+        "loading": false,
+        "dataReady": false,
+        "dataUnavailable": true,
+        "startupLoadingText": "",
+        "startupUnavailableTitle": "暂时没能读取习惯",
+        "readRefreshing": false,
+        "total": 0
+      },
+      "elements": {
+        ".startup-skeleton": null,
+        ".skeleton-card": null,
+        ".loading-status": null,
+        ".task": null,
+        ".read-status": null,
+        ".empty .primary": {
+          "size": {
+            "width": 358,
+            "height": 44
+          },
+          "text": "重新读取"
+        }
+      },
+      "elapsedMs": 9118,
+      "session": {
+        "configured": true,
+        "connected": false,
+        "ready": false,
+        "stale": false,
+        "phase": "offline",
+        "busy": false,
+        "networkOffline": false,
+        "accountId": "",
+        "epoch": "",
+        "accountLabel": "",
+        "pending": 0,
+        "deletionPending": false,
+        "count": 0,
+        "conflict": null,
+        "lastError": "连接时间有些长，请重新读取",
+        "lastErrorCode": "CLOUD_READ_TIMEOUT",
+        "lastSyncedAt": "",
+        "lastAttemptAt": 1792071454345
+      },
+      "timings": [
+        {
+          "stage": "startup_read",
+          "durationMs": 8015,
+          "code": "TIMEOUT"
+        }
+      ]
+    },
+    {
+      "theme": "mist",
+      "state": "retry-ready",
+      "stack": [
+        "pages/today/index"
+      ],
+      "data": {
+        "loading": false,
+        "dataReady": true,
+        "dataUnavailable": false,
+        "startupLoadingText": "",
+        "startupUnavailableTitle": "",
+        "readRefreshing": false,
+        "total": 2
+      },
+      "elements": {
+        ".startup-skeleton": null,
+        ".skeleton-card": null,
+        ".loading-status": null,
+        ".empty .primary": null,
+        ".read-status": null,
+        ".task": {
+          "size": {
+            "width": 358,
+            "height": 137.890625
+          },
+          "text": "读一会儿平时目标 30分钟忙时 10分钟已做 30分钟打卡忙时 10分钟打卡"
+        }
+      },
+      "elapsedMs": 10310,
+      "session": {
+        "configured": true,
+        "connected": true,
+        "ready": true,
+        "stale": false,
+        "phase": "ready",
+        "busy": false,
+        "networkOffline": false,
+        "accountId": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "epoch": "startup-fixture",
+        "accountLabel": "aaaaaa",
+        "pending": 0,
+        "deletionPending": false,
+        "count": 2,
+        "conflict": null,
+        "lastError": "",
+        "lastErrorCode": "",
+        "lastSyncedAt": "2026-10-15T13:37:43.507Z",
+        "lastAttemptAt": 1792071463503
+      },
+      "timings": [
+        {
+          "stage": "startup_read",
+          "durationMs": 8015,
+          "code": "TIMEOUT"
+        },
+        {
+          "stage": "state_accept",
+          "durationMs": 0,
+          "code": "OK"
+        },
+        {
+          "stage": "startup_read",
+          "durationMs": 4,
+          "code": "OK"
+        }
+      ]
+    },
+    {
+      "theme": "mist",
+      "state": "warm-return",
+      "stack": [
+        "pages/today/index"
+      ],
+      "data": {
+        "loading": false,
+        "dataReady": true,
+        "dataUnavailable": false,
+        "startupLoadingText": "",
+        "startupUnavailableTitle": "",
+        "readRefreshing": true,
+        "total": 2
+      },
+      "elements": {
+        ".startup-skeleton": null,
+        ".skeleton-card": null,
+        ".loading-status": null,
+        ".empty .primary": null,
+        ".task": {
+          "size": {
+            "width": 358,
+            "height": 137.890625
+          },
+          "text": "读一会儿平时目标 30分钟忙时 10分钟已做 30分钟打卡忙时 10分钟打卡"
+        },
+        ".read-status": {
+          "size": {
+            "width": 358,
+            "height": 19.5
+          },
+          "text": "正在更新今日习惯"
+        }
+      },
+      "elapsedMs": 13518,
+      "session": {
+        "configured": true,
+        "connected": true,
+        "ready": true,
+        "stale": false,
+        "phase": "ready",
+        "busy": true,
+        "networkOffline": false,
+        "accountId": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "epoch": "startup-fixture",
+        "accountLabel": "aaaaaa",
+        "pending": 0,
+        "deletionPending": false,
+        "count": 2,
+        "conflict": null,
+        "lastError": "",
+        "lastErrorCode": "",
+        "lastSyncedAt": "2026-10-15T13:37:43.507Z",
+        "lastAttemptAt": 1792071466821
+      },
+      "timings": [
+        {
+          "stage": "startup_read",
+          "durationMs": 8015,
+          "code": "TIMEOUT"
+        },
+        {
+          "stage": "state_accept",
+          "durationMs": 0,
+          "code": "OK"
+        },
+        {
+          "stage": "startup_read",
+          "durationMs": 4,
+          "code": "OK"
+        }
+      ]
+    },
+    {
+      "theme": "paper",
+      "state": "skeleton",
+      "stack": [
+        "pages/today/index"
+      ],
+      "data": {
+        "loading": true,
+        "dataReady": false,
+        "dataUnavailable": false,
+        "startupLoadingText": "正在读取今日习惯",
+        "startupUnavailableTitle": "",
+        "readRefreshing": false,
+        "total": 0
+      },
+      "elements": {
+        ".empty .primary": null,
+        ".task": null,
+        ".read-status": null,
+        ".startup-skeleton": {
+          "size": {
+            "width": 358,
+            "height": 232
+          },
+          "text": ""
+        },
+        ".skeleton-card": {
+          "size": {
+            "width": 358,
+            "height": 110
+          },
+          "text": ""
+        },
+        ".loading-status": {
+          "size": {
+            "width": 358,
+            "height": 20
+          },
+          "text": "正在读取今日习惯"
+        }
+      },
+      "skeletonBounds": [
+        {
+          "size": {
+            "width": 358,
+            "height": 110
+          },
+          "offset": {
+            "left": 16,
+            "top": 114.09375
+          },
+          "footerSize": {
+            "width": 90.71875,
+            "height": 12
+          },
+          "footerOffset": {
+            "left": 33,
+            "top": 195.09375
+          }
+        },
+        {
+          "size": {
+            "width": 358,
+            "height": 110
+          },
+          "offset": {
+            "left": 16,
+            "top": 236.09375
+          },
+          "footerSize": {
+            "width": 90.71875,
+            "height": 12
+          },
+          "footerOffset": {
+            "left": 33,
+            "top": 317.09375
+          }
+        }
+      ],
+      "elapsedMs": 3000,
+      "session": {
+        "configured": true,
+        "connected": false,
+        "ready": false,
+        "stale": false,
+        "phase": "loading",
+        "busy": true,
+        "networkOffline": false,
+        "accountId": "",
+        "epoch": "",
+        "accountLabel": "",
+        "pending": 0,
+        "deletionPending": false,
+        "count": 0,
+        "conflict": null,
+        "lastError": "",
+        "lastErrorCode": "",
+        "lastSyncedAt": "",
+        "lastAttemptAt": 1792071467869
+      },
+      "timings": []
+    },
+    {
+      "theme": "paper",
+      "state": "slow",
+      "stack": [
+        "pages/today/index"
+      ],
+      "data": {
+        "loading": true,
+        "dataReady": false,
+        "dataUnavailable": false,
+        "startupLoadingText": "连接有些慢，正在读取今日习惯",
+        "startupUnavailableTitle": "",
+        "readRefreshing": false,
+        "total": 0
+      },
+      "elements": {
+        ".empty .primary": null,
+        ".task": null,
+        ".read-status": null,
+        ".startup-skeleton": {
+          "size": {
+            "width": 358,
+            "height": 232
+          },
+          "text": ""
+        },
+        ".skeleton-card": {
+          "size": {
+            "width": 358,
+            "height": 110
+          },
+          "text": ""
+        },
+        ".loading-status": {
+          "size": {
+            "width": 358,
+            "height": 20
+          },
+          "text": "连接有些慢，正在读取今日习惯"
+        }
+      },
+      "skeletonBounds": [
+        {
+          "size": {
+            "width": 358,
+            "height": 110
+          },
+          "offset": {
+            "left": 16,
+            "top": 114.09375
+          },
+          "footerSize": {
+            "width": 90.71875,
+            "height": 12
+          },
+          "footerOffset": {
+            "left": 33,
+            "top": 195.09375
+          }
+        },
+        {
+          "size": {
+            "width": 358,
+            "height": 110
+          },
+          "offset": {
+            "left": 16,
+            "top": 236.09375
+          },
+          "footerSize": {
+            "width": 90.71875,
+            "height": 12
+          },
+          "footerOffset": {
+            "left": 33,
+            "top": 317.09375
+          }
+        }
+      ],
+      "elapsedMs": 4111,
+      "session": {
+        "configured": true,
+        "connected": false,
+        "ready": false,
+        "stale": false,
+        "phase": "loading",
+        "busy": true,
+        "networkOffline": false,
+        "accountId": "",
+        "epoch": "",
+        "accountLabel": "",
+        "pending": 0,
+        "deletionPending": false,
+        "count": 0,
+        "conflict": null,
+        "lastError": "",
+        "lastErrorCode": "",
+        "lastSyncedAt": "",
+        "lastAttemptAt": 1792071467869
+      },
+      "timings": []
+    },
+    {
+      "theme": "paper",
+      "state": "timeout",
+      "stack": [
+        "pages/today/index"
+      ],
+      "data": {
+        "loading": false,
+        "dataReady": false,
+        "dataUnavailable": true,
+        "startupLoadingText": "",
+        "startupUnavailableTitle": "暂时没能读取习惯",
+        "readRefreshing": false,
+        "total": 0
+      },
+      "elements": {
+        ".startup-skeleton": null,
+        ".skeleton-card": null,
+        ".loading-status": null,
+        ".task": null,
+        ".read-status": null,
+        ".empty .primary": {
+          "size": {
+            "width": 358,
+            "height": 44
+          },
+          "text": "重新读取"
+        }
+      },
+      "elapsedMs": 9151,
+      "session": {
+        "configured": true,
+        "connected": false,
+        "ready": false,
+        "stale": false,
+        "phase": "offline",
+        "busy": false,
+        "networkOffline": false,
+        "accountId": "",
+        "epoch": "",
+        "accountLabel": "",
+        "pending": 0,
+        "deletionPending": false,
+        "count": 0,
+        "conflict": null,
+        "lastError": "连接时间有些长，请重新读取",
+        "lastErrorCode": "CLOUD_READ_TIMEOUT",
+        "lastSyncedAt": "",
+        "lastAttemptAt": 1792071467869
+      },
+      "timings": [
+        {
+          "stage": "startup_read",
+          "durationMs": 8011,
+          "code": "TIMEOUT"
+        }
+      ]
+    },
+    {
+      "theme": "paper",
+      "state": "retry-ready",
+      "stack": [
+        "pages/today/index"
+      ],
+      "data": {
+        "loading": false,
+        "dataReady": true,
+        "dataUnavailable": false,
+        "startupLoadingText": "",
+        "startupUnavailableTitle": "",
+        "readRefreshing": false,
+        "total": 2
+      },
+      "elements": {
+        ".startup-skeleton": null,
+        ".skeleton-card": null,
+        ".loading-status": null,
+        ".empty .primary": null,
+        ".read-status": null,
+        ".task": {
+          "size": {
+            "width": 358,
+            "height": 137.890625
+          },
+          "text": "读一会儿平时目标 30分钟忙时 10分钟已做 30分钟打卡忙时 10分钟打卡"
+        }
+      },
+      "elapsedMs": 10403,
+      "session": {
+        "configured": true,
+        "connected": true,
+        "ready": true,
+        "stale": false,
+        "phase": "ready",
+        "busy": false,
+        "networkOffline": false,
+        "accountId": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "epoch": "startup-fixture",
+        "accountLabel": "aaaaaa",
+        "pending": 0,
+        "deletionPending": false,
+        "count": 2,
+        "conflict": null,
+        "lastError": "",
+        "lastErrorCode": "",
+        "lastSyncedAt": "2026-10-15T13:37:57.078Z",
+        "lastAttemptAt": 1792071477070
+      },
+      "timings": [
+        {
+          "stage": "startup_read",
+          "durationMs": 8011,
+          "code": "TIMEOUT"
+        },
+        {
+          "stage": "state_accept",
+          "durationMs": 1,
+          "code": "OK"
+        },
+        {
+          "stage": "startup_read",
+          "durationMs": 8,
+          "code": "OK"
+        }
+      ]
+    },
+    {
+      "theme": "paper",
+      "state": "warm-return",
+      "stack": [
+        "pages/today/index"
+      ],
+      "data": {
+        "loading": false,
+        "dataReady": true,
+        "dataUnavailable": false,
+        "startupLoadingText": "",
+        "startupUnavailableTitle": "",
+        "readRefreshing": true,
+        "total": 2
+      },
+      "elements": {
+        ".startup-skeleton": null,
+        ".skeleton-card": null,
+        ".loading-status": null,
+        ".empty .primary": null,
+        ".task": {
+          "size": {
+            "width": 358,
+            "height": 137.890625
+          },
+          "text": "读一会儿平时目标 30分钟忙时 10分钟已做 30分钟打卡忙时 10分钟打卡"
+        },
+        ".read-status": {
+          "size": {
+            "width": 358,
+            "height": 19.5
+          },
+          "text": "正在更新今日习惯"
+        }
+      },
+      "elapsedMs": 13536,
+      "session": {
+        "configured": true,
+        "connected": true,
+        "ready": true,
+        "stale": false,
+        "phase": "ready",
+        "busy": true,
+        "networkOffline": false,
+        "accountId": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "epoch": "startup-fixture",
+        "accountLabel": "aaaaaa",
+        "pending": 0,
+        "deletionPending": false,
+        "count": 2,
+        "conflict": null,
+        "lastError": "",
+        "lastErrorCode": "",
+        "lastSyncedAt": "2026-10-15T13:37:57.078Z",
+        "lastAttemptAt": 1792071480313
+      },
+      "timings": [
+        {
+          "stage": "startup_read",
+          "durationMs": 8011,
+          "code": "TIMEOUT"
+        },
+        {
+          "stage": "state_accept",
+          "durationMs": 1,
+          "code": "OK"
+        },
+        {
+          "stage": "startup_read",
+          "durationMs": 8,
+          "code": "OK"
+        }
+      ]
+    }
+  ],
+  "exceptions": [],
+  "errors": [],
+  "viewport": {
+    "windowWidth": 390,
+    "windowHeight": 671,
+    "fontSizeSetting": 16,
+    "SDKVersion": "3.17.3"
+  },
+  "initialStack": [
+    "pages/today/index"
+  ],
+  "guard": {
+    "cloudCalls": 0,
+    "networkCalls": 0,
+    "storageReads": 0,
+    "storageWrites": 0,
+    "businessWrites": 0,
+    "transportReads": 13
+  },
+  "result": "passed"
+}

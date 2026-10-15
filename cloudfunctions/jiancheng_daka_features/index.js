@@ -7,6 +7,11 @@ const { configuration, createLimitRepository, createLimiter } = require('./lib/l
 const { FIELDS, createReminderApi, createReminderRepository, createRecipientCodec } = require('./lib/reminders');
 const domain = require('./shared/habits');
 const dates = require('./shared/date');
+const { createSupervisionApi } = require('./lib/supervision');
+const { createSupervisionRepository } = require('./lib/supervision-repository');
+const { createMediaApi } = require('./lib/media');
+const { createMediaProvider } = require('./lib/media-provider');
+const { SUPERVISION_ACTIONS, MEDIA_ACTIONS, supervisionReady, mediaReady, mediaConfiguration, recordGuardReady, supervisorReminderReady } = require('./lib/supervision-gates');
 cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV });
 
 // 本小程序 AppID（公开值，非密钥）：未配置 HABIT_APP_ID 时的默认绑定。
@@ -30,6 +35,28 @@ exports.main = async event => {
   }
   try {
     const request = businessEvent(event);
+    const identity = cloud.getWXContext();
+    if (request && (SUPERVISION_ACTIONS.includes(request.action) || MEDIA_ACTIONS.includes(request.action))) {
+      const isMedia = MEDIA_ACTIONS.includes(request.action);
+      if (!(isMedia ? mediaReady(process.env) : supervisionReady(process.env))) return { ok: false, code: 'NOT_ENABLED', message: isMedia ? '照片功能尚未开放' : '好友监督尚未开放' };
+      if (request.photoRequired === true && !mediaReady(process.env)) return { ok: false, code: 'NOT_ENABLED', message: '照片功能尚未开放，请先使用选填约定' };
+      const provider = createMediaProvider(cloud, { ...mediaConfiguration(process.env), appId: process.env.HABIT_APP_ID || DEFAULT_APP_ID });
+      const db = cloud.database();
+      if (!limiter) limiter = createLimiter({ repository: createLimitRepository(db), scope: 'features', limits: configuration(process.env, 'HABIT_FEATURES_LIMIT', true, FEATURES_LIMIT_DEFAULTS) });
+      const options = { repository: createSupervisionRepository(db), provider, domain, dates, limiter,
+        allowedAppId: process.env.HABIT_APP_ID || DEFAULT_APP_ID, allowedSources: ['wx_client', 'wx_devtools'],
+        checkText: (text, openid) => provider.checkText(text, openid) };
+      return await (isMedia ? createMediaApi(options) : createSupervisionApi(options))(request, identity);
+    }
+    if (request && Object.prototype.hasOwnProperty.call(FIELDS, request.action) && (request.type || request.includeTypes === true)) {
+      if (['HABIT_REMINDERS_ENABLED', 'HABIT_REMINDER_STORAGE_READY', 'HABIT_TEMPLATE_VERIFIED', 'HABIT_TIMER_VERIFIED', 'HABIT_REMINDER_TTL_VERIFIED', ...COMMON_GATES].some(k => process.env[k] !== 'true')) return { ok: false, code: 'NOT_ENABLED', message: '提醒服务尚未开放' };
+      if (request.type === 'supervisor' && !supervisorReminderReady(process.env)) return { ok: false, code: 'NOT_ENABLED', message: '监督提醒尚未开放' };
+      const codec = createRecipientCodec(process.env.HABIT_REMINDER_KEY), db = cloud.database();
+      if (!reminderLimiter) reminderLimiter = createLimiter({ repository: createLimitRepository(db), scope: 'reminders', limits: configuration(process.env, 'HABIT_REMINDERS_LIMIT') });
+      return await createReminderApi({ repository: createReminderRepository(db, { supervisionEnabled: recordGuardReady() }), domain, dates, codec, limiter: reminderLimiter,
+        templateIds: { self: process.env.HABIT_REMINDER_TEMPLATE, supervisor: process.env.HABIT_SUPERVISOR_TEMPLATE },
+        allowedAppId: process.env.HABIT_APP_ID || DEFAULT_APP_ID, allowedSources: ['wx_client', 'wx_devtools'] })(request, identity);
+    }
     if (request && APPEARANCE_ACTIONS.includes(request.action)) {
       if (disabled('HABIT_APPEARANCE_ENABLED')) return { ok: false, code: 'NOT_ENABLED', message: '外观主题服务尚未开放' };
     } else {
@@ -39,11 +66,11 @@ exports.main = async event => {
         const codec = createRecipientCodec(process.env.HABIT_REMINDER_KEY);
         if (!reminderLimiter) reminderLimiter = createLimiter({ repository: createLimitRepository(cloud.database()), scope: 'reminders', limits: configuration(process.env, 'HABIT_REMINDERS_LIMIT') });
         return await createReminderApi({ repository: createReminderRepository(cloud.database()), domain, dates, codec, limiter: reminderLimiter,
-          templateId: process.env.HABIT_REMINDER_TEMPLATE, allowedAppId: process.env.HABIT_APP_ID || DEFAULT_APP_ID, allowedSources: ['wx_client', 'wx_devtools'] })(request, cloud.getWXContext());
+        templateId: process.env.HABIT_REMINDER_TEMPLATE, allowedAppId: process.env.HABIT_APP_ID || DEFAULT_APP_ID, allowedSources: ['wx_client', 'wx_devtools'] })(request, identity);
       }
     }
     if (!limiter) limiter = createLimiter({ repository: createLimitRepository(cloud.database()), scope: 'features', limits: configuration(process.env, 'HABIT_FEATURES_LIMIT', true, FEATURES_LIMIT_DEFAULTS) });
     return await createFeaturesApi({ repository: createFeaturesRepository(cloud.database()), domain, dates,
-      limiter, allowedAppId: process.env.HABIT_APP_ID || DEFAULT_APP_ID, allowedSources: ['wx_client', 'wx_devtools'] })(request, cloud.getWXContext());
+      limiter, allowedAppId: process.env.HABIT_APP_ID || DEFAULT_APP_ID, allowedSources: ['wx_client', 'wx_devtools'] })(request, identity);
   } catch (_) { return { ok: false, code: 'SERVICE_UNAVAILABLE', message: '服务暂不可用，请稍后重试' }; }
 };

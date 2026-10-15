@@ -6,6 +6,7 @@ function stateError(status) {
   const waiting = status.phase === 'loading' && !status.lastError;
   const error = Error(waiting ? '正在读取云端记录' : status.lastError || '云端记录暂不可用，请联网重试');
   error.code = waiting ? 'DATA_LOADING' : 'DATA_UNAVAILABLE';
+  if (status.lastErrorCode) error.causeCode = status.lastErrorCode;
   return error;
 }
 
@@ -33,10 +34,10 @@ function createWorkspaceStore(session, noteDrafts) {
     info() {
       const status = session.status();
       return {
-        source: 'cloud', ready: status.ready, phase: status.phase,
+        source: 'cloud', ready: status.ready, phase: status.phase, busy: !!status.busy,
         pending: status.pending || 0, deletionPending: !!status.deletionPending,
-        conflict: status.conflict || null, lastError: status.lastError || '',
-        lastSyncedAt: status.lastSyncedAt || '', ...syncPresentation(status)
+        conflict: status.conflict || null, lastError: status.lastError || '', lastErrorCode: status.lastErrorCode || '',
+        lastSyncedAt: status.lastSyncedAt || '', lastAttemptAt: status.lastAttemptAt || 0, ...syncPresentation(status)
       };
     },
     async clear(confirmation) {

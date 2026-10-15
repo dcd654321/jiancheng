@@ -1,1 +1,4 @@
 /* pages/reminder/index.wxss */
+.segments { display: flex; flex-wrap: wrap; gap: 8px; }
+.segment { min-height: 44px; }
+.reminder-candidate.selected { background: var(--color-soft); }

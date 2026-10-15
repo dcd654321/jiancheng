@@ -1,0 +1,4 @@
+{
+  "read": false,
+  "write": "auth != null && /^jiancheng_daka_media\\/uploads\\//.test(resource.path) && resource.openid == auth.openid"
+}

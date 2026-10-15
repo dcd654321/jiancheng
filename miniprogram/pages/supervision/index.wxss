@@ -1,0 +1,6 @@
+.supervision-card { display: block; width: 100%; text-align: left; margin-top: 12px; }
+.relation-status { margin-top: 12px; font-size: 15px; color: var(--color-primary); }
+.relation-status.overdue { color: var(--color-error); }
+.supervision-card .task-title { overflow-wrap: anywhere; }
+.segments { display: flex; flex-wrap: wrap; gap: 8px; }
+.segment { min-height: 44px; }

@@ -2,7 +2,7 @@
 
 const domain = require('../core/habits');
 const dates = require('../core/date');
-const { createCloudTransport } = require('./cloud-transport');
+const { createCloudTransport, withTimeout, recordTiming, READ_TIMEOUT_MS } = require('./cloud-transport');
 const { apiFunction } = require('../config/cloud-resources');
 
 const clone = value => JSON.parse(JSON.stringify(value));
@@ -17,10 +17,12 @@ function createCloudSession(wxApi, config, transportFactory = createCloudTranspo
   let phase = 'loading';
   let busy = false;
   let activeWork = null;
+  let activeRead = null;
   let foreground = null;
   let recovery = null;
   let networkOffline = false;
   let lastError = '';
+  let lastErrorCode = '';
   let lastSyncedAt = '';
   let lastConfirmedAt = 0;
   let lastAttemptAt = 0;
@@ -41,9 +43,9 @@ function createCloudSession(wxApi, config, transportFactory = createCloudTranspo
   const configured = config.enabled === true && envValid && sharedValid
     && (config.mode === undefined || config.mode === 'default' || config.mode === 'shared');
 
-  function invoke(event) {
-    if (!transport) transport = transportFactory(wxApi, config);
-    return transport(event);
+  function invoke(event, request) {
+    if (!transport) transport = transportFactory(wxApi, config, options);
+    return transport(event, request);
   }
 
   function validate(value) {
@@ -85,6 +87,7 @@ function createCloudSession(wxApi, config, transportFactory = createCloudTranspo
       count: snapshot ? snapshot.state.habits.length : 0,
       conflict: null,
       lastError,
+      lastErrorCode,
       lastSyncedAt,
       lastAttemptAt
     };
@@ -116,6 +119,7 @@ function createCloudSession(wxApi, config, transportFactory = createCloudTranspo
     // 确认数据仍应接收，页面须继续只读，等待联网恢复重新读取。
     phase = networkOffline ? 'offline' : 'ready';
     lastError = networkOffline ? '当前无网络，云端记录不可用' : '';
+    lastErrorCode = '';
     lastConfirmedAt = now();
     lastSyncedAt = new Date(lastConfirmedAt).toISOString();
     notify();
@@ -127,20 +131,35 @@ function createCloudSession(wxApi, config, transportFactory = createCloudTranspo
 
   async function pull() {
     lastAttemptAt = now();
+    lastErrorCode = '';
+    const startedAt = now();
+    const initialRead = !snapshot;
+    let code = 'FAILED';
+    let current = true;
     try {
-      const result = await invoke({ action: 'pull' });
+      // The deadline only covers reads. Writes retain their original pending receipt.
+      const result = await withTimeout(() => invoke({ action: 'pull' }, { isCurrent: () => current }),
+        options.readTimeoutMs || READ_TIMEOUT_MS, options);
       if (!result || result.ok !== true) {
         const error = Error(result && result.message || '云端记录暂不可用，请重试');
         error.code = result && result.code;
         throw error;
       }
+      const acceptAt = now();
       acceptSnapshot(result);
+      recordTiming(options, 'state_accept', acceptAt, 'OK');
+      code = 'OK';
       return status();
     } catch (error) {
+      if (error.code === 'CLOUD_READ_TIMEOUT' || error.code === 'CLOUD_INIT_TIMEOUT') code = 'TIMEOUT';
       phase = error.code === 'DELETE_PENDING' ? 'deleting' : 'offline';
       lastError = error.message || '云端记录暂不可用，请重试';
+      lastErrorCode = typeof error.code === 'string' && /^[A-Z_]{1,60}$/.test(error.code) ? error.code : '';
       notify();
       throw error;
+    } finally {
+      current = false;
+      if (initialRead) recordTiming(options, 'startup_read', startedAt, code);
     }
   }
 
@@ -187,7 +206,9 @@ function createCloudSession(wxApi, config, transportFactory = createCloudTranspo
           ? '删除功能暂不可用，请稍后重试。' : result.message || '云端未接受本次操作，请刷新后重试';
       }
       notify();
-      throw Error(lastError);
+      const error = Error(lastError);
+      if (typeof result.code === 'string' && /^[A-Z_]{1,60}$/.test(result.code)) error.code = result.code;
+      throw error;
     }
     try { validateReceipt(result, event); }
     catch (error) {
@@ -231,12 +252,22 @@ function createCloudSession(wxApi, config, transportFactory = createCloudTranspo
     if (!configured) {
       phase = 'offline';
       lastError = '云环境尚未配置';
+      lastErrorCode = '';
       notify();
       return status();
     }
     if (pendingEvent) return retry();
-    if (!snapshot) { phase = 'loading'; notify(); }
-    return exclusive(pull);
+    return readOnce();
+  }
+
+  function readOnce() {
+    if (activeRead) return activeRead;
+    if (!snapshot && !busy) { phase = 'loading'; lastError = ''; lastErrorCode = ''; }
+    const work = exclusive(pull);
+    activeRead = work;
+    const clear = () => { if (activeRead === work) activeRead = null; };
+    work.then(clear, clear);
+    return work;
   }
 
   function retry() {
@@ -247,7 +278,7 @@ function createCloudSession(wxApi, config, transportFactory = createCloudTranspo
   function refresh() {
     if (pendingEvent) return retry();
     if (!configured) return start();
-    return exclusive(pull);
+    return readOnce();
   }
 
   async function foregroundWork(force) {
@@ -297,6 +328,7 @@ function createCloudSession(wxApi, config, transportFactory = createCloudTranspo
       if (networkOffline) {
         phase = pendingEvent ? 'uncertain' : 'offline';
         lastError = pendingEvent ? '云端结果未确认，联网后重试' : '当前无网络，云端记录不可用';
+        lastErrorCode = '';
       }
       notify();
     },

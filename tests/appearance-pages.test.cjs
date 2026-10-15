@@ -31,6 +31,12 @@ async function setup(t, options = {}) {
     info: () => ({ ready: true, source: 'cloud', pending: 0 }),
     dispatch: async command => { const r = await f.api(f.request(await f.pull(), command)); return r.state; } };
   const app = { cloudSession: session, store, appearanceController: controller, quoteSession: { current: () => '' } };
+  let rendered = false;
+  app.onCoreContentRendered = () => {
+    if (rendered) return;
+    rendered = true;
+    void controller.ensureRead();
+  };
   global.wx = wx; global.getApp = () => app;
   const pages = []; t.after(() => pages.forEach(p => p.onUnload && p.onUnload()));
   function page(name, opts = {}) {

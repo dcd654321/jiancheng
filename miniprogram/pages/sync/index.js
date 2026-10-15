@@ -10,7 +10,7 @@ Page(ui.withLifecycle({
       const status = getApp().cloudSession.status();
       this.setData({ ...status, ...syncPresentation(status), busy: status.busy || !!this._running,
         loading: !status.ready && !status.lastError,
-        dataUnavailable: !status.ready && !!status.lastError });
+        dataUnavailable: !status.ready && !!status.lastError }, ui.coreContentRendered(this));
     } catch (err) { this.setData({ error: err.message || '暂时无法读取云端状态' }); }
   },
   async run(action) {

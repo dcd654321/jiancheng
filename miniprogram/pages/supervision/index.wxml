@@ -1,0 +1,14 @@
+<view class="page theme-{{theme}}">
+  <view class="heading">好友监督</view>
+  <view wx:if="{{!enabled}}" class="notice spaced">好友监督尚未开放。</view>
+  <view wx:elif="{{loading}}" class="sub spaced">正在读取…</view>
+  <view wx:elif="{{dataUnavailable}}" class="empty"><view>{{error}}</view><button class="primary spaced" bindtap="onDataRetry">重新读取</button></view>
+  <block wx:elif="{{dataReady}}">
+    <view class="segments spaced"><button class="segment {{tab === 'supervisor' ? 'selected' : ''}}" data-tab="supervisor" bindtap="onTab">我监督的</button><button class="segment {{tab === 'subject' ? 'selected' : ''}}" data-tab="subject" bindtap="onTab">监督我的</button></view>
+    <view wx:if="{{error}}" class="error spaced">{{error}}</view>
+    <view class="row spaced"><button class="text-button" disabled="{{busy}}" bindtap="onRefresh">刷新</button><text class="grow" /><button wx:if="{{tab === 'supervisor'}}" class="text-button" bindtap="onReminders">下一次提醒</button><button wx:else class="text-button" bindtap="onInvite">邀请好友</button></view>
+    <view wx:if="{{!visibleItems.length}}" class="empty"><view>{{tab === 'supervisor' ? '还没有要监督的习惯' : '请一个熟人，陪你坚持一件小事'}}</view><view class="sub spaced">{{tab === 'supervisor' ? '朋友邀请你后，申请并等对方确认。' : '选一个习惯，约好时间和期限，再发给朋友。'}}</view><button wx:if="{{tab === 'subject'}}" class="primary spaced" bindtap="onInvite">邀请好友监督</button></view>
+    <button wx:for="{{visibleItems}}" wx:key="supervisionId" class="card supervision-card" data-id="{{item.supervisionId}}" bindtap="onOpen"><view class="row"><view class="grow"><view class="task-title">{{item.title}}</view><view class="sub">{{tab === 'supervisor' ? item.subjectName : item.supervisorName}} · 至 {{item.endDate}}</view></view><view class="chevron" /></view><view wx:if="{{item.habitPlan}}" class="sub spaced">平时 {{item.habitPlan.target}}{{item.habitPlan.unit}}<text wx:if="{{item.habitPlan.minimum}}"> · 忙时 {{item.habitPlan.minimum}}{{item.habitPlan.unit}}</text><text wx:if="{{item.habitPlan.time}}"> · 计划 {{item.habitPlan.time}}</text></view><view class="relation-status {{item.overdue ? 'overdue' : ''}}">{{item.statusLabel || (item.overdue ? '已过约定时间 · 待完成' : item.dayLabel)}}</view><view wx:if="{{item.status === 'active' && item.today.status === 'pending'}}" class="sub">约定 {{item.today.deadline}} 前完成</view><view wx:if="{{item.status === 'scheduled'}}" class="sub">{{item.startDate}} 起查看新的记录</view></button>
+    <block wx:if="{{invitations.length}}"><view class="section-title spaced">邀请与申请</view><button wx:for="{{invitations}}" wx:key="inviteId" wx:if="{{item.role === tab}}" class="setting-row" data-id="{{item.inviteId}}" bindtap="onInvitation"><view class="grow">{{item.habit.title}}<view class="sub">{{item.role === 'supervisor' ? '已申请，等待本人确认' : item.status === 'applied' ? '有人申请，等你确认' : '等待好友申请'}}</view></view><view class="chevron" /></button></block>
+  </block>
+</view>

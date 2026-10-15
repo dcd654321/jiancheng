@@ -1,0 +1,273 @@
+{
+  "label": "states",
+  "level": "isolated-native-fixture",
+  "screenshots": [
+    {
+      "file": "states-calendar-mist.png",
+      "route": "pages/progress/index"
+    },
+    {
+      "file": "states-progress-large-mist.png",
+      "route": "pages/progress/index"
+    },
+    {
+      "file": "states-today-large-mist.png",
+      "route": "pages/today/index"
+    },
+    {
+      "file": "states-detail-more-mist.png",
+      "route": "pages/detail/index?id=habit-read"
+    },
+    {
+      "file": "states-today-long-mist.png",
+      "route": "pages/today/index"
+    },
+    {
+      "file": "states-calendar-paper.png",
+      "route": "pages/progress/index"
+    },
+    {
+      "file": "states-progress-large-paper.png",
+      "route": "pages/progress/index"
+    },
+    {
+      "file": "states-today-large-paper.png",
+      "route": "pages/today/index"
+    },
+    {
+      "file": "states-detail-more-paper.png",
+      "route": "pages/detail/index?id=habit-read"
+    },
+    {
+      "file": "states-today-long-paper.png",
+      "route": "pages/today/index"
+    }
+  ],
+  "measurements": [
+    {
+      "name": "calendar-mist",
+      "selectors": [
+        ".month-cell",
+        ".calendar-day",
+        ".month-step"
+      ],
+      "rects": [
+        {
+          "width": 54.578125,
+          "height": 73,
+          "fontSize": "15px"
+        },
+        {
+          "width": 8.796875,
+          "height": 21,
+          "fontSize": "15px"
+        },
+        {
+          "width": 60,
+          "height": 44,
+          "fontSize": "13px"
+        }
+      ]
+    },
+    {
+      "name": "progress-large-mist",
+      "selectors": [
+        ".heading",
+        ".metric",
+        ".segment"
+      ],
+      "rects": [
+        {
+          "width": 358,
+          "height": 35.75,
+          "fontSize": "27.5px"
+        },
+        {
+          "width": 328,
+          "height": 51,
+          "fontSize": "42.5px"
+        },
+        {
+          "width": 116,
+          "height": 44.25,
+          "fontSize": "17.5px"
+        }
+      ]
+    },
+    {
+      "name": "today-large-mist",
+      "selectors": [
+        ".task",
+        ".check-pill"
+      ],
+      "rects": [
+        {
+          "width": 358,
+          "height": 241.890625,
+          "fontSize": "15px"
+        },
+        {
+          "width": 328,
+          "height": 74,
+          "fontSize": "16px"
+        }
+      ]
+    },
+    {
+      "name": "detail-more-mist",
+      "selectors": [
+        ".action-header",
+        ".setting-row"
+      ],
+      "rects": [
+        {
+          "width": 356,
+          "height": 48,
+          "fontSize": "15px"
+        },
+        {
+          "width": 328,
+          "height": 48,
+          "fontSize": "15px"
+        }
+      ]
+    },
+    {
+      "name": "today-long-mist",
+      "selectors": [
+        ".task-title",
+        ".check-pill"
+      ],
+      "rects": [
+        {
+          "width": 328,
+          "height": 22.390625,
+          "fontSize": "16px"
+        },
+        {
+          "width": 160,
+          "height": 52,
+          "fontSize": "13px"
+        }
+      ]
+    },
+    {
+      "name": "calendar-paper",
+      "selectors": [
+        ".month-cell",
+        ".calendar-day",
+        ".month-step"
+      ],
+      "rects": [
+        {
+          "width": 54.578125,
+          "height": 73,
+          "fontSize": "15px"
+        },
+        {
+          "width": 8.796875,
+          "height": 21,
+          "fontSize": "15px"
+        },
+        {
+          "width": 60,
+          "height": 44,
+          "fontSize": "13px"
+        }
+      ]
+    },
+    {
+      "name": "progress-large-paper",
+      "selectors": [
+        ".heading",
+        ".metric",
+        ".segment"
+      ],
+      "rects": [
+        {
+          "width": 358,
+          "height": 35.75,
+          "fontSize": "27.5px"
+        },
+        {
+          "width": 328,
+          "height": 51,
+          "fontSize": "42.5px"
+        },
+        {
+          "width": 116,
+          "height": 44.25,
+          "fontSize": "17.5px"
+        }
+      ]
+    },
+    {
+      "name": "today-large-paper",
+      "selectors": [
+        ".task",
+        ".check-pill"
+      ],
+      "rects": [
+        {
+          "width": 358,
+          "height": 241.890625,
+          "fontSize": "15px"
+        },
+        {
+          "width": 328,
+          "height": 74,
+          "fontSize": "16px"
+        }
+      ]
+    },
+    {
+      "name": "detail-more-paper",
+      "selectors": [
+        ".action-header",
+        ".setting-row"
+      ],
+      "rects": [
+        {
+          "width": 356,
+          "height": 48,
+          "fontSize": "15px"
+        },
+        {
+          "width": 328,
+          "height": 48,
+          "fontSize": "15px"
+        }
+      ]
+    },
+    {
+      "name": "today-long-paper",
+      "selectors": [
+        ".task-title",
+        ".check-pill"
+      ],
+      "rects": [
+        {
+          "width": 328,
+          "height": 22.390625,
+          "fontSize": "16px"
+        },
+        {
+          "width": 160,
+          "height": 52,
+          "fontSize": "13px"
+        }
+      ]
+    }
+  ],
+  "exceptions": [],
+  "viewport": {
+    "windowWidth": 390,
+    "windowHeight": 671,
+    "fontSizeSetting": 16
+  },
+  "guard": {
+    "cloudCalls": 0,
+    "storageWrites": 0,
+    "businessWrites": 0
+  }
+}

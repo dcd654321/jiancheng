@@ -23,8 +23,6 @@ Page(ui.withLifecycle({
     quickMinimumEnabled: ui.quickMinimumEnabled, exampleTemplate: getHabitTemplate('read') },
   onThemeChange() { this.syncView(); },
   onShow() {
-    const controller = appearanceController();
-    if (controller) controller.ensureRead();
     this.syncView();
   },
   onHide() { this.setData({ saving: false }); },
@@ -32,18 +30,18 @@ Page(ui.withLifecycle({
   refresh() { this.syncView(); },
   syncView() {
     const controller = appearanceController();
-    if (!controller) { this.setData({ enabled: false, options: optionsFor('mist', 'mist') }); return; }
+    if (!controller) { this.setData({ enabled: false, options: optionsFor('mist', 'mist') }, ui.coreContentRendered(this)); return; }
     const view = controller.view();
     // 账户上下文变化时清空预览；同一账户内保存成功或冲突读取都不丢弃用户的选择。
     if (this._viewKey !== view.key) {
       this._viewKey = view.key; this._preview = null;
-      this.setData({ saving: false, saveError: '' });
+      this.setData({ saving: false, saveError: '' }, ui.coreContentRendered(this));
     }
     if (view.pendingTheme && !this._preview) this._preview = view.pendingTheme;
     const preview = this._preview || view.theme;
     if (!view.enabled) {
       this.setData({ enabled: false, theme: view.theme, preview: view.theme, savedTheme: view.theme,
-        options: optionsFor(view.theme, view.theme) });
+        options: optionsFor(view.theme, view.theme) }, ui.coreContentRendered(this));
       return;
     }
     const hasRevision = view.revision !== null && view.revision !== undefined;
@@ -61,7 +59,7 @@ Page(ui.withLifecycle({
       pendingTheme: view.pendingTheme || '', offline, options: optionsFor(preview, view.theme),
       primaryLabel: this.data.saving ? '正在保存…' : pending ? '重新核对' : usingSaved ? '正在使用' : '使用' + option.name,
       primaryDisabled: this.data.saving || usingSaved || offline || (!pending && !hasRevision),
-      statusNote });
+      statusNote }, ui.coreContentRendered(this));
   },
   isOffline() {
     try {

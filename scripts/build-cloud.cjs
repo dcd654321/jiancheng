@@ -1,6 +1,6 @@
 const fs = require('node:fs');
 const path = require('node:path');
-const { apiFunction, featuresFunction, publicShareFunction, reminderTickFunction, planFunction } = require('../miniprogram/config/cloud-resources');
+const { apiFunction, featuresFunction, publicShareFunction, reminderTickFunction, planFunction, mediaCallbackFunction, mediaTickFunction } = require('../miniprogram/config/cloud-resources');
 const root = path.resolve(__dirname, '..');
 const files = [
   ['server/handler.js', 'lib/handler.js'],
@@ -25,6 +25,16 @@ const featureFiles = [
   ['server/cloudbase-repository.js', 'lib/cloudbase-repository.js'],
   ['miniprogram/core/habits.js', 'shared/habits.js'],
   ['miniprogram/core/date.js', 'shared/date.js']
+];
+const supervisionFiles = [
+  ['server/supervision.js', 'lib/supervision.js'],
+  ['server/supervision-repository.js', 'lib/supervision-repository.js'],
+  ['server/supervision-gates.js', 'lib/supervision-gates.js'],
+  ['server/supervision-config.js', 'lib/supervision-config.js'],
+  ['server/media.js', 'lib/media.js'],
+  ['server/media-provider.js', 'lib/media-provider.js'],
+  ['server/media-worker.js', 'lib/media-worker.js'],
+  ['server/next-reminders.js', 'lib/next-reminders.js']
 ];
 const check = process.argv.includes('--check');
 let count = 0;
@@ -56,14 +66,16 @@ function emit(destination, bytes) {
   }
   count++;
 }
-for (const [name, entries] of [[apiFunction, files],
-  [featuresFunction, [['server/entries/features.js', 'index.js'], ...featureFiles]],
+for (const [name, entries] of [[apiFunction, [['server/entries/api.js', 'index.js'], ...files, ...supervisionFiles]],
+  [featuresFunction, [['server/entries/features.js', 'index.js'], ...featureFiles, ...supervisionFiles]],
   [publicShareFunction, [['server/entries/public-share.js', 'index.js'], ...featureFiles]],
-  [reminderTickFunction, [['server/entries/reminder-tick.js', 'index.js'], ['server/reminder-worker.js','lib/reminder-worker.js'], ...featureFiles]],
+  [reminderTickFunction, [['server/entries/reminder-tick.js', 'index.js'], ['server/reminder-worker.js','lib/reminder-worker.js'], ...featureFiles, ...supervisionFiles]],
+  [mediaCallbackFunction, [['server/entries/media-callback.js', 'index.js'], ...featureFiles, ...supervisionFiles]],
+  [mediaTickFunction, [['server/entries/media-tick.js', 'index.js'], ['server/reminder-worker.js','lib/reminder-worker.js'], ...featureFiles, ...supervisionFiles]],
   [planFunction, [['server/entries/plan.js','index.js']]]]) {
   const output = path.join(root, 'cloudfunctions', name);
   for (const [source, target] of entries) emit(path.join(output, target), fs.readFileSync(path.join(root, source)));
-  if ([featuresFunction,reminderTickFunction].includes(name)) emit(path.join(output,'lib/reminders.js'),fs.readFileSync(path.join(root,'server/reminders.js')));
+  if ([apiFunction,featuresFunction,reminderTickFunction,mediaCallbackFunction,mediaTickFunction].includes(name)) emit(path.join(output,'lib/reminders.js'),fs.readFileSync(path.join(root,'server/reminders.js')));
   if (name === planFunction) {
     const { version } = JSON.parse(fs.readFileSync(path.join(root, 'cloudfunctions', apiFunction, 'package.json'), 'utf8'));
     const manifest = { name: name.replaceAll('_', '-'), version, private: true, main: 'index.js' };

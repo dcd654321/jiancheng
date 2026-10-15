@@ -1,0 +1,6 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    { "name": "qa-preview", "runtimeExecutable": "npx", "runtimeArgs": ["-y", "http-server", "qa/devtools-20260930/preview", "-p", "8731", "--silent"], "port": 8731 }
+  ]
+}

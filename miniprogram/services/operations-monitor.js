@@ -33,9 +33,10 @@ function createOperationsMonitor(wxApi, config, options = {}) {
       if (!valid(context)) return Promise.resolve(false);
       try {
         if (!transport) transport = (options.transportFactory || createCloudTransport)(wxApi, { ...config, functionName: monitorFunction });
+        const sentAt = now();
         return Promise.resolve(transport({ ...event, accountGeneration: context.accountGeneration })).then(result => {
           if (!result || result.ok !== true) throw Error('MONITOR_REJECTED');
-          return true;
+          return { result, sentAt };
         });
       } catch (error) { return Promise.reject(error); }
     };
@@ -56,18 +57,33 @@ function createOperationsMonitor(wxApi, config, options = {}) {
       });
     });
   }
+  function ensureStarted(session) {
+    if (!valid(session)) return Promise.resolve(false);
+    if (session.startConfirmed) return Promise.resolve(true);
+    if (session.startWork) return session.startWork;
+    session.startWork = send({ action: 'trackUsage', eventType: 'start', sessionId: session.sessionId, elapsedMs: 0 }, session).then(accepted => {
+      if (!accepted || !valid(session)) return false;
+      const data = accepted.result.data;
+      const hasServerAnchor = data && Number.isSafeInteger(data.startedAtMs) && Number.isSafeInteger(data.observedAtMs)
+        && Number.isSafeInteger(data.elapsedMs) && data.startedAtMs >= 0 && data.observedAtMs >= data.startedAtMs
+        && data.observedAtMs - data.startedAtMs <= 36 * 60 * 60 * 1000 && data.elapsedMs >= 0 && data.elapsedMs <= 36 * 60 * 60 * 1000;
+      // Pair a local request timestamp with the server's session age. A start
+      // retry may acknowledge an existing session; its original anchor stays.
+      session.startedAt = accepted.sentAt - (hasServerAnchor ? data.observedAtMs - data.startedAtMs : 0);
+      session.startConfirmed = true;
+      return true;
+    }).then(accepted => { session.startWork = null; return accepted; });
+    return session.startWork;
+  }
   function usage(kind, session) {
     if (!valid(session)) return;
     const reportedAt = now();
     if (kind === 'start') {
-      session.startWork = send({ action: 'trackUsage', eventType: kind, sessionId: session.sessionId, elapsedMs: 0 }, session).then(accepted => {
-        session.startedAt = now(); return accepted;
-      });
-      session.usageWork = session.startWork;
+      session.usageWork = ensureStarted(session);
       return;
     }
-    session.usageWork = session.usageWork.then(async accepted => {
-      if (!accepted || !valid(session)) return false;
+    session.usageWork = session.usageWork.then(async () => {
+      if (!valid(session) || !await ensureStarted(session)) return false;
       const elapsedMs = Math.min(86400000, Math.max(0, Math.floor(reportedAt - session.startedAt)));
       await send({ action: 'trackUsage', eventType: kind, sessionId: session.sessionId, elapsedMs }, session);
       return true;

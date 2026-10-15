@@ -41,10 +41,11 @@
         </view>
       </view>
     </view>
-    <button wx:if="{{featuresEnabled && current.status === 'active' && current.minimum}}" class="text-button" bindtap="onSharePlan">分享这份轻计划</button>
+    <button wx:if="{{supervisionEnabled && current.status === 'active'}}" class="text-button spaced" bindtap="onInviteSupervision">邀请一位好友监督</button>
+    <button wx:if="{{sharingEnabled && current.status === 'active' && current.minimum}}" class="text-button" bindtap="onSharePlan">分享这份轻计划</button>
     <view class="section-title">近28天有安排的记录</view>
     <view wx:if="{{!history.length}}" class="sub">这段时间还没有安排，不算漏做。</view>
-    <view wx:else class="card list-card"><view wx:for="{{visibleHistory}}" wx:key="date" class="setting-row"><view class="grow">{{item.date}}<view class="sub">{{item.goal}}</view></view><text class="sub">{{item.status}}</text></view></view>
+    <view wx:else class="card list-card"><view wx:for="{{visibleHistory}}" wx:key="date" class="setting-row"><view class="grow">{{item.date}}<view class="sub">{{item.goal}}</view></view><text class="sub">{{item.status}}</text><button wx:if="{{photoEnabled && item.done}}" class="text-button" data-date="{{item.date}}" bindtap="onPhotoRecord">照片</button></view></view>
     <button wx:if="{{history.length > 7}}" class="text-button spaced" bindtap="onToggleHistory">{{showHistory ? '收起历史' : '查看全部 ' + history.length + ' 天'}}</button>
   </block>
 </view>

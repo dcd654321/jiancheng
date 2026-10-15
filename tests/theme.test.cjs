@@ -65,9 +65,9 @@ test('active styles avoid the loud legacy colors and keep the accessibility floo
     assert.ok(!styles.includes(legacy), '不再整片使用旧版浓色 ' + legacy);
   }
   assert.match(styles, /--color-busy-bg/);
-  // 重复同一处说明：正文16、辅助14、按钮最小高度48、触区44。
-  assert.match(styles, /\.sub \{ font-size: 14px/);
-  assert.match(styles, /\.heading \{ font-size: 26px/);
+  // 紧凑视觉规格：正文15、辅助13、页标题22，触区仍保持44。
+  assert.match(styles, /\.sub \{ font-size: 13px/);
+  assert.match(styles, /\.heading \{ font-size: 22px/);
   assert.match(styles, /min-height: 44px/);
   assert.match(styles, /min-height: 48px/);
   for (const page of ['today', 'edit', 'progress', 'mine', 'appearance']) {

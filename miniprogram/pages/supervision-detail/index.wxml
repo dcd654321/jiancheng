@@ -1,0 +1,22 @@
+<view class="page theme-{{theme}}">
+  <view wx:if="{{!enabled}}" class="notice">好友监督尚未开放。</view><view wx:elif="{{loading}}" class="sub">正在读取约定…</view>
+  <view wx:elif="{{dataUnavailable}}" class="empty"><view>{{error}}</view><button class="primary spaced" bindtap="onDataRetry">重新读取</button></view>
+  <block wx:elif="{{dataReady}}"><view wx:if="{{error}}" class="error spaced">{{error}}</view><button class="text-button" disabled="{{busy}}" bindtap="onRefresh">刷新状态</button>
+    <block wx:if="{{item}}"><view class="heading">{{item.title}}</view><view class="sub spaced">{{item.subjectName}} · {{item.supervisorName}}<view>{{item.startDate}} 至 {{item.endDate}}</view></view>
+      <view wx:if="{{item.habitPlan}}" class="sub spaced">平时 {{item.habitPlan.target}}{{item.habitPlan.unit}}<text wx:if="{{item.habitPlan.minimum}}"> · 忙时 {{item.habitPlan.minimum}}{{item.habitPlan.unit}}</text><view>{{schedule}}{{item.habitPlan.time ? ' · 计划 ' + item.habitPlan.time : ''}}</view></view>
+      <view class="card spaced"><view class="section-title">{{item.status === 'active' ? dayLabel : item.status === 'scheduled' ? '明日起监督' : item.status === 'expired' ? '约定已到期' : item.status === 'ended' ? '约定已结束' : '约定已失效'}}</view><view wx:if="{{item.status === 'active'}}" class="sub">{{item.today.deadline}} 前完成 · 照片{{item.today.photoRequired ? '至少一张' : '选填'}}</view><view wx:if="{{item.status === 'scheduled'}}" class="sub">{{item.startDate}} 起查看新的记录，今天的原有记录不会开放。</view><view wx:if="{{item.today.photosPending}}" class="sub spaced">照片处理中，打卡已确认。</view><view wx:if="{{item.today.photosUnavailable}}" class="sub spaced">部分照片暂不能展示{{item.role === 'subject' ? '，可更换照片' : ''}}。</view></view>
+      <view wx:if="{{item.pendingRules}}" class="notice spaced">明日起：{{item.pendingRules.deadline}} 前完成 · 照片{{item.pendingRules.photoRequired ? '至少一张' : '选填'}}</view>
+      <block wx:if="{{item.status === 'active' || item.status === 'scheduled'}}"><button class="secondary spaced" bindtap="onReminder">预约下一次提醒</button>
+        <button wx:if="{{item.role === 'subject'}}" class="setting-row spaced" bindtap="onEditRules"><text class="grow">调整约定</text><text class="sub">明天生效</text><view class="chevron" /></button>
+        <view wx:if="{{editingRules}}" class="card spaced"><picker mode="time" value="{{deadline}}" disabled="{{busy}}" bindchange="onTime"><view class="setting-row">截止时间<text class="grow" />{{deadline}}<view class="chevron down" /></view></picker><view class="setting-row"><text class="grow">至少一张照片</text><switch color="{{primary}}" checked="{{photoRequired}}" disabled="{{busy}}" bindchange="onPhoto" /></view><button class="primary spaced" disabled="{{busy}}" bindtap="onSaveRules">保存，明天生效</button></view>
+        <button class="text-button danger spaced" disabled="{{busy}}" bindtap="onEnd">结束监督</button>
+      </block>
+      <view class="section-title spaced">约定期间的记录</view><view wx:if="{{!days.length}}" class="sub">还没有可查看的记录。</view>
+      <view wx:for="{{days}}" wx:for-item="day" wx:key="date" class="record-day">
+        <view class="row"><view class="grow">{{day.date}}<view class="sub">{{day.label}}{{day.photosPending ? ' · 照片处理中' : day.photosUnavailable ? ' · 照片暂不能展示' : ''}}</view></view><button wx:if="{{day.photoCount || day.photosPending || day.photosUnavailable}}" class="text-button" data-date="{{day.date}}" bindtap="onPhotos">看照片</button></view>
+        <button wx:if="{{day.canEncourage && !day.encouraged}}" class="text-button" disabled="{{busy}}" data-date="{{day.date}}" bindtap="onEncourage">为这次坚持点个赞</button>
+        <view wx:if="{{day.encouraged}}" class="sub">{{item.role === 'subject' ? '好友为这次坚持点了赞' : '已送出鼓励'}}</view>
+      </view>
+    </block>
+  </block>
+</view>

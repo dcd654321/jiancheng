@@ -3,9 +3,14 @@ const { present } = require('../../core/share-presentation');
 const { APP_NAME } = require('../../config/brand');
 const { themeSnapshot, appearanceController } = require('../../services/appearance');
 const dates = require('../../core/date');
+const ui = require('../../services/ui');
 Page({
   data: { loading: true, error: '', view: null, mine: false, active: false, busy: false, adopting: false, adoptError: '', adoptNeedsSync: false, statusLabel: '', expires: '', shareEnabled: false, theme: 'mist' },
   onLoad(options = {}) { this._id = options.id || ''; this.setData({ mine: options.mine === '1' }); },
+  contentRendered(version = this._version) {
+    const rendered = ui.coreContentRendered(this, () => !this.data.loading);
+    return () => { if (version === this._version) rendered(); };
+  },
   bindTheme() {
     const controller = appearanceController();
     if (controller && !this._themeUnsubscribe) this._themeUnsubscribe = controller.subscribe(() => {
@@ -15,17 +20,21 @@ Page({
   },
   onShow() {
     this._visible = true; this._gone = false;
+    const showVersion = this._showVersion = (this._showVersion || 0) + 1;
     this.bindTheme();
     const session = getApp().cloudSession;
     if (this._unsubscribe) this._unsubscribe();
-    if (this.data.mine && session && session.subscribe) this._unsubscribe = session.subscribe(() => {
-      if (!this._visible || !this._context) return;
-      let key = ''; try { key = features().contextKey(); } catch (_) { /* lost account context */ }
-      if (key !== this._context) {
-        this._version = (this._version || 0) + 1; this._snapshot = null;
-        this.setData({ view: null, active: false, shareEnabled: false, error: '账户数据已变化，请重新打开分享' });
-        if (wx.hideShareMenu) wx.hideShareMenu();
+    if (session && session.subscribe) this._unsubscribe = session.subscribe(() => {
+      if (!this._visible || this._gone || this._showVersion !== showVersion) return;
+      if (this.data.mine && this._context) {
+        let key = ''; try { key = features().contextKey(); } catch (_) { /* lost account context */ }
+        if (key !== this._context) {
+          this._version = (this._version || 0) + 1; this._snapshot = null;
+          this.setData({ view: null, active: false, shareEnabled: false, error: '账户数据已变化，请重新打开分享' });
+          if (wx.hideShareMenu) wx.hideShareMenu();
+        }
       }
+      if (!this.data.loading) this.setData({ loading: false }, this.contentRendered());
     });
     return this.load();
   },
@@ -46,10 +55,10 @@ Page({
       const capabilities = service.status();
       const shareEnabled = active && capabilities.publicShares;
       this.setData({ loading: false, view: present(result.publicSnapshot), active, shareEnabled,
-        expires: dates.today(Date.parse(result.expiresAt)), statusLabel: { revoked: '已撤回 · 仅本人可回看', expired: '已到期 · 仅本人可回看' }[result.status] || '公开快照' });
+        expires: dates.today(Date.parse(result.expiresAt)), statusLabel: { revoked: '已撤回 · 仅本人可回看', expired: '已到期 · 仅本人可回看' }[result.status] || '公开快照' }, this.contentRendered(version));
       if (shareEnabled && wx.showShareMenu) wx.showShareMenu({ menus: capabilities.timeline ? ['shareAppMessage','shareTimeline'] : ['shareAppMessage'] });
     } catch (err) {
-      if (this._visible && !this._gone && version === this._version) this.setData({ loading: false, error: err.message || '分享暂不可用' });
+      if (this._visible && !this._gone && version === this._version) this.setData({ loading: false, error: err.message || '分享暂不可用' }, this.contentRendered(version));
     }
   },
   onRetry() { return this.load(); },

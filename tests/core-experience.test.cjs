@@ -84,11 +84,12 @@ test('progress empty state offers creation without calendar scaffolding', () => 
   assert.match(markup, /未打卡/);
 });
 
-test('cold start opens today directly and shows a brief reading state without a welcome screen', () => {
+test('cold start opens today directly with decorative skeletons and staged reading feedback', () => {
   const markup = mini('pages/today/index.wxml');
   const loading = markup.match(/<view wx:if="\{\{loading\}\}"[\s\S]*?(?=<view wx:elif="\{\{dataUnavailable\}\}")/);
   assert.ok(loading, '等待、读取失败和账户就绪仍是不同状态');
-  assert.match(loading[0], /正在读取/);
+  assert.match(loading[0], /startupLoadingText/);
+  assert.equal((loading[0].match(/class="skeleton-card"/g) || []).length, 2);
   assert.doesNotMatch(loading[0], /loadingGreeting|loadingNote|loading-hero|loading-bars|loading-example|bindtap="onCreate"|bindtap="onAssistant"/);
   assert.match(markup, /wx:elif="\{\{dataReady\}\}"/);
   assert.match(markup, /暂时没能读取记录/);

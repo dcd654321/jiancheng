@@ -35,5 +35,5 @@ test('every registered page opens without writes or model requests and resolves 
       }
     }
   }
-  assert.equal(pages.length, 13); assert.equal(requests.length, 0); assert.equal(writes.length, 0);
+  assert.equal(pages.length, require('../miniprogram/app.json').pages.length); assert.equal(requests.length, 0); assert.equal(writes.length, 0);
 });

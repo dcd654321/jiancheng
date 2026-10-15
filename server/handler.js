@@ -9,7 +9,7 @@ const MAX_ACCOUNT_BYTES = 700 * 1024;
 const MAX_RECEIPTS = 256;
 
 /** Repository must atomically commit account state and receipts together. Identity is trusted server context, never event fields. */
-function createApi({ repository, domain, dates, clock = () => new Date(), newEpoch = () => crypto.randomUUID(), allowedAppId, allowedSources, cleanup, reportOperations, monitorLogger = () => {} }) {
+function createApi({ repository, domain, dates, clock = () => new Date(), newEpoch = () => crypto.randomUUID(), allowedAppId, allowedSources, cleanup, recordMutationGuard, reportOperations, monitorLogger = () => {} }) {
   function validateAccount(account) {
     if (!Number.isSafeInteger(account.revision) || account.revision < 0 || !Array.isArray(account.receipts) || account.receipts.length > MAX_RECEIPTS || !/^[a-zA-Z0-9_-]{1,100}$/.test(account.epoch || '')) throw Error('ACCOUNT_CORRUPT');
     domain.validateState(account.state);
@@ -35,7 +35,7 @@ function createApi({ repository, domain, dates, clock = () => new Date(), newEpo
       }
       const fingerprint = event.action === 'pull' ? null : hash(canonical(event));
       let metric = null;
-      const outcome = await repository.transact(owner, async saved => {
+      const outcome = await repository.transact(owner, async (saved, tx) => {
         metric = null;
         let account = saved || { epoch: newEpoch(), revision: 0, state: domain.emptyState(), receipts: [], updatedAt: now.toISOString() };
         validateAccount(account);
@@ -71,6 +71,7 @@ function createApi({ repository, domain, dates, clock = () => new Date(), newEpo
 
         if (event.action === 'purge') {
           const oldEpoch = account.epoch;
+          if (recordMutationGuard) await recordMutationGuard(tx, account, { type: 'purge' }, serverDate, now);
           account = { epoch: newEpoch(), revision: account.revision + 1, state: domain.emptyState(), receipts: [], updatedAt: now.toISOString(),
             ...(cleanup ? { cleanupPending: true, cleanupSourceEpoch: oldEpoch } : {}) };
         } else {
@@ -81,6 +82,8 @@ function createApi({ repository, domain, dates, clock = () => new Date(), newEpo
             domain.validateState(candidate.state);
           } catch (err) { fail('INVALID_COMMAND', err.message); }
           if (candidate.state.habits.length > 100) fail('CAPACITY_LIMIT', '当前最多保留100个习惯，请先整理已有习惯');
+          if (recordMutationGuard) await recordMutationGuard(tx, account, event.command, event.operationDate, now);
+          else if (Object.prototype.hasOwnProperty.call(event.command, 'mediaIds')) fail('NOT_ENABLED', '照片打卡尚未开放');
           // Delayed completion remains an explicitly self-reported record, never proof for rewards.
           if (isRecord) {
             const r = candidate.state.records[`${event.command.id}@${event.operationDate}`];

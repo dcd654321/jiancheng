@@ -19,6 +19,7 @@ test('已安装真实SDK合同：运营事件先读账户与事件，再update/i
     const db = cloud.database(), Db = db._db.constructor, original = Db.reqClass;
     const calls = [], identity = { APPID: 'wx58e61dffcbfa4249', OPENID: 'sdk-monitor-user', SOURCE: 'wx_client' };
     let transactionId = 0, conflict = true;
+    const pendingTransactions = new Set();
     Db.reqClass = class {
       async send(action, params = {}) {
         calls.push({ action, params });
@@ -29,6 +30,10 @@ test('已安装真实SDK合同：运营事件先读账户与事件，再update/i
           if (conflict) { conflict = false; return { code: 'DATABASE_TRANSACTION_CONFLICT', message: 'write conflict' }; }
           return { ok: 1 };
         }
+        if (pendingTransactions.has(params.transactionId)) throw Error('ResourceUnavailable.TransactionBusy');
+        pendingTransactions.add(params.transactionId);
+        await new Promise(resolve => setImmediate(resolve));
+        pendingTransactions.delete(params.transactionId);
         assert.ok(['jiancheng_daka_accounts', 'monitor_events'].includes(params.collectionName));
         if (action === 'database.getDocument') return { data: { list: params.collectionName === 'jiancheng_daka_accounts'
           ? [JSON.stringify({ payload: { epoch: 'sdk-epoch' }, _monitorFence: 4 })] : [] } };
