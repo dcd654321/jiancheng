@@ -2,7 +2,7 @@
 const crypto = require('node:crypto');
 const { ApiError, fail, validateEvent, canonical, RECORD_TYPES } = require('./protocol');
 const { authenticate } = require('./identity');
-const { confirmedMetric, settleMonitoring } = require('./operations-monitor');
+const { confirmedMetric, discoveryMetric, settleMonitoring } = require('./operations-monitor');
 const hash = value => crypto.createHash('sha256').update(value).digest('hex');
 const clone = value => JSON.parse(JSON.stringify(value));
 const MAX_ACCOUNT_BYTES = 700 * 1024;
@@ -16,7 +16,7 @@ function createApi({ repository, domain, dates, clock = () => new Date(), newEpo
   }
   function snapshot(account, owner, serverDate) {
     return { accountId: owner, epoch: account.epoch, revision: account.revision, state: clone(account.state), serverDate,
-      capabilities: { monitorSessionMetadata: true } };
+      capabilities: { monitorSessionMetadata: true, searchAttributionMetadata: typeof reportOperations === 'function' } };
   }
   return async function handle(event, identity) {
     try {
@@ -26,6 +26,15 @@ function createApi({ repository, domain, dates, clock = () => new Date(), newEpo
       validateEvent(event);
       const now = clock();
       const serverDate = dates.today(now.getTime());
+      if (event.action === 'trackDiscovery') {
+        if (typeof reportOperations !== 'function') return { ok: true, accepted: false };
+        let accepted = false;
+        const settled = await settleMonitoring(async () => {
+          const result = await reportOperations(discoveryMetric(event), identity, now);
+          accepted = result !== false && !(result && result.result === false);
+        }, monitorLogger);
+        return { ok: true, accepted: settled && accepted };
+      }
       if (event.action === 'pull' && typeof repository.read === 'function') {
         const account = await repository.read(owner);
         if (account) {

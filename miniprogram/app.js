@@ -21,7 +21,7 @@ const lifecycle = createAppLifecycle({
 });
 
 App({
-  onLaunch() { return lifecycle.onLaunch(this); },
-  onShow() { return lifecycle.onShow(this); },
+  onLaunch(options) { return lifecycle.onLaunch(this, options); },
+  onShow(options) { return lifecycle.onShow(this, options); },
   onHide() { return lifecycle.onHide(this); }
 });

@@ -12,6 +12,16 @@ function object(value, allowed) {
 function string(value, min, max) { return typeof value === 'string' && value.length >= min && value.length <= max; }
 function token(value) { return string(value, 1, 100) && /^[a-zA-Z0-9_-]+$/.test(value) && !['__proto__', 'constructor', 'prototype'].includes(value); }
 const RECORD_TYPES = ['complete', 'completeMinimum', 'undo', 'simplify', 'restore', 'note'];
+function validateSearchSource(source) {
+  object(source, ['visitId', 'scene', 'route', 'templateKey']);
+  if (!token(source.visitId) || !Number.isInteger(source.scene) ||
+    !(source.scene === 0 || (source.scene >= 1000 && source.scene <= 1999 && source.scene !== 1129)) ||
+    !['pages/discover/index', 'pages/template/index', 'pages/today/index'].includes(source.route) ||
+    (own(source, 'templateKey') && !['read', 'walk', 'study', 'tidy'].includes(source.templateKey)) ||
+    (source.route === 'pages/template/index' && !own(source, 'templateKey')) ||
+    (source.route === 'pages/today/index' && own(source, 'templateKey'))) fail('INVALID_REQUEST', '公开来源字段无效');
+  return source;
+}
 const COMMAND_FIELDS = {
   create: ['type', 'id', 'startDate', 'plan'], edit: ['type', 'id', 'baseRevision', 'plan'],
   status: ['type', 'id', 'baseRevision', 'status'], cancelFuture: ['type', 'id', 'baseRevision'],
@@ -38,8 +48,16 @@ function validateCommand(command) {
   return command;
 }
 function validateEvent(event) {
-  object(event, ['action', 'operationId', 'expectedRevision', 'epoch', 'operationDate', 'command', 'confirmation', 'sessionId']);
-  if (!['pull', 'mutate', 'purge'].includes(event.action)) fail('INVALID_REQUEST', '不支持的请求');
+  object(event, ['action', 'operationId', 'expectedRevision', 'epoch', 'operationDate', 'command', 'confirmation', 'sessionId', 'kind', 'searchSource']);
+  if (!['pull', 'mutate', 'purge', 'trackDiscovery'].includes(event.action)) fail('INVALID_REQUEST', '不支持的请求');
+  if (event.action === 'trackDiscovery') {
+    object(event, ['action', 'epoch', 'kind', 'searchSource']);
+    if (!token(event.epoch) || !['entry', 'public_view', 'template_selected'].includes(event.kind)) fail('INVALID_REQUEST', '公开事件无效');
+    validateSearchSource(event.searchSource);
+    if (event.kind !== 'entry' && event.searchSource.route === 'pages/today/index') fail('INVALID_REQUEST', '公开事件路由无效');
+    if (event.kind === 'template_selected' && !event.searchSource.templateKey) fail('INVALID_REQUEST', '模板来源无效');
+    return event;
+  }
   if (event.action === 'pull') {
     if (Object.keys(event).length !== 1) fail('INVALID_REQUEST', '读取请求不接受用户身份或筛选条件');
     return event;
@@ -47,10 +65,14 @@ function validateEvent(event) {
   if (!token(event.operationId) || !token(event.epoch) || !Number.isSafeInteger(event.expectedRevision) || event.expectedRevision < 0) fail('INVALID_REQUEST', '同步请求标识或版本无效');
   if (!string(event.operationDate, 10, 10)) fail('INVALID_REQUEST', '操作日期无效');
   if (event.action === 'mutate') {
-    if (own(event, 'confirmation')) fail('INVALID_REQUEST', '操作字段无效');
+    if (own(event, 'confirmation') || own(event, 'kind')) fail('INVALID_REQUEST', '操作字段无效');
     if (own(event, 'sessionId') && !token(event.sessionId)) fail('INVALID_REQUEST', '会话标识无效');
     validateCommand(event.command);
-  } else if (event.confirmation !== 'DELETE_MY_DATA' || own(event, 'command') || own(event, 'sessionId')) fail('CONFIRMATION_REQUIRED', '删除数据需要明确确认');
+    if (own(event, 'searchSource')) {
+      if (!['create', 'complete', 'completeMinimum'].includes(event.command.type)) fail('INVALID_REQUEST', '该操作不接受公开来源');
+      validateSearchSource(event.searchSource);
+    }
+  } else if (event.confirmation !== 'DELETE_MY_DATA' || own(event, 'command') || own(event, 'sessionId') || own(event, 'searchSource') || own(event, 'kind')) fail('CONFIRMATION_REQUIRED', '删除数据需要明确确认');
   return event;
 }
 function canonical(value) {
@@ -58,4 +80,4 @@ function canonical(value) {
   if (value && typeof value === 'object') return '{' + Object.keys(value).sort().map(key => JSON.stringify(key) + ':' + canonical(value[key])).join(',') + '}';
   return JSON.stringify(value);
 }
-module.exports = { ApiError, fail, validateEvent, canonical, token, RECORD_TYPES };
+module.exports = { ApiError, fail, validateEvent, validateSearchSource, canonical, token, RECORD_TYPES };

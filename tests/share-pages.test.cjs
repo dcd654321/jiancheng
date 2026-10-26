@@ -91,7 +91,7 @@ test('pinning changes only ordering, ignores rest days and falls back when prefe
   assert.deepEqual(today.data.pending.map(task=>task.id),['walk']);
 });
 test('static app invitation does not create a public snapshot and all new page event bindings exist',async t=>{
-  const h=await setup(t),mine=await h.page('mine');assert.equal(mine.onShareAppMessage().path,'/pages/today/index');assert.equal(h.f.shares.size,0);
+  const h=await setup(t),mine=await h.page('mine');assert.equal(mine.onShareAppMessage().path,'/pages/discover/index');assert.equal(h.f.shares.size,0);
   for(const name of ['share-create','share-list','share-view']) {
     const p=await h.page(name);const markup=fs.readFileSync(path.resolve(__dirname,'../miniprogram/pages/'+name+'/index.wxml'),'utf8');
     for(const match of markup.matchAll(/bind(?:tap|change)="(\w+)"/g))assert.equal(typeof p[match[1]],'function',name+':'+match[1]);

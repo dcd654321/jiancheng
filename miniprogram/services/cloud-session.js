@@ -4,6 +4,7 @@ const domain = require('../core/habits');
 const dates = require('../core/date');
 const { createCloudTransport, withTimeout, recordTiming, READ_TIMEOUT_MS } = require('./cloud-transport');
 const { apiFunction } = require('../config/cloud-resources');
+const { normalizeSource } = require('./search-attribution');
 
 const clone = value => JSON.parse(JSON.stringify(value));
 const ACCOUNT = /^[a-f0-9]{64}$/;
@@ -239,13 +240,32 @@ function createCloudSession(wxApi, config, transportFactory = createCloudTranspo
     }
     const operationId = newId();
     if (!EPOCH.test(operationId)) throw Error('操作标识无效');
-    let sessionId;
+    let sessionId, searchSource;
     if (command && snapshot.capabilities && snapshot.capabilities.monitorSessionMetadata === true && typeof options.sessionId === 'function') {
       try { sessionId = options.sessionId(); } catch (_) { /* Optional telemetry must not prevent a business intent. */ }
     }
+    if (command && ['create', 'complete', 'completeMinimum'].includes(command.type) && snapshot.capabilities &&
+      snapshot.capabilities.searchAttributionMetadata === true && typeof options.searchSource === 'function') {
+      try { searchSource = normalizeSource(options.searchSource()); } catch (_) { /* Optional attribution cannot prevent saving. */ }
+    }
     return { action, operationId, epoch: snapshot.epoch, expectedRevision: snapshot.revision,
       operationDate, ...(command ? { command: clone(command) } : { confirmation }),
-      ...(typeof sessionId === 'string' && EPOCH.test(sessionId) ? { sessionId } : {}) };
+      ...(typeof sessionId === 'string' && EPOCH.test(sessionId) ? { sessionId } : {}),
+      ...(searchSource ? { searchSource } : {}) };
+  }
+
+  async function trackDiscovery(kind, source) {
+    const searchSource = normalizeSource(source), context = snapshot;
+    if (!context || !status().ready || !context.capabilities || context.capabilities.searchAttributionMetadata !== true || !searchSource ||
+      !['entry', 'public_view', 'template_selected'].includes(kind) || (kind === 'template_selected' && !searchSource.templateKey) ||
+      (kind !== 'entry' && searchSource.route === 'pages/today/index')) return false;
+    const isCurrent = () => !!snapshot && snapshot.accountId === context.accountId && snapshot.epoch === context.epoch &&
+      !status().deletionPending && status().ready;
+    try {
+      const result = await withTimeout(() => invoke({ action: 'trackDiscovery', epoch: context.epoch, kind, searchSource }, { isCurrent }),
+        options.readTimeoutMs || READ_TIMEOUT_MS, options);
+      return isCurrent() && !!result && result.ok === true && result.accepted === true;
+    } catch (_) { return false; }
   }
 
   async function start() {
@@ -339,6 +359,7 @@ function createCloudSession(wxApi, config, transportFactory = createCloudTranspo
     // 用于刷新失败后的只读呈现；不落磁盘、不构成离线写队列。
     staleRead() { return snapshot && phase === 'offline' ? clone(snapshot.state) : null; },
     dispatch,
+    trackDiscovery,
     purge
   };
 }

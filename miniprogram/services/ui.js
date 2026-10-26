@@ -165,6 +165,8 @@ function withLifecycle(definition, { watchDate = true } = {}) {
     onShow() {
       this._gone = false;
       this._visible = true;
+      const app = getApp();
+      if (typeof app.ensureAccountReady === 'function') app.ensureAccountReady();
       const showVersion = this._showVersion = (this._showVersion || 0) + 1;
       this._day = date.today();
       this.bindTheme();

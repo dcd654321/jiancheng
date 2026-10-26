@@ -1,0 +1,52 @@
+{
+  "level": "isolated-native-final-source-smoke",
+  "root": "D:\\codex\\coding\\jiancheng-miniprogram",
+  "fixtureRoot": "D:\\codex\\coding\\jiancheng-miniprogram\\qa\\local\\search-discovery-project-2026-10-18T03-11-06-125Z",
+  "out": "D:\\codex\\coding\\jiancheng-miniprogram\\docs\\audits\\2026-10-18-search-discovery",
+  "port": 9439,
+  "createdAt": "2026-10-18T03:11:06.276Z",
+  "appOnlyFixture": true,
+  "exceptions": [],
+  "stage": "confirmation",
+  "confirmation": {
+    "route": "pages/edit/index",
+    "compact": true,
+    "title": "读一会儿",
+    "target": "30",
+    "minimum": "10",
+    "saved": false
+  },
+  "guard": {
+    "cloudCalls": 0,
+    "networkCalls": 0,
+    "storageReads": 0,
+    "storageWrites": 0,
+    "businessWrites": 0
+  },
+  "result": "passed",
+  "titleCalls": [
+    {
+      "title": "渐成习惯打卡",
+      "at": 1792293131369,
+      "stack": [
+        "pages/discover/index"
+      ]
+    },
+    {
+      "title": "阅读打卡计划 · 渐成",
+      "at": 1792293134137,
+      "stack": [
+        "pages/template/index"
+      ]
+    },
+    {
+      "title": "确认新习惯",
+      "at": 1792293136811,
+      "stack": [
+        "pages/template/index",
+        "pages/edit/index"
+      ]
+    }
+  ],
+  "steadyWaitMs": 4000
+}

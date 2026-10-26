@@ -3,6 +3,7 @@ const actions = require('../../services/data-actions');
 const { features } = require('../../services/features-client');
 const { themeSnapshot } = require('../../services/appearance');
 const { APP_NAME } = require('../../config/brand');
+const { OVERVIEW_PATH, STATIC_SHARE_IMAGE } = require('../../config/search-pages');
 const { supervision } = require('../../services/supervision-client');
 Page(ui.withLifecycle({
   ...actions,
@@ -19,7 +20,7 @@ Page(ui.withLifecycle({
   onReminders() { wx.navigateTo({url:'/pages/reminder/index'}); },
   onShares() { wx.navigateTo({ url: '/pages/share-list/index' }); },
   onSupervisions() { wx.navigateTo({ url: '/pages/supervision/index' }); },
-  onShareAppMessage() { return { title: APP_NAME + '：忙的时候，也能做一点', path: '/pages/today/index', imageUrl: '/assets/share/cover.png' }; },
+  onShareAppMessage() { return { title: APP_NAME + '：忙的时候，也能做一点', path: OVERVIEW_PATH, imageUrl: STATIC_SHARE_IMAGE }; },
   onData() { wx.navigateTo({ url: '/pages/data/index' }); },
   onHelp() {
     const smallGoalHelp = ui.quickMinimumEnabled

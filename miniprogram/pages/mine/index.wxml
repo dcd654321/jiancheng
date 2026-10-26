@@ -14,4 +14,5 @@
     <view class="group"><view class="group-label">一起进步</view><button wx:if="{{supervisionEnabled}}" class="setting-row" bindtap="onSupervisions"><view class="grow">好友监督<view class="sub">我监督的 · 监督我的</view></view><view class="chevron" /></button><button class="setting-row" open-type="share"><text class="grow">分享小程序</text><view class="chevron" /></button><button wx:if="{{sharingEnabled}}" class="setting-row" bindtap="onShares"><view class="grow">我的分享<view class="sub">创建、回看与撤回公开内容</view></view><view class="chevron" /></button></view>
     <view class="group"><button class="setting-row" open-type="feedback"><text class="grow">意见与问题反馈</text><view class="chevron" /></button></view>
   </block>
+  <view class="group"><view class="group-label">了解渐成</view><navigator class="setting-row" url="/pages/discover/index"><view class="grow">习惯入门与模板<view class="sub">阅读、步行、学习和整理的小计划</view></view><view class="chevron" /></navigator></view>
 </view>

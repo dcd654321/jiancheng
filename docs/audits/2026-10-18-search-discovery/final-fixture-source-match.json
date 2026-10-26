@@ -1,0 +1,9 @@
+{
+  "fixtureRoot": "D:\\codex\\coding\\jiancheng-miniprogram\\qa\\local\\search-discovery-project-2026-10-18T03-11-06-125Z",
+  "comparedFiles": 136,
+  "expectedReplacements": [
+    "app.js",
+    "config/cloud.js"
+  ],
+  "differences": []
+}

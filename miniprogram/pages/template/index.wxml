@@ -1,0 +1,40 @@
+<view class="page public-page theme-{{theme}}">
+  <block wx:if="{{template}}">
+    <view class="public-eyebrow">渐成官方模板 · {{template.category}}</view>
+    <view class="heading">{{template.title}}</view>
+    <view class="public-body">{{template.summary}}</view>
+
+    <view class="public-goals">
+      <view class="public-goal"><view class="sub">平时目标</view><view class="public-goal-value">{{template.target}}<text class="public-goal-unit">{{template.unit}}</text></view></view>
+      <text class="public-plus">+</text>
+      <view class="public-goal busy"><view class="sub">忙时目标</view><view class="public-goal-value">{{template.minimum}}<text class="public-goal-unit">{{template.unit}}</text></view></view>
+    </view>
+    <view class="public-body sub">{{template.audience}}</view>
+
+    <view class="public-use">
+      <view wx:if="{{error}}" class="error">{{error}}</view>
+      <button class="primary" bindtap="onUseTemplate">使用这个模板</button>
+      <view class="sub public-confirm-note">下一步可调整目标与执行日期，再确认创建。</view>
+    </view>
+
+    <view class="section-title">先把目标安排清楚</view>
+    <view class="public-panel"><view class="public-template-title">{{template.habitTitle}}</view><view class="public-body">{{template.suggestion}}</view></view>
+
+    <view class="section-title">可以这样开始</view>
+    <view class="public-panel">
+      <view wx:for="{{template.steps}}" wx:key="*this" class="public-step"><text class="public-step-number">{{index + 1}}</text><view class="public-body">{{item}}</view></view>
+    </view>
+    <view class="public-example public-body">{{template.example}}</view>
+
+    <view class="section-title">也可以看看</view>
+    <view class="public-panel">
+      <navigator wx:for="{{related}}" wx:key="key" url="{{item.path}}" open-type="redirect" class="setting-row" hover-class="public-link-hover"><text class="grow">{{item.title}}</text><view class="chevron" /></navigator>
+    </view>
+    <button class="secondary public-share" open-type="share">分享这份计划</button>
+  </block>
+  <view wx:else class="empty">
+    <view class="heading">暂时找不到这个模板</view>
+    <view class="sub">可以回到习惯入门，重新选择阅读、步行、复习或整理计划。</view>
+  </view>
+  <navigator url="{{overviewPath}}" open-type="redirect" class="public-overview-link" hover-class="public-link-hover">了解渐成与全部模板</navigator>
+</view>

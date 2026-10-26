@@ -3,6 +3,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs'), path = require('node:path');
 const { createFeaturesClient } = require('../miniprogram/services/features-client');
 const domain = require('../miniprogram/core/habits');
+const { OVERVIEW_ROUTE, TEMPLATE_ROUTE } = require('../miniprogram/config/search-pages');
 test('every registered page opens without writes or model requests and resolves its event handlers', async t => {
   const pages = [], requests = [], writes = [];
   const status = { ready: true, accountId: 'a'.repeat(64), epoch: 'fixture-epoch', phase: 'ready', pending: 0 };
@@ -23,7 +24,12 @@ test('every registered page opens without writes or model requests and resolves 
     const p = { ...definition, data: structuredClone(definition.data),
       setData(value, callback) { Object.assign(this.data, value); if (callback) callback(); } };
     pages.push(p); if (p.onLoad) p.onLoad({}); if (p.onShow) await p.onShow(); await new Promise(setImmediate);
-    assert.equal(p.data.loading, false, route);
+    if (route === OVERVIEW_ROUTE || route === TEMPLATE_ROUTE) {
+      assert.equal(p.data.theme, 'mist', route);
+      assert.equal(p.data.loading, undefined, 'public content has no account-loading state');
+      if (route === OVERVIEW_ROUTE) assert.equal(p.data.templates.length, 4);
+      else assert.equal(p.data.template, null, 'missing template key uses the safe public fallback');
+    } else assert.equal(p.data.loading, false, route);
     const markup = fs.readFileSync(file.replace(/\.js$/, '.wxml'), 'utf8');
     for (const match of markup.matchAll(/(?:bind|catch)(?::)?(?:tap|change|input|focus|blur|keyboardheightchange)="(\w+)"/g)) {
       assert.equal(typeof p[match[1]], 'function', route + ': ' + match[1]);

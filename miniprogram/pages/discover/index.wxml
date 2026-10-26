@@ -1,0 +1,33 @@
+<view class="page public-page theme-{{theme}}">
+  <view class="public-eyebrow">认识渐成</view>
+  <view class="heading">{{intro.title}}</view>
+  <view class="public-tagline">{{intro.tagline}}</view>
+  <view class="public-body">{{intro.description}}</view>
+
+  <view class="public-goals">
+    <view class="public-goal"><view class="sub">平时目标</view><view class="public-goal-label">按自己的计划做</view></view>
+    <text class="public-plus">+</text>
+    <view class="public-goal busy"><view class="sub">忙时目标</view><view class="public-goal-label">留一点继续的空间</view></view>
+  </view>
+
+  <view class="section-title">从一个小计划开始</view>
+  <view class="sub">先看看具体做法。进入确认页后，还可以调整成适合自己的目标。</view>
+  <view class="public-template-list">
+    <navigator wx:for="{{templates}}" wx:key="key" url="{{item.path}}" open-type="redirect" class="public-template-link" hover-class="public-link-hover" aria-label="查看{{item.title}}">
+      <view class="public-template-top"><text class="public-template-title">{{item.title}}</text><view class="chevron" /></view>
+      <view class="public-template-summary sub">{{item.summary}}</view>
+      <view class="public-template-goals"><text>平时 {{item.target}}{{item.unit}}</text><text class="chip-lime">忙时 {{item.minimum}}{{item.unit}}</text></view>
+    </navigator>
+  </view>
+
+  <view class="section-title">怎么使用</view>
+  <view class="public-panel">
+    <view wx:for="{{intro.steps}}" wx:key="*this" class="public-step"><text class="public-step-number">{{index + 1}}</text><view class="public-body">{{item}}</view></view>
+  </view>
+
+  <view class="section-title">开始前了解一下</view>
+  <view class="public-panel public-faq">
+    <view wx:for="{{intro.questions}}" wx:key="question" class="public-question"><view class="public-template-title">{{item.question}}</view><view class="public-body sub">{{item.answer}}</view></view>
+  </view>
+  <button class="secondary public-share" open-type="share">把渐成分享给朋友</button>
+</view>

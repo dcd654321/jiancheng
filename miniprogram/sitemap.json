@@ -1,4 +1,8 @@
 {
-  "desc": "本机开发阶段不提供搜索索引；正式上线另行核验",
-  "rules": [{ "action": "disallow", "page": "*" }]
+  "desc": "仅官方介绍与模板可收录；私人记录、账户及用户分享均不提供索引",
+  "rules": [
+    { "action": "allow", "page": "pages/discover/index", "params": [], "matching": "exact" },
+    { "action": "allow", "page": "pages/template/index", "params": ["key"], "matching": "exact" },
+    { "action": "disallow", "page": "*" }
+  ]
 }

@@ -31,7 +31,15 @@ function confirmedMetric(before, after, event) {
   }
   if (!type) return null;
   if (event.sessionId) payload.sessionId = event.sessionId;
+  if (event.searchSource) payload.searchSource = { ...event.searchSource };
   return { type, payload, accountGeneration: event.epoch, eventId: hash(event.epoch + '|' + event.operationId + '|' + type) };
+}
+
+function discoveryMetric(event) {
+  const source = event.searchSource;
+  return { type: event.kind === 'entry' ? 'discovery_entry' : event.kind === 'public_view' ? 'discovery_page_view' : 'discovery_template_selected',
+    payload: { ...source }, accountGeneration: event.epoch,
+    eventId: hash(['discovery', event.epoch, source.visitId, event.kind, source.route, source.templateKey || ''].join('|')) };
 }
 
 async function optionalDocument(reference) {
@@ -117,4 +125,4 @@ function createOperationsCleanup(db) {
     }
   };
 }
-module.exports = { confirmedMetric, createOperationsReporter, createOperationsCleanup, settleMonitoring, MONITOR_WAIT_MS };
+module.exports = { confirmedMetric, discoveryMetric, createOperationsReporter, createOperationsCleanup, settleMonitoring, MONITOR_WAIT_MS };
