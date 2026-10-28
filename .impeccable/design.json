@@ -1,0 +1,228 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-27T13:07:22.947Z",
+  "title": "Design System: 渐成习惯打卡 · 清爽日程融合",
+  "extensions": {
+    "colorMeta": {
+      "primary": {
+        "role": "primary",
+        "displayName": "沉稳叶绿"
+      },
+      "busy-bg": {
+        "role": "primary",
+        "displayName": "浅薄荷"
+      },
+      "busy-fill": {
+        "role": "primary",
+        "displayName": "柔薄荷"
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "林下深墨"
+      },
+      "secondary": {
+        "role": "neutral",
+        "displayName": "叶影辅助文字"
+      },
+      "page": {
+        "role": "neutral",
+        "displayName": "白色页面"
+      },
+      "surface": {
+        "role": "neutral",
+        "displayName": "白色内容面"
+      },
+      "line": {
+        "role": "neutral",
+        "displayName": "淡叶分隔线"
+      },
+      "paper-primary": {
+        "role": "primary",
+        "displayName": "暖纸棕"
+      },
+      "paper-page": {
+        "role": "neutral",
+        "displayName": "暖纸"
+      },
+      "paper-ink": {
+        "role": "neutral",
+        "displayName": "褐墨"
+      },
+      "error": {
+        "role": "error",
+        "displayName": "土红错误色"
+      }
+    },
+    "typographyMeta": {
+      "headline": {
+        "displayName": "页面标题",
+        "purpose": "主页面标题与详情习惯名；长习惯名采用独立行高。"
+      },
+      "body": {
+        "displayName": "日常正文",
+        "purpose": "表单、主要按钮与日常说明。"
+      },
+      "task": {
+        "displayName": "待做任务",
+        "purpose": "时间线任务名；窄屏与大字号由页面样式适配。"
+      },
+      "task-completed": {
+        "displayName": "完成任务",
+        "purpose": "降低已完成行的视觉重量，同时保留详情入口和撤销。"
+      },
+      "label": {
+        "displayName": "辅助说明",
+        "purpose": "任务目标、提示、列表辅助文本。"
+      },
+      "caption": {
+        "displayName": "紧凑标注",
+        "purpose": "时间、日期、图例和忙时入口。"
+      },
+      "navigation-title": {
+        "displayName": "返回行标题",
+        "purpose": "详情和添加/编辑的返回行页面名称。"
+      }
+    },
+    "shadows": [
+      {
+        "name": "field-focus",
+        "value": "inset 0 0 0 2px var(--color-primary)",
+        "purpose": "原生输入框与选择器焦点，不改变布局。"
+      },
+      {
+        "name": "primary-pressed",
+        "value": "inset 0 0 0 999px rgba(0, 0, 0, .14)",
+        "purpose": "共用主按钮按下时保留原主色并内侧加深。"
+      },
+      {
+        "name": "calendar-selection",
+        "value": "inset 0 0 0 2px var(--color-ink)",
+        "purpose": "月历选择日期的轮廓；深色完成格改用 on-primary。"
+      }
+    ],
+    "motion": [
+      {
+        "name": "startup-breathe",
+        "value": "1.8s ease-in-out 4",
+        "purpose": "今日页读取骨架有限次呼吸；prefers-reduced-motion 时关闭。"
+      },
+      {
+        "name": "confirmed-stamp",
+        "value": ".26s ease-out both",
+        "purpose": "既有完成勾形的短状态反馈，不作为云端确认依据。"
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "compact-page-and-timeline-max",
+        "value": "359px"
+      },
+      {
+        "name": "edit-week-wrap-max",
+        "value": "379px"
+      },
+      {
+        "name": "legacy-task-stack-max",
+        "value": "340px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "主要按钮",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "真实提交和主要动作；最小 44px，编辑提交为 48px。",
+      "html": "<button class=\"ds-primary\">保存习惯</button>",
+      "css": ".ds-primary{min-height:44px;padding:9px 14px;border:0;border-radius:10px;background:var(--color-primary,#246446);color:var(--color-on-primary,#fff);font:600 15px/1.5 -apple-system,BlinkMacSystemFont,\"PingFang SC\",\"Microsoft YaHei\",sans-serif}.ds-primary:hover,.ds-primary:active{box-shadow:inset 0 0 0 999px rgba(0,0,0,.14)}.ds-primary:focus-visible{outline:2px solid var(--color-primary,#246446);outline-offset:3px}.ds-primary:disabled{background:var(--color-soft,#f7faf7);color:var(--color-secondary,#587065);box-shadow:none}"
+    },
+    {
+      "name": "次要按钮",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "描边次要动作，保留原生最小操作热区。",
+      "html": "<button class=\"ds-secondary\">返回今日</button>",
+      "css": ".ds-secondary{min-height:44px;padding:9px 14px;border:1px solid var(--color-control-border,#7a897d);border-radius:10px;background:var(--color-surface,#fff);color:var(--color-ink,#18382c);font:600 15px/1.5 -apple-system,BlinkMacSystemFont,\"PingFang SC\",\"Microsoft YaHei\",sans-serif}.ds-secondary:hover,.ds-secondary:active{background:var(--color-soft,#f7faf7)}.ds-secondary:focus-visible{outline:2px solid var(--color-primary,#246446);outline-offset:3px}.ds-secondary:disabled{background:var(--color-soft,#f7faf7);color:var(--color-secondary,#587065);border-color:var(--color-line,#dce7df)}"
+    },
+    {
+      "name": "添加入口",
+      "kind": "button",
+      "refersTo": "button-add",
+      "description": "页标题旁的低强调创建入口。",
+      "html": "<button class=\"ds-add\">添加习惯</button>",
+      "css": ".ds-add{min-height:44px;padding:8px 12px;border:1px solid var(--color-accent-border,#b6cdbf);border-radius:10px;background:var(--color-busy-bg,#edf6ef);color:var(--color-primary,#246446);font:400 13px/1.5 -apple-system,BlinkMacSystemFont,\"PingFang SC\",\"Microsoft YaHei\",sans-serif}.ds-add:hover,.ds-add:active{background:var(--color-soft,#f7faf7)}.ds-add:focus-visible{outline:2px solid var(--color-primary,#246446);outline-offset:3px}"
+    },
+    {
+      "name": "编辑字段",
+      "kind": "input",
+      "refersTo": "input-edit",
+      "description": "48px 原生编辑字段；名称长度仍由现有表单限制。",
+      "html": "<label class=\"ds-field-label\" for=\"ds-habit\">习惯名称</label><input class=\"ds-field\" id=\"ds-habit\" value=\"读一会儿\" maxlength=\"20\" />",
+      "css": ".ds-field-label{display:block;margin-bottom:8px;color:var(--color-ink,#18382c);font:600 14px/1.5 -apple-system,BlinkMacSystemFont,\"PingFang SC\",\"Microsoft YaHei\",sans-serif}.ds-field{height:48px;width:100%;padding:0 12px;border:1px solid var(--color-field-border,#c6d8cc);border-radius:9px;background:var(--color-surface,#fff);color:var(--color-ink,#18382c);font:400 15px/1.5 -apple-system,BlinkMacSystemFont,\"PingFang SC\",\"Microsoft YaHei\",sans-serif;caret-color:var(--color-primary,#246446)}.ds-field:hover{border-color:var(--color-control-border,#7a897d)}.ds-field:focus-visible{outline:0;box-shadow:inset 0 0 0 2px var(--color-primary,#246446)}.ds-field[aria-invalid=true]{border-color:var(--color-error,#a23c2e);box-shadow:inset 0 0 0 1px var(--color-error,#a23c2e)}"
+    },
+    {
+      "name": "忙时标签",
+      "kind": "chip",
+      "refersTo": "chip-busy",
+      "description": "非交互状态标签；不以颜色单独表达忙时。",
+      "html": "<span class=\"ds-chip\">忙时</span>",
+      "css": ".ds-chip{display:inline-flex;align-items:center;padding:2px 7px;border-radius:5px;background:var(--color-busy-bg,#edf6ef);color:var(--color-busy-text,#246446);font:500 13px/1.5 -apple-system,BlinkMacSystemFont,\"PingFang SC\",\"Microsoft YaHei\",sans-serif}"
+    },
+    {
+      "name": "共用内容容器",
+      "kind": "card",
+      "refersTo": "container",
+      "description": "其他功能页的纯色浅面和细边界；今日时间线不用卡片包裹。",
+      "html": "<div class=\"ds-container\"><strong class=\"ds-container-title\">记录与数据</strong><p class=\"ds-container-copy\">查看当前记录的状态。</p></div>",
+      "css": ".ds-container{padding:14px;border:1px solid var(--color-line,#dce7df);border-radius:10px;background:var(--color-surface,#fff);color:var(--color-ink,#18382c);font:400 15px/1.5 -apple-system,BlinkMacSystemFont,\"PingFang SC\",\"Microsoft YaHei\",sans-serif}.ds-container-title{font-size:16px;font-weight:600}.ds-container-copy{margin:6px 0 0;font-size:13px;color:var(--color-secondary,#587065)}"
+    },
+    {
+      "name": "原生三项导航",
+      "kind": "nav",
+      "description": "原生 TabBar 的标签与颜色映射示意，实际导航和图标由微信绘制。",
+      "html": "<nav class=\"ds-nav\" aria-label=\"主导航\"><button class=\"ds-nav-item ds-nav-current\" aria-current=\"page\">今日</button><button class=\"ds-nav-item\">进度</button><button class=\"ds-nav-item\">我的</button></nav>",
+      "css": ".ds-nav{display:flex;background:var(--color-page,#fff);border-top:1px solid var(--color-line,#dce7df)}.ds-nav-item{flex:1;min-height:44px;border:0;background:transparent;color:var(--color-secondary,#587065);font:400 13px/1.5 -apple-system,BlinkMacSystemFont,\"PingFang SC\",\"Microsoft YaHei\",sans-serif}.ds-nav-current{color:var(--color-primary,#246446);font-weight:600}.ds-nav-item:hover,.ds-nav-item:active{background:var(--color-soft,#f7faf7)}.ds-nav-item:focus-visible{outline:2px solid var(--color-primary,#246446);outline-offset:-2px}"
+    },
+    {
+      "name": "今日时间线待做行",
+      "kind": "custom",
+      "refersTo": "timeline-checkin",
+      "description": "42px 时间、16px 轨道与固定 104px 动作列；示例为视觉片段，不提交数据。",
+      "html": "<div class=\"ds-row\"><time class=\"ds-time\">12:30</time><div class=\"ds-rail\"><span class=\"ds-dot\"></span></div><div class=\"ds-slot\"><div class=\"ds-task\"><button class=\"ds-task-title\">读一会儿<svg viewBox=\"0 0 8 12\" width=\"6\" height=\"9\" aria-hidden=\"true\"><path d=\"m1 1 5 5-5 5\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\"/></svg></button><div class=\"ds-task-meta\">平时 20分钟</div></div><div class=\"ds-actions\"><button class=\"ds-checkin\">打卡</button><button class=\"ds-busy\">忙时 2分钟打卡</button></div></div></div>",
+      "css": ".ds-row{display:grid;grid-template-columns:42px 16px minmax(0,1fr);min-height:102px;color:var(--color-ink,#18382c);font-family:-apple-system,BlinkMacSystemFont,\"PingFang SC\",\"Microsoft YaHei\",sans-serif}.ds-time{padding-top:17px;font-size:12px;line-height:20px;font-variant-numeric:tabular-nums;color:var(--color-secondary,#587065)}.ds-rail{display:flex;justify-content:center;padding-top:23px}.ds-dot{width:7px;height:7px;border:1.5px solid var(--color-control-border,#7a897d);border-radius:50%;background:var(--color-page,#fff)}.ds-slot{display:grid;grid-template-columns:minmax(0,1fr) 104px;gap:10px;min-height:102px;padding:6px 0 7px;border-bottom:1px solid var(--color-line,#dce7df)}.ds-task{min-width:0}.ds-task-title{display:inline-flex;align-items:center;gap:5px;min-width:44px;min-height:44px;padding:5px 0;border:0;background:transparent;color:var(--color-ink,#18382c);text-align:left;font-size:16px;line-height:1.45;font-weight:650;overflow-wrap:anywhere}.ds-task-title svg{color:var(--color-secondary,#587065);flex-shrink:0}.ds-task-meta{font-size:13px;color:var(--color-secondary,#587065);overflow-wrap:anywhere}.ds-checkin,.ds-busy{width:104px;min-height:44px;border:0}.ds-checkin{padding:8px 3px;border-radius:10px;background:var(--color-primary,#246446);color:var(--color-on-primary,#fff);font-size:14px;font-weight:600}.ds-busy{padding:8px 0;border-radius:8px;background:transparent;color:var(--color-primary,#246446);font-size:12px}.ds-checkin:hover,.ds-checkin:active{box-shadow:inset 0 0 0 999px rgba(0,0,0,.14)}.ds-busy:hover,.ds-busy:active,.ds-task-title:hover{background:var(--color-soft,#f7faf7)}.ds-checkin:focus-visible,.ds-busy:focus-visible,.ds-task-title:focus-visible{outline:2px solid var(--color-primary,#246446);outline-offset:2px}@media(max-width:359px){.ds-row{grid-template-columns:36px 14px minmax(0,1fr)}.ds-slot{grid-template-columns:minmax(0,1fr) 100px;gap:7px}.ds-checkin,.ds-busy{width:100px}.ds-task-title{font-size:15px}}"
+    }
+  ],
+  "narrative": {
+    "northStar": "清爽日程融合",
+    "overview": "用户选定 A 的颜色与优化后的 C 时间线。原生页面以白色内容面、克制的绿色状态、细分隔线和稳定的动作列承载日常记录。密度紧凑，任务名称与打卡动作先被看到，次要设置逐步展开。\n\n这是已实施客户端的设计记录。薄雾绿为默认主题，暖纸白只替换语义颜色，两者共用页面结构、尺寸和交互。顶部导航与今日、进度、我的三项底栏由微信原生组件承载。",
+    "keyCharacteristics": [
+      "真实安排组成时间线，完成项默认展开，置顶任务独立呈现。",
+      "颜色、文字和形状共同表达原目标、忙时、未打卡与无安排。",
+      "紧凑字号与间距配合至少 44px 的主要操作热区。",
+      "表现层沿用云端确认与结果核对，不以动画或本机假状态宣告保存。"
+    ],
+    "rules": [
+      {
+        "name": "The Semantic Theme Rule",
+        "body": "页面使用语义颜色变量；同一状态在两个主题中保留相同文字、形状与布局。",
+        "section": "colors"
+      },
+      {
+        "name": "The Flat Content Rule",
+        "body": "时间线和日常列表用内容对齐与分隔线建立层级，不叠加阴影卡片。",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do 使用语义 token 与同一套双主题布局。",
+      "Do 保持任务、时间轨道与动作列的对齐，长内容允许增高。",
+      "Do 用文字和形状补充状态色，主要操作保留至少 44px 热区。",
+      "Do 依据云端确认显示保存结果，给待核对、错误、加载和空状态明确入口。"
+    ],
+    "donts": [
+      "Don't 将原目标、忙时目标、只调整今天与明天生效合并为同一个动作。",
+      "Don't 为对齐截图裁剪真实任务、历史或已启用入口。",
+      "Don't 将隔离模拟器、HTML 原型或自动测试写成真实云、真机、双账户或用户验收。"
+    ]
+  }
+}

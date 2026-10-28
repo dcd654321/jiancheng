@@ -1,0 +1,1298 @@
+{
+  "label": "final-320-long-mist",
+  "level": "isolated-wechat-devtools-native",
+  "theme": "mist",
+  "simulatedFontSizeSetting": 16,
+  "variant": "long",
+  "screenshots": [
+    {
+      "file": "final-320-long-mist-today.png",
+      "route": "pages/today/index",
+      "viewport": {
+        "windowWidth": 320,
+        "windowHeight": 456,
+        "screenWidth": 320,
+        "screenHeight": 568,
+        "statusBarHeight": 20,
+        "fontSizeSetting": 16
+      }
+    },
+    {
+      "file": "final-320-long-mist-edit.png",
+      "route": "pages/edit/index",
+      "viewport": {
+        "windowWidth": 320,
+        "windowHeight": 456,
+        "screenWidth": 320,
+        "screenHeight": 568,
+        "statusBarHeight": 20,
+        "fontSizeSetting": 16
+      }
+    },
+    {
+      "file": "final-320-long-mist-detail.png",
+      "route": "pages/detail/index?id=read",
+      "viewport": {
+        "windowWidth": 320,
+        "windowHeight": 456,
+        "screenWidth": 320,
+        "screenHeight": 568,
+        "statusBarHeight": 20,
+        "fontSizeSetting": 16
+      }
+    }
+  ],
+  "measurements": [
+    {
+      "page": "today",
+      "document": {
+        "width": 320,
+        "height": 456
+      },
+      "elements": [
+        {
+          "selector": ".page",
+          "rects": [
+            {
+              "left": 0,
+              "top": 0,
+              "width": 320,
+              "height": 673.4375,
+              "fontSize": "15px",
+              "lineHeight": "22.5px",
+              "text": "今日添加习惯10月27日 周二1 / 4已打卡查看进度待做 3 项今天的安排收起已完成（1）07:30晨间拉伸已打卡 · 8分钟撤销12:30每天阅读并整理今天值得保留下来的学习内容平时 20分钟打卡忙时 2分钟打卡18:30走一会儿平时 20分钟打卡忙时 5分钟打卡21:30睡"
+            }
+          ]
+        },
+        {
+          "selector": ".page-header",
+          "rects": [
+            {
+              "left": 16,
+              "top": 18,
+              "width": 288,
+              "height": 44,
+              "fontSize": "15px",
+              "lineHeight": "22.5px",
+              "text": "今日添加习惯"
+            }
+          ]
+        },
+        {
+          "selector": ".heading",
+          "rects": [
+            {
+              "left": 16,
+              "top": 24.15625,
+              "width": 48,
+              "height": 31.671875,
+              "fontSize": "24px",
+              "lineHeight": "31.68px",
+              "text": "今日"
+            }
+          ]
+        },
+        {
+          "selector": ".subline",
+          "rects": [
+            {
+              "left": 16,
+              "top": 65,
+              "width": 288,
+              "height": 19.5,
+              "fontSize": "13px",
+              "lineHeight": "19.5px",
+              "text": "10月27日 周二"
+            }
+          ]
+        },
+        {
+          "selector": ".today-summary",
+          "rects": [
+            {
+              "left": 16,
+              "top": 96.5,
+              "width": 288,
+              "height": 83,
+              "fontSize": "15px",
+              "lineHeight": "22.5px",
+              "text": "1 / 4已打卡查看进度待做 3 项"
+            }
+          ]
+        },
+        {
+          "selector": ".summary-top",
+          "rects": [
+            {
+              "left": 16,
+              "top": 96.5,
+              "width": 288,
+              "height": 44,
+              "fontSize": "15px",
+              "lineHeight": "22.5px",
+              "text": "1 / 4已打卡查看进度"
+            }
+          ]
+        },
+        {
+          "selector": ".summary-bottom",
+          "rects": [
+            {
+              "left": 16,
+              "top": 144.5,
+              "width": 288,
+              "height": 18,
+              "fontSize": "15px",
+              "lineHeight": "22.5px",
+              "text": "待做 3 项"
+            }
+          ]
+        },
+        {
+          "selector": ".timeline-head",
+          "rects": [
+            {
+              "left": 16,
+              "top": 187.5,
+              "width": 288,
+              "height": 44,
+              "fontSize": "14px",
+              "lineHeight": "21px",
+              "text": "今天的安排收起已完成（1）"
+            }
+          ]
+        },
+        {
+          "selector": ".timeline",
+          "rects": [
+            {
+              "left": 16,
+              "top": 235.5,
+              "width": 288,
+              "height": 380.75,
+              "fontSize": "15px",
+              "lineHeight": "22.5px",
+              "text": "07:30晨间拉伸已打卡 · 8分钟撤销12:30每天阅读并整理今天值得保留下来的学习内容平时 20分钟打卡忙时 2分钟打卡18:30走一会儿平时 20分钟打卡忙时 5分钟打卡21:30睡前整理平时 10分钟打卡忙时 2分钟打卡"
+            }
+          ]
+        },
+        {
+          "selector": ".schedule-row",
+          "rects": [
+            {
+              "left": 16,
+              "top": 235.5,
+              "width": 288,
+              "height": 69,
+              "fontSize": "15px",
+              "lineHeight": "22.5px",
+              "text": "07:30晨间拉伸已打卡 · 8分钟撤销"
+            },
+            {
+              "left": 16,
+              "top": 304.5,
+              "width": 288,
+              "height": 107.75,
+              "fontSize": "15px",
+              "lineHeight": "22.5px",
+              "text": "12:30每天阅读并整理今天值得保留下来的学习内容平时 20分钟打卡忙时 2分钟打卡"
+            },
+            {
+              "left": 16,
+              "top": 412.25,
+              "width": 288,
+              "height": 102,
+              "fontSize": "15px",
+              "lineHeight": "22.5px",
+              "text": "18:30走一会儿平时 20分钟打卡忙时 5分钟打卡"
+            },
+            {
+              "left": 16,
+              "top": 514.25,
+              "width": 288,
+              "height": 102,
+              "fontSize": "15px",
+              "lineHeight": "22.5px",
+              "text": "21:30睡前整理平时 10分钟打卡忙时 2分钟打卡"
+            }
+          ]
+        },
+        {
+          "selector": ".timeline-time",
+          "rects": [
+            {
+              "left": 16,
+              "top": 235.5,
+              "width": 36,
+              "height": 69,
+              "fontSize": "12px",
+              "lineHeight": "20px",
+              "text": "07:30"
+            },
+            {
+              "left": 16,
+              "top": 304.5,
+              "width": 36,
+              "height": 107.75,
+              "fontSize": "12px",
+              "lineHeight": "20px",
+              "text": "12:30"
+            },
+            {
+              "left": 16,
+              "top": 412.25,
+              "width": 36,
+              "height": 102,
+              "fontSize": "12px",
+              "lineHeight": "20px",
+              "text": "18:30"
+            },
+            {
+              "left": 16,
+              "top": 514.25,
+              "width": 36,
+              "height": 102,
+              "fontSize": "12px",
+              "lineHeight": "20px",
+              "text": "21:30"
+            }
+          ]
+        },
+        {
+          "selector": ".rail",
+          "rects": [
+            {
+              "left": 52,
+              "top": 235.5,
+              "width": 14,
+              "height": 69,
+              "fontSize": "15px",
+              "lineHeight": "22.5px",
+              "text": ""
+            },
+            {
+              "left": 52,
+              "top": 304.5,
+              "width": 14,
+              "height": 107.75,
+              "fontSize": "15px",
+              "lineHeight": "22.5px",
+              "text": ""
+            },
+            {
+              "left": 52,
+              "top": 412.25,
+              "width": 14,
+              "height": 102,
+              "fontSize": "15px",
+              "lineHeight": "22.5px",
+              "text": ""
+            },
+            {
+              "left": 52,
+              "top": 514.25,
+              "width": 14,
+              "height": 102,
+              "fontSize": "15px",
+              "lineHeight": "22.5px",
+              "text": ""
+            }
+          ]
+        },
+        {
+          "selector": ".slot",
+          "rects": [
+            {
+              "left": 66,
+              "top": 235.5,
+              "width": 238,
+              "height": 69,
+              "fontSize": "15px",
+              "lineHeight": "22.5px",
+              "text": "晨间拉伸已打卡 · 8分钟撤销"
+            },
+            {
+              "left": 66,
+              "top": 304.5,
+              "width": 238,
+              "height": 107.75,
+              "fontSize": "15px",
+              "lineHeight": "22.5px",
+              "text": "每天阅读并整理今天值得保留下来的学习内容平时 20分钟打卡忙时 2分钟打卡"
+            },
+            {
+              "left": 66,
+              "top": 412.25,
+              "width": 238,
+              "height": 102,
+              "fontSize": "15px",
+              "lineHeight": "22.5px",
+              "text": "走一会儿平时 20分钟打卡忙时 5分钟打卡"
+            },
+            {
+              "left": 66,
+              "top": 514.25,
+              "width": 238,
+              "height": 102,
+              "fontSize": "15px",
+              "lineHeight": "22.5px",
+              "text": "睡前整理平时 10分钟打卡忙时 2分钟打卡"
+            }
+          ]
+        },
+        {
+          "selector": ".timeline-title",
+          "rects": [
+            {
+              "left": 66,
+              "top": 235.5,
+              "width": 56,
+              "height": 44,
+              "fontSize": "14px",
+              "lineHeight": "20.3px",
+              "text": "晨间拉伸"
+            },
+            {
+              "left": 66,
+              "top": 310.5,
+              "width": 131,
+              "height": 75.25,
+              "fontSize": "15px",
+              "lineHeight": "21.75px",
+              "text": "每天阅读并整理今天值得保留下来的学习内容"
+            },
+            {
+              "left": 66,
+              "top": 418.25,
+              "width": 60,
+              "height": 44,
+              "fontSize": "15px",
+              "lineHeight": "21.75px",
+              "text": "走一会儿"
+            },
+            {
+              "left": 66,
+              "top": 520.25,
+              "width": 60,
+              "height": 44,
+              "fontSize": "15px",
+              "lineHeight": "21.75px",
+              "text": "睡前整理"
+            }
+          ]
+        },
+        {
+          "selector": ".task-meta",
+          "rects": [
+            {
+              "left": 66,
+              "top": 279.5,
+              "width": 131,
+              "height": 18,
+              "fontSize": "12px",
+              "lineHeight": "18px",
+              "text": "已打卡 · 8分钟"
+            },
+            {
+              "left": 66,
+              "top": 384.75,
+              "width": 131,
+              "height": 19.5,
+              "fontSize": "13px",
+              "lineHeight": "19.5px",
+              "text": "平时 20分钟"
+            },
+            {
+              "left": 66,
+              "top": 461.25,
+              "width": 131,
+              "height": 19.5,
+              "fontSize": "13px",
+              "lineHeight": "19.5px",
+              "text": "平时 20分钟"
+            },
+            {
+              "left": 66,
+              "top": 563.25,
+              "width": 131,
+              "height": 19.5,
+              "fontSize": "13px",
+              "lineHeight": "19.5px",
+              "text": "平时 10分钟"
+            }
+          ]
+        },
+        {
+          "selector": ".timeline-checkin",
+          "rects": [
+            {
+              "left": 204,
+              "top": 310.5,
+              "width": 100,
+              "height": 44,
+              "fontSize": "14px",
+              "lineHeight": "19.6px",
+              "text": "打卡"
+            },
+            {
+              "left": 204,
+              "top": 418.25,
+              "width": 100,
+              "height": 44,
+              "fontSize": "14px",
+              "lineHeight": "19.6px",
+              "text": "打卡"
+            },
+            {
+              "left": 204,
+              "top": 520.25,
+              "width": 100,
+              "height": 44,
+              "fontSize": "14px",
+              "lineHeight": "19.6px",
+              "text": "打卡"
+            }
+          ]
+        },
+        {
+          "selector": ".timeline-busy",
+          "rects": [
+            {
+              "left": 204,
+              "top": 354.5,
+              "width": 100,
+              "height": 44,
+              "fontSize": "12px",
+              "lineHeight": "18px",
+              "text": "忙时 2分钟打卡"
+            },
+            {
+              "left": 204,
+              "top": 462.25,
+              "width": 100,
+              "height": 44,
+              "fontSize": "12px",
+              "lineHeight": "18px",
+              "text": "忙时 5分钟打卡"
+            },
+            {
+              "left": 204,
+              "top": 564.25,
+              "width": 100,
+              "height": 44,
+              "fontSize": "12px",
+              "lineHeight": "18px",
+              "text": "忙时 2分钟打卡"
+            }
+          ]
+        },
+        {
+          "selector": ".timeline-note",
+          "rects": [
+            {
+              "left": 16,
+              "top": 616.25,
+              "width": 288,
+              "height": 33.1875,
+              "fontSize": "12px",
+              "lineHeight": "19.2px",
+              "text": "时间仅用于安排顺序，不会发送提醒。"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "page": "edit",
+      "document": {
+        "width": 320,
+        "height": 504
+      },
+      "elements": [
+        {
+          "selector": ".page",
+          "rects": [
+            {
+              "left": 0,
+              "top": 0,
+              "width": 320,
+              "height": 877.875,
+              "fontSize": "15px",
+              "lineHeight": "22.5px",
+              "text": "添加习惯平时认真做，忙时也能留下一小步。习惯名称20/20平时目标分钟忙时目标 可选分钟忙碌时做这个目标，也算完成一次打卡。重复星期每天一二三四五六日每天 · 不含节假日调休。开始日期今天 · 10月27日更多设置计划时间添加习惯"
+            }
+          ]
+        },
+        {
+          "selector": ".back-heading",
+          "rects": [
+            {
+              "left": 6,
+              "top": 18,
+              "width": 298,
+              "height": 44,
+              "fontSize": "15px",
+              "lineHeight": "22.5px",
+              "text": "添加习惯"
+            }
+          ]
+        },
+        {
+          "selector": ".heading",
+          "rects": [
+            {
+              "left": 58,
+              "top": 25.484375,
+              "width": 88,
+              "height": 29.03125,
+              "fontSize": "22px",
+              "lineHeight": "29.04px",
+              "text": "添加习惯"
+            }
+          ]
+        },
+        {
+          "selector": ".form-intro",
+          "rects": [
+            {
+              "left": 16,
+              "top": 70,
+              "width": 288,
+              "height": 19.5,
+              "fontSize": "13px",
+              "lineHeight": "19.5px",
+              "text": "平时认真做，忙时也能留下一小步。"
+            }
+          ]
+        },
+        {
+          "selector": "#field-title",
+          "rects": [
+            {
+              "left": 16,
+              "top": 109.5,
+              "width": 288,
+              "height": 77,
+              "fontSize": "15px",
+              "lineHeight": "22.5px",
+              "text": "习惯名称20/20"
+            }
+          ]
+        },
+        {
+          "selector": "#field-target",
+          "rects": [
+            {
+              "left": 16,
+              "top": 206.5,
+              "width": 288,
+              "height": 77,
+              "fontSize": "15px",
+              "lineHeight": "22.5px",
+              "text": "平时目标分钟"
+            }
+          ]
+        },
+        {
+          "selector": "#field-minimum",
+          "rects": [
+            {
+              "left": 16,
+              "top": 303.5,
+              "width": 288,
+              "height": 126.1875,
+              "fontSize": "15px",
+              "lineHeight": "22.5px",
+              "text": "忙时目标 可选分钟忙碌时做这个目标，也算完成一次打卡。"
+            }
+          ]
+        },
+        {
+          "selector": ".form-field",
+          "rects": [
+            {
+              "left": 16,
+              "top": 109.5,
+              "width": 288,
+              "height": 77,
+              "fontSize": "15px",
+              "lineHeight": "22.5px",
+              "text": "习惯名称20/20"
+            },
+            {
+              "left": 16,
+              "top": 206.5,
+              "width": 288,
+              "height": 77,
+              "fontSize": "15px",
+              "lineHeight": "22.5px",
+              "text": "平时目标分钟"
+            },
+            {
+              "left": 16,
+              "top": 303.5,
+              "width": 288,
+              "height": 126.1875,
+              "fontSize": "15px",
+              "lineHeight": "22.5px",
+              "text": "忙时目标 可选分钟忙碌时做这个目标，也算完成一次打卡。"
+            },
+            {
+              "left": 16,
+              "top": 449.6875,
+              "width": 288,
+              "height": 151.1875,
+              "fontSize": "15px",
+              "lineHeight": "22.5px",
+              "text": "重复星期每天一二三四五六日每天 · 不含节假日调休。"
+            },
+            {
+              "left": 16,
+              "top": 478.6875,
+              "width": 288,
+              "height": 122.1875,
+              "fontSize": "15px",
+              "lineHeight": "22.5px",
+              "text": "一二三四五六日每天 · 不含节假日调休。"
+            },
+            {
+              "left": 16,
+              "top": 620.875,
+              "width": 288,
+              "height": 77,
+              "fontSize": "15px",
+              "lineHeight": "22.5px",
+              "text": "开始日期今天 · 10月27日"
+            }
+          ]
+        },
+        {
+          "selector": ".field-label",
+          "rects": [
+            {
+              "left": 16,
+              "top": 109.5,
+              "width": 56,
+              "height": 21,
+              "fontSize": "14px",
+              "lineHeight": "21px",
+              "text": "习惯名称"
+            },
+            {
+              "left": 16,
+              "top": 206.5,
+              "width": 288,
+              "height": 21,
+              "fontSize": "14px",
+              "lineHeight": "21px",
+              "text": "平时目标"
+            },
+            {
+              "left": 16,
+              "top": 315,
+              "width": 89.171875,
+              "height": 21,
+              "fontSize": "14px",
+              "lineHeight": "21px",
+              "text": "忙时目标 可选"
+            },
+            {
+              "left": 16,
+              "top": 449.6875,
+              "width": 56,
+              "height": 21,
+              "fontSize": "14px",
+              "lineHeight": "21px",
+              "text": "重复星期"
+            },
+            {
+              "left": 16,
+              "top": 620.875,
+              "width": 288,
+              "height": 21,
+              "fontSize": "14px",
+              "lineHeight": "21px",
+              "text": "开始日期"
+            }
+          ]
+        },
+        {
+          "selector": ".input",
+          "rects": [
+            {
+              "left": 16,
+              "top": 138.5,
+              "width": 288,
+              "height": 48,
+              "fontSize": "15px",
+              "lineHeight": "22.5px",
+              "text": ""
+            },
+            {
+              "left": 16,
+              "top": 235.5,
+              "width": 194,
+              "height": 48,
+              "fontSize": "15px",
+              "lineHeight": "22.5px",
+              "text": ""
+            },
+            {
+              "left": 16,
+              "top": 355.5,
+              "width": 194,
+              "height": 48,
+              "fontSize": "15px",
+              "lineHeight": "22.5px",
+              "text": ""
+            }
+          ]
+        },
+        {
+          "selector": ".minimum-heading",
+          "rects": [
+            {
+              "left": 16,
+              "top": 303.5,
+              "width": 288,
+              "height": 44,
+              "fontSize": "15px",
+              "lineHeight": "22.5px",
+              "text": "忙时目标 可选"
+            }
+          ]
+        },
+        {
+          "selector": ".week-options",
+          "rects": [
+            {
+              "left": 16,
+              "top": 478.6875,
+              "width": 288,
+              "height": 96,
+              "fontSize": "15px",
+              "lineHeight": "22.5px",
+              "text": "一二三四五六日"
+            }
+          ]
+        },
+        {
+          "selector": ".day-option",
+          "rects": [
+            {
+              "left": 16,
+              "top": 478.6875,
+              "width": 66,
+              "height": 44,
+              "fontSize": "13px",
+              "lineHeight": "19.5px",
+              "text": "一"
+            },
+            {
+              "left": 90,
+              "top": 478.6875,
+              "width": 66,
+              "height": 44,
+              "fontSize": "13px",
+              "lineHeight": "19.5px",
+              "text": "二"
+            },
+            {
+              "left": 164,
+              "top": 478.6875,
+              "width": 66,
+              "height": 44,
+              "fontSize": "13px",
+              "lineHeight": "19.5px",
+              "text": "三"
+            },
+            {
+              "left": 238,
+              "top": 478.6875,
+              "width": 66,
+              "height": 44,
+              "fontSize": "13px",
+              "lineHeight": "19.5px",
+              "text": "四"
+            },
+            {
+              "left": 16,
+              "top": 530.6875,
+              "width": 66,
+              "height": 44,
+              "fontSize": "13px",
+              "lineHeight": "19.5px",
+              "text": "五"
+            },
+            {
+              "left": 90,
+              "top": 530.6875,
+              "width": 66,
+              "height": 44,
+              "fontSize": "13px",
+              "lineHeight": "19.5px",
+              "text": "六"
+            },
+            {
+              "left": 164,
+              "top": 530.6875,
+              "width": 66,
+              "height": 44,
+              "fontSize": "13px",
+              "lineHeight": "19.5px",
+              "text": "日"
+            }
+          ]
+        },
+        {
+          "selector": ".primary",
+          "rects": [
+            {
+              "left": 32,
+              "top": 805.875,
+              "width": 256,
+              "height": 48,
+              "fontSize": "15px",
+              "lineHeight": "22.5px",
+              "text": "添加习惯"
+            }
+          ]
+        },
+        {
+          "selector": ".submit-bar",
+          "rects": [
+            {
+              "left": 16,
+              "top": 801.875,
+              "width": 288,
+              "height": 52,
+              "fontSize": "15px",
+              "lineHeight": "22.5px",
+              "text": "添加习惯"
+            }
+          ]
+        },
+        {
+          "selector": ".disclosure",
+          "rects": [
+            {
+              "left": 16,
+              "top": 723.875,
+              "width": 288,
+              "height": 58,
+              "fontSize": "15px",
+              "lineHeight": "22.5px",
+              "text": "更多设置计划时间"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "page": "detail",
+      "document": {
+        "width": 320,
+        "height": 504
+      },
+      "elements": [
+        {
+          "selector": ".page",
+          "rects": [
+            {
+              "left": 0,
+              "top": 0,
+              "width": 320,
+              "height": 1207.34375,
+              "fontSize": "15px",
+              "lineHeight": "22.5px",
+              "text": "习惯详情每天阅读并整理今天值得保留下来的学习内容进行中每天今日目标只调整今天平时目标20 分钟忙时目标2 分钟原目标打卡 · 20 分钟忙时打卡 · 2 分钟备注编辑把书放在桌边，午饭后读几页。习惯计划重复每天开始日期2026-10-01计划时间12:30 · 仅排序调整计划近2"
+            }
+          ]
+        },
+        {
+          "selector": ".back-heading",
+          "rects": [
+            {
+              "left": 6,
+              "top": 18,
+              "width": 298,
+              "height": 44,
+              "fontSize": "15px",
+              "lineHeight": "22.5px",
+              "text": "习惯详情"
+            }
+          ]
+        },
+        {
+          "selector": ".heading",
+          "rects": [
+            {
+              "left": 58,
+              "top": 25.484375,
+              "width": 88,
+              "height": 29.03125,
+              "fontSize": "22px",
+              "lineHeight": "29.04px",
+              "text": "习惯详情"
+            }
+          ]
+        },
+        {
+          "selector": ".detail-name",
+          "rects": [
+            {
+              "left": 16,
+              "top": 78,
+              "width": 288,
+              "height": 97.1875,
+              "fontSize": "15px",
+              "lineHeight": "22.5px",
+              "text": "每天阅读并整理今天值得保留下来的学习内容进行中每天"
+            }
+          ]
+        },
+        {
+          "selector": ".habit-name",
+          "rects": [
+            {
+              "left": 16,
+              "top": 78,
+              "width": 288,
+              "height": 67.1875,
+              "fontSize": "24px",
+              "lineHeight": "33.6px",
+              "text": "每天阅读并整理今天值得保留下来的学习内容"
+            }
+          ]
+        },
+        {
+          "selector": ".status-line",
+          "rects": [
+            {
+              "left": 16,
+              "top": 151.1875,
+              "width": 288,
+              "height": 24,
+              "fontSize": "15px",
+              "lineHeight": "22.5px",
+              "text": "进行中每天"
+            }
+          ]
+        },
+        {
+          "selector": ".detail-section",
+          "rects": [
+            {
+              "left": 16,
+              "top": 199.1875,
+              "width": 288,
+              "height": 246,
+              "fontSize": "15px",
+              "lineHeight": "22.5px",
+              "text": "今日目标只调整今天平时目标20 分钟忙时目标2 分钟原目标打卡 · 20 分钟忙时打卡 · 2 分钟"
+            },
+            {
+              "left": 16,
+              "top": 469.1875,
+              "width": 288,
+              "height": 74.09375,
+              "fontSize": "15px",
+              "lineHeight": "22.5px",
+              "text": "备注编辑把书放在桌边，午饭后读几页。"
+            },
+            {
+              "left": 16,
+              "top": 567.28125,
+              "width": 288,
+              "height": 223.6875,
+              "fontSize": "15px",
+              "lineHeight": "22.5px",
+              "text": "习惯计划重复每天开始日期2026-10-01计划时间12:30 · 仅排序调整计划"
+            },
+            {
+              "left": 16,
+              "top": 814.96875,
+              "width": 288,
+              "height": 287.375,
+              "fontSize": "15px",
+              "lineHeight": "22.5px",
+              "text": "近28天有安排的记录30123456789101112131415161718192021222324252627原目标忙时未打卡无安排无安排不计漏做；可在更多操作查看历史明细。"
+            },
+            {
+              "left": 16,
+              "top": 1128.34375,
+              "width": 288,
+              "height": 55,
+              "fontSize": "15px",
+              "lineHeight": "22.5px",
+              "text": "更多操作暂停、归档、删除"
+            }
+          ]
+        },
+        {
+          "selector": ".detail-section-head",
+          "rects": [
+            {
+              "left": 16,
+              "top": 199.1875,
+              "width": 288,
+              "height": 44,
+              "fontSize": "15px",
+              "lineHeight": "22.5px",
+              "text": "今日目标只调整今天"
+            },
+            {
+              "left": 16,
+              "top": 469.1875,
+              "width": 288,
+              "height": 44,
+              "fontSize": "15px",
+              "lineHeight": "22.5px",
+              "text": "备注编辑"
+            },
+            {
+              "left": 16,
+              "top": 567.28125,
+              "width": 288,
+              "height": 23.1875,
+              "fontSize": "15px",
+              "lineHeight": "22.5px",
+              "text": "习惯计划"
+            },
+            {
+              "left": 16,
+              "top": 814.96875,
+              "width": 288,
+              "height": 23.1875,
+              "fontSize": "15px",
+              "lineHeight": "22.5px",
+              "text": "近28天有安排的记录"
+            }
+          ]
+        },
+        {
+          "selector": ".target-lines",
+          "rects": [
+            {
+              "left": 16,
+              "top": 251.1875,
+              "width": 288,
+              "height": 86,
+              "fontSize": "15px",
+              "lineHeight": "22.5px",
+              "text": "平时目标20 分钟忙时目标2 分钟"
+            }
+          ]
+        },
+        {
+          "selector": ".target-line",
+          "rects": [
+            {
+              "left": 16,
+              "top": 260.1875,
+              "width": 288,
+              "height": 33,
+              "fontSize": "13px",
+              "lineHeight": "19.5px",
+              "text": "平时目标20 分钟"
+            },
+            {
+              "left": 16,
+              "top": 293.1875,
+              "width": 288,
+              "height": 33,
+              "fontSize": "13px",
+              "lineHeight": "19.5px",
+              "text": "忙时目标2 分钟"
+            }
+          ]
+        },
+        {
+          "selector": ".detail-checkin-actions",
+          "rects": [
+            {
+              "left": 16,
+              "top": 349.1875,
+              "width": 288,
+              "height": 96,
+              "fontSize": "15px",
+              "lineHeight": "22.5px",
+              "text": "原目标打卡 · 20 分钟忙时打卡 · 2 分钟"
+            }
+          ]
+        },
+        {
+          "selector": ".primary",
+          "rects": [
+            {
+              "left": 16,
+              "top": 349.1875,
+              "width": 288,
+              "height": 44,
+              "fontSize": "13px",
+              "lineHeight": "19.5px",
+              "text": "原目标打卡 · 20 分钟"
+            }
+          ]
+        },
+        {
+          "selector": ".secondary",
+          "rects": [
+            {
+              "left": 16,
+              "top": 401.1875,
+              "width": 288,
+              "height": 44,
+              "fontSize": "13px",
+              "lineHeight": "19.5px",
+              "text": "忙时打卡 · 2 分钟"
+            },
+            {
+              "left": 16,
+              "top": 746.96875,
+              "width": 288,
+              "height": 44,
+              "fontSize": "15px",
+              "lineHeight": "22.5px",
+              "text": "调整计划"
+            }
+          ]
+        },
+        {
+          "selector": ".note-preview",
+          "rects": [
+            {
+              "left": 16,
+              "top": 521.1875,
+              "width": 288,
+              "height": 22.09375,
+              "fontSize": "13px",
+              "lineHeight": "22.1px",
+              "text": "把书放在桌边，午饭后读几页。"
+            }
+          ]
+        },
+        {
+          "selector": ".plan-list",
+          "rects": [
+            {
+              "left": 16,
+              "top": 598.46875,
+              "width": 288,
+              "height": 134.5,
+              "fontSize": "15px",
+              "lineHeight": "22.5px",
+              "text": "重复每天开始日期2026-10-01计划时间12:30 · 仅排序"
+            }
+          ]
+        },
+        {
+          "selector": ".plan-item",
+          "rects": [
+            {
+              "left": 16,
+              "top": 599.46875,
+              "width": 288,
+              "height": 44.5,
+              "fontSize": "13px",
+              "lineHeight": "19.5px",
+              "text": "重复每天"
+            },
+            {
+              "left": 16,
+              "top": 643.96875,
+              "width": 288,
+              "height": 44.5,
+              "fontSize": "13px",
+              "lineHeight": "19.5px",
+              "text": "开始日期2026-10-01"
+            },
+            {
+              "left": 16,
+              "top": 688.46875,
+              "width": 288,
+              "height": 43.5,
+              "fontSize": "13px",
+              "lineHeight": "19.5px",
+              "text": "计划时间12:30 · 仅排序"
+            }
+          ]
+        },
+        {
+          "selector": ".more-group",
+          "rects": [
+            {
+              "left": 16,
+              "top": 1128.34375,
+              "width": 288,
+              "height": 55,
+              "fontSize": "15px",
+              "lineHeight": "22.5px",
+              "text": "更多操作暂停、归档、删除"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "exceptions": [],
+  "viewport": {
+    "windowWidth": 320,
+    "windowHeight": 456,
+    "screenWidth": 320,
+    "screenHeight": 568,
+    "pixelRatio": 2,
+    "fontSizeSetting": 16,
+    "platform": "devtools",
+    "SDKVersion": "3.17.4",
+    "model": "iPhone 5"
+  },
+  "visualSetup": "TEMP-only new form initial data: blank title, target20, minimum2, enabled; production defaults unchanged",
+  "guard": {
+    "cloudCalls": 0,
+    "networkCalls": 0,
+    "storageWrites": 0,
+    "businessWrites": 0,
+    "installed": {
+      "wx.cloud.init": true,
+      "wx.cloud.callFunction": true,
+      "wx.cloud.uploadFile": true,
+      "wx.cloud.downloadFile": true,
+      "wx.cloud.getTempFileURL": true,
+      "wx.cloud.deleteFile": true,
+      "wx.cloud.database": true,
+      "wx.cloud.Cloud": true,
+      "wx.cloud.callContainer": true,
+      "wx.cloud.connectContainer": true,
+      "wx.cloud.getCloudbaseExtConfig": true,
+      "wx.cloud.getOpenData": true,
+      "wx.cloud.getVoIPSign": true,
+      "wx.cloud.getWXContext": true,
+      "wx.cloud.extend": true,
+      "wx.cloud.constructor": true,
+      "wx.cloud.__defineGetter__": true,
+      "wx.cloud.__defineSetter__": true,
+      "wx.cloud.hasOwnProperty": true,
+      "wx.cloud.__lookupGetter__": true,
+      "wx.cloud.__lookupSetter__": true,
+      "wx.cloud.isPrototypeOf": true,
+      "wx.cloud.propertyIsEnumerable": true,
+      "wx.cloud.toString": true,
+      "wx.cloud.valueOf": true,
+      "wx.cloud.toLocaleString": true,
+      "wx.request": true,
+      "wx.uploadFile": true,
+      "wx.downloadFile": true,
+      "wx.connectSocket": true,
+      "wx.sendSocketMessage": true,
+      "wx.setStorage": true,
+      "wx.setStorageSync": true,
+      "wx.removeStorage": true,
+      "wx.removeStorageSync": true,
+      "wx.clearStorage": true,
+      "wx.clearStorageSync": true,
+      "wx.batchSetStorage": true,
+      "wx.batchSetStorageSync": true
+    }
+  }
+}

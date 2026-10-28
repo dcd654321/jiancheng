@@ -2,7 +2,7 @@ const ui = require('../../services/ui');
 const form = require('../../services/plan-form');
 const flow = require('../../services/today-flow');
 const { createFormDrafts } = require('../../services/form-drafts');
-const draftFields = ['title', 'target', 'minimum', 'unit', 'time', 'weekdays', 'startOffset', 'addingMinimum'];
+const draftFields = ['title', 'target', 'minimum', 'unit', 'time', 'weekdays', 'startOffset', 'addingMinimum', 'minimumVisible'];
 const inputSnapshot = data => draftFields.reduce((result, key) => { result[key] = data[key]; return result; }, {});
 function drafts() { const app = getApp(); return app.formDrafts || (app.formDrafts = createFormDrafts()); }
 const { templatePlan } = require('../../config/habit-templates');
@@ -11,8 +11,8 @@ Page(ui.withLifecycle({
   data: { error: '', loading: true, dataUnavailable: false, dataReady: false, dataReadOnly: false,
     pendingConfirm: false, recoveryLabel: '重新读取',
     editing: false, compact: false, saving: false, title: '', target: '5', minimum: '', unit: '分钟', units: ['分钟', '页', '次'],
-    time: '', weekdays: [1, 2, 3, 4, 5, 6, 7], days: [], startOffset: 0, firstLabel: '', effectiveLabel: '', source: '',
-    moreOpen: false, frequencyOpen: false, startOpen: false, addingMinimum: false, keyboardOpen: false, focusField: '',
+    time: '', weekdays: [1, 2, 3, 4, 5, 6, 7], days: [], startOffset: 0, startOptions: [], startIndex: 0, firstLabel: '', effectiveLabel: '', source: '',
+    moreOpen: false, frequencyOpen: false, startOpen: false, addingMinimum: false, minimumVisible: true, keyboardOpen: false, focusField: '',
     canCreateToday: true, canCreateTomorrow: true, capacityFull: false, confirmedCreate: false, capacityNote: '', fieldErrors: {}, titleCount: 0, targetHint: '', frequencyLabel: '', moreSummary: '', draftDirty: false, draftRestored: false },
   onLoad(options = {}) {
     this._id = options.id || ui.id();
@@ -91,8 +91,11 @@ Page(ui.withLifecycle({
     const capacity = flow.creationAvailability(state, ui.date.today());
     const confirmedCreate = state.habits.some(habit => habit.id === this._id);
     const forced = !confirmedCreate && !capacity.today && capacity.tomorrow;
+    const startOptions = [0, 1].filter(offset => offset === 0 ? capacity.today : capacity.tomorrow).map(offset => ({ offset,
+      label: (offset ? '明天' : '今天') + ' · ' + ui.date.shortLabel(ui.date.shift(ui.date.today(), offset)) }));
     if (forced && this._cleanInput) this._cleanInput.startOffset = 1;
-    this.setData({ canCreateToday: capacity.today, canCreateTomorrow: capacity.tomorrow,
+    this.setData({ canCreateToday: capacity.today, canCreateTomorrow: capacity.tomorrow, startOptions,
+      startIndex: Math.max(0, startOptions.findIndex(option => option.offset === (forced ? 1 : this.data.startOffset))),
       capacityFull: !capacity.today && !capacity.tomorrow, confirmedCreate,
       capacityNote: confirmedCreate ? '这个习惯已创建。核对后可返回今日；修改已有计划请进入习惯详情。'
         : !capacity.today && !capacity.tomorrow ? '已有 5 个进行中的习惯，调整一个后再创建。'
@@ -104,8 +107,10 @@ Page(ui.withLifecycle({
     const date = ui.date.today();
     const start = ui.date.shift(date, this.data.editing ? 1 : this.data.startOffset);
     const days = [1, 2, 3, 4, 5, 6, 7].map(value => ({ value, label: '一二三四五六日'[value - 1], selected: this.data.weekdays.includes(value) }));
+    const first = this.data.weekdays.length ? ui.domain.firstExecution(this.data, start) : null;
     this.setData({ days, ...form.presentation(this.data), effectiveLabel: ui.date.label(start),
-      firstLabel: this.data.weekdays.length ? ui.date.label(ui.domain.firstExecution(this.data, start)) : '至少选择一个星期' });
+      showStartSummary: this.data.editing || !first || first !== start,
+      firstLabel: first ? ui.date.label(first) : '至少选择一个星期' });
     this.keepDraft();
   },
   keepDraft() {
@@ -156,7 +161,16 @@ Page(ui.withLifecycle({
   onMore() { if (!this.data.saving) this.setData({ moreOpen: !this.data.moreOpen }); },
   onToggleFrequency() { if (!this.data.saving) this.setData({ frequencyOpen: !this.data.frequencyOpen }); },
   onToggleStart() { if (!this.data.saving) this.setData({ startOpen: !this.data.startOpen }); },
+  onStartPicker(event) { const option = this.data.startOptions[Number(event.detail.value)]; if (option) this.onStart({ currentTarget: { dataset: { offset: option.offset } } }); },
   onAddMinimum() { if (!this.data.saving) { this.setData({ addingMinimum: true }); this.keepDraft(); } },
+  onBack() { wx.navigateBack({ fail: () => wx.switchTab({ url: '/pages/today/index' }) }); },
+  onToggleMinimum(event) {
+    if (this.data.saving) return;
+    const minimumVisible = event.detail.value === true;
+    this.setData({ minimumVisible });
+    if (!minimumVisible) this.onRemoveMinimum();
+    else this.onAddMinimum();
+  },
   onRemoveMinimum() { if (!this.data.saving) { this.setData({ minimum: '', addingMinimum: false, fieldErrors: { ...this.data.fieldErrors, minimum: '' } }); this.updateSchedule(); } },
   onUnit(event) { if (this.data.saving) return; this.setData({ unit: this.data.units[Number(event.detail.value)] }); this.updateSchedule(); this.validateField('target'); this.validateField('minimum'); },
   onTime(event) { if (this.data.saving) return; this.setData({ time: event.detail.value }); this.updateSchedule(); },
@@ -177,7 +191,7 @@ Page(ui.withLifecycle({
     if (this.data.saving) return;
     const offset = Number(event.currentTarget.dataset.offset);
     if (![0, 1].includes(offset) || (offset === 0 ? !this.data.canCreateToday : !this.data.canCreateTomorrow)) return;
-    this.setData({ startOffset: offset }); this.updateSchedule();
+    this.setData({ startOffset: offset, startIndex: Math.max(0, this.data.startOptions.findIndex(option => option.offset === offset)) }); this.updateSchedule();
   },
   onSave() {
     if (this.data.saving) return;

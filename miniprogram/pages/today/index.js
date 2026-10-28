@@ -3,6 +3,7 @@ const { TODAY_QUOTE } = require('../../services/quotes');
 const { firstReturnTask } = require('../../services/gentle-return');
 const flow = require('../../services/today-flow');
 const { HABIT_TEMPLATES } = require('../../config/habit-templates');
+const { timeline } = require('../../services/today-timeline');
 
 const disabledFeatures = { status: () => ({ enabled: false, reminders: false }), cachedPreferences: () => null };
 const disabledService = { status: () => ({ enabled: false }) };
@@ -21,7 +22,7 @@ function media() {
   if (!require('../../config/media').enabled) return disabledService;
   return require('../../services/media-client').media();
 }
-function createPhotoCheckin(options) { return require('../../services/photo-checkin').createPhotoCheckin(options); }
+const checkin = require('../../services/checkin-ui');
 
 function usesLargeFont() {
   try { return typeof wx.getSystemInfoSync === 'function' && Number(wx.getSystemInfoSync().fontSizeSetting) > 16; }
@@ -29,11 +30,13 @@ function usesLargeFont() {
 }
 
 Page(ui.withLifecycle({
+  ...checkin.actions,
   data: { error: '', loading: true, dataUnavailable: false, dataReady: false, dataReadOnly: false,
     startupLoadingText: '', startupUnavailableTitle: '', readRefreshing: false,
     pendingConfirm: false, recoveryLabel: '重新读取',
     date: '', dateLabel: ui.date.label(ui.date.today()), pending: [], completed: [], total: 0, done: 0, minimum: 0, rate: 0,
-    hasHabits: false, hideQuote: false, quote: TODAY_QUOTE, showCompleted: false, chooserOpen: false,
+    hasHabits: false, hideQuote: false, quote: TODAY_QUOTE, showCompleted: true, chooserOpen: false,
+    pinnedTasks: [], timelineTasks: [], progressSegments: [],
     quickMinimumEnabled: ui.quickMinimumEnabled,
     firstHabitGuide: '', returnGuide: null, tomorrow: null, canCreateToday: true, canCreateTomorrow: true,
     templates: HABIT_TEMPLATES, largeFont: false, supervisionEnabled: false, supervisionCount: 0, supervisionOverdue: 0, photoEnabled: false, remindersEnabled: false,
@@ -76,7 +79,7 @@ Page(ui.withLifecycle({
     ui.read(this, (state, date) => {
       const feedbackContext = ui.contextKey() + ':' + date;
       if (this._firstGuideContext !== feedbackContext) {
-        this._firstGuideId = null; this.setData({ firstHabitGuide: '' }); this._firstGuideContext = feedbackContext;
+        this._firstGuideId = null; this.setData({ firstHabitGuide: '', showCompleted: true }); this._firstGuideContext = feedbackContext;
       }
       if (this._pinContext !== ui.contextKey()) this._visitPinnedId = null;
       this._pinContext = ui.contextKey();
@@ -113,7 +116,9 @@ Page(ui.withLifecycle({
       // 今天已经留下任何记录后，回归提示不再出现；有同步异常时优先恢复，不叠加提示。
       const returnGuide = (ui.storageInfo().syncAttention || completed.length) ? null : firstReturnTask(state, date, pending);
       const capacity = flow.creationAvailability(state, date);
+      this._timelineSource = tasks;
       this.setData({ date, dateLabel: ui.date.label(date), pending, completed, firstHabitGuide, returnGuide,
+        ...timeline(tasks, this.data.showCompleted),
         tomorrow: flow.tomorrowSummary(state, date), canCreateToday: capacity.today, canCreateTomorrow: capacity.tomorrow,
         total: tasks.length, done: completed.length, minimum: completed.filter(t => t.status === 'minimum').length,
         rate: tasks.length ? completed.length / tasks.length * 100 : 0,
@@ -127,10 +132,7 @@ Page(ui.withLifecycle({
   },
   async onShow() {
     this.setData({ largeFont: usesLargeFont(), dateLabel: ui.date.label(ui.date.today()) });
-    if (this._photoCheckin) this.setData(this._photoCheckin.view());
-    const session = getApp().cloudSession;
-    if (this._unsubscribePhoto) this._unsubscribePhoto();
-    if (session && typeof session.subscribeConfirmed === 'function') this._unsubscribePhoto = session.subscribeConfirmed(event => { if (this._photoCheckin) this._photoCheckin.confirmed(event); });
+    this.startPhotoCheckin();
     this.loadSupervisions();
     this.loadMediaStatuses(true);
     const service = features();
@@ -150,7 +152,7 @@ Page(ui.withLifecycle({
   onHide() {
     this.clearStartupFeedback();
     this._visitPinnedId = null;
-    this.setData({ firstHabitGuide: '', returnGuide: null, chooserOpen: false, showCompleted: false });
+    this.setData({ firstHabitGuide: '', returnGuide: null, chooserOpen: false, showCompleted: true });
     this._firstGuideId = null;
     if (this._unsubscribePhoto) this._unsubscribePhoto(); this._unsubscribePhoto = null;
     this.setData({ photoOpen: false });
@@ -196,23 +198,6 @@ Page(ui.withLifecycle({
       }
     }
   },
-  photoController() {
-    if (!this._photoCheckin) this._photoCheckin = createPhotoCheckin({ wx, media: media(), context: ui.contextKey, today: ui.date.today,
-      visible: () => !this._gone && this._visible !== false, change: value => this.setData(value), pending: () => ui.storageInfo().pending > 0,
-      dispatch: command => ui.mutate(this, command), retry: async () => { await getApp().cloudSession.retry(); return true; } });
-    return this._photoCheckin;
-  },
-  openPhotoCheckin(task, type) { try { ui.assertContext(this); ui.assertWritable(); this.photoController().open(task, type); } catch (err) { ui.error(this, err); } },
-  onMutationFailure(err, command) {
-    if (err.code !== 'PHOTO_REQUIRED' || !this.data.photoEnabled || !['complete', 'completeMinimum'].includes(command.type)) return;
-    const task = this.data.pending.find(item => item.id === command.id); if (task) this.openPhotoCheckin({ ...task, photoRequired: true }, command.type);
-  },
-  onPhotoClose() { if (this._photoCheckin) this._photoCheckin.close(); },
-  onPhotoChoose() { if (this._photoCheckin) this._photoCheckin.choose(); },
-  onPhotoRetry() { return this._photoCheckin && this._photoCheckin.upload(); },
-  onPhotoRemove(event) { if (this._photoCheckin) this._photoCheckin.remove(event.currentTarget.dataset.id); },
-  onPhotoSubmit() { return this._photoCheckin && this._photoCheckin.submit(); },
-  onPhotoBackdrop() {},
   onSupervisions() { wx.navigateTo({ url: '/pages/supervision/index?tab=supervisor' }); },
   onNextReminder() { wx.navigateTo({ url: '/pages/reminder/index?type=self&date=' + ui.date.shift(ui.date.today(), 1) }); },
   onDismissGuide() { this.setData({ firstHabitGuide: '' }); this._firstGuideId = null; },
@@ -235,8 +220,9 @@ Page(ui.withLifecycle({
       wx.navigateTo({ url: '/pages/edit/index' + (params.length ? '?' + params.join('&') : '') });
     } catch (err) { ui.error(this, err); }
   },
+  onProgress() { wx.switchTab({ url: '/pages/progress/index' }); },
   onManage() { wx.navigateTo({ url: '/pages/manage/index' }); },
-  onToggleCompleted() { this.setData({ showCompleted: !this.data.showCompleted }); },
+  onToggleCompleted() { const showCompleted = !this.data.showCompleted; this.setData({ showCompleted, ...timeline(this._timelineSource || [], showCompleted) }); },
   onSync() { wx.navigateTo({ url: '/pages/sync/index' }); },
   ...ui.taskActions
 }));

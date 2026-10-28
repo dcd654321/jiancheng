@@ -1,0 +1,500 @@
+{
+  "level": "frozen-html-reference-measurement",
+  "viewport": {
+    "width": 390,
+    "height": 780
+  },
+  "bodyOrigin": {
+    "left": 0,
+    "top": 44,
+    "width": 390,
+    "height": 670
+  },
+  "elements": [
+    {
+      "selector": ".page",
+      "rects": [
+        {
+          "left": 0,
+          "top": 0,
+          "width": 390,
+          "height": 880.21875,
+          "fontSize": "15px",
+          "lineHeight": "22.5px",
+          "text": "我的\n我的习惯空间\n\n按自己的节奏，把日常慢慢做好。\n\n4个习惯\n1项今日完成\n习惯管理\n管理我的习惯\n4个\n偏好与提醒\n显示首页短句\n\n在今日安排下方显示一句短句\n\n外观主题\n入口预览\n下一次提醒\n入口预览\n好友监督与分享\n反馈\n习惯入门\n\n当前为「清爽日程融合版」交互原型。\n"
+        }
+      ]
+    },
+    {
+      "selector": ".heading",
+      "rects": [
+        {
+          "left": 20,
+          "top": 18,
+          "width": 350,
+          "height": 31.671875,
+          "fontSize": "15px",
+          "lineHeight": "22.5px",
+          "text": "我的"
+        }
+      ]
+    },
+    {
+      "selector": "h1",
+      "rects": [
+        {
+          "left": 20,
+          "top": 18,
+          "width": 47.046875,
+          "height": 31.671875,
+          "fontSize": "24px",
+          "lineHeight": "31.68px",
+          "text": "我的"
+        }
+      ]
+    },
+    {
+      "selector": ".subline",
+      "rects": []
+    },
+    {
+      "selector": ".today-summary",
+      "rects": []
+    },
+    {
+      "selector": ".summary-top",
+      "rects": []
+    },
+    {
+      "selector": ".summary-bottom",
+      "rects": []
+    },
+    {
+      "selector": ".timeline-head",
+      "rects": []
+    },
+    {
+      "selector": ".timeline",
+      "rects": []
+    },
+    {
+      "selector": ".schedule-row",
+      "rects": []
+    },
+    {
+      "selector": ".time",
+      "rects": []
+    },
+    {
+      "selector": ".rail",
+      "rects": []
+    },
+    {
+      "selector": ".slot",
+      "rects": []
+    },
+    {
+      "selector": ".task-title",
+      "rects": []
+    },
+    {
+      "selector": ".task-meta",
+      "rects": []
+    },
+    {
+      "selector": ".checkin",
+      "rects": []
+    },
+    {
+      "selector": ".busy-btn",
+      "rects": []
+    },
+    {
+      "selector": ".timeline-note",
+      "rects": []
+    },
+    {
+      "selector": ".segmented",
+      "rects": []
+    },
+    {
+      "selector": ".segment",
+      "rects": []
+    },
+    {
+      "selector": ".period",
+      "rects": []
+    },
+    {
+      "selector": ".progress-copy",
+      "rects": []
+    },
+    {
+      "selector": ".progress-copy h2",
+      "rects": []
+    },
+    {
+      "selector": ".chart-title",
+      "rects": []
+    },
+    {
+      "selector": ".daily-chart",
+      "rects": []
+    },
+    {
+      "selector": ".chart-column",
+      "rects": []
+    },
+    {
+      "selector": ".bar-stack",
+      "rects": []
+    },
+    {
+      "selector": ".chart-legend",
+      "rects": []
+    },
+    {
+      "selector": ".rate-row",
+      "rects": []
+    },
+    {
+      "selector": ".current-line",
+      "rects": []
+    },
+    {
+      "selector": ".form-intro",
+      "rects": []
+    },
+    {
+      "selector": ".form-field",
+      "rects": []
+    },
+    {
+      "selector": ".field-label",
+      "rects": []
+    },
+    {
+      "selector": "input",
+      "rects": []
+    },
+    {
+      "selector": ".field-heading",
+      "rects": []
+    },
+    {
+      "selector": ".weekdays",
+      "rects": []
+    },
+    {
+      "selector": ".weekday-btn",
+      "rects": []
+    },
+    {
+      "selector": ".primary",
+      "rects": []
+    },
+    {
+      "selector": ".save-block",
+      "rects": []
+    },
+    {
+      "selector": ".more-settings",
+      "rects": []
+    },
+    {
+      "selector": ".back-heading",
+      "rects": []
+    },
+    {
+      "selector": ".detail-name",
+      "rects": []
+    },
+    {
+      "selector": ".detail-name h2",
+      "rects": []
+    },
+    {
+      "selector": ".status-line",
+      "rects": []
+    },
+    {
+      "selector": ".section",
+      "rects": [
+        {
+          "left": 20,
+          "top": 217.671875,
+          "width": 350,
+          "height": 95.1875,
+          "fontSize": "15px",
+          "lineHeight": "22.5px",
+          "text": "习惯管理\n管理我的习惯\n4个"
+        },
+        {
+          "left": 20,
+          "top": 336.859375,
+          "width": 350,
+          "height": 222.1875,
+          "fontSize": "15px",
+          "lineHeight": "22.5px",
+          "text": "偏好与提醒\n显示首页短句\n\n在今日安排下方显示一句短句\n\n外观主题\n入口预览\n下一次提醒\n入口预览"
+        },
+        {
+          "left": 20,
+          "top": 583.046875,
+          "width": 350,
+          "height": 188,
+          "fontSize": "15px",
+          "lineHeight": "22.5px",
+          "text": "好友监督与分享\n反馈\n习惯入门"
+        }
+      ]
+    },
+    {
+      "selector": ".section-head",
+      "rects": [
+        {
+          "left": 20,
+          "top": 217.671875,
+          "width": 350,
+          "height": 23.1875,
+          "fontSize": "15px",
+          "lineHeight": "22.5px",
+          "text": "习惯管理"
+        },
+        {
+          "left": 20,
+          "top": 336.859375,
+          "width": 350,
+          "height": 23.1875,
+          "fontSize": "15px",
+          "lineHeight": "22.5px",
+          "text": "偏好与提醒"
+        }
+      ]
+    },
+    {
+      "selector": ".target-lines",
+      "rects": []
+    },
+    {
+      "selector": ".target-line",
+      "rects": []
+    },
+    {
+      "selector": ".detail-actions",
+      "rects": []
+    },
+    {
+      "selector": ".secondary",
+      "rects": []
+    },
+    {
+      "selector": ".note-copy",
+      "rects": []
+    },
+    {
+      "selector": ".plan-list",
+      "rects": []
+    },
+    {
+      "selector": ".plan-item",
+      "rects": []
+    },
+    {
+      "selector": ".more-operations",
+      "rects": []
+    },
+    {
+      "selector": ".mine-intro",
+      "rects": [
+        {
+          "left": 20,
+          "top": 67.671875,
+          "width": 350,
+          "height": 126,
+          "fontSize": "15px",
+          "lineHeight": "22.5px",
+          "text": "我的习惯空间\n\n按自己的节奏，把日常慢慢做好。\n\n4个习惯\n1项今日完成"
+        }
+      ]
+    },
+    {
+      "selector": ".menu-list",
+      "rects": [
+        {
+          "left": 20,
+          "top": 248.859375,
+          "width": 350,
+          "height": 64,
+          "fontSize": "15px",
+          "lineHeight": "22.5px",
+          "text": "管理我的习惯\n4个"
+        },
+        {
+          "left": 20,
+          "top": 368.046875,
+          "width": 350,
+          "height": 191,
+          "fontSize": "15px",
+          "lineHeight": "22.5px",
+          "text": "显示首页短句\n\n在今日安排下方显示一句短句\n\n外观主题\n入口预览\n下一次提醒\n入口预览"
+        },
+        {
+          "left": 20,
+          "top": 583.046875,
+          "width": 350,
+          "height": 188,
+          "fontSize": "15px",
+          "lineHeight": "22.5px",
+          "text": "好友监督与分享\n反馈\n习惯入门"
+        }
+      ]
+    },
+    {
+      "selector": ".menu-row",
+      "rects": [
+        {
+          "left": 20,
+          "top": 249.859375,
+          "width": 350,
+          "height": 62,
+          "fontSize": "14px",
+          "lineHeight": "normal",
+          "text": "管理我的习惯\n4个"
+        },
+        {
+          "left": 20,
+          "top": 434.046875,
+          "width": 350,
+          "height": 62,
+          "fontSize": "14px",
+          "lineHeight": "normal",
+          "text": "外观主题\n入口预览"
+        },
+        {
+          "left": 20,
+          "top": 496.046875,
+          "width": 350,
+          "height": 62,
+          "fontSize": "14px",
+          "lineHeight": "normal",
+          "text": "下一次提醒\n入口预览"
+        },
+        {
+          "left": 20,
+          "top": 584.046875,
+          "width": 350,
+          "height": 62,
+          "fontSize": "14px",
+          "lineHeight": "normal",
+          "text": "好友监督与分享"
+        },
+        {
+          "left": 20,
+          "top": 646.046875,
+          "width": 350,
+          "height": 62,
+          "fontSize": "14px",
+          "lineHeight": "normal",
+          "text": "反馈"
+        },
+        {
+          "left": 20,
+          "top": 708.046875,
+          "width": 350,
+          "height": 62,
+          "fontSize": "14px",
+          "lineHeight": "normal",
+          "text": "习惯入门"
+        }
+      ]
+    },
+    {
+      "selector": ".setting-row",
+      "rects": [
+        {
+          "left": 20,
+          "top": 369.046875,
+          "width": 350,
+          "height": 65,
+          "fontSize": "15px",
+          "lineHeight": "22.5px",
+          "text": "显示首页短句\n\n在今日安排下方显示一句短句"
+        }
+      ]
+    },
+    {
+      "selector": ".menu-icon",
+      "rects": [
+        {
+          "left": 20,
+          "top": 265.859375,
+          "width": 30,
+          "height": 30,
+          "fontSize": "14px",
+          "lineHeight": "normal",
+          "text": ""
+        },
+        {
+          "left": 20,
+          "top": 449.546875,
+          "width": 30,
+          "height": 30,
+          "fontSize": "14px",
+          "lineHeight": "normal",
+          "text": ""
+        },
+        {
+          "left": 20,
+          "top": 512.046875,
+          "width": 30,
+          "height": 30,
+          "fontSize": "14px",
+          "lineHeight": "normal",
+          "text": ""
+        },
+        {
+          "left": 20,
+          "top": 599.546875,
+          "width": 30,
+          "height": 30,
+          "fontSize": "14px",
+          "lineHeight": "normal",
+          "text": ""
+        },
+        {
+          "left": 20,
+          "top": 661.546875,
+          "width": 30,
+          "height": 30,
+          "fontSize": "14px",
+          "lineHeight": "normal",
+          "text": ""
+        },
+        {
+          "left": 20,
+          "top": 724.046875,
+          "width": 30,
+          "height": 30,
+          "fontSize": "14px",
+          "lineHeight": "normal",
+          "text": ""
+        }
+      ]
+    },
+    {
+      "selector": ".demo-footer",
+      "rects": [
+        {
+          "left": 20,
+          "top": 771.046875,
+          "width": 350,
+          "height": 85.171875,
+          "fontSize": "12px",
+          "lineHeight": "20.4px",
+          "text": "当前为「清爽日程融合版」交互原型。\n演示数据仅保留在当前窗口，不联网、不读取个人记录；刷新后恢复初始状态。"
+        }
+      ]
+    }
+  ]
+}

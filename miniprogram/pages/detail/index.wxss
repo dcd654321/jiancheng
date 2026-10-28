@@ -1,15 +1,45 @@
-/* pages/detail/index.wxss */
+.detail-name { margin-top: 16px; }
+.habit-name { font-size: 24px; font-weight: 700; line-height: 1.4; overflow-wrap: anywhere; }
+.status-line { display: flex; align-items: center; gap: 8px; margin-top: 6px; }
+.habit-status { color: var(--color-primary); background: var(--color-busy-bg); font-size: 12px; padding: 3px 8px; border-radius: 4px; }
+.detail-section { margin-top: 24px; }
+.detail-section-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 8px; }
+.detail-section-head .section-title { margin: 0; font-size: 16px; }
+.detail-section-head .text-button { padding: 8px 0; display: flex; align-items: center; gap: 4px; }
+.target-lines { border-top: 1px solid var(--color-line); border-bottom: 1px solid var(--color-line); padding: 8px 0 10px; }
+.target-line { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; font-size: 13px; color: var(--color-secondary); padding: 6px 0; }
+.target-value { color: var(--color-ink); font-weight: 600; font-size: 14px; }
+.detail-checkin-actions { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; margin-top: 12px; }
+.detail-checkin-actions.single { grid-template-columns: 1fr; }
+.detail-checkin-actions .primary, .detail-checkin-actions .secondary { min-width: 0; font-size: 13px; min-height: 44px; padding: 11px 6px; }
+.detail-checkin-actions .secondary { color: var(--color-primary); border-color: var(--color-field-border, var(--color-line)); }
+.today-goal-form { padding: 14px; margin-top: 12px; background: var(--color-busy-bg); border-radius: 10px; }
+.restore-target { padding-left: 0; }
+.detail-page .note-preview { margin: 0; font-size: 13px; line-height: 1.7; }
 .note-actions { flex-wrap: wrap; gap: 4px 12px; }
-.detail-actions { margin-top: 12px; overflow: hidden; }
-.action-header { display: flex; align-items: center; gap: 10px; width: 100%; min-height: 48px; padding: 11px 14px; margin: 0; text-align: left; border: 0; border-radius: 0; background: var(--color-surface, #FFFFFF); }
-.action-header.button-hover { background: var(--color-soft, #EEF2EC); }
-.note-section, .plan-action { border-bottom: 1px solid var(--color-line, #DBE2D9); }
-.note-section .note-preview { margin: 0; padding: 0 14px 12px; }
-.note-form { margin-top: 0; padding: 0 14px 10px; }
-.more-group { background: var(--color-surface, #FFFFFF); }
-.more-header.is-expanded { border-bottom: 1px solid var(--color-line, #DBE2D9); }
-.more-content, .more-actions { background: var(--color-surface, #FFFFFF); }
-.more-help { margin: 0; padding: 10px 14px 0; }
-.more-actions { padding: 0 14px; }
-.more-actions .setting-row:last-child { border-bottom: 0; }
-.delete-help { margin: 0; padding: 0 14px 12px; }
+.note-actions .text-button { padding-left: 0; }
+.plan-list { border-top: 1px solid var(--color-line); border-bottom: 1px solid var(--color-line); }
+.plan-edit { margin-top: 14px; }
+.plan-item { display: flex; align-items: center; justify-content: space-between; gap: 14px; min-height: 44px; padding: 12px 0; border-bottom: 1px solid var(--color-line); font-size: 13px; color: var(--color-secondary); }
+.plan-item > text:last-child { color: var(--color-ink); text-align: right; overflow-wrap: anywhere; }
+.action-header { display: flex; align-items: center; width: 100%; min-height: 48px; text-align: left; gap: 10px; }
+.more-content { margin-top: 8px; }
+.history-list { border-top: 1px solid var(--color-line); }
+.history-grid { display: grid; grid-template-columns: repeat(7,minmax(0,1fr)); gap: 6px; margin-top: 14px; }
+.history-cell { min-height: 44px; border-radius: 6px; background: var(--color-soft); display: flex; flex-direction: column; gap: 5px; align-items: center; justify-content: center; font-size: 12px; color: var(--color-secondary); }
+.history-mark, .history-key { width: 9px; height: 9px; background: var(--color-surface); border: 1px solid var(--color-field-border); border-radius: 2px; }
+.history-cell.standard .history-mark, .history-key.standard { background: var(--color-primary); border-color: var(--color-primary); }
+.history-cell.minimum .history-mark, .history-key.minimum { background: var(--color-busy-fill); }
+.history-cell.rest .history-mark { height: 1px; width: 7px; border: 0; background: var(--color-secondary); border-radius: 0; }
+.history-cell.today { box-shadow: inset 0 0 0 1px var(--color-primary); }
+.history-legend { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; font-size: 12px; color: var(--color-secondary); margin-top: 12px; }
+.plan-item:last-child { border-bottom: 0; min-height: 0; }
+.history-help { font-size: 12px; line-height: 1.6; color: var(--color-secondary); margin-top: 7px; }
+.more-group { border-top: 1px solid var(--color-line); padding-top: 10px; margin-top: 26px; }
+.more-group .more-header { min-height: 44px; }
+@media (max-width: 359px) { .detail-checkin-actions { grid-template-columns: 1fr; } }
+.detail-page.large-font { font-size: 18px; }
+.large-font .habit-name { font-size: 28px; }
+.large-font .detail-checkin-actions { grid-template-columns: 1fr; }
+.large-font .detail-checkin-actions .primary, .large-font .detail-checkin-actions .secondary { font-size: 17px; }
+.large-font .target-line, .large-font .target-value, .large-font .plan-item, .large-font .note-preview, .large-font .sub, .large-font .text-button { font-size: 16px; }

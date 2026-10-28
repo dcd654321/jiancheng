@@ -1,3 +1,18 @@
+<template name="timeline-task">
+  <view wx:if="{{task.unscheduledStart}}" class="unscheduled">未设置计划时间</view>
+  <view class="schedule-row {{task.done ? 'done' : ''}} {{largeFont ? 'large-font' : ''}}">
+    <view class="timeline-time">{{task.time || '未定'}}</view>
+    <view class="rail"><view class="rail-dot" /></view>
+    <view class="slot">
+      <view class="task-copy"><button class="timeline-title" data-id="{{task.id}}" bindtap="onOpen" aria-label="查看{{task.title}}详情">{{task.title}}</button><view class="task-meta">{{task.done ? (task.status === 'minimum' ? '忙时打卡' : '已打卡') + ' · ' + task.target + task.unit : task.simplified ? '今天 ' + task.target + task.unit + ' · 已调小' : '平时 ' + task.originalTarget + task.unit}}</view><view wx:if="{{task.photoRequired && !task.done}}" class="task-meta">需照片打卡</view><view wx:if="{{task.photosPending || task.photosUnavailable}}" class="task-meta">{{task.photosUnavailable ? '照片暂不可用，请更换' : '照片处理中'}}</view></view>
+      <view class="timeline-actions">
+        <button wx:if="{{task.done}}" class="timeline-undo" disabled="{{readOnly || writeBusy}}" data-id="{{task.id}}" data-date="{{task.date}}" data-done="{{true}}" bindtap="onComplete" aria-label="撤销{{task.title}}的打卡">{{recordingId === task.id && recordingType === 'undo' ? recordingLabel : '撤销'}}</button>
+        <block wx:else><button class="timeline-checkin" disabled="{{readOnly || writeBusy}}" data-id="{{task.id}}" data-date="{{task.date}}" data-done="{{false}}" bindtap="onComplete" aria-label="{{task.title}}已做{{task.target}}{{task.unit}}，打卡">{{recordingId === task.id && recordingType === 'complete' ? recordingLabel : '打卡'}}</button><button wx:if="{{task.simplified}}" class="timeline-busy" disabled="{{readOnly || writeBusy}}" data-id="{{task.id}}" data-date="{{task.date}}" bindtap="onRestore">恢复原目标</button><button wx:elif="{{quickMinimumEnabled && task.minimum}}" class="timeline-busy" disabled="{{readOnly || writeBusy}}" data-id="{{task.id}}" data-date="{{task.date}}" bindtap="onCompleteMinimum" aria-label="{{task.title}}忙时打卡{{task.minimum}}{{task.unit}}">{{recordingId === task.id && recordingType === 'completeMinimum' ? recordingLabel : '忙时 ' + task.minimum + task.unit + '打卡'}}</button></block>
+      </view>
+    </view>
+  </view>
+</template>
+
 <template name="task">
   <view class="task {{task.done ? 'done' : ''}} {{largeFont ? 'large-font' : ''}} {{writeBusy && !readOnly ? 'task-writing' : ''}}">
     <view class="task-top">

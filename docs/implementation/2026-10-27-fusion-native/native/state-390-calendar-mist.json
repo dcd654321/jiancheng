@@ -1,0 +1,262 @@
+{
+  "label": "state-390-calendar-mist",
+  "level": "isolated-wechat-devtools-native",
+  "theme": "mist",
+  "simulatedFontSizeSetting": 16,
+  "variant": "calendar",
+  "screenshots": [
+    {
+      "file": "state-390-calendar-mist-progress.png",
+      "route": "pages/progress/index",
+      "viewport": {
+        "windowWidth": 390,
+        "windowHeight": 671,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "statusBarHeight": 47,
+        "fontSizeSetting": 16
+      }
+    }
+  ],
+  "measurements": [
+    {
+      "page": "progress",
+      "document": {
+        "width": 390,
+        "height": 671
+      },
+      "elements": [
+        {
+          "selector": ".page",
+          "rects": [
+            {
+              "left": 0,
+              "top": 0,
+              "width": 390,
+              "height": 1391.65625,
+              "fontSize": "15px",
+              "lineHeight": "22.5px",
+              "text": "打卡进度看见记录，也看见每一天的安排近7天近1个月日历上一月2026年10月下一月跳转日期回到今天一二三四五六日1廿一0/42廿二0/43廿三0/44廿四0/45廿五0/46廿六0/47廿七0/48廿八0/49廿九0/410九月0/411初二0/412初三0/413初四0/414"
+            }
+          ]
+        },
+        {
+          "selector": ".heading",
+          "rects": [
+            {
+              "left": 20,
+              "top": 18,
+              "width": 96,
+              "height": 31.671875,
+              "fontSize": "24px",
+              "lineHeight": "31.68px",
+              "text": "打卡进度"
+            }
+          ]
+        },
+        {
+          "selector": ".subline",
+          "rects": [
+            {
+              "left": 20,
+              "top": 52.671875,
+              "width": 350,
+              "height": 19.5,
+              "fontSize": "13px",
+              "lineHeight": "19.5px",
+              "text": "看见记录，也看见每一天的安排"
+            }
+          ]
+        },
+        {
+          "selector": ".segments",
+          "rects": [
+            {
+              "left": 20,
+              "top": 88.171875,
+              "width": 350,
+              "height": 50,
+              "fontSize": "15px",
+              "lineHeight": "22.5px",
+              "text": "近7天近1个月日历"
+            }
+          ]
+        },
+        {
+          "selector": ".segment",
+          "rects": [
+            {
+              "left": 23,
+              "top": 91.171875,
+              "width": 114.65625,
+              "height": 44,
+              "fontSize": "14px",
+              "lineHeight": "21px",
+              "text": "近7天"
+            },
+            {
+              "left": 137.65625,
+              "top": 91.171875,
+              "width": 114.671875,
+              "height": 44,
+              "fontSize": "14px",
+              "lineHeight": "21px",
+              "text": "近1个月"
+            },
+            {
+              "left": 252.328125,
+              "top": 91.171875,
+              "width": 114.65625,
+              "height": 44,
+              "fontSize": "14px",
+              "lineHeight": "21px",
+              "text": "日历"
+            }
+          ]
+        },
+        {
+          "selector": ".range",
+          "rects": []
+        },
+        {
+          "selector": ".progress-copy",
+          "rects": []
+        },
+        {
+          "selector": ".progress-statement",
+          "rects": []
+        },
+        {
+          "selector": ".chart-title",
+          "rects": []
+        },
+        {
+          "selector": ".week-trend",
+          "rects": []
+        },
+        {
+          "selector": ".trend-day",
+          "rects": []
+        },
+        {
+          "selector": ".bar-stack",
+          "rects": []
+        },
+        {
+          "selector": ".trend-legend",
+          "rects": []
+        },
+        {
+          "selector": ".rate-row",
+          "rects": []
+        },
+        {
+          "selector": ".current-line",
+          "rects": []
+        }
+      ]
+    }
+  ],
+  "exceptions": [],
+  "sourceFiles": [
+    {
+      "file": "app.wxss",
+      "sha256": "9874b9137bdddaf94daa259c22db9ee7c6c2b6da2dc0d8e5d67c3e6de23d234c"
+    },
+    {
+      "file": "app.json",
+      "sha256": "4f7bac145a9930108cc7019a5a128c43a14ae4fd61dfbd869170979ab1269314"
+    },
+    {
+      "file": "styles/theme.wxss",
+      "sha256": "9624a5f89e9067539b430411284121f5515676d871c5a5b7037a10bcb50b3cae"
+    },
+    {
+      "file": "config/theme-tokens.js",
+      "sha256": "742e1bdbec98679c26b8a437b7635dd9c110a8f26fbef106e07fae835dc6bb96"
+    },
+    {
+      "file": "services/ui.js",
+      "sha256": "2e04941edbbc79c5197c7b33b5b64e5cf0a59302fc3ac1752d884c24fab9cb6a"
+    },
+    {
+      "file": "services/appearance.js",
+      "sha256": "06c7e17b2b864d14b2606b9a233649c3c4ed8872f8b8b16e5c7b31a366b324de"
+    },
+    {
+      "file": "pages/progress/index.js",
+      "sha256": "e1603da92385d8676babfe1a57a33e98c7142e65a8911a45b7f6f11abbb0710e"
+    },
+    {
+      "file": "pages/progress/index.wxml",
+      "sha256": "a7b1d3251ca240c4f6483ac239b12846ffe81ce8c1eeeaf89932c3c0d64a2b86"
+    },
+    {
+      "file": "pages/progress/index.wxss",
+      "sha256": "b0f4dd4cad233f13345421c8399ddae2369cdf9875f1cf061b56fc2639ecf535"
+    }
+  ],
+  "startContext": {
+    "route": "pages/progress/index",
+    "theme": "mist"
+  },
+  "viewport": {
+    "windowWidth": 390,
+    "windowHeight": 671,
+    "screenWidth": 390,
+    "screenHeight": 844,
+    "pixelRatio": 3,
+    "fontSizeSetting": 16,
+    "platform": "devtools",
+    "SDKVersion": "3.17.4",
+    "model": "iPhone 12/13 (Pro)"
+  },
+  "visualSetup": "Native segment tap; production calendar projection from synthetic domain state",
+  "guard": {
+    "cloudCalls": 0,
+    "networkCalls": 0,
+    "storageWrites": 0,
+    "businessWrites": 0,
+    "installed": {
+      "wx.cloud.init": true,
+      "wx.cloud.callFunction": true,
+      "wx.cloud.uploadFile": true,
+      "wx.cloud.downloadFile": true,
+      "wx.cloud.getTempFileURL": true,
+      "wx.cloud.deleteFile": true,
+      "wx.cloud.database": true,
+      "wx.cloud.Cloud": true,
+      "wx.cloud.callContainer": true,
+      "wx.cloud.connectContainer": true,
+      "wx.cloud.getCloudbaseExtConfig": true,
+      "wx.cloud.getOpenData": true,
+      "wx.cloud.getVoIPSign": true,
+      "wx.cloud.getWXContext": true,
+      "wx.cloud.extend": true,
+      "wx.cloud.constructor": true,
+      "wx.cloud.__defineGetter__": true,
+      "wx.cloud.__defineSetter__": true,
+      "wx.cloud.hasOwnProperty": true,
+      "wx.cloud.__lookupGetter__": true,
+      "wx.cloud.__lookupSetter__": true,
+      "wx.cloud.isPrototypeOf": true,
+      "wx.cloud.propertyIsEnumerable": true,
+      "wx.cloud.toString": true,
+      "wx.cloud.valueOf": true,
+      "wx.cloud.toLocaleString": true,
+      "wx.request": true,
+      "wx.uploadFile": true,
+      "wx.downloadFile": true,
+      "wx.connectSocket": true,
+      "wx.sendSocketMessage": true,
+      "wx.setStorage": true,
+      "wx.setStorageSync": true,
+      "wx.removeStorage": true,
+      "wx.removeStorageSync": true,
+      "wx.clearStorage": true,
+      "wx.clearStorageSync": true,
+      "wx.batchSetStorage": true,
+      "wx.batchSetStorageSync": true
+    }
+  }
+}

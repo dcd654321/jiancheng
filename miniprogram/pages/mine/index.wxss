@@ -1,1 +1,21 @@
-/* pages/mine/index.wxss */
+.mine-page .heading { margin-bottom: 0; }
+.mine-page > .heading { display: inline-block; }
+.mine-intro { margin-top: 18px; padding: 17px 0 20px; border-bottom: 1px solid var(--color-line); }
+.mine-title { font-size: 20px; line-height: 1.45; font-weight: 700; }
+.mine-intro .sub { margin-top: 6px; }
+.mine-count { display: flex; flex-wrap: wrap; gap: 8px 16px; color: var(--color-primary); margin-top: 14px; font-size: 13px; font-weight: 600; }
+.mine-page .group { border: 0; border-radius: 0; background: transparent; padding: 0; margin-top: 24px; }
+.mine-page .group-label { color: var(--color-ink); font-size: 16px; line-height: 1.45; font-weight: 650; margin: 0 0 8px; }
+.mine-page .setting-row { min-height: 62px; padding: 12px 0; font-size: 14px; gap: 12px; box-sizing: border-box; }
+.mine-page .quote-setting { min-height: 64px; padding: 10px 0; }
+.mine-page .menu-list { border-top: 1px solid var(--color-line); border-bottom: 1px solid var(--color-line); }
+.mine-page .group .setting-row:last-child { border-bottom: 0; }
+.mine-page .setting-row .sub { font-size: 12px; margin-top: 3px; }
+.menu-icon { width: 30px; height: 30px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; border-radius: 7px; background: var(--color-busy-bg); }
+.menu-icon image { width: 18px; height: 18px; }
+.mine-page switch { transform: scale(.85); transform-origin: right center; }
+.social-group { padding-top: 0; }
+.social-options { padding-left: 42px; border-bottom: 1px solid var(--color-line); }
+.account-caption { margin-top: 20px; font-size: 12px; }
+.mine-page .guide-group { margin-top: 0; }
+.mine-page .guide-group .setting-row { border-top: 0; }

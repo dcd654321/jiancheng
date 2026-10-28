@@ -107,7 +107,7 @@ test('today empty state centers one add entry and retains existing task lists', 
   assert.equal((empty[1].match(/<button\b/g) || []).length, 1);
   assert.match(empty[1], /disabled="\{\{dataReadOnly\}\}" data-template="" bindtap="onCreate">添加习惯<\/button>/);
   assert.doesNotMatch(empty[1], /模板|推荐|整理|onAssistant|onToggleChooser|onManage/);
-  assert.match(markup, /<block wx:if="\{\{total\}\}">[\s\S]*wx:for="\{\{pending\}\}"[\s\S]*wx:for="\{\{completed\}\}"[\s\S]*<\/block>\s*<view wx:else class="today-empty">/);
+  assert.match(markup, /<block wx:if="\{\{total\}\}">[\s\S]*wx:for="\{\{pinnedTasks\}\}"[\s\S]*wx:for="\{\{timelineTasks\}\}"[\s\S]*<\/block>\s*<view wx:else class="today-empty">/);
   assert.match(markup, /<button wx:if="\{\{dataReady && total\}\}" class="add-button"/);
   assert.match(markup, /wx:if="\{\{total && chooserOpen\}\}"/);
   assert.match(markup, /wx:if="\{\{total && !pending.length && tomorrow\}\}"/);
@@ -124,7 +124,7 @@ test('task controls keep their recording labels and shared theme styling', () =>
   assert.match(task, /record-action-goal">忙时 {{task.minimum}}{{task.unit}}/);
   assert.match(task, /record-action-label">打卡/);
   const wxss = mini('app.wxss').toLowerCase();
-  for (const token of ['#f6f7f2', '#edf2e3', '.card {', '.check-pill', '.soft-button', '.stamp-in', '.skeleton']) assert.ok(wxss.includes(token), token);
+  for (const token of ['#ffffff', '#edf6ef', '.card {', '.check-pill', '.soft-button', '.stamp-in', '.skeleton']) assert.ok(wxss.includes(token), token);
   assert.ok(wxss.includes('@import "styles/theme.wxss"'), 'app.wxss 引入主题作用域');
 });
 

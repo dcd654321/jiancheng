@@ -10,6 +10,21 @@ const TAB_ICONS = [
   ['assets/tabbar/mine.png', 'assets/tabbar/mine-selected.png', 'assets/tabbar/mine-selected-paper.png']
 ];
 
+// Native colors belong to the currently visible page. Reapply on entry because
+// a child page has its own navigation bar and cannot update a hidden TabBar.
+function applyPageAppearance(wxApi, theme, tabPage = false) {
+  const tokens = THEMES[theme] || THEMES[DEFAULT_THEME];
+  const call = (name, payload) => { try { if (typeof wxApi[name] === 'function') wxApi[name](payload); } catch (_) {} };
+  call('setNavigationBarColor', { frontColor: '#000000', backgroundColor: tokens.page });
+  call('setBackgroundColor', { backgroundColor: tokens.page, backgroundColorTop: tokens.page, backgroundColorBottom: tokens.page });
+  if (!tabPage) return;
+  call('setTabBarStyle', { color: tokens.secondary, selectedColor: tokens.primary, backgroundColor: tokens.surface, borderStyle: 'white' });
+  TAB_ICONS.forEach(([normal, mist, paper], index) => call('setTabBarItem', {
+    index, iconPath: theme === 'paper' ? normal.replace('.png', '-paper.png') : normal,
+    selectedIconPath: theme === 'paper' ? paper : mist
+  }));
+}
+
 function createAppearanceController({ client, wxApi, session }) {
   let saved = { theme: DEFAULT_THEME, revision: null };
   let loadState = 'idle', loadError = '', accountKey = '', reading = null;
@@ -42,14 +57,7 @@ function createAppearanceController({ client, wxApi, session }) {
 
   // 原生区域：官方 API 可用则换色，失败保留中性浅底且不阻塞业务页面。
   function applyNative(theme) {
-    const tokens = THEMES[theme] || THEMES[DEFAULT_THEME];
-    const call = (fn, payload) => { try { if (typeof fn === 'function') fn.call(wxApi, payload); } catch (_) { /* 原生配色可选 */ } };
-    call(wxApi.setNavigationBarColor, { frontColor: '#000000', backgroundColor: tokens.page });
-    call(wxApi.setBackgroundColor, { backgroundColor: tokens.page, backgroundColorTop: tokens.page, backgroundColorBottom: tokens.page });
-    call(wxApi.setTabBarStyle, { color: tokens.secondary, selectedColor: tokens.primary, backgroundColor: tokens.surface, borderStyle: 'white' });
-    TAB_ICONS.forEach(([normal, mist, paper], index) => {
-      call(wxApi.setTabBarItem, { index, iconPath: normal, selectedIconPath: theme === 'paper' ? paper : mist });
-    });
+    applyPageAppearance(wxApi, theme, true);
   }
 
   function applyConfirmed(value) {
@@ -134,4 +142,4 @@ function themeSnapshot() {
   return { ...view, primary: (THEMES[view.theme] || THEMES[DEFAULT_THEME]).primary };
 }
 
-module.exports = { createAppearanceController, appearanceController, themeSnapshot, TAB_ICONS };
+module.exports = { createAppearanceController, appearanceController, themeSnapshot, applyPageAppearance, TAB_ICONS };

@@ -1,0 +1,87 @@
+{
+  "date": "2026-10-28",
+  "branch": "dev",
+  "tests": {
+    "command": "npm test",
+    "total": 676,
+    "passed": 676,
+    "failed": 0
+  },
+  "source": {
+    "output": "> jiancheng-miniprogram@0.1.0 check\r\n> node scripts/check.cjs\r\n\r\nPASS 618 syntax/config/page checks. WXML compilation and native rendering require WeChat DevTools.",
+    "checks": 618,
+    "status": "passed",
+    "command": "npm run check"
+  },
+  "cloud": {
+    "command": "npm run check:cloud",
+    "matchedFiles": 122,
+    "status": "passed"
+  },
+  "openspec": {
+    "command": "npm run openspec -- validate --all --strict",
+    "passed": 26,
+    "failed": 0
+  },
+  "nativeCompiler": {
+    "command": "node scripts/check-native.cjs <WeChat-DevTools-directory>",
+    "wxml": {
+      "inputs": 23,
+      "compiledBytes": 270343,
+      "status": "passed"
+    },
+    "wxss": {
+      "inputs": 23,
+      "compiledBytes": 72586,
+      "status": "passed"
+    }
+  },
+  "uiGeneration": {
+    "command": "npm run build:ui",
+    "tabIcons": 12,
+    "menuIcons": 12,
+    "status": "passed",
+    "note": "Final rerun retained generated asset bytes; 155-file isolated source proof also matched."
+  },
+  "nativeSimulator": {
+    "data": "synthetic-domain-fixture",
+    "widths": [
+      320,
+      375,
+      390,
+      430
+    ],
+    "themes": [
+      "mist",
+      "paper"
+    ],
+    "normalScreenshots": 40,
+    "pairedRectangles": 248,
+    "maximumGeometryDelta": 1.90625,
+    "cloudCalls": 0,
+    "networkCalls": 0,
+    "storageWrites": 0,
+    "businessWrites": 0,
+    "evidence": "acceptance-summary.json"
+  },
+  "visualReview": {
+    "disposition": "ship",
+    "scope": "390px five core pages, both themes, listed material fixes only",
+    "listedFixes": "resolved",
+    "userAcceptance": "pending"
+  },
+  "pending": [
+    "Real-cloud check-in/photo/goal adjustment verification",
+    "Real-device software keyboard and system font settings",
+    "Two-account acceptance",
+    "User UI and interaction acceptance"
+  ],
+  "operationsAtInitialLocalValidation": {
+    "committed": false,
+    "pushed": false,
+    "deployed": false,
+    "merged": false,
+    "published": false,
+    "accountMigration": false
+  }
+}

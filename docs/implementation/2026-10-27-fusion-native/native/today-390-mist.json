@@ -1,0 +1,482 @@
+{
+  "label": "today-390-mist",
+  "level": "isolated-wechat-devtools-native",
+  "theme": "mist",
+  "simulatedFontSizeSetting": 16,
+  "variant": "normal",
+  "screenshots": [
+    {
+      "file": "today-390-mist-today.png",
+      "route": "pages/today/index"
+    }
+  ],
+  "measurements": [
+    {
+      "page": "today",
+      "document": {
+        "width": 390,
+        "height": 671
+      },
+      "elements": [
+        {
+          "selector": ".page",
+          "rects": [
+            {
+              "left": 0,
+              "top": 0,
+              "width": 390,
+              "height": 701.6875,
+              "fontSize": "15px",
+              "lineHeight": "22.5px",
+              "text": "今日添加习惯10月27日 周二1 / 4已打卡查看进度待做 3 项今天的安排收起已完成（1）07:30晨间拉伸已打卡 · 8分钟撤销12:30读一会儿平时 20分钟打卡忙时 2分钟打卡18:30走一会儿平时 20分钟打卡忙时 5分钟打卡21:30睡前整理平时 10分钟打卡忙时 2"
+            }
+          ]
+        },
+        {
+          "selector": ".heading",
+          "rects": [
+            {
+              "left": 20,
+              "top": 24.15625,
+              "width": 48,
+              "height": 31.671875,
+              "fontSize": "24px",
+              "lineHeight": "31.68px",
+              "text": "今日"
+            }
+          ]
+        },
+        {
+          "selector": ".subline",
+          "rects": [
+            {
+              "left": 20,
+              "top": 65,
+              "width": 350,
+              "height": 19.5,
+              "fontSize": "13px",
+              "lineHeight": "19.5px",
+              "text": "10月27日 周二"
+            }
+          ]
+        },
+        {
+          "selector": ".today-summary",
+          "rects": [
+            {
+              "left": 20,
+              "top": 96.5,
+              "width": 350,
+              "height": 83,
+              "fontSize": "15px",
+              "lineHeight": "22.5px",
+              "text": "1 / 4已打卡查看进度待做 3 项"
+            }
+          ]
+        },
+        {
+          "selector": ".summary-top",
+          "rects": [
+            {
+              "left": 20,
+              "top": 96.5,
+              "width": 350,
+              "height": 44,
+              "fontSize": "15px",
+              "lineHeight": "22.5px",
+              "text": "1 / 4已打卡查看进度"
+            }
+          ]
+        },
+        {
+          "selector": ".summary-bottom",
+          "rects": [
+            {
+              "left": 20,
+              "top": 144.5,
+              "width": 350,
+              "height": 18,
+              "fontSize": "15px",
+              "lineHeight": "22.5px",
+              "text": "待做 3 项"
+            }
+          ]
+        },
+        {
+          "selector": ".timeline-head",
+          "rects": [
+            {
+              "left": 20,
+              "top": 187.5,
+              "width": 350,
+              "height": 44,
+              "fontSize": "14px",
+              "lineHeight": "21px",
+              "text": "今天的安排收起已完成（1）"
+            }
+          ]
+        },
+        {
+          "selector": ".timeline",
+          "rects": [
+            {
+              "left": 20,
+              "top": 235.5,
+              "width": 350,
+              "height": 375,
+              "fontSize": "15px",
+              "lineHeight": "22.5px",
+              "text": "07:30晨间拉伸已打卡 · 8分钟撤销12:30读一会儿平时 20分钟打卡忙时 2分钟打卡18:30走一会儿平时 20分钟打卡忙时 5分钟打卡21:30睡前整理平时 10分钟打卡忙时 2分钟打卡"
+            }
+          ]
+        },
+        {
+          "selector": ".schedule-row",
+          "rects": [
+            {
+              "left": 20,
+              "top": 235.5,
+              "width": 350,
+              "height": 69,
+              "fontSize": "15px",
+              "lineHeight": "22.5px",
+              "text": "07:30晨间拉伸已打卡 · 8分钟撤销"
+            },
+            {
+              "left": 20,
+              "top": 304.5,
+              "width": 350,
+              "height": 102,
+              "fontSize": "15px",
+              "lineHeight": "22.5px",
+              "text": "12:30读一会儿平时 20分钟打卡忙时 2分钟打卡"
+            },
+            {
+              "left": 20,
+              "top": 406.5,
+              "width": 350,
+              "height": 102,
+              "fontSize": "15px",
+              "lineHeight": "22.5px",
+              "text": "18:30走一会儿平时 20分钟打卡忙时 5分钟打卡"
+            },
+            {
+              "left": 20,
+              "top": 508.5,
+              "width": 350,
+              "height": 102,
+              "fontSize": "15px",
+              "lineHeight": "22.5px",
+              "text": "21:30睡前整理平时 10分钟打卡忙时 2分钟打卡"
+            }
+          ]
+        },
+        {
+          "selector": ".time",
+          "rects": []
+        },
+        {
+          "selector": ".rail",
+          "rects": [
+            {
+              "left": 62,
+              "top": 235.5,
+              "width": 16,
+              "height": 69,
+              "fontSize": "15px",
+              "lineHeight": "22.5px",
+              "text": ""
+            },
+            {
+              "left": 62,
+              "top": 304.5,
+              "width": 16,
+              "height": 102,
+              "fontSize": "15px",
+              "lineHeight": "22.5px",
+              "text": ""
+            },
+            {
+              "left": 62,
+              "top": 406.5,
+              "width": 16,
+              "height": 102,
+              "fontSize": "15px",
+              "lineHeight": "22.5px",
+              "text": ""
+            },
+            {
+              "left": 62,
+              "top": 508.5,
+              "width": 16,
+              "height": 102,
+              "fontSize": "15px",
+              "lineHeight": "22.5px",
+              "text": ""
+            }
+          ]
+        },
+        {
+          "selector": ".slot",
+          "rects": [
+            {
+              "left": 78,
+              "top": 235.5,
+              "width": 292,
+              "height": 69,
+              "fontSize": "15px",
+              "lineHeight": "22.5px",
+              "text": "晨间拉伸已打卡 · 8分钟撤销"
+            },
+            {
+              "left": 78,
+              "top": 304.5,
+              "width": 292,
+              "height": 102,
+              "fontSize": "15px",
+              "lineHeight": "22.5px",
+              "text": "读一会儿平时 20分钟打卡忙时 2分钟打卡"
+            },
+            {
+              "left": 78,
+              "top": 406.5,
+              "width": 292,
+              "height": 102,
+              "fontSize": "15px",
+              "lineHeight": "22.5px",
+              "text": "走一会儿平时 20分钟打卡忙时 5分钟打卡"
+            },
+            {
+              "left": 78,
+              "top": 508.5,
+              "width": 292,
+              "height": 102,
+              "fontSize": "15px",
+              "lineHeight": "22.5px",
+              "text": "睡前整理平时 10分钟打卡忙时 2分钟打卡"
+            }
+          ]
+        },
+        {
+          "selector": ".timeline-title",
+          "rects": [
+            {
+              "left": 78,
+              "top": 235.5,
+              "width": 178,
+              "height": 44,
+              "fontSize": "14px",
+              "lineHeight": "20.3px",
+              "text": "晨间拉伸"
+            },
+            {
+              "left": 78,
+              "top": 310.5,
+              "width": 178,
+              "height": 44,
+              "fontSize": "16px",
+              "lineHeight": "23.2px",
+              "text": "读一会儿"
+            },
+            {
+              "left": 78,
+              "top": 412.5,
+              "width": 178,
+              "height": 44,
+              "fontSize": "16px",
+              "lineHeight": "23.2px",
+              "text": "走一会儿"
+            },
+            {
+              "left": 78,
+              "top": 514.5,
+              "width": 178,
+              "height": 44,
+              "fontSize": "16px",
+              "lineHeight": "23.2px",
+              "text": "睡前整理"
+            }
+          ]
+        },
+        {
+          "selector": ".task-meta",
+          "rects": [
+            {
+              "left": 78,
+              "top": 279.5,
+              "width": 178,
+              "height": 18,
+              "fontSize": "12px",
+              "lineHeight": "18px",
+              "text": "已打卡 · 8分钟"
+            },
+            {
+              "left": 78,
+              "top": 353.5,
+              "width": 178,
+              "height": 19.5,
+              "fontSize": "13px",
+              "lineHeight": "19.5px",
+              "text": "平时 20分钟"
+            },
+            {
+              "left": 78,
+              "top": 455.5,
+              "width": 178,
+              "height": 19.5,
+              "fontSize": "13px",
+              "lineHeight": "19.5px",
+              "text": "平时 20分钟"
+            },
+            {
+              "left": 78,
+              "top": 557.5,
+              "width": 178,
+              "height": 19.5,
+              "fontSize": "13px",
+              "lineHeight": "19.5px",
+              "text": "平时 10分钟"
+            }
+          ]
+        },
+        {
+          "selector": ".timeline-checkin",
+          "rects": [
+            {
+              "left": 266,
+              "top": 310.5,
+              "width": 104,
+              "height": 44,
+              "fontSize": "14px",
+              "lineHeight": "19.6px",
+              "text": "打卡"
+            },
+            {
+              "left": 266,
+              "top": 412.5,
+              "width": 104,
+              "height": 44,
+              "fontSize": "14px",
+              "lineHeight": "19.6px",
+              "text": "打卡"
+            },
+            {
+              "left": 266,
+              "top": 514.5,
+              "width": 104,
+              "height": 44,
+              "fontSize": "14px",
+              "lineHeight": "19.6px",
+              "text": "打卡"
+            }
+          ]
+        },
+        {
+          "selector": ".timeline-busy",
+          "rects": [
+            {
+              "left": 266,
+              "top": 354.5,
+              "width": 104,
+              "height": 44,
+              "fontSize": "12px",
+              "lineHeight": "18px",
+              "text": "忙时 2分钟打卡"
+            },
+            {
+              "left": 266,
+              "top": 456.5,
+              "width": 104,
+              "height": 44,
+              "fontSize": "12px",
+              "lineHeight": "18px",
+              "text": "忙时 5分钟打卡"
+            },
+            {
+              "left": 266,
+              "top": 558.5,
+              "width": 104,
+              "height": 44,
+              "fontSize": "12px",
+              "lineHeight": "18px",
+              "text": "忙时 2分钟打卡"
+            }
+          ]
+        },
+        {
+          "selector": ".timeline-note",
+          "rects": [
+            {
+              "left": 20,
+              "top": 610.5,
+              "width": 350,
+              "height": 33.1875,
+              "fontSize": "12px",
+              "lineHeight": "19.2px",
+              "text": "时间仅用于安排顺序，不会发送提醒。"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "exceptions": [],
+  "viewport": {
+    "windowWidth": 390,
+    "windowHeight": 671,
+    "screenWidth": 390,
+    "screenHeight": 844,
+    "pixelRatio": 3,
+    "fontSizeSetting": 16,
+    "platform": "devtools",
+    "SDKVersion": "3.17.4",
+    "model": "iPhone 12/13 (Pro)"
+  },
+  "guard": {
+    "cloudCalls": 0,
+    "networkCalls": 0,
+    "storageWrites": 0,
+    "businessWrites": 0,
+    "installed": {
+      "wx.cloud.init": true,
+      "wx.cloud.callFunction": true,
+      "wx.cloud.uploadFile": true,
+      "wx.cloud.downloadFile": true,
+      "wx.cloud.getTempFileURL": true,
+      "wx.cloud.deleteFile": true,
+      "wx.cloud.database": true,
+      "wx.cloud.Cloud": true,
+      "wx.cloud.callContainer": true,
+      "wx.cloud.connectContainer": true,
+      "wx.cloud.getCloudbaseExtConfig": true,
+      "wx.cloud.getOpenData": true,
+      "wx.cloud.getVoIPSign": true,
+      "wx.cloud.getWXContext": true,
+      "wx.cloud.extend": true,
+      "wx.cloud.constructor": true,
+      "wx.cloud.__defineGetter__": true,
+      "wx.cloud.__defineSetter__": true,
+      "wx.cloud.hasOwnProperty": true,
+      "wx.cloud.__lookupGetter__": true,
+      "wx.cloud.__lookupSetter__": true,
+      "wx.cloud.isPrototypeOf": true,
+      "wx.cloud.propertyIsEnumerable": true,
+      "wx.cloud.toString": true,
+      "wx.cloud.valueOf": true,
+      "wx.cloud.toLocaleString": true,
+      "wx.request": true,
+      "wx.uploadFile": true,
+      "wx.downloadFile": true,
+      "wx.connectSocket": true,
+      "wx.sendSocketMessage": true,
+      "wx.setStorage": true,
+      "wx.setStorageSync": true,
+      "wx.removeStorage": true,
+      "wx.removeStorageSync": true,
+      "wx.clearStorage": true,
+      "wx.clearStorageSync": true,
+      "wx.batchSetStorage": true,
+      "wx.batchSetStorageSync": true
+    }
+  }
+}

@@ -1,0 +1,517 @@
+{
+  "level": "frozen-html-reference-measurement",
+  "viewport": {
+    "width": 390,
+    "height": 780
+  },
+  "bodyOrigin": {
+    "left": 0,
+    "top": 44,
+    "width": 390,
+    "height": 670
+  },
+  "elements": [
+    {
+      "selector": ".page",
+      "rects": [
+        {
+          "left": 0,
+          "top": 0,
+          "width": 390,
+          "height": 1121.75,
+          "fontSize": "15px",
+          "lineHeight": "22.5px",
+          "text": "习惯详情\n读一会儿\n进行中\n每天\n今日目标\n只调整今天\n平时目标\n20 分钟\n忙时目标\n2 分钟\n原目标打卡 · 20 分钟\n忙时打卡 · 2 分钟\n备注\n编辑\n\n把书放在桌边，午饭后读几页。\n\n习惯计划\n重复\n每天\n开始日期\n2026.10.01\n计划时间\n12:30 · 仅排"
+        }
+      ]
+    },
+    {
+      "selector": ".heading",
+      "rects": [
+        {
+          "left": 10,
+          "top": 18,
+          "width": 360,
+          "height": 44,
+          "fontSize": "15px",
+          "lineHeight": "22.5px",
+          "text": "习惯详情"
+        }
+      ]
+    },
+    {
+      "selector": "h1",
+      "rects": [
+        {
+          "left": 62,
+          "top": 25.484375,
+          "width": 86.25,
+          "height": 29.03125,
+          "fontSize": "22px",
+          "lineHeight": "29.04px",
+          "text": "习惯详情"
+        }
+      ]
+    },
+    {
+      "selector": ".subline",
+      "rects": []
+    },
+    {
+      "selector": ".today-summary",
+      "rects": []
+    },
+    {
+      "selector": ".summary-top",
+      "rects": []
+    },
+    {
+      "selector": ".summary-bottom",
+      "rects": []
+    },
+    {
+      "selector": ".timeline-head",
+      "rects": []
+    },
+    {
+      "selector": ".timeline",
+      "rects": []
+    },
+    {
+      "selector": ".schedule-row",
+      "rects": []
+    },
+    {
+      "selector": ".time",
+      "rects": []
+    },
+    {
+      "selector": ".rail",
+      "rects": []
+    },
+    {
+      "selector": ".slot",
+      "rects": []
+    },
+    {
+      "selector": ".task-title",
+      "rects": []
+    },
+    {
+      "selector": ".task-meta",
+      "rects": []
+    },
+    {
+      "selector": ".checkin",
+      "rects": []
+    },
+    {
+      "selector": ".busy-btn",
+      "rects": []
+    },
+    {
+      "selector": ".timeline-note",
+      "rects": []
+    },
+    {
+      "selector": ".segmented",
+      "rects": []
+    },
+    {
+      "selector": ".segment",
+      "rects": []
+    },
+    {
+      "selector": ".period",
+      "rects": []
+    },
+    {
+      "selector": ".progress-copy",
+      "rects": []
+    },
+    {
+      "selector": ".progress-copy h2",
+      "rects": []
+    },
+    {
+      "selector": ".chart-title",
+      "rects": []
+    },
+    {
+      "selector": ".daily-chart",
+      "rects": []
+    },
+    {
+      "selector": ".chart-column",
+      "rects": []
+    },
+    {
+      "selector": ".bar-stack",
+      "rects": []
+    },
+    {
+      "selector": ".chart-legend",
+      "rects": []
+    },
+    {
+      "selector": ".rate-row",
+      "rects": []
+    },
+    {
+      "selector": ".current-line",
+      "rects": []
+    },
+    {
+      "selector": ".form-intro",
+      "rects": []
+    },
+    {
+      "selector": ".form-field",
+      "rects": []
+    },
+    {
+      "selector": ".field-label",
+      "rects": []
+    },
+    {
+      "selector": "input",
+      "rects": []
+    },
+    {
+      "selector": ".field-heading",
+      "rects": []
+    },
+    {
+      "selector": ".weekdays",
+      "rects": []
+    },
+    {
+      "selector": ".weekday-btn",
+      "rects": []
+    },
+    {
+      "selector": ".primary",
+      "rects": [
+        {
+          "left": 20,
+          "top": 315.59375,
+          "width": 171,
+          "height": 44,
+          "fontSize": "13px",
+          "lineHeight": "normal",
+          "text": "原目标打卡 · 20 分钟"
+        }
+      ]
+    },
+    {
+      "selector": ".save-block",
+      "rects": []
+    },
+    {
+      "selector": ".more-settings",
+      "rects": []
+    },
+    {
+      "selector": ".back-heading",
+      "rects": [
+        {
+          "left": 10,
+          "top": 18,
+          "width": 360,
+          "height": 44,
+          "fontSize": "15px",
+          "lineHeight": "22.5px",
+          "text": "习惯详情"
+        }
+      ]
+    },
+    {
+      "selector": ".detail-name",
+      "rects": [
+        {
+          "left": 20,
+          "top": 78,
+          "width": 350,
+          "height": 63.59375,
+          "fontSize": "15px",
+          "lineHeight": "22.5px",
+          "text": "读一会儿\n进行中\n每天"
+        }
+      ]
+    },
+    {
+      "selector": ".detail-name h2",
+      "rects": [
+        {
+          "left": 20,
+          "top": 78,
+          "width": 350,
+          "height": 33.59375,
+          "fontSize": "24px",
+          "lineHeight": "33.6px",
+          "text": "读一会儿"
+        }
+      ]
+    },
+    {
+      "selector": ".status-line",
+      "rects": [
+        {
+          "left": 20,
+          "top": 117.59375,
+          "width": 350,
+          "height": 24,
+          "fontSize": "13px",
+          "lineHeight": "19.5px",
+          "text": "进行中\n每天"
+        }
+      ]
+    },
+    {
+      "selector": ".section",
+      "rects": [
+        {
+          "left": 20,
+          "top": 165.59375,
+          "width": 350,
+          "height": 194,
+          "fontSize": "15px",
+          "lineHeight": "22.5px",
+          "text": "今日目标\n只调整今天\n平时目标\n20 分钟\n忙时目标\n2 分钟\n原目标打卡 · 20 分钟\n忙时打卡 · 2 分钟"
+        },
+        {
+          "left": 20,
+          "top": 383.59375,
+          "width": 350,
+          "height": 74.09375,
+          "fontSize": "15px",
+          "lineHeight": "22.5px",
+          "text": "备注\n编辑\n\n把书放在桌边，午饭后读几页。"
+        },
+        {
+          "left": 20,
+          "top": 481.6875,
+          "width": 350,
+          "height": 223.6875,
+          "fontSize": "15px",
+          "lineHeight": "22.5px",
+          "text": "习惯计划\n重复\n每天\n开始日期\n2026.10.01\n计划时间\n12:30 · 仅排序\n调整计划"
+        },
+        {
+          "left": 20,
+          "top": 729.375,
+          "width": 350,
+          "height": 287.375,
+          "fontSize": "15px",
+          "lineHeight": "22.5px",
+          "text": "近28天安排历史\n截至10月27日\n30\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n原目标\n忙时\n未打卡\n无样例\n\n仅 10月21—27日提供样例；其余日期未提供记录。"
+        }
+      ]
+    },
+    {
+      "selector": ".section-head",
+      "rects": [
+        {
+          "left": 20,
+          "top": 165.59375,
+          "width": 350,
+          "height": 44,
+          "fontSize": "15px",
+          "lineHeight": "22.5px",
+          "text": "今日目标\n只调整今天"
+        },
+        {
+          "left": 20,
+          "top": 383.59375,
+          "width": 350,
+          "height": 44,
+          "fontSize": "15px",
+          "lineHeight": "22.5px",
+          "text": "备注\n编辑"
+        },
+        {
+          "left": 20,
+          "top": 481.6875,
+          "width": 350,
+          "height": 23.1875,
+          "fontSize": "15px",
+          "lineHeight": "22.5px",
+          "text": "习惯计划"
+        },
+        {
+          "left": 20,
+          "top": 729.375,
+          "width": 350,
+          "height": 23.1875,
+          "fontSize": "15px",
+          "lineHeight": "22.5px",
+          "text": "近28天安排历史\n截至10月27日"
+        }
+      ]
+    },
+    {
+      "selector": ".target-lines",
+      "rects": [
+        {
+          "left": 20,
+          "top": 217.59375,
+          "width": 350,
+          "height": 86,
+          "fontSize": "15px",
+          "lineHeight": "22.5px",
+          "text": "平时目标\n20 分钟\n忙时目标\n2 分钟"
+        }
+      ]
+    },
+    {
+      "selector": ".target-line",
+      "rects": [
+        {
+          "left": 20,
+          "top": 226.59375,
+          "width": 350,
+          "height": 33,
+          "fontSize": "14px",
+          "lineHeight": "21px",
+          "text": "平时目标\n20 分钟"
+        },
+        {
+          "left": 20,
+          "top": 259.59375,
+          "width": 350,
+          "height": 33,
+          "fontSize": "14px",
+          "lineHeight": "21px",
+          "text": "忙时目标\n2 分钟"
+        }
+      ]
+    },
+    {
+      "selector": ".detail-actions",
+      "rects": [
+        {
+          "left": 20,
+          "top": 315.59375,
+          "width": 350,
+          "height": 44,
+          "fontSize": "15px",
+          "lineHeight": "22.5px",
+          "text": "原目标打卡 · 20 分钟\n忙时打卡 · 2 分钟"
+        }
+      ]
+    },
+    {
+      "selector": ".secondary",
+      "rects": [
+        {
+          "left": 199,
+          "top": 315.59375,
+          "width": 171,
+          "height": 44,
+          "fontSize": "13px",
+          "lineHeight": "normal",
+          "text": "忙时打卡 · 2 分钟"
+        },
+        {
+          "left": 20,
+          "top": 661.375,
+          "width": 350,
+          "height": 44,
+          "fontSize": "14px",
+          "lineHeight": "normal",
+          "text": "调整计划"
+        }
+      ]
+    },
+    {
+      "selector": ".note-copy",
+      "rects": [
+        {
+          "left": 20,
+          "top": 435.59375,
+          "width": 350,
+          "height": 22.09375,
+          "fontSize": "13px",
+          "lineHeight": "22.1px",
+          "text": "把书放在桌边，午饭后读几页。"
+        }
+      ]
+    },
+    {
+      "selector": ".plan-list",
+      "rects": [
+        {
+          "left": 20,
+          "top": 512.875,
+          "width": 350,
+          "height": 134.5,
+          "fontSize": "15px",
+          "lineHeight": "22.5px",
+          "text": "重复\n每天\n开始日期\n2026.10.01\n计划时间\n12:30 · 仅排序"
+        }
+      ]
+    },
+    {
+      "selector": ".plan-item",
+      "rects": [
+        {
+          "left": 20,
+          "top": 513.875,
+          "width": 350,
+          "height": 44.5,
+          "fontSize": "13px",
+          "lineHeight": "19.5px",
+          "text": "重复\n每天"
+        },
+        {
+          "left": 20,
+          "top": 558.375,
+          "width": 350,
+          "height": 44.5,
+          "fontSize": "13px",
+          "lineHeight": "19.5px",
+          "text": "开始日期\n2026.10.01"
+        },
+        {
+          "left": 20,
+          "top": 602.875,
+          "width": 350,
+          "height": 43.5,
+          "fontSize": "13px",
+          "lineHeight": "19.5px",
+          "text": "计划时间\n12:30 · 仅排序"
+        }
+      ]
+    },
+    {
+      "selector": ".more-operations",
+      "rects": [
+        {
+          "left": 20,
+          "top": 1042.75,
+          "width": 350,
+          "height": 55,
+          "fontSize": "15px",
+          "lineHeight": "22.5px",
+          "text": "更多操作"
+        }
+      ]
+    },
+    {
+      "selector": ".mine-intro",
+      "rects": []
+    },
+    {
+      "selector": ".setting-row",
+      "rects": []
+    },
+    {
+      "selector": ".menu-icon",
+      "rects": []
+    },
+    {
+      "selector": ".demo-footer",
+      "rects": []
+    }
+  ]
+}

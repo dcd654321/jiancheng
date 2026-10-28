@@ -1,0 +1,3386 @@
+{
+  "label": "final-390-mist",
+  "viewport": {
+    "windowWidth": 390,
+    "windowHeight": 671,
+    "screenWidth": 390,
+    "screenHeight": 844,
+    "pixelRatio": 3,
+    "fontSizeSetting": 16,
+    "platform": "devtools",
+    "SDKVersion": "3.17.4",
+    "model": "iPhone 12/13 (Pro)"
+  },
+  "rule": "Body logical rectangles, native navigation/tab bar excluded; page root height includes native safe area and is recorded separately.",
+  "pages": [
+    {
+      "page": "today",
+      "pageRoot": {
+        "native": {
+          "left": 0,
+          "top": 0,
+          "width": 390,
+          "height": 701.6875,
+          "fontSize": "15px",
+          "lineHeight": "22.5px",
+          "text": "今日添加习惯10月27日 周二1 / 4已打卡查看进度待做 3 项今天的安排收起已完成（1）07:30晨间拉伸已打卡 · 8分钟撤销12:30读一会儿平时 20分钟打卡忙时 2分钟打卡18:30走一会儿平时 20分钟打卡忙时 5分钟打卡21:30睡前整理平时 10分钟打卡忙时 2"
+        },
+        "reference": {
+          "left": 0,
+          "top": 0,
+          "width": 390,
+          "height": 667.6875,
+          "fontSize": "15px",
+          "lineHeight": "22.5px",
+          "text": "今日\n添加习惯\n\n10月27日，星期二\n\n1 / 4\n已打卡\n查看进度\n待做 3 项\n今天的安排\n收起已完成（1）\n07:30\n晨间拉伸\n已打卡 · 8 分钟\n撤销\n12:30\n读一会儿\n平时 20 分钟\n打卡\n忙时 2 分钟打卡\n18:30\n走一会儿\n平时 20 分钟\n打卡\n忙"
+        }
+      },
+      "pairs": [
+        {
+          "native": ".page-header",
+          "reference": ".heading",
+          "nativeCount": 1,
+          "referenceCount": 1,
+          "rects": [
+            {
+              "index": 0,
+              "native": {
+                "left": 20,
+                "top": 18,
+                "width": 350,
+                "height": 44
+              },
+              "reference": {
+                "left": 20,
+                "top": 18,
+                "width": 350,
+                "height": 44
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            }
+          ]
+        },
+        {
+          "native": ".heading",
+          "reference": "h1",
+          "nativeCount": 1,
+          "referenceCount": 1,
+          "rects": [
+            {
+              "index": 0,
+              "native": {
+                "left": 20,
+                "top": 24.15625,
+                "width": 48,
+                "height": 31.671875
+              },
+              "reference": {
+                "left": 20,
+                "top": 24.15625,
+                "width": 47.046875,
+                "height": 31.671875
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0.953125,
+                "height": 0
+              },
+              "maxDelta": 0.953125
+            }
+          ]
+        },
+        {
+          "native": ".subline",
+          "reference": ".subline",
+          "nativeCount": 1,
+          "referenceCount": 1,
+          "rects": [
+            {
+              "index": 0,
+              "native": {
+                "left": 20,
+                "top": 65,
+                "width": 350,
+                "height": 19.5
+              },
+              "reference": {
+                "left": 20,
+                "top": 65,
+                "width": 350,
+                "height": 19.5
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            }
+          ]
+        },
+        {
+          "native": ".today-summary",
+          "reference": ".today-summary",
+          "nativeCount": 1,
+          "referenceCount": 1,
+          "rects": [
+            {
+              "index": 0,
+              "native": {
+                "left": 20,
+                "top": 96.5,
+                "width": 350,
+                "height": 83
+              },
+              "reference": {
+                "left": 20,
+                "top": 96.5,
+                "width": 350,
+                "height": 83
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            }
+          ]
+        },
+        {
+          "native": ".summary-top",
+          "reference": ".summary-top",
+          "nativeCount": 1,
+          "referenceCount": 1,
+          "rects": [
+            {
+              "index": 0,
+              "native": {
+                "left": 20,
+                "top": 96.5,
+                "width": 350,
+                "height": 44
+              },
+              "reference": {
+                "left": 20,
+                "top": 96.5,
+                "width": 350,
+                "height": 44
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            }
+          ]
+        },
+        {
+          "native": ".summary-bottom",
+          "reference": ".summary-bottom",
+          "nativeCount": 1,
+          "referenceCount": 1,
+          "rects": [
+            {
+              "index": 0,
+              "native": {
+                "left": 20,
+                "top": 144.5,
+                "width": 350,
+                "height": 18
+              },
+              "reference": {
+                "left": 20,
+                "top": 144.5,
+                "width": 350,
+                "height": 18
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            }
+          ]
+        },
+        {
+          "native": ".timeline-head",
+          "reference": ".timeline-head",
+          "nativeCount": 1,
+          "referenceCount": 1,
+          "rects": [
+            {
+              "index": 0,
+              "native": {
+                "left": 20,
+                "top": 187.5,
+                "width": 350,
+                "height": 44
+              },
+              "reference": {
+                "left": 20,
+                "top": 187.5,
+                "width": 350,
+                "height": 44
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            }
+          ]
+        },
+        {
+          "native": ".timeline",
+          "reference": ".timeline",
+          "nativeCount": 1,
+          "referenceCount": 1,
+          "rects": [
+            {
+              "index": 0,
+              "native": {
+                "left": 20,
+                "top": 235.5,
+                "width": 350,
+                "height": 375
+              },
+              "reference": {
+                "left": 20,
+                "top": 235.5,
+                "width": 350,
+                "height": 375
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            }
+          ]
+        },
+        {
+          "native": ".schedule-row",
+          "reference": ".schedule-row",
+          "nativeCount": 4,
+          "referenceCount": 4,
+          "rects": [
+            {
+              "index": 0,
+              "native": {
+                "left": 20,
+                "top": 235.5,
+                "width": 350,
+                "height": 69
+              },
+              "reference": {
+                "left": 20,
+                "top": 235.5,
+                "width": 350,
+                "height": 69
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            },
+            {
+              "index": 1,
+              "native": {
+                "left": 20,
+                "top": 304.5,
+                "width": 350,
+                "height": 102
+              },
+              "reference": {
+                "left": 20,
+                "top": 304.5,
+                "width": 350,
+                "height": 102
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            },
+            {
+              "index": 2,
+              "native": {
+                "left": 20,
+                "top": 406.5,
+                "width": 350,
+                "height": 102
+              },
+              "reference": {
+                "left": 20,
+                "top": 406.5,
+                "width": 350,
+                "height": 102
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            },
+            {
+              "index": 3,
+              "native": {
+                "left": 20,
+                "top": 508.5,
+                "width": 350,
+                "height": 102
+              },
+              "reference": {
+                "left": 20,
+                "top": 508.5,
+                "width": 350,
+                "height": 102
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            }
+          ]
+        },
+        {
+          "native": ".slot",
+          "reference": ".slot",
+          "nativeCount": 4,
+          "referenceCount": 4,
+          "rects": [
+            {
+              "index": 0,
+              "native": {
+                "left": 78,
+                "top": 235.5,
+                "width": 292,
+                "height": 69
+              },
+              "reference": {
+                "left": 78,
+                "top": 235.5,
+                "width": 292,
+                "height": 69
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            },
+            {
+              "index": 1,
+              "native": {
+                "left": 78,
+                "top": 304.5,
+                "width": 292,
+                "height": 102
+              },
+              "reference": {
+                "left": 78,
+                "top": 304.5,
+                "width": 292,
+                "height": 102
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            },
+            {
+              "index": 2,
+              "native": {
+                "left": 78,
+                "top": 406.5,
+                "width": 292,
+                "height": 102
+              },
+              "reference": {
+                "left": 78,
+                "top": 406.5,
+                "width": 292,
+                "height": 102
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            },
+            {
+              "index": 3,
+              "native": {
+                "left": 78,
+                "top": 508.5,
+                "width": 292,
+                "height": 102
+              },
+              "reference": {
+                "left": 78,
+                "top": 508.5,
+                "width": 292,
+                "height": 102
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            }
+          ]
+        },
+        {
+          "native": ".timeline-title",
+          "reference": ".task-title",
+          "nativeCount": 4,
+          "referenceCount": 4,
+          "rects": [
+            {
+              "index": 0,
+              "native": {
+                "left": 78,
+                "top": 235.5,
+                "width": 56,
+                "height": 44
+              },
+              "reference": {
+                "left": 78,
+                "top": 235.5,
+                "width": 56,
+                "height": 44
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            },
+            {
+              "index": 1,
+              "native": {
+                "left": 78,
+                "top": 310.5,
+                "width": 64,
+                "height": 44
+              },
+              "reference": {
+                "left": 78,
+                "top": 310.5,
+                "width": 64,
+                "height": 44
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            },
+            {
+              "index": 2,
+              "native": {
+                "left": 78,
+                "top": 412.5,
+                "width": 64,
+                "height": 44
+              },
+              "reference": {
+                "left": 78,
+                "top": 412.5,
+                "width": 64,
+                "height": 44
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            },
+            {
+              "index": 3,
+              "native": {
+                "left": 78,
+                "top": 514.5,
+                "width": 64,
+                "height": 44
+              },
+              "reference": {
+                "left": 78,
+                "top": 514.5,
+                "width": 64,
+                "height": 44
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            }
+          ]
+        },
+        {
+          "native": ".timeline-checkin",
+          "reference": ".checkin",
+          "nativeCount": 3,
+          "referenceCount": 3,
+          "rects": [
+            {
+              "index": 0,
+              "native": {
+                "left": 266,
+                "top": 310.5,
+                "width": 104,
+                "height": 44
+              },
+              "reference": {
+                "left": 266,
+                "top": 310.5,
+                "width": 104,
+                "height": 44
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            },
+            {
+              "index": 1,
+              "native": {
+                "left": 266,
+                "top": 412.5,
+                "width": 104,
+                "height": 44
+              },
+              "reference": {
+                "left": 266,
+                "top": 412.5,
+                "width": 104,
+                "height": 44
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            },
+            {
+              "index": 2,
+              "native": {
+                "left": 266,
+                "top": 514.5,
+                "width": 104,
+                "height": 44
+              },
+              "reference": {
+                "left": 266,
+                "top": 514.5,
+                "width": 104,
+                "height": 44
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            }
+          ]
+        },
+        {
+          "native": ".timeline-busy",
+          "reference": ".busy-btn",
+          "nativeCount": 3,
+          "referenceCount": 3,
+          "rects": [
+            {
+              "index": 0,
+              "native": {
+                "left": 266,
+                "top": 354.5,
+                "width": 104,
+                "height": 44
+              },
+              "reference": {
+                "left": 266,
+                "top": 354.5,
+                "width": 104,
+                "height": 44
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            },
+            {
+              "index": 1,
+              "native": {
+                "left": 266,
+                "top": 456.5,
+                "width": 104,
+                "height": 44
+              },
+              "reference": {
+                "left": 266,
+                "top": 456.5,
+                "width": 104,
+                "height": 44
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            },
+            {
+              "index": 2,
+              "native": {
+                "left": 266,
+                "top": 558.5,
+                "width": 104,
+                "height": 44
+              },
+              "reference": {
+                "left": 266,
+                "top": 558.5,
+                "width": 104,
+                "height": 44
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            }
+          ]
+        },
+        {
+          "native": ".timeline-note",
+          "reference": ".timeline-note",
+          "nativeCount": 1,
+          "referenceCount": 1,
+          "rects": [
+            {
+              "index": 0,
+              "native": {
+                "left": 20,
+                "top": 610.5,
+                "width": 350,
+                "height": 33.1875
+              },
+              "reference": {
+                "left": 20,
+                "top": 610.5,
+                "width": 350,
+                "height": 33.1875
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "page": "progress",
+      "pageRoot": {
+        "native": {
+          "left": 0,
+          "top": 0,
+          "width": 390,
+          "height": 1486.359375,
+          "fontSize": "15px",
+          "lineHeight": "22.5px",
+          "text": "打卡进度看见记录，也看见每一天的安排近7天近1个月日历10月21日 – 10月27日7天里，6天有打卡累计 17 次 · 原目标 13 次 · 忙时 4 次每天完成 / 安排每格 1 项3 / 421三4 / 422四0 / 423五4 / 424六3 / 425日2 / 426"
+        },
+        "reference": {
+          "left": 0,
+          "top": 0,
+          "width": 390,
+          "height": 675.859375,
+          "fontSize": "15px",
+          "lineHeight": "22.5px",
+          "text": "打卡进度\n\n看见记录，也看见每一天的安排\n\n近7天\n近1个月\n日历\n\n2026年10月21日 — 10月27日\n\n7天里，6天有打卡\n\n累计 17 次 · 原目标 13 次 · 忙时 4 次\n\n每天完成 / 安排\n每格 1 项\n3 / 4\n21\n三\n4 / 4\n22\n四\n0 / "
+        }
+      },
+      "pairs": [
+        {
+          "native": ".heading",
+          "reference": "h1",
+          "nativeCount": 1,
+          "referenceCount": 1,
+          "rects": [
+            {
+              "index": 0,
+              "native": {
+                "left": 20,
+                "top": 18,
+                "width": 96,
+                "height": 31.671875
+              },
+              "reference": {
+                "left": 20,
+                "top": 18,
+                "width": 94.09375,
+                "height": 31.671875
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 1.90625,
+                "height": 0
+              },
+              "maxDelta": 1.90625
+            }
+          ]
+        },
+        {
+          "native": ".subline",
+          "reference": ".subline",
+          "nativeCount": 1,
+          "referenceCount": 1,
+          "rects": [
+            {
+              "index": 0,
+              "native": {
+                "left": 20,
+                "top": 52.671875,
+                "width": 350,
+                "height": 19.5
+              },
+              "reference": {
+                "left": 20,
+                "top": 52.671875,
+                "width": 350,
+                "height": 19.5
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            }
+          ]
+        },
+        {
+          "native": ".segments",
+          "reference": ".segmented",
+          "nativeCount": 1,
+          "referenceCount": 1,
+          "rects": [
+            {
+              "index": 0,
+              "native": {
+                "left": 20,
+                "top": 88.171875,
+                "width": 350,
+                "height": 50
+              },
+              "reference": {
+                "left": 20,
+                "top": 88.171875,
+                "width": 350,
+                "height": 50
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            }
+          ]
+        },
+        {
+          "native": ".segment",
+          "reference": ".segment",
+          "nativeCount": 3,
+          "referenceCount": 3,
+          "rects": [
+            {
+              "index": 0,
+              "native": {
+                "left": 23,
+                "top": 91.171875,
+                "width": 114.65625,
+                "height": 44
+              },
+              "reference": {
+                "left": 23,
+                "top": 91.171875,
+                "width": 114.65625,
+                "height": 44
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            },
+            {
+              "index": 1,
+              "native": {
+                "left": 137.65625,
+                "top": 91.171875,
+                "width": 114.671875,
+                "height": 44
+              },
+              "reference": {
+                "left": 137.65625,
+                "top": 91.171875,
+                "width": 114.671875,
+                "height": 44
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            },
+            {
+              "index": 2,
+              "native": {
+                "left": 252.328125,
+                "top": 91.171875,
+                "width": 114.65625,
+                "height": 44
+              },
+              "reference": {
+                "left": 252.328125,
+                "top": 91.171875,
+                "width": 114.65625,
+                "height": 44
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            }
+          ]
+        },
+        {
+          "native": ".range",
+          "reference": ".period",
+          "nativeCount": 1,
+          "referenceCount": 1,
+          "rects": [
+            {
+              "index": 0,
+              "native": {
+                "left": 20,
+                "top": 152.171875,
+                "width": 350,
+                "height": 18
+              },
+              "reference": {
+                "left": 20,
+                "top": 152.171875,
+                "width": 350,
+                "height": 18
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            }
+          ]
+        },
+        {
+          "native": ".progress-copy",
+          "reference": ".progress-copy",
+          "nativeCount": 1,
+          "referenceCount": 1,
+          "rects": [
+            {
+              "index": 0,
+              "native": {
+                "left": 20,
+                "top": 186.171875,
+                "width": 350,
+                "height": 52
+              },
+              "reference": {
+                "left": 20,
+                "top": 186.171875,
+                "width": 350,
+                "height": 52
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            }
+          ]
+        },
+        {
+          "native": ".progress-statement",
+          "reference": ".progress-copy h2",
+          "nativeCount": 1,
+          "referenceCount": 1,
+          "rects": [
+            {
+              "index": 0,
+              "native": {
+                "left": 20,
+                "top": 186.171875,
+                "width": 350,
+                "height": 28
+              },
+              "reference": {
+                "left": 20,
+                "top": 186.171875,
+                "width": 350,
+                "height": 28
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            }
+          ]
+        },
+        {
+          "native": ".chart-title",
+          "reference": ".chart-title",
+          "nativeCount": 1,
+          "referenceCount": 1,
+          "rects": [
+            {
+              "index": 0,
+              "native": {
+                "left": 20,
+                "top": 254.171875,
+                "width": 350,
+                "height": 19.5
+              },
+              "reference": {
+                "left": 20,
+                "top": 254.171875,
+                "width": 350,
+                "height": 19.5
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            }
+          ]
+        },
+        {
+          "native": ".week-trend",
+          "reference": ".daily-chart",
+          "nativeCount": 1,
+          "referenceCount": 1,
+          "rects": [
+            {
+              "index": 0,
+              "native": {
+                "left": 20,
+                "top": 289.671875,
+                "width": 350,
+                "height": 176
+              },
+              "reference": {
+                "left": 20,
+                "top": 289.671875,
+                "width": 350,
+                "height": 176
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            }
+          ]
+        },
+        {
+          "native": ".trend-day",
+          "reference": ".chart-column",
+          "nativeCount": 7,
+          "referenceCount": 7,
+          "rects": [
+            {
+              "index": 0,
+              "native": {
+                "left": 20,
+                "top": 289.671875,
+                "width": 44,
+                "height": 176
+              },
+              "reference": {
+                "left": 20,
+                "top": 289.671875,
+                "width": 43.140625,
+                "height": 176
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0.859375,
+                "height": 0
+              },
+              "maxDelta": 0.859375
+            },
+            {
+              "index": 1,
+              "native": {
+                "left": 71,
+                "top": 289.671875,
+                "width": 44,
+                "height": 176
+              },
+              "reference": {
+                "left": 71.140625,
+                "top": 289.671875,
+                "width": 43.140625,
+                "height": 176
+              },
+              "delta": {
+                "left": -0.140625,
+                "top": 0,
+                "width": 0.859375,
+                "height": 0
+              },
+              "maxDelta": 0.859375
+            },
+            {
+              "index": 2,
+              "native": {
+                "left": 122,
+                "top": 289.671875,
+                "width": 44,
+                "height": 176
+              },
+              "reference": {
+                "left": 122.28125,
+                "top": 289.671875,
+                "width": 43.140625,
+                "height": 176
+              },
+              "delta": {
+                "left": -0.28125,
+                "top": 0,
+                "width": 0.859375,
+                "height": 0
+              },
+              "maxDelta": 0.859375
+            },
+            {
+              "index": 3,
+              "native": {
+                "left": 173,
+                "top": 289.671875,
+                "width": 44,
+                "height": 176
+              },
+              "reference": {
+                "left": 173.421875,
+                "top": 289.671875,
+                "width": 43.140625,
+                "height": 176
+              },
+              "delta": {
+                "left": -0.421875,
+                "top": 0,
+                "width": 0.859375,
+                "height": 0
+              },
+              "maxDelta": 0.859375
+            },
+            {
+              "index": 4,
+              "native": {
+                "left": 224,
+                "top": 289.671875,
+                "width": 44,
+                "height": 176
+              },
+              "reference": {
+                "left": 224.5625,
+                "top": 289.671875,
+                "width": 43.140625,
+                "height": 176
+              },
+              "delta": {
+                "left": -0.5625,
+                "top": 0,
+                "width": 0.859375,
+                "height": 0
+              },
+              "maxDelta": 0.859375
+            },
+            {
+              "index": 5,
+              "native": {
+                "left": 275,
+                "top": 289.671875,
+                "width": 44,
+                "height": 176
+              },
+              "reference": {
+                "left": 275.703125,
+                "top": 289.671875,
+                "width": 43.140625,
+                "height": 176
+              },
+              "delta": {
+                "left": -0.703125,
+                "top": 0,
+                "width": 0.859375,
+                "height": 0
+              },
+              "maxDelta": 0.859375
+            },
+            {
+              "index": 6,
+              "native": {
+                "left": 326,
+                "top": 289.671875,
+                "width": 44,
+                "height": 176
+              },
+              "reference": {
+                "left": 326.84375,
+                "top": 289.671875,
+                "width": 43.140625,
+                "height": 176
+              },
+              "delta": {
+                "left": -0.84375,
+                "top": 0,
+                "width": 0.859375,
+                "height": 0
+              },
+              "maxDelta": 0.859375
+            }
+          ]
+        },
+        {
+          "native": ".bar-stack",
+          "reference": ".bar-stack",
+          "nativeCount": 7,
+          "referenceCount": 7,
+          "rects": [
+            {
+              "index": 0,
+              "native": {
+                "left": 30.5,
+                "top": 315.671875,
+                "width": 23,
+                "height": 104
+              },
+              "reference": {
+                "left": 30.0625,
+                "top": 316.671875,
+                "width": 23,
+                "height": 104
+              },
+              "delta": {
+                "left": 0.4375,
+                "top": -1,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 1
+            },
+            {
+              "index": 1,
+              "native": {
+                "left": 81.5,
+                "top": 315.671875,
+                "width": 23,
+                "height": 104
+              },
+              "reference": {
+                "left": 81.203125,
+                "top": 316.671875,
+                "width": 23,
+                "height": 104
+              },
+              "delta": {
+                "left": 0.296875,
+                "top": -1,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 1
+            },
+            {
+              "index": 2,
+              "native": {
+                "left": 132.5,
+                "top": 315.671875,
+                "width": 23,
+                "height": 104
+              },
+              "reference": {
+                "left": 132.34375,
+                "top": 316.671875,
+                "width": 23,
+                "height": 104
+              },
+              "delta": {
+                "left": 0.15625,
+                "top": -1,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 1
+            },
+            {
+              "index": 3,
+              "native": {
+                "left": 183.5,
+                "top": 315.671875,
+                "width": 23,
+                "height": 104
+              },
+              "reference": {
+                "left": 183.484375,
+                "top": 316.671875,
+                "width": 23,
+                "height": 104
+              },
+              "delta": {
+                "left": 0.015625,
+                "top": -1,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 1
+            },
+            {
+              "index": 4,
+              "native": {
+                "left": 234.5,
+                "top": 315.671875,
+                "width": 23,
+                "height": 104
+              },
+              "reference": {
+                "left": 234.625,
+                "top": 316.671875,
+                "width": 23,
+                "height": 104
+              },
+              "delta": {
+                "left": -0.125,
+                "top": -1,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 1
+            },
+            {
+              "index": 5,
+              "native": {
+                "left": 285.5,
+                "top": 315.671875,
+                "width": 23,
+                "height": 104
+              },
+              "reference": {
+                "left": 285.765625,
+                "top": 316.671875,
+                "width": 23,
+                "height": 104
+              },
+              "delta": {
+                "left": -0.265625,
+                "top": -1,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 1
+            },
+            {
+              "index": 6,
+              "native": {
+                "left": 336.5,
+                "top": 315.671875,
+                "width": 23,
+                "height": 104
+              },
+              "reference": {
+                "left": 336.90625,
+                "top": 316.671875,
+                "width": 23,
+                "height": 104
+              },
+              "delta": {
+                "left": -0.40625,
+                "top": -1,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 1
+            }
+          ]
+        },
+        {
+          "native": ".trend-legend",
+          "reference": ".chart-legend",
+          "nativeCount": 1,
+          "referenceCount": 1,
+          "rects": [
+            {
+              "index": 0,
+              "native": {
+                "left": 20,
+                "top": 479.671875,
+                "width": 350,
+                "height": 36.5
+              },
+              "reference": {
+                "left": 20,
+                "top": 479.671875,
+                "width": 350,
+                "height": 35
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 1.5
+              },
+              "maxDelta": 1.5
+            }
+          ]
+        },
+        {
+          "native": ".rate-row",
+          "reference": ".rate-row",
+          "nativeCount": 1,
+          "referenceCount": 1,
+          "rects": [
+            {
+              "index": 0,
+              "native": {
+                "left": 20,
+                "top": 532.171875,
+                "width": 350,
+                "height": 41.5
+              },
+              "reference": {
+                "left": 20,
+                "top": 530.671875,
+                "width": 350,
+                "height": 41.5
+              },
+              "delta": {
+                "left": 0,
+                "top": 1.5,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 1.5
+            }
+          ]
+        },
+        {
+          "native": ".current-line",
+          "reference": ".current-line",
+          "nativeCount": 1,
+          "referenceCount": 1,
+          "rects": [
+            {
+              "index": 0,
+              "native": {
+                "left": 20,
+                "top": 587.671875,
+                "width": 350,
+                "height": 39.5
+              },
+              "reference": {
+                "left": 20,
+                "top": 586.171875,
+                "width": 350,
+                "height": 39.5
+              },
+              "delta": {
+                "left": 0,
+                "top": 1.5,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 1.5
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "page": "edit",
+      "pageRoot": {
+        "native": {
+          "left": 0,
+          "top": 0,
+          "width": 390,
+          "height": 859.875,
+          "fontSize": "15px",
+          "lineHeight": "22.5px",
+          "text": "添加习惯平时认真做，忙时也能留下一小步。习惯名称0/20平时目标分钟忙时目标 可选分钟忙碌时做这个目标，也算完成一次打卡。重复星期每天一二三四五六日每天 · 不含节假日调休。开始日期今天 · 10月27日更多设置计划时间添加习惯"
+        },
+        "reference": {
+          "left": 0,
+          "top": 0,
+          "width": 390,
+          "height": 853.875,
+          "fontSize": "15px",
+          "lineHeight": "22.5px",
+          "text": "添加习惯\n\n平时认真做，忙时也能留下一小步。\n\n习惯名称\n必填\n平时目标\n必填\n分钟\n次\n页\n忙时目标\n可选\n分钟\n\n忙碌时做这个目标，也算完成一次打卡。\n\n重复星期\n一\n二\n三\n四\n五\n六\n日\n\n每天\n\n开始日期\n今天 · 10月27日\n明天 · 10月28日\n更多设置\n添加到"
+        }
+      },
+      "pairs": [
+        {
+          "native": ".back-heading",
+          "reference": ".back-heading",
+          "nativeCount": 1,
+          "referenceCount": 1,
+          "rects": [
+            {
+              "index": 0,
+              "native": {
+                "left": 10,
+                "top": 18,
+                "width": 360,
+                "height": 44
+              },
+              "reference": {
+                "left": 10,
+                "top": 18,
+                "width": 360,
+                "height": 44
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            }
+          ]
+        },
+        {
+          "native": ".heading",
+          "reference": "h1",
+          "nativeCount": 1,
+          "referenceCount": 1,
+          "rects": [
+            {
+              "index": 0,
+              "native": {
+                "left": 62,
+                "top": 25.484375,
+                "width": 88,
+                "height": 29.03125
+              },
+              "reference": {
+                "left": 62,
+                "top": 25.484375,
+                "width": 86.25,
+                "height": 29.03125
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 1.75,
+                "height": 0
+              },
+              "maxDelta": 1.75
+            }
+          ]
+        },
+        {
+          "native": ".form-intro",
+          "reference": ".form-intro",
+          "nativeCount": 1,
+          "referenceCount": 1,
+          "rects": [
+            {
+              "index": 0,
+              "native": {
+                "left": 20,
+                "top": 70,
+                "width": 350,
+                "height": 19.5
+              },
+              "reference": {
+                "left": 20,
+                "top": 70,
+                "width": 350,
+                "height": 19.5
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            }
+          ]
+        },
+        {
+          "native": "#field-title",
+          "reference": ".form-field",
+          "nativeCount": 1,
+          "referenceCount": 1,
+          "rects": [
+            {
+              "index": 0,
+              "native": {
+                "left": 20,
+                "top": 109.5,
+                "width": 350,
+                "height": 77
+              },
+              "reference": {
+                "left": 20,
+                "top": 109.5,
+                "width": 350,
+                "height": 77
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            }
+          ]
+        },
+        {
+          "native": "#field-target",
+          "reference": ".form-field",
+          "nativeCount": 1,
+          "referenceCount": 1,
+          "rects": [
+            {
+              "index": 0,
+              "native": {
+                "left": 20,
+                "top": 206.5,
+                "width": 350,
+                "height": 77
+              },
+              "reference": {
+                "left": 20,
+                "top": 206.5,
+                "width": 350,
+                "height": 77
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            }
+          ]
+        },
+        {
+          "native": "#field-minimum",
+          "reference": ".form-field",
+          "nativeCount": 1,
+          "referenceCount": 1,
+          "rects": [
+            {
+              "index": 0,
+              "native": {
+                "left": 20,
+                "top": 303.5,
+                "width": 350,
+                "height": 126.1875
+              },
+              "reference": {
+                "left": 20,
+                "top": 303.5,
+                "width": 350,
+                "height": 126.1875
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            }
+          ]
+        },
+        {
+          "native": ".input",
+          "reference": "input",
+          "nativeCount": 3,
+          "referenceCount": 4,
+          "rects": [
+            {
+              "index": 0,
+              "native": {
+                "left": 20,
+                "top": 138.5,
+                "width": 350,
+                "height": 48
+              },
+              "reference": {
+                "left": 20,
+                "top": 138.5,
+                "width": 350,
+                "height": 48
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            },
+            {
+              "index": 1,
+              "native": {
+                "left": 20,
+                "top": 235.5,
+                "width": 256,
+                "height": 48
+              },
+              "reference": {
+                "left": 20,
+                "top": 235.5,
+                "width": 256,
+                "height": 48
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            },
+            {
+              "index": 2,
+              "native": {
+                "left": 20,
+                "top": 355.5,
+                "width": 256,
+                "height": 48
+              },
+              "reference": {
+                "left": 20,
+                "top": 355.5,
+                "width": 256,
+                "height": 48
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            }
+          ]
+        },
+        {
+          "native": ".minimum-heading",
+          "reference": ".field-heading",
+          "nativeCount": 1,
+          "referenceCount": 1,
+          "rects": [
+            {
+              "index": 0,
+              "native": {
+                "left": 20,
+                "top": 303.5,
+                "width": 350,
+                "height": 44
+              },
+              "reference": {
+                "left": 20,
+                "top": 303.5,
+                "width": 350,
+                "height": 44
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            }
+          ]
+        },
+        {
+          "native": ".week-options",
+          "reference": ".weekdays",
+          "nativeCount": 1,
+          "referenceCount": 1,
+          "rects": [
+            {
+              "index": 0,
+              "native": {
+                "left": 20,
+                "top": 478.6875,
+                "width": 350,
+                "height": 44
+              },
+              "reference": {
+                "left": 20,
+                "top": 478.6875,
+                "width": 350,
+                "height": 44
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            }
+          ]
+        },
+        {
+          "native": ".day-option",
+          "reference": ".weekday-btn",
+          "nativeCount": 7,
+          "referenceCount": 7,
+          "rects": [
+            {
+              "index": 0,
+              "native": {
+                "left": 20,
+                "top": 478.6875,
+                "width": 44,
+                "height": 44
+              },
+              "reference": {
+                "left": 20,
+                "top": 478.6875,
+                "width": 44,
+                "height": 44
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            },
+            {
+              "index": 1,
+              "native": {
+                "left": 69,
+                "top": 478.6875,
+                "width": 44,
+                "height": 44
+              },
+              "reference": {
+                "left": 69,
+                "top": 478.6875,
+                "width": 44,
+                "height": 44
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            },
+            {
+              "index": 2,
+              "native": {
+                "left": 118,
+                "top": 478.6875,
+                "width": 44,
+                "height": 44
+              },
+              "reference": {
+                "left": 118,
+                "top": 478.6875,
+                "width": 44,
+                "height": 44
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            },
+            {
+              "index": 3,
+              "native": {
+                "left": 167,
+                "top": 478.6875,
+                "width": 44,
+                "height": 44
+              },
+              "reference": {
+                "left": 167,
+                "top": 478.6875,
+                "width": 44,
+                "height": 44
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            },
+            {
+              "index": 4,
+              "native": {
+                "left": 216,
+                "top": 478.6875,
+                "width": 44,
+                "height": 44
+              },
+              "reference": {
+                "left": 216,
+                "top": 478.6875,
+                "width": 44,
+                "height": 44
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            },
+            {
+              "index": 5,
+              "native": {
+                "left": 265,
+                "top": 478.6875,
+                "width": 44,
+                "height": 44
+              },
+              "reference": {
+                "left": 265,
+                "top": 478.6875,
+                "width": 44,
+                "height": 44
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            },
+            {
+              "index": 6,
+              "native": {
+                "left": 314,
+                "top": 478.6875,
+                "width": 44,
+                "height": 44
+              },
+              "reference": {
+                "left": 314,
+                "top": 478.6875,
+                "width": 44,
+                "height": 44
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            }
+          ]
+        },
+        {
+          "native": ".primary",
+          "reference": ".primary",
+          "nativeCount": 1,
+          "referenceCount": 1,
+          "rects": [
+            {
+              "index": 0,
+              "native": {
+                "left": 20,
+                "top": 753.875,
+                "width": 350,
+                "height": 48
+              },
+              "reference": {
+                "left": 20,
+                "top": 753.875,
+                "width": 350,
+                "height": 48
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            }
+          ]
+        },
+        {
+          "native": ".disclosure",
+          "reference": ".more-settings",
+          "nativeCount": 1,
+          "referenceCount": 1,
+          "rects": [
+            {
+              "index": 0,
+              "native": {
+                "left": 20,
+                "top": 671.875,
+                "width": 350,
+                "height": 58
+              },
+              "reference": {
+                "left": 20,
+                "top": 671.875,
+                "width": 350,
+                "height": 58
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "page": "detail",
+      "pageRoot": {
+        "native": {
+          "left": 0,
+          "top": 0,
+          "width": 390,
+          "height": 1155.75,
+          "fontSize": "15px",
+          "lineHeight": "22.5px",
+          "text": "习惯详情读一会儿进行中每天今日目标只调整今天平时目标20 分钟忙时目标2 分钟原目标打卡 · 20 分钟忙时打卡 · 2 分钟备注编辑把书放在桌边，午饭后读几页。习惯计划重复每天开始日期2026-10-01计划时间12:30 · 仅排序调整计划近28天有安排的记录30123456"
+        },
+        "reference": {
+          "left": 0,
+          "top": 0,
+          "width": 390,
+          "height": 1121.75,
+          "fontSize": "15px",
+          "lineHeight": "22.5px",
+          "text": "习惯详情\n读一会儿\n进行中\n每天\n今日目标\n只调整今天\n平时目标\n20 分钟\n忙时目标\n2 分钟\n原目标打卡 · 20 分钟\n忙时打卡 · 2 分钟\n备注\n编辑\n\n把书放在桌边，午饭后读几页。\n\n习惯计划\n重复\n每天\n开始日期\n2026.10.01\n计划时间\n12:30 · 仅排"
+        }
+      },
+      "pairs": [
+        {
+          "native": ".back-heading",
+          "reference": ".back-heading",
+          "nativeCount": 1,
+          "referenceCount": 1,
+          "rects": [
+            {
+              "index": 0,
+              "native": {
+                "left": 10,
+                "top": 18,
+                "width": 360,
+                "height": 44
+              },
+              "reference": {
+                "left": 10,
+                "top": 18,
+                "width": 360,
+                "height": 44
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            }
+          ]
+        },
+        {
+          "native": ".heading",
+          "reference": "h1",
+          "nativeCount": 1,
+          "referenceCount": 1,
+          "rects": [
+            {
+              "index": 0,
+              "native": {
+                "left": 62,
+                "top": 25.484375,
+                "width": 88,
+                "height": 29.03125
+              },
+              "reference": {
+                "left": 62,
+                "top": 25.484375,
+                "width": 86.25,
+                "height": 29.03125
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 1.75,
+                "height": 0
+              },
+              "maxDelta": 1.75
+            }
+          ]
+        },
+        {
+          "native": ".detail-name",
+          "reference": ".detail-name",
+          "nativeCount": 1,
+          "referenceCount": 1,
+          "rects": [
+            {
+              "index": 0,
+              "native": {
+                "left": 20,
+                "top": 78,
+                "width": 350,
+                "height": 63.59375
+              },
+              "reference": {
+                "left": 20,
+                "top": 78,
+                "width": 350,
+                "height": 63.59375
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            }
+          ]
+        },
+        {
+          "native": ".habit-name",
+          "reference": ".detail-name h2",
+          "nativeCount": 1,
+          "referenceCount": 1,
+          "rects": [
+            {
+              "index": 0,
+              "native": {
+                "left": 20,
+                "top": 78,
+                "width": 350,
+                "height": 33.59375
+              },
+              "reference": {
+                "left": 20,
+                "top": 78,
+                "width": 350,
+                "height": 33.59375
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            }
+          ]
+        },
+        {
+          "native": ".status-line",
+          "reference": ".status-line",
+          "nativeCount": 1,
+          "referenceCount": 1,
+          "rects": [
+            {
+              "index": 0,
+              "native": {
+                "left": 20,
+                "top": 117.59375,
+                "width": 350,
+                "height": 24
+              },
+              "reference": {
+                "left": 20,
+                "top": 117.59375,
+                "width": 350,
+                "height": 24
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            }
+          ]
+        },
+        {
+          "native": ".detail-section",
+          "reference": ".section",
+          "nativeCount": 5,
+          "referenceCount": 4,
+          "rects": [
+            {
+              "index": 0,
+              "native": {
+                "left": 20,
+                "top": 165.59375,
+                "width": 350,
+                "height": 194
+              },
+              "reference": {
+                "left": 20,
+                "top": 165.59375,
+                "width": 350,
+                "height": 194
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            },
+            {
+              "index": 1,
+              "native": {
+                "left": 20,
+                "top": 383.59375,
+                "width": 350,
+                "height": 74.09375
+              },
+              "reference": {
+                "left": 20,
+                "top": 383.59375,
+                "width": 350,
+                "height": 74.09375
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            },
+            {
+              "index": 2,
+              "native": {
+                "left": 20,
+                "top": 481.6875,
+                "width": 350,
+                "height": 223.6875
+              },
+              "reference": {
+                "left": 20,
+                "top": 481.6875,
+                "width": 350,
+                "height": 223.6875
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            },
+            {
+              "index": 3,
+              "native": {
+                "left": 20,
+                "top": 729.375,
+                "width": 350,
+                "height": 287.375
+              },
+              "reference": {
+                "left": 20,
+                "top": 729.375,
+                "width": 350,
+                "height": 287.375
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            },
+            {
+              "index": 4,
+              "unmatched": true
+            }
+          ]
+        },
+        {
+          "native": ".detail-section-head",
+          "reference": ".section-head",
+          "nativeCount": 4,
+          "referenceCount": 4,
+          "rects": [
+            {
+              "index": 0,
+              "native": {
+                "left": 20,
+                "top": 165.59375,
+                "width": 350,
+                "height": 44
+              },
+              "reference": {
+                "left": 20,
+                "top": 165.59375,
+                "width": 350,
+                "height": 44
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            },
+            {
+              "index": 1,
+              "native": {
+                "left": 20,
+                "top": 383.59375,
+                "width": 350,
+                "height": 44
+              },
+              "reference": {
+                "left": 20,
+                "top": 383.59375,
+                "width": 350,
+                "height": 44
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            },
+            {
+              "index": 2,
+              "native": {
+                "left": 20,
+                "top": 481.6875,
+                "width": 350,
+                "height": 23.1875
+              },
+              "reference": {
+                "left": 20,
+                "top": 481.6875,
+                "width": 350,
+                "height": 23.1875
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            },
+            {
+              "index": 3,
+              "native": {
+                "left": 20,
+                "top": 729.375,
+                "width": 350,
+                "height": 23.1875
+              },
+              "reference": {
+                "left": 20,
+                "top": 729.375,
+                "width": 350,
+                "height": 23.1875
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            }
+          ]
+        },
+        {
+          "native": ".target-lines",
+          "reference": ".target-lines",
+          "nativeCount": 1,
+          "referenceCount": 1,
+          "rects": [
+            {
+              "index": 0,
+              "native": {
+                "left": 20,
+                "top": 217.59375,
+                "width": 350,
+                "height": 86
+              },
+              "reference": {
+                "left": 20,
+                "top": 217.59375,
+                "width": 350,
+                "height": 86
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            }
+          ]
+        },
+        {
+          "native": ".target-line",
+          "reference": ".target-line",
+          "nativeCount": 2,
+          "referenceCount": 2,
+          "rects": [
+            {
+              "index": 0,
+              "native": {
+                "left": 20,
+                "top": 226.59375,
+                "width": 350,
+                "height": 33
+              },
+              "reference": {
+                "left": 20,
+                "top": 226.59375,
+                "width": 350,
+                "height": 33
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            },
+            {
+              "index": 1,
+              "native": {
+                "left": 20,
+                "top": 259.59375,
+                "width": 350,
+                "height": 33
+              },
+              "reference": {
+                "left": 20,
+                "top": 259.59375,
+                "width": 350,
+                "height": 33
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            }
+          ]
+        },
+        {
+          "native": ".detail-checkin-actions",
+          "reference": ".detail-actions",
+          "nativeCount": 1,
+          "referenceCount": 1,
+          "rects": [
+            {
+              "index": 0,
+              "native": {
+                "left": 20,
+                "top": 315.59375,
+                "width": 350,
+                "height": 44
+              },
+              "reference": {
+                "left": 20,
+                "top": 315.59375,
+                "width": 350,
+                "height": 44
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            }
+          ]
+        },
+        {
+          "native": ".primary",
+          "reference": ".primary",
+          "nativeCount": 1,
+          "referenceCount": 1,
+          "rects": [
+            {
+              "index": 0,
+              "native": {
+                "left": 20,
+                "top": 315.59375,
+                "width": 171,
+                "height": 44
+              },
+              "reference": {
+                "left": 20,
+                "top": 315.59375,
+                "width": 171,
+                "height": 44
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            }
+          ]
+        },
+        {
+          "native": ".secondary",
+          "reference": ".secondary",
+          "nativeCount": 2,
+          "referenceCount": 2,
+          "rects": [
+            {
+              "index": 0,
+              "native": {
+                "left": 199,
+                "top": 315.59375,
+                "width": 171,
+                "height": 44
+              },
+              "reference": {
+                "left": 199,
+                "top": 315.59375,
+                "width": 171,
+                "height": 44
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            },
+            {
+              "index": 1,
+              "native": {
+                "left": 20,
+                "top": 661.375,
+                "width": 350,
+                "height": 44
+              },
+              "reference": {
+                "left": 20,
+                "top": 661.375,
+                "width": 350,
+                "height": 44
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            }
+          ]
+        },
+        {
+          "native": ".note-preview",
+          "reference": ".note-copy",
+          "nativeCount": 1,
+          "referenceCount": 1,
+          "rects": [
+            {
+              "index": 0,
+              "native": {
+                "left": 20,
+                "top": 435.59375,
+                "width": 350,
+                "height": 22.09375
+              },
+              "reference": {
+                "left": 20,
+                "top": 435.59375,
+                "width": 350,
+                "height": 22.09375
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            }
+          ]
+        },
+        {
+          "native": ".plan-list",
+          "reference": ".plan-list",
+          "nativeCount": 1,
+          "referenceCount": 1,
+          "rects": [
+            {
+              "index": 0,
+              "native": {
+                "left": 20,
+                "top": 512.875,
+                "width": 350,
+                "height": 134.5
+              },
+              "reference": {
+                "left": 20,
+                "top": 512.875,
+                "width": 350,
+                "height": 134.5
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            }
+          ]
+        },
+        {
+          "native": ".plan-item",
+          "reference": ".plan-item",
+          "nativeCount": 3,
+          "referenceCount": 3,
+          "rects": [
+            {
+              "index": 0,
+              "native": {
+                "left": 20,
+                "top": 513.875,
+                "width": 350,
+                "height": 44.5
+              },
+              "reference": {
+                "left": 20,
+                "top": 513.875,
+                "width": 350,
+                "height": 44.5
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            },
+            {
+              "index": 1,
+              "native": {
+                "left": 20,
+                "top": 558.375,
+                "width": 350,
+                "height": 44.5
+              },
+              "reference": {
+                "left": 20,
+                "top": 558.375,
+                "width": 350,
+                "height": 44.5
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            },
+            {
+              "index": 2,
+              "native": {
+                "left": 20,
+                "top": 602.875,
+                "width": 350,
+                "height": 43.5
+              },
+              "reference": {
+                "left": 20,
+                "top": 602.875,
+                "width": 350,
+                "height": 43.5
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            }
+          ]
+        },
+        {
+          "native": ".more-group",
+          "reference": ".more-operations",
+          "nativeCount": 1,
+          "referenceCount": 1,
+          "rects": [
+            {
+              "index": 0,
+              "native": {
+                "left": 20,
+                "top": 1042.75,
+                "width": 350,
+                "height": 55
+              },
+              "reference": {
+                "left": 20,
+                "top": 1042.75,
+                "width": 350,
+                "height": 55
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "page": "mine",
+      "pageRoot": {
+        "native": {
+          "left": 0,
+          "top": 0,
+          "width": 390,
+          "height": 867.046875,
+          "fontSize": "15px",
+          "lineHeight": "22.5px",
+          "text": "我的我的习惯空间按自己的节奏，把日常慢慢做好。4 个习惯1 项今日完成习惯管理管理我的习惯4个偏好与提醒显示首页短句在今日安排下方显示一句短句外观主题薄雾绿下一次提醒好友监督与分享意见与问题反馈习惯入门与模板记录跟随当前微信账号"
+        },
+        "reference": {
+          "left": 0,
+          "top": 0,
+          "width": 390,
+          "height": 880.21875,
+          "fontSize": "15px",
+          "lineHeight": "22.5px",
+          "text": "我的\n我的习惯空间\n\n按自己的节奏，把日常慢慢做好。\n\n4个习惯\n1项今日完成\n习惯管理\n管理我的习惯\n4个\n偏好与提醒\n显示首页短句\n\n在今日安排下方显示一句短句\n\n外观主题\n入口预览\n下一次提醒\n入口预览\n好友监督与分享\n反馈\n习惯入门\n\n当前为「清爽日程融合版」交互原型。\n"
+        }
+      },
+      "pairs": [
+        {
+          "native": ".heading",
+          "reference": "h1",
+          "nativeCount": 1,
+          "referenceCount": 1,
+          "rects": [
+            {
+              "index": 0,
+              "native": {
+                "left": 20,
+                "top": 18,
+                "width": 48,
+                "height": 31.671875
+              },
+              "reference": {
+                "left": 20,
+                "top": 18,
+                "width": 47.046875,
+                "height": 31.671875
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0.953125,
+                "height": 0
+              },
+              "maxDelta": 0.953125
+            }
+          ]
+        },
+        {
+          "native": ".mine-intro",
+          "reference": ".mine-intro",
+          "nativeCount": 1,
+          "referenceCount": 1,
+          "rects": [
+            {
+              "index": 0,
+              "native": {
+                "left": 20,
+                "top": 67.671875,
+                "width": 350,
+                "height": 126
+              },
+              "reference": {
+                "left": 20,
+                "top": 67.671875,
+                "width": 350,
+                "height": 126
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            }
+          ]
+        },
+        {
+          "native": ".group",
+          "reference": ".section",
+          "nativeCount": 3,
+          "referenceCount": 3,
+          "rects": [
+            {
+              "index": 0,
+              "native": {
+                "left": 20,
+                "top": 217.671875,
+                "width": 350,
+                "height": 95.1875
+              },
+              "reference": {
+                "left": 20,
+                "top": 217.671875,
+                "width": 350,
+                "height": 95.1875
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            },
+            {
+              "index": 1,
+              "native": {
+                "left": 20,
+                "top": 336.859375,
+                "width": 350,
+                "height": 222.1875
+              },
+              "reference": {
+                "left": 20,
+                "top": 336.859375,
+                "width": 350,
+                "height": 222.1875
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            },
+            {
+              "index": 2,
+              "native": {
+                "left": 20,
+                "top": 583.046875,
+                "width": 350,
+                "height": 188
+              },
+              "reference": {
+                "left": 20,
+                "top": 583.046875,
+                "width": 350,
+                "height": 188
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            }
+          ]
+        },
+        {
+          "native": ".group-label",
+          "reference": ".section-head",
+          "nativeCount": 2,
+          "referenceCount": 2,
+          "rects": [
+            {
+              "index": 0,
+              "native": {
+                "left": 20,
+                "top": 217.671875,
+                "width": 350,
+                "height": 23.1875
+              },
+              "reference": {
+                "left": 20,
+                "top": 217.671875,
+                "width": 350,
+                "height": 23.1875
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            },
+            {
+              "index": 1,
+              "native": {
+                "left": 20,
+                "top": 336.859375,
+                "width": 350,
+                "height": 23.1875
+              },
+              "reference": {
+                "left": 20,
+                "top": 336.859375,
+                "width": 350,
+                "height": 23.1875
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            }
+          ]
+        },
+        {
+          "native": ".menu-list",
+          "reference": ".menu-list",
+          "nativeCount": 3,
+          "referenceCount": 3,
+          "rects": [
+            {
+              "index": 0,
+              "native": {
+                "left": 20,
+                "top": 248.859375,
+                "width": 350,
+                "height": 64
+              },
+              "reference": {
+                "left": 20,
+                "top": 248.859375,
+                "width": 350,
+                "height": 64
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            },
+            {
+              "index": 1,
+              "native": {
+                "left": 20,
+                "top": 368.046875,
+                "width": 350,
+                "height": 191
+              },
+              "reference": {
+                "left": 20,
+                "top": 368.046875,
+                "width": 350,
+                "height": 191
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            },
+            {
+              "index": 2,
+              "native": {
+                "left": 20,
+                "top": 583.046875,
+                "width": 350,
+                "height": 188
+              },
+              "reference": {
+                "left": 20,
+                "top": 583.046875,
+                "width": 350,
+                "height": 188
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            }
+          ]
+        },
+        {
+          "native": ".setting-row",
+          "reference": ".menu-row",
+          "nativeCount": 6,
+          "referenceCount": 6,
+          "rects": [
+            {
+              "index": 0,
+              "native": {
+                "left": 20,
+                "top": 249.859375,
+                "width": 350,
+                "height": 62
+              },
+              "reference": {
+                "left": 20,
+                "top": 249.859375,
+                "width": 350,
+                "height": 62
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            },
+            {
+              "index": 1,
+              "native": {
+                "left": 20,
+                "top": 434.046875,
+                "width": 350,
+                "height": 62
+              },
+              "reference": {
+                "left": 20,
+                "top": 434.046875,
+                "width": 350,
+                "height": 62
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            },
+            {
+              "index": 2,
+              "native": {
+                "left": 20,
+                "top": 496.046875,
+                "width": 350,
+                "height": 62
+              },
+              "reference": {
+                "left": 20,
+                "top": 496.046875,
+                "width": 350,
+                "height": 62
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            },
+            {
+              "index": 3,
+              "native": {
+                "left": 20,
+                "top": 584.046875,
+                "width": 350,
+                "height": 62
+              },
+              "reference": {
+                "left": 20,
+                "top": 584.046875,
+                "width": 350,
+                "height": 62
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            },
+            {
+              "index": 4,
+              "native": {
+                "left": 20,
+                "top": 646.046875,
+                "width": 350,
+                "height": 62
+              },
+              "reference": {
+                "left": 20,
+                "top": 646.046875,
+                "width": 350,
+                "height": 62
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            },
+            {
+              "index": 5,
+              "native": {
+                "left": 20,
+                "top": 708.046875,
+                "width": 350,
+                "height": 62
+              },
+              "reference": {
+                "left": 20,
+                "top": 708.046875,
+                "width": 350,
+                "height": 62
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            }
+          ]
+        },
+        {
+          "native": ".quote-setting",
+          "reference": ".setting-row",
+          "nativeCount": 1,
+          "referenceCount": 1,
+          "rects": [
+            {
+              "index": 0,
+              "native": {
+                "left": 20,
+                "top": 369.046875,
+                "width": 350,
+                "height": 65
+              },
+              "reference": {
+                "left": 20,
+                "top": 369.046875,
+                "width": 350,
+                "height": 65
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            }
+          ]
+        },
+        {
+          "native": ".menu-icon",
+          "reference": ".menu-icon",
+          "nativeCount": 6,
+          "referenceCount": 6,
+          "rects": [
+            {
+              "index": 0,
+              "native": {
+                "left": 20,
+                "top": 265.859375,
+                "width": 30,
+                "height": 30
+              },
+              "reference": {
+                "left": 20,
+                "top": 265.859375,
+                "width": 30,
+                "height": 30
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            },
+            {
+              "index": 1,
+              "native": {
+                "left": 20,
+                "top": 449.546875,
+                "width": 30,
+                "height": 30
+              },
+              "reference": {
+                "left": 20,
+                "top": 449.546875,
+                "width": 30,
+                "height": 30
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            },
+            {
+              "index": 2,
+              "native": {
+                "left": 20,
+                "top": 512.046875,
+                "width": 30,
+                "height": 30
+              },
+              "reference": {
+                "left": 20,
+                "top": 512.046875,
+                "width": 30,
+                "height": 30
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            },
+            {
+              "index": 3,
+              "native": {
+                "left": 20,
+                "top": 599.546875,
+                "width": 30,
+                "height": 30
+              },
+              "reference": {
+                "left": 20,
+                "top": 599.546875,
+                "width": 30,
+                "height": 30
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            },
+            {
+              "index": 4,
+              "native": {
+                "left": 20,
+                "top": 661.546875,
+                "width": 30,
+                "height": 30
+              },
+              "reference": {
+                "left": 20,
+                "top": 661.546875,
+                "width": 30,
+                "height": 30
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            },
+            {
+              "index": 5,
+              "native": {
+                "left": 20,
+                "top": 724.046875,
+                "width": 30,
+                "height": 30
+              },
+              "reference": {
+                "left": 20,
+                "top": 724.046875,
+                "width": 30,
+                "height": 30
+              },
+              "delta": {
+                "left": 0,
+                "top": 0,
+                "width": 0,
+                "height": 0
+              },
+              "maxDelta": 0
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

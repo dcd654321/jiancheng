@@ -1,0 +1,51 @@
+{
+  "label": "final-390-mist",
+  "note": "Full screens normalized to390 logical width. Native raw PNG preview scale is not used for the2px geometry gate; use the original automator logical rectangles.",
+  "pairs": [
+    {
+      "page": "today",
+      "raw": "final-390-mist-today.png",
+      "rawWidth": 363,
+      "rawHeight": 785,
+      "displayWidth": 390,
+      "displayHeight": 844,
+      "pair": "final-390-mist-today-pair.png"
+    },
+    {
+      "page": "progress",
+      "raw": "final-390-mist-progress.png",
+      "rawWidth": 363,
+      "rawHeight": 785,
+      "displayWidth": 390,
+      "displayHeight": 844,
+      "pair": "final-390-mist-progress-pair.png"
+    },
+    {
+      "page": "edit",
+      "raw": "final-390-mist-edit.png",
+      "rawWidth": 363,
+      "rawHeight": 785,
+      "displayWidth": 390,
+      "displayHeight": 844,
+      "pair": "final-390-mist-edit-pair.png"
+    },
+    {
+      "page": "detail",
+      "raw": "final-390-mist-detail.png",
+      "rawWidth": 363,
+      "rawHeight": 785,
+      "displayWidth": 390,
+      "displayHeight": 844,
+      "pair": "final-390-mist-detail-pair.png"
+    },
+    {
+      "page": "mine",
+      "raw": "final-390-mist-mine.png",
+      "rawWidth": 363,
+      "rawHeight": 785,
+      "displayWidth": 390,
+      "displayHeight": 844,
+      "pair": "final-390-mist-mine-pair.png"
+    }
+  ]
+}

@@ -21,18 +21,46 @@ function contrast(a, b) {
 test('two documented themes share one semantic shape and the documented values', () => {
   assert.equal(DEFAULT_THEME, 'mist');
   assert.deepEqual(Object.keys(THEMES), ['mist', 'paper']);
-  assert.deepEqual(Object.keys(THEMES.mist), Object.keys(THEMES.paper), '两套主题使用同一组语义 token');
+  assert.deepEqual(Object.keys(THEMES.mist), Object.keys(THEMES.paper));
   assert.deepEqual(THEME_NAMES, { mist: '薄雾绿', paper: '暖纸白' });
   assert.deepEqual(THEMES.mist, {
-    page: '#F6F7F2', surface: '#FFFFFF', ink: '#25352D', secondary: '#5F6C63', primary: '#355E4C',
-    onPrimary: '#FFFFFF', busyBg: '#EDF2E3', busyText: '#4D6040', soft: '#EEF2EC', line: '#DBE2D9',
-    controlBorder: '#7A897D', error: '#A23C2E', errorBg: '#FFF1EC'
-  });
+  "page": "#FFFFFF",
+  "surface": "#FFFFFF",
+  "ink": "#18382C",
+  "secondary": "#587065",
+  "primary": "#246446",
+  "onPrimary": "#FFFFFF",
+  "busyBg": "#EDF6EF",
+  "busyText": "#246446",
+  "soft": "#F7FAF7",
+  "line": "#DCE7DF",
+  "busyFill": "#C1DECB",
+  "controlBorder": "#7A897D",
+  "fieldBorder": "#C6D8CC",
+  "chartBorder": "#CBDACF",
+  "accentBorder": "#B6CDBF",
+  "error": "#A23C2E",
+  "errorBg": "#FFF1EC"
+});
   assert.deepEqual(THEMES.paper, {
-    page: '#FAF8F3', surface: '#FFFEFA', ink: '#39352F', secondary: '#70695F', primary: '#79604F',
-    onPrimary: '#FFFFFF', busyBg: '#F0F1E7', busyText: '#606449', soft: '#F3F0EA', line: '#E6E0D6',
-    controlBorder: '#998A7D', error: '#A33D2A', errorBg: '#FFF1EB'
-  });
+  "page": "#FAF8F3",
+  "surface": "#FFFEFA",
+  "ink": "#39352F",
+  "secondary": "#70695F",
+  "primary": "#79604F",
+  "onPrimary": "#FFFFFF",
+  "busyBg": "#F0F1E7",
+  "busyText": "#606449",
+  "soft": "#F3F0EA",
+  "line": "#E6E0D6",
+  "busyFill": "#D4D6B9",
+  "controlBorder": "#998A7D",
+  "fieldBorder": "#C8BEB0",
+  "chartBorder": "#D9D4C8",
+  "accentBorder": "#C8BEB0",
+  "error": "#A33D2A",
+  "errorBg": "#FFF1EB"
+});
 });
 
 test('contrast stays readable in every documented combination for both themes', () => {
@@ -65,9 +93,9 @@ test('active styles avoid the loud legacy colors and keep the accessibility floo
     assert.ok(!styles.includes(legacy), '不再整片使用旧版浓色 ' + legacy);
   }
   assert.match(styles, /--color-busy-bg/);
-  // 紧凑视觉规格：正文15、辅助13、页标题22，触区仍保持44。
+  // 紧凑视觉规格：正文15、辅助13、页标题24，触区仍保持44。
   assert.match(styles, /\.sub \{ font-size: 13px/);
-  assert.match(styles, /\.heading \{ font-size: 22px/);
+  assert.match(styles, /\.heading \{ font-size: 24px/);
   assert.match(styles, /min-height: 44px/);
   assert.match(styles, /min-height: 48px/);
   for (const page of ['today', 'edit', 'progress', 'mine', 'appearance']) {
@@ -97,4 +125,24 @@ test('theme switching keeps tab and navigation colors readable through official 
       assert.ok(fs.existsSync(path.resolve(__dirname, '../miniprogram', tab[field])), tab[field] + ' 存在');
     }
   }
+});
+
+test('entering a new page restores native colors and updates TabBar only when visible', () => {
+  const { applyPageAppearance } = require('../miniprogram/services/appearance');
+  const calls=[];
+  const wxApi=Object.fromEntries(['setNavigationBarColor','setBackgroundColor','setTabBarStyle','setTabBarItem'].map(name=>[name,payload=>calls.push({name,payload})]));
+  applyPageAppearance(wxApi,'paper');
+  assert.deepEqual(calls.map(x=>x.name),['setNavigationBarColor','setBackgroundColor']);
+  assert.equal(calls[0].payload.backgroundColor,THEMES.paper.page);
+  calls.length=0;applyPageAppearance(wxApi,'paper',true);
+  assert.equal(calls.find(x=>x.name==='setTabBarStyle').payload.selectedColor,THEMES.paper.primary);
+  assert.ok(calls.filter(x=>x.name==='setTabBarItem').every(x=>x.payload.selectedIconPath.endsWith('-selected-paper.png')));
+  for (const {payload} of calls.filter(x=>x.name==='setTabBarItem')) {
+    assert.ok(payload.iconPath.endsWith('-paper.png'));
+    assert.ok(fs.existsSync(path.resolve(__dirname,'../miniprogram',payload.iconPath)));
+  }
+  calls.length=0;applyPageAppearance(wxApi,'mist',true);
+  assert.equal(calls[0].payload.backgroundColor,THEMES.mist.page);
+  assert.ok(calls.filter(x=>x.name==='setTabBarItem').every(x=>!x.payload.selectedIconPath.includes('paper')));
+  assert.ok(calls.filter(x=>x.name==='setTabBarItem').every(x=>!x.payload.iconPath.includes('paper')));
 });

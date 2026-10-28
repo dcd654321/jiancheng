@@ -1,0 +1,673 @@
+{
+  "date": "2026-10-28",
+  "level": "isolated-native-synthetic-data",
+  "matrix": [
+    {
+      "label": "final-320-mist",
+      "width": 320,
+      "theme": "mist",
+      "files": [
+        {
+          "file": "final-320-mist-today.png",
+          "sha256": "ebd1f65725c39e73fed018df57403630bc649d38d9541b934cde8ebaaf0ad5fc"
+        },
+        {
+          "file": "final-320-mist-progress.png",
+          "sha256": "b7bd446c1744a09a7b021e8fb41925ab51b7985f4c30982a160e999fc09a9987"
+        },
+        {
+          "file": "final-320-mist-edit.png",
+          "sha256": "82b5b90120b8e30cf8edd461421fe54531c7eebb5f813d1115ecf81d4d6c62f8"
+        },
+        {
+          "file": "final-320-mist-detail.png",
+          "sha256": "0b81deaab4e94135a8d771c0b366c0992fe4dc085ef909cb5f76e3f0e2bc6430"
+        },
+        {
+          "file": "final-320-mist-mine.png",
+          "sha256": "cd5b5db406c2917d45dc593db319e2027894a42a167783209fc7758d382a97ac"
+        }
+      ],
+      "variant": "normal",
+      "guard": {
+        "cloudCalls": 0,
+        "networkCalls": 0,
+        "storageWrites": 0,
+        "businessWrites": 0
+      }
+    },
+    {
+      "label": "final-320-paper",
+      "width": 320,
+      "theme": "paper",
+      "files": [
+        {
+          "file": "final-320-paper-today.png",
+          "sha256": "987f26d0e061ad4a6a1ee2f759b31bf4946f165e53a56d629144514c5444cbaa"
+        },
+        {
+          "file": "final-320-paper-progress.png",
+          "sha256": "364a8975c4c0a47a4f0ee7bb3521aa94fa4501b351bda5756e71aa396f56255b"
+        },
+        {
+          "file": "final-320-paper-edit.png",
+          "sha256": "1d53a9b3cf33f4add0b2234aa735f11bf7b0231dfc0218b170073819fc116cf7"
+        },
+        {
+          "file": "final-320-paper-detail.png",
+          "sha256": "bcb51963046ae15edb7fe4468bf8b712fbc0207bfe8162234c238fd09476fad6"
+        },
+        {
+          "file": "final-320-paper-mine.png",
+          "sha256": "8084fa85a9762e608fd51de72b3dabfbf48c0ca4e336360a6c3d5ade05901610"
+        }
+      ],
+      "variant": "normal",
+      "guard": {
+        "cloudCalls": 0,
+        "networkCalls": 0,
+        "storageWrites": 0,
+        "businessWrites": 0
+      }
+    },
+    {
+      "label": "final-375-mist",
+      "width": 375,
+      "theme": "mist",
+      "files": [
+        {
+          "file": "final-375-mist-today.png",
+          "sha256": "7cae1a77ddf226f42696f955e00f52a871a5a37e713c99dffc9fff58b25279e5"
+        },
+        {
+          "file": "final-375-mist-progress.png",
+          "sha256": "1027279e9a83396280271b7355665b97c104acb0f2397f2ac104c7bbd39c89a1"
+        },
+        {
+          "file": "final-375-mist-edit.png",
+          "sha256": "9a0ddaf33f405fe0ce11b184ca908f62f37d5827b19574b14a7806811b96694f"
+        },
+        {
+          "file": "final-375-mist-detail.png",
+          "sha256": "da23e045541f4318e1035ab2ea81149d542084360a50c3fc110736feb6ae9a60"
+        },
+        {
+          "file": "final-375-mist-mine.png",
+          "sha256": "6814369e8b0f4b53621d48bef9695fc4089e1aee8ea295c353a8905e82d1d3a6"
+        }
+      ],
+      "variant": "normal",
+      "guard": {
+        "cloudCalls": 0,
+        "networkCalls": 0,
+        "storageWrites": 0,
+        "businessWrites": 0
+      }
+    },
+    {
+      "label": "final-375-paper",
+      "width": 375,
+      "theme": "paper",
+      "files": [
+        {
+          "file": "final-375-paper-today.png",
+          "sha256": "7af3ae67a188d3930937f99bbe715fbeee32e6c08451c7400605a6df43e79fed"
+        },
+        {
+          "file": "final-375-paper-progress.png",
+          "sha256": "a07e49c4ab35c9bed6312b24bae596440fa98e9f62fdf626f9701f008743d0d3"
+        },
+        {
+          "file": "final-375-paper-edit.png",
+          "sha256": "a9b338168ba6088067cf0b2a751bc294cf25d2eba32503568a41bac3a218f524"
+        },
+        {
+          "file": "final-375-paper-mine.png",
+          "sha256": "57cca9f28d123d4bc3269cda9c1542ed3181ee19898f90aa04f3b56193bd023e"
+        },
+        {
+          "file": "final-375-paper-detail.png",
+          "sha256": "3a91c549656d2983cea2ff49322397af8ef52b29a3db8bffb282d9031919b3d6"
+        }
+      ],
+      "variant": "normal",
+      "guard": {
+        "cloudCalls": 0,
+        "networkCalls": 0,
+        "storageWrites": 0,
+        "businessWrites": 0
+      }
+    },
+    {
+      "label": "final-390-mist",
+      "width": 390,
+      "theme": "mist",
+      "files": [
+        {
+          "file": "final-390-mist-today.png",
+          "sha256": "a6b3c67ad4afa5123111f090cbfe53ee7c2744cf9b318e6e9f6c4b2848b0641f"
+        },
+        {
+          "file": "final-390-mist-progress.png",
+          "sha256": "5298a13b833f971e54b3d0171d6451a7242f70884f46b0c96bb4f47aa333d2be"
+        },
+        {
+          "file": "final-390-mist-edit.png",
+          "sha256": "1ddb85717128e345c9c65fb5f055baf726591c81caa7da5873b4272281359c64"
+        },
+        {
+          "file": "final-390-mist-detail.png",
+          "sha256": "f89529c1719d554a9ba0ef6b1969e1f0b7546c52e9aff622dfaeeb15e045c8fd"
+        },
+        {
+          "file": "final-390-mist-mine.png",
+          "sha256": "03e33ec99b13b7b0db65f459a6f4ab370892c7a6ae058dc1f899f07d845c89f0"
+        }
+      ],
+      "variant": "normal",
+      "guard": {
+        "cloudCalls": 0,
+        "networkCalls": 0,
+        "storageWrites": 0,
+        "businessWrites": 0
+      }
+    },
+    {
+      "label": "final-390-paper",
+      "width": 390,
+      "theme": "paper",
+      "files": [
+        {
+          "file": "final-390-paper-today.png",
+          "sha256": "ece258bec9967f0926162259d2dc2ca64896b564353f9a100bad24aa6156725e"
+        },
+        {
+          "file": "final-390-paper-progress.png",
+          "sha256": "c22cdecc3f74fcb7e962ca5d5d4ac7273b44dbbb173796b916f7792accc270f7"
+        },
+        {
+          "file": "final-390-paper-edit.png",
+          "sha256": "16cdf294e3fab79bf728a578fa493bf384e736f07024cedc3fbabfe0f294ea28"
+        },
+        {
+          "file": "final-390-paper-detail.png",
+          "sha256": "e2bb9fa02f89c42481dee69d8a7c67a271f8839c1b3a5ffdb3b7927ef33facf2"
+        },
+        {
+          "file": "final-390-paper-mine.png",
+          "sha256": "661998f60f3bf7886884765b0d0200f92985c5081c255beb5b7cc6067307dd20"
+        }
+      ],
+      "variant": "normal",
+      "guard": {
+        "cloudCalls": 0,
+        "networkCalls": 0,
+        "storageWrites": 0,
+        "businessWrites": 0
+      }
+    },
+    {
+      "label": "final-430-mist",
+      "width": 430,
+      "theme": "mist",
+      "files": [
+        {
+          "file": "final-430-mist-today.png",
+          "sha256": "74b8966fa7b80cef2796ed9f0a8185c16c7cb497a8907dde20cf8269e5fc0616"
+        },
+        {
+          "file": "final-430-mist-progress.png",
+          "sha256": "4a0039f01910a1b839361d6d2fbb9300f08ed1f0c012756a003061640b6cd2a1"
+        },
+        {
+          "file": "final-430-mist-edit.png",
+          "sha256": "accd76c789b81c64307db60b7522d5ff25768524975d92e64c9ac7a734940266"
+        },
+        {
+          "file": "final-430-mist-detail.png",
+          "sha256": "395094003f105d32d91c422d525bba63bef792c213c7a6218aacbf7ad461961b"
+        },
+        {
+          "file": "final-430-mist-mine.png",
+          "sha256": "e6156129c32220a6d7b52372ccdf158fe9a7f74eaa4fd48c3830106bd9356c62"
+        }
+      ],
+      "variant": "normal",
+      "guard": {
+        "cloudCalls": 0,
+        "networkCalls": 0,
+        "storageWrites": 0,
+        "businessWrites": 0
+      }
+    },
+    {
+      "label": "final-430-paper",
+      "width": 430,
+      "theme": "paper",
+      "files": [
+        {
+          "file": "final-430-paper-today.png",
+          "sha256": "952ad9d4f0e9e9d8f300d85f77ae6aa1cc1a5e6e46a1da530e792867a6adfccd"
+        },
+        {
+          "file": "final-430-paper-progress.png",
+          "sha256": "a5d0af2b99d084f781ab1cdcad4a4a128787b6e81b1ffd08cb13b180d89d2e72"
+        },
+        {
+          "file": "final-430-paper-edit.png",
+          "sha256": "6989fa9fdcf4d56a078471547f077a167f6f10933feafe9b369865817eb51cba"
+        },
+        {
+          "file": "final-430-paper-detail.png",
+          "sha256": "a814596c4ef07a64597a3fb87edfb82cdbb5858ec707ecf735bcc293f62fa59d"
+        },
+        {
+          "file": "final-430-paper-mine.png",
+          "sha256": "3451c7953a1051f2c3e1df15d9832d51a3a63a1b7179365ad670f5ecf0fde3bf"
+        }
+      ],
+      "variant": "snapshot",
+      "guard": {
+        "cloudCalls": 0,
+        "networkCalls": 0,
+        "storageWrites": 0,
+        "businessWrites": 0
+      }
+    }
+  ],
+  "geometry": [
+    {
+      "theme": "mist",
+      "pages": [
+        {
+          "page": "today",
+          "matched": 27,
+          "maxDelta": 0.953125,
+          "over2px": [],
+          "missing": []
+        },
+        {
+          "page": "progress",
+          "matched": 28,
+          "maxDelta": 1.90625,
+          "over2px": [],
+          "missing": []
+        },
+        {
+          "page": "edit",
+          "matched": 20,
+          "maxDelta": 1.75,
+          "over2px": [],
+          "missing": [
+            {
+              "native": ".input",
+              "reference": "input",
+              "nativeCount": 3,
+              "referenceCount": 4
+            }
+          ]
+        },
+        {
+          "page": "detail",
+          "matched": 26,
+          "maxDelta": 1.75,
+          "over2px": [],
+          "missing": [
+            {
+              "native": ".detail-section",
+              "reference": ".section",
+              "nativeCount": 5,
+              "referenceCount": 4
+            }
+          ]
+        },
+        {
+          "page": "mine",
+          "matched": 23,
+          "maxDelta": 0.953125,
+          "over2px": [],
+          "missing": []
+        }
+      ]
+    },
+    {
+      "theme": "paper",
+      "pages": [
+        {
+          "page": "today",
+          "matched": 27,
+          "maxDelta": 0.953125,
+          "over2px": [],
+          "missing": []
+        },
+        {
+          "page": "progress",
+          "matched": 28,
+          "maxDelta": 1.90625,
+          "over2px": [],
+          "missing": []
+        },
+        {
+          "page": "edit",
+          "matched": 20,
+          "maxDelta": 1.75,
+          "over2px": [],
+          "missing": [
+            {
+              "native": ".input",
+              "reference": "input",
+              "nativeCount": 3,
+              "referenceCount": 4
+            }
+          ]
+        },
+        {
+          "page": "detail",
+          "matched": 26,
+          "maxDelta": 1.75,
+          "over2px": [],
+          "missing": [
+            {
+              "native": ".detail-section",
+              "reference": ".section",
+              "nativeCount": 5,
+              "referenceCount": 4
+            }
+          ]
+        },
+        {
+          "page": "mine",
+          "matched": 23,
+          "maxDelta": 0.953125,
+          "over2px": [],
+          "missing": []
+        }
+      ]
+    }
+  ],
+  "extremes": [
+    {
+      "label": "final-320-long-mist",
+      "width": 320,
+      "simulatedFontSizeSetting": 16,
+      "variant": "long",
+      "screenshots": [
+        {
+          "file": "final-320-long-mist-today.png",
+          "sha256": "15a35fcc450e4e347c4a8a2d6b71e68a36377af00ec38ef80ef47b13d149780f"
+        },
+        {
+          "file": "final-320-long-mist-edit.png",
+          "sha256": "303e25d8c787a10a5adad55d9fd32986606b67cc93f337d69e11e936bb83b0c6"
+        },
+        {
+          "file": "final-320-long-mist-detail.png",
+          "sha256": "dd0ed8a6ee85be4d0b52b98f58c87c5fe10f9910da51cbf17c53da215356b061"
+        }
+      ],
+      "measuredDocumentWidths": [
+        {
+          "page": "today",
+          "width": 320
+        },
+        {
+          "page": "edit",
+          "width": 320
+        },
+        {
+          "page": "detail",
+          "width": 320
+        }
+      ]
+    },
+    {
+      "label": "final-320-large-mist",
+      "width": 320,
+      "simulatedFontSizeSetting": 20,
+      "variant": "long-snapshot",
+      "screenshots": [
+        {
+          "file": "final-320-large-mist-today.png",
+          "sha256": "b256c83d8b06a031cc79c36b73984ad87d5282b93cc86fb7ff88ba698180e1e9"
+        },
+        {
+          "file": "final-320-large-mist-progress.png",
+          "sha256": "0b55881dc7f3fb080bd2d0c45f0b256f64f84e91410aff00fe759641bfe20756"
+        },
+        {
+          "file": "final-320-large-mist-detail.png",
+          "sha256": "b2f75408cf843336eaf67f84ab5f90dfa2c2d8cb9ac594e69b6cee581e679a37"
+        }
+      ],
+      "measuredDocumentWidths": [
+        {
+          "page": "today",
+          "width": 320
+        },
+        {
+          "page": "progress",
+          "width": 320
+        },
+        {
+          "page": "detail",
+          "width": 320
+        }
+      ]
+    },
+    {
+      "label": "final-320-large-paper",
+      "width": 320,
+      "simulatedFontSizeSetting": 20,
+      "variant": "long-snapshot",
+      "screenshots": [
+        {
+          "file": "final-320-large-paper-today.png",
+          "sha256": "bce64b16489098eea456b7ddff4632bc8ec36df94601af95a48a75413c145f2f"
+        },
+        {
+          "file": "final-320-large-paper-progress.png",
+          "sha256": "56f4d3bca41d8e90c1da55670f750df6a0d08d210acc7ad43a6125ebe68be9bf"
+        },
+        {
+          "file": "final-320-large-paper-detail.png",
+          "sha256": "6fa2d5e4cf3acf173188ac94ae2ec8dbfe9c22a00d698a7bafefe811e9619c40"
+        }
+      ],
+      "measuredDocumentWidths": [
+        {
+          "page": "today",
+          "width": 320
+        },
+        {
+          "page": "progress",
+          "width": 320
+        },
+        {
+          "page": "detail",
+          "width": 320
+        }
+      ]
+    },
+    {
+      "label": "final-320-scroll-mist",
+      "width": 320,
+      "simulatedFontSizeSetting": 16,
+      "variant": "scroll",
+      "screenshots": [
+        {
+          "file": "final-320-scroll-mist-edit.png",
+          "sha256": "0949b59a3733d40623c7f254113e8982772ca056594f4099e6bca4e1a5947e28"
+        },
+        {
+          "file": "final-320-scroll-mist-edit-bottom.png",
+          "sha256": "f4f45b44a6ef556e641b47766f36c0c46ba2d7368548303860f1bf9c36f466c7",
+          "scrollTop": 374
+        },
+        {
+          "file": "final-320-scroll-mist-detail.png",
+          "sha256": "59b409705d2e4710d2a51a0613557c6939b4ef4e8031d4d14fc15cd2c55095c1"
+        },
+        {
+          "file": "final-320-scroll-mist-detail-bottom.png",
+          "sha256": "8f2000e333c724faf954807604029eb7a73b08ad79a7c159a047772e625e58b6",
+          "scrollTop": 670
+        },
+        {
+          "file": "final-320-scroll-mist-mine.png",
+          "sha256": "2565a1047f83c6dc260140020f4fed96f01e87ce89ccc421fa038b3f8331e761"
+        },
+        {
+          "file": "final-320-scroll-mist-mine-bottom.png",
+          "sha256": "3cbdee1cd07f492b7a30fda36d5eaa49f077615b38b4ee058a24f985b7c5c81a",
+          "scrollTop": 377
+        }
+      ],
+      "measuredDocumentWidths": [
+        {
+          "page": "edit",
+          "width": 320
+        },
+        {
+          "page": "detail",
+          "width": 320
+        },
+        {
+          "page": "mine",
+          "width": 320
+        }
+      ]
+    },
+    {
+      "label": "state-390-edit-existing-mist",
+      "width": 390,
+      "simulatedFontSizeSetting": 16,
+      "variant": "editing",
+      "screenshots": [
+        {
+          "file": "state-390-edit-existing-mist-edit.png",
+          "sha256": "b886ad099738795699589986ea4a6de269e1efbec883a5dd9ece068f06c52df8"
+        },
+        {
+          "file": "state-390-edit-existing-mist-edit-bottom.png",
+          "sha256": "c7643ad24084df144a9508554bf91cc7da00a3bc9237c8c970c167da9e9af4bc",
+          "scrollTop": 75
+        }
+      ],
+      "measuredDocumentWidths": [
+        {
+          "page": "edit",
+          "width": 390
+        }
+      ]
+    },
+    {
+      "label": "state-390-edit-existing-paper",
+      "width": 390,
+      "simulatedFontSizeSetting": 16,
+      "variant": "editing",
+      "screenshots": [
+        {
+          "file": "state-390-edit-existing-paper-edit.png",
+          "sha256": "87b1417e625c0c65d91691c1742973005212481f161a9cf43d24b2f48314e336"
+        },
+        {
+          "file": "state-390-edit-existing-paper-edit-bottom.png",
+          "sha256": "96bfedfcead50b164b5cf8185d6e26021cf746d6d9aa1fd019847b76c8151895",
+          "scrollTop": 75
+        }
+      ],
+      "measuredDocumentWidths": [
+        {
+          "page": "edit",
+          "width": 390
+        }
+      ]
+    },
+    {
+      "label": "state-390-month-mist",
+      "width": 390,
+      "simulatedFontSizeSetting": 16,
+      "variant": "month",
+      "screenshots": [
+        {
+          "file": "state-390-month-mist-progress.png",
+          "sha256": "e609ca6cace09a59a0f1277fa39d7a06030b307fa203ea98648ab3afcaa2424c"
+        }
+      ],
+      "measuredDocumentWidths": [
+        {
+          "page": "progress",
+          "width": 390
+        }
+      ]
+    },
+    {
+      "label": "state-390-calendar-mist",
+      "width": 390,
+      "simulatedFontSizeSetting": 16,
+      "variant": "calendar",
+      "screenshots": [
+        {
+          "file": "state-390-calendar-mist-progress.png",
+          "sha256": "cdfb905c7c1983626089891b59bbcae4f94f7db4e11a0748fd43eb5d5c2de603"
+        }
+      ],
+      "measuredDocumentWidths": [
+        {
+          "page": "progress",
+          "width": 390
+        }
+      ]
+    }
+  ],
+  "focus": {
+    "evidence": "native/focus-390-real-input.json",
+    "focusField": "title",
+    "keyboardOpen": false
+  },
+  "baseline": [
+    {
+      "file": "fusion.html",
+      "sourceUnchanged": true,
+      "frozenUnchanged": true
+    },
+    {
+      "file": "fusion-design.md",
+      "sourceUnchanged": true,
+      "frozenUnchanged": true
+    },
+    {
+      "file": "fusion-today-390.png",
+      "sourceUnchanged": true,
+      "frozenUnchanged": true
+    },
+    {
+      "file": "fusion-progress-390.png",
+      "sourceUnchanged": true,
+      "frozenUnchanged": true
+    },
+    {
+      "file": "fusion-edit-390.png",
+      "sourceUnchanged": true,
+      "frozenUnchanged": true
+    },
+    {
+      "file": "fusion-detail-390.png",
+      "sourceUnchanged": true,
+      "frozenUnchanged": true
+    },
+    {
+      "file": "fusion-mine-390.png",
+      "sourceUnchanged": true,
+      "frozenUnchanged": true
+    }
+  ],
+  "pending": [
+    "真实云端",
+    "真机软键盘与系统大字号",
+    "双账户",
+    "用户UI及业务验收"
+  ],
+  "normalWidthCoverage": "5 pages x 2 themes x 4 actual native logical widths",
+  "note": "390正文矩形比较；安全区、原生导航/Tab及系统字体按平台显示。暖纸白颜色对照语义主题参数。极端状态另见验收报告。"
+}

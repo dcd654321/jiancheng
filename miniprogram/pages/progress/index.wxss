@@ -1,4 +1,30 @@
-.progress-tabs { margin-bottom: 14px; }
+.progress-tabs { margin: 16px 0 0; display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 0; }
+.progress-page .subline { margin-top: 3px; }
+.progress-page .range { margin: 14px 0 16px; font-size: 12px; }
+.progress-copy { margin-bottom: 16px; }
+.progress-statement { font-size: calc(20px * var(--progress-font-scale, 1)); font-weight: 700; line-height: 1.4; }
+.progress-copy .sub { font-size: calc(12px * var(--progress-font-scale, 1)); margin-top: 6px; }
+.chart-title { display: flex; align-items: center; justify-content: space-between; font-size: 13px; margin-bottom: 10px; font-weight: 600; }
+.chart-title .sub { font-size: 12px; font-weight: 400; }
+.progress-page .week-trend { gap: 7px; margin: 16px 0 0; }
+.progress-page .trend-day { padding: 0; min-height: 176px; min-width: 44px; }
+.bar-count { font-size: 13px; line-height: 20px; margin-bottom: 6px; font-variant-numeric: tabular-nums; }
+.bar-stack { display: flex; flex-direction: column-reverse; gap: 4px; min-height: 104px; width: 23px; position: relative; }
+.bar-unit { height: 23px; flex-shrink: 0; border: 1px solid var(--color-chart-border, var(--color-line)); border-radius: 3px; }
+.bar-unit.standard { background: var(--color-primary); border-color: var(--color-primary); }
+.bar-unit.minimum { background: var(--color-busy-fill); border-color: var(--color-chart-border, var(--color-line)); }
+.progress-page .trend-date { font-size: 12px; margin-top: 9px; }
+.trend-week { color: var(--color-secondary); font-size: 12px; line-height: 18px; }
+.progress-page .trend-today .trend-date, .trend-today .trend-week { color: var(--color-primary); font-weight: 600; }
+.progress-page .trend-legend { font-size: calc(12px * var(--progress-font-scale, 1)); line-height: 1.5; padding-bottom: 16px; border-bottom: 1px solid var(--color-line); margin: 14px 0 0; }
+.progress-page .rate-row { border-top: 0; margin-top: 16px; padding-top: 0; gap: 12px; align-items: center; }
+.rate-title { font-size: 13px; font-weight: 600; }
+.progress-page .rate-row .sub { font-size: 12px; margin-top: 4px; }
+.progress-page .rate-value { color: var(--color-primary); font-size: 27px; }
+.progress-page .current-line { background: var(--color-busy-bg); padding: 10px 76px 10px 12px; margin-top: 14px; position: relative; }
+.progress-page .today-summary-title { font-size: 13px; font-weight: 400; color: var(--color-primary); }
+.current-line .text-button { font-size: 12px; margin: 0; position: absolute; right: 12px; top: 50%; transform: translateY(-50%); }
+.progress-help { margin-top: 7px; font-size: 12px; }
 .progress-tabs .segment { min-width: 0; font-size: calc(14px * var(--progress-font-scale, 1)); }
 .range { margin: 0 0 10px; }
 .progress-page .metric { font-size: calc(34px * var(--progress-font-scale, 1)); margin: 3px 0; }
@@ -18,7 +44,7 @@
 .trend-track { width: 100%; height: 72px; position: relative; overflow: hidden; background: var(--color-soft); border-radius: 6px; }
 .trend-fills { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: flex-end; }
 .trend-standard { background: var(--color-primary); }
-.trend-minimum, .key-swatch.minimum { background-color: var(--color-busy-text); background-image: repeating-linear-gradient(135deg, transparent 0, transparent 3px, rgba(255, 255, 255, .35) 3px, rgba(255, 255, 255, .35) 5px); }
+.trend-minimum, .key-swatch.minimum { background-color: var(--color-busy-fill); }
 .trend-rest { background: transparent; border: 1px dashed var(--color-line); }
 .rest-text { position: absolute; bottom: 0; left: 0; right: 0; font-size: calc(13px * var(--progress-font-scale, 1)); color: var(--color-secondary); }
 .trend-today .trend-track { outline: 1px solid var(--color-control-border); outline-offset: 2px; }
@@ -78,7 +104,8 @@
 .record-link { padding-left: 0; }
 .calendar-empty { padding: 10px 0 20px; }
 .progress-page { font-size: calc(15px * var(--progress-font-scale, 1)); }
-.progress-page .heading { font-size: calc(22px * var(--progress-font-scale, 1)); }
+.progress-page .heading { font-size: calc(24px * var(--progress-font-scale, 1)); margin-bottom: 0; }
+.progress-page > .heading { display: inline-block; }
 .progress-page .section-title { font-size: calc(16px * var(--progress-font-scale, 1)); }
 .progress-page .sub, .progress-page .section-count, .progress-page .text-button { font-size: calc(13px * var(--progress-font-scale, 1)); }
 .progress-page .metric-suffix { font-size: calc(15px * var(--progress-font-scale, 1)); }
@@ -88,7 +115,9 @@
 .progress-large-font .today-summary { flex-wrap: wrap; }
 .progress-large-font .trend-day { padding-left: 2px; padding-right: 2px; }
 .today-summary > view { flex: 1; min-width: 0; }
+.progress-page .range, .progress-page .progress-copy .sub { font-size: calc(12px * var(--progress-font-scale, 1)); }
 @media (max-width: 359px) {
+  .progress-page .week-trend { gap: 0; margin-left: -10px; margin-right: -10px; }
   .month-calendar { margin-left: -10px; margin-right: -10px; }
   .week-trend { margin-left: -10px; margin-right: -10px; }
   .today-summary { padding: 10px; }
@@ -96,3 +125,4 @@
   .today-summary .sub { font-size: calc(13px * var(--progress-font-scale, 1)); }
   .metric-counts .sub { display: block; margin-top: 4px; }
 }
+@media (min-width: 360px) and (max-width: 379px) { .progress-page .week-trend { gap: 4px; } }

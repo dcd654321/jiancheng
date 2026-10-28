@@ -28,10 +28,10 @@ async function setup(t, prepare, route) {
   return { f, session, store, app, calls, toasts, modals, navigation, page };
 }
 
-test('detail only projects today records while check-in and undo stay available on today', async t => {
+test('detail and today expose the same confirmed check-in and undo commands', async t => {
   const h = await setup(t), detail = await h.page('detail', { id: 'read' }), today = await h.page('today');
   for (const action of ['onComplete', 'onCompleteMinimum', 'recordCompletion', 'onSimplify', 'onRestore']) {
-    assert.equal(detail[action], undefined, `${action} must not be exposed by detail`);
+    assert.equal(typeof detail[action], 'function', `${action} is available on detail`);
     assert.equal(typeof today[action], 'function', `${action} remains available on today`);
   }
   assert.equal(detail.data.task.done, false);
@@ -54,7 +54,7 @@ test('latest habit status updates detail management and progress only after conf
     assert.equal(detail.data.statusText, expected);
     assert.equal(manage.data.habits[0].status, expected);
     assert.equal(progress.data.stats.habits[0].statusLabel, expected);
-    assert.deepEqual(detail.data.task, todayTask);
+    assert.deepEqual(detail.data.task, { ...todayTask, photoRequired: false });
     assert.deepEqual(detail.data.history, history); assert.deepEqual(h.store.read().records, records);
   }
   statusEverywhere('进行中');
@@ -230,5 +230,5 @@ test('a new page visit receives a late check-in snapshot without the old success
   const gate = deferred(), h = await setup(t, null, async (command, f) => { if (command.action === 'mutate') await gate.promise; return f.api(command); });
   const p = await h.page('today'), work = p.onComplete(event({ id: 'read', date: h.f.date }));
   p.onHide(); await p.onShow(); gate.resolve(); await work;
-  assert.equal(p.data.done, 1); assert.equal(p.data.showCompleted, false); assert.equal(h.toasts.length, 0); assert.equal(p.data.writeBusy, false);
+  assert.equal(p.data.done, 1); assert.equal(p.data.showCompleted, true); assert.equal(h.toasts.length, 0); assert.equal(p.data.writeBusy, false);
 });

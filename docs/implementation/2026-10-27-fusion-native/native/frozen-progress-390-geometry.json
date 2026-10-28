@@ -1,0 +1,533 @@
+{
+  "level": "frozen-html-reference-measurement",
+  "viewport": {
+    "width": 390,
+    "height": 780
+  },
+  "bodyOrigin": {
+    "left": 0,
+    "top": 44,
+    "width": 390,
+    "height": 670
+  },
+  "elements": [
+    {
+      "selector": ".page",
+      "rects": [
+        {
+          "left": 0,
+          "top": 0,
+          "width": 390,
+          "height": 675.859375,
+          "fontSize": "15px",
+          "lineHeight": "22.5px",
+          "text": "打卡进度\n\n看见记录，也看见每一天的安排\n\n近7天\n近1个月\n日历\n\n2026年10月21日 — 10月27日\n\n7天里，6天有打卡\n\n累计 17 次 · 原目标 13 次 · 忙时 4 次\n\n每天完成 / 安排\n每格 1 项\n3 / 4\n21\n三\n4 / 4\n22\n四\n0 / "
+        }
+      ]
+    },
+    {
+      "selector": ".heading",
+      "rects": [
+        {
+          "left": 20,
+          "top": 18,
+          "width": 350,
+          "height": 31.671875,
+          "fontSize": "15px",
+          "lineHeight": "22.5px",
+          "text": "打卡进度"
+        }
+      ]
+    },
+    {
+      "selector": "h1",
+      "rects": [
+        {
+          "left": 20,
+          "top": 18,
+          "width": 94.09375,
+          "height": 31.671875,
+          "fontSize": "24px",
+          "lineHeight": "31.68px",
+          "text": "打卡进度"
+        }
+      ]
+    },
+    {
+      "selector": ".subline",
+      "rects": [
+        {
+          "left": 20,
+          "top": 52.671875,
+          "width": 350,
+          "height": 19.5,
+          "fontSize": "13px",
+          "lineHeight": "19.5px",
+          "text": "看见记录，也看见每一天的安排"
+        }
+      ]
+    },
+    {
+      "selector": ".today-summary",
+      "rects": []
+    },
+    {
+      "selector": ".summary-top",
+      "rects": []
+    },
+    {
+      "selector": ".summary-bottom",
+      "rects": []
+    },
+    {
+      "selector": ".timeline-head",
+      "rects": []
+    },
+    {
+      "selector": ".timeline",
+      "rects": []
+    },
+    {
+      "selector": ".schedule-row",
+      "rects": []
+    },
+    {
+      "selector": ".time",
+      "rects": []
+    },
+    {
+      "selector": ".rail",
+      "rects": []
+    },
+    {
+      "selector": ".slot",
+      "rects": []
+    },
+    {
+      "selector": ".task-title",
+      "rects": []
+    },
+    {
+      "selector": ".task-meta",
+      "rects": []
+    },
+    {
+      "selector": ".checkin",
+      "rects": []
+    },
+    {
+      "selector": ".busy-btn",
+      "rects": []
+    },
+    {
+      "selector": ".timeline-note",
+      "rects": []
+    },
+    {
+      "selector": ".segmented",
+      "rects": [
+        {
+          "left": 20,
+          "top": 88.171875,
+          "width": 350,
+          "height": 50,
+          "fontSize": "15px",
+          "lineHeight": "22.5px",
+          "text": "近7天\n近1个月\n日历"
+        }
+      ]
+    },
+    {
+      "selector": ".segment",
+      "rects": [
+        {
+          "left": 23,
+          "top": 91.171875,
+          "width": 114.65625,
+          "height": 44,
+          "fontSize": "13px",
+          "lineHeight": "normal",
+          "text": "近7天"
+        },
+        {
+          "left": 137.65625,
+          "top": 91.171875,
+          "width": 114.671875,
+          "height": 44,
+          "fontSize": "13px",
+          "lineHeight": "normal",
+          "text": "近1个月"
+        },
+        {
+          "left": 252.328125,
+          "top": 91.171875,
+          "width": 114.65625,
+          "height": 44,
+          "fontSize": "13px",
+          "lineHeight": "normal",
+          "text": "日历"
+        }
+      ]
+    },
+    {
+      "selector": ".period",
+      "rects": [
+        {
+          "left": 20,
+          "top": 152.171875,
+          "width": 350,
+          "height": 18,
+          "fontSize": "12px",
+          "lineHeight": "18px",
+          "text": "2026年10月21日 — 10月27日"
+        }
+      ]
+    },
+    {
+      "selector": ".progress-copy",
+      "rects": [
+        {
+          "left": 20,
+          "top": 186.171875,
+          "width": 350,
+          "height": 52,
+          "fontSize": "15px",
+          "lineHeight": "22.5px",
+          "text": "7天里，6天有打卡\n\n累计 17 次 · 原目标 13 次 · 忙时 4 次"
+        }
+      ]
+    },
+    {
+      "selector": ".progress-copy h2",
+      "rects": [
+        {
+          "left": 20,
+          "top": 186.171875,
+          "width": 350,
+          "height": 28,
+          "fontSize": "20px",
+          "lineHeight": "28px",
+          "text": "7天里，6天有打卡"
+        }
+      ]
+    },
+    {
+      "selector": ".chart-title",
+      "rects": [
+        {
+          "left": 20,
+          "top": 254.171875,
+          "width": 350,
+          "height": 19.5,
+          "fontSize": "13px",
+          "lineHeight": "19.5px",
+          "text": "每天完成 / 安排\n每格 1 项"
+        }
+      ]
+    },
+    {
+      "selector": ".daily-chart",
+      "rects": [
+        {
+          "left": 20,
+          "top": 289.671875,
+          "width": 350,
+          "height": 176,
+          "fontSize": "15px",
+          "lineHeight": "22.5px",
+          "text": "3 / 4\n21\n三\n4 / 4\n22\n四\n0 / 4\n23\n五\n4 / 4\n24\n六\n3 / 4\n25\n日\n2 / 4\n26\n一\n1 / 4\n27\n今天"
+        }
+      ]
+    },
+    {
+      "selector": ".chart-column",
+      "rects": [
+        {
+          "left": 20,
+          "top": 289.671875,
+          "width": 43.140625,
+          "height": 176,
+          "fontSize": "15px",
+          "lineHeight": "22.5px",
+          "text": "3 / 4\n21\n三"
+        },
+        {
+          "left": 71.140625,
+          "top": 289.671875,
+          "width": 43.140625,
+          "height": 176,
+          "fontSize": "15px",
+          "lineHeight": "22.5px",
+          "text": "4 / 4\n22\n四"
+        },
+        {
+          "left": 122.28125,
+          "top": 289.671875,
+          "width": 43.140625,
+          "height": 176,
+          "fontSize": "15px",
+          "lineHeight": "22.5px",
+          "text": "0 / 4\n23\n五"
+        },
+        {
+          "left": 173.421875,
+          "top": 289.671875,
+          "width": 43.140625,
+          "height": 176,
+          "fontSize": "15px",
+          "lineHeight": "22.5px",
+          "text": "4 / 4\n24\n六"
+        },
+        {
+          "left": 224.5625,
+          "top": 289.671875,
+          "width": 43.140625,
+          "height": 176,
+          "fontSize": "15px",
+          "lineHeight": "22.5px",
+          "text": "3 / 4\n25\n日"
+        },
+        {
+          "left": 275.703125,
+          "top": 289.671875,
+          "width": 43.140625,
+          "height": 176,
+          "fontSize": "15px",
+          "lineHeight": "22.5px",
+          "text": "2 / 4\n26\n一"
+        },
+        {
+          "left": 326.84375,
+          "top": 289.671875,
+          "width": 43.140625,
+          "height": 176,
+          "fontSize": "15px",
+          "lineHeight": "22.5px",
+          "text": "1 / 4\n27\n今天"
+        }
+      ]
+    },
+    {
+      "selector": ".bar-stack",
+      "rects": [
+        {
+          "left": 30.0625,
+          "top": 316.671875,
+          "width": 23,
+          "height": 104,
+          "fontSize": "15px",
+          "lineHeight": "22.5px",
+          "text": ""
+        },
+        {
+          "left": 81.203125,
+          "top": 316.671875,
+          "width": 23,
+          "height": 104,
+          "fontSize": "15px",
+          "lineHeight": "22.5px",
+          "text": ""
+        },
+        {
+          "left": 132.34375,
+          "top": 316.671875,
+          "width": 23,
+          "height": 104,
+          "fontSize": "15px",
+          "lineHeight": "22.5px",
+          "text": ""
+        },
+        {
+          "left": 183.484375,
+          "top": 316.671875,
+          "width": 23,
+          "height": 104,
+          "fontSize": "15px",
+          "lineHeight": "22.5px",
+          "text": ""
+        },
+        {
+          "left": 234.625,
+          "top": 316.671875,
+          "width": 23,
+          "height": 104,
+          "fontSize": "15px",
+          "lineHeight": "22.5px",
+          "text": ""
+        },
+        {
+          "left": 285.765625,
+          "top": 316.671875,
+          "width": 23,
+          "height": 104,
+          "fontSize": "15px",
+          "lineHeight": "22.5px",
+          "text": ""
+        },
+        {
+          "left": 336.90625,
+          "top": 316.671875,
+          "width": 23,
+          "height": 104,
+          "fontSize": "15px",
+          "lineHeight": "22.5px",
+          "text": ""
+        }
+      ]
+    },
+    {
+      "selector": ".chart-legend",
+      "rects": [
+        {
+          "left": 20,
+          "top": 479.671875,
+          "width": 350,
+          "height": 35,
+          "fontSize": "12px",
+          "lineHeight": "18px",
+          "text": "原目标\n忙时\n未打卡"
+        }
+      ]
+    },
+    {
+      "selector": ".rate-row",
+      "rects": [
+        {
+          "left": 20,
+          "top": 530.671875,
+          "width": 350,
+          "height": 41.5,
+          "fontSize": "15px",
+          "lineHeight": "22.5px",
+          "text": "截至昨天的按计划打卡率\n\n10月21—26日 · 完成 16 / 安排 24 次\n\n67%"
+        }
+      ]
+    },
+    {
+      "selector": ".current-line",
+      "rects": [
+        {
+          "left": 20,
+          "top": 586.171875,
+          "width": 350,
+          "height": 39.5,
+          "fontSize": "13px",
+          "lineHeight": "19.5px",
+          "text": "今天 1 / 4，仍在进行中"
+        }
+      ]
+    },
+    {
+      "selector": ".form-intro",
+      "rects": []
+    },
+    {
+      "selector": ".form-field",
+      "rects": []
+    },
+    {
+      "selector": ".field-label",
+      "rects": []
+    },
+    {
+      "selector": "input",
+      "rects": []
+    },
+    {
+      "selector": ".field-heading",
+      "rects": []
+    },
+    {
+      "selector": ".weekdays",
+      "rects": []
+    },
+    {
+      "selector": ".weekday-btn",
+      "rects": []
+    },
+    {
+      "selector": ".primary",
+      "rects": []
+    },
+    {
+      "selector": ".save-block",
+      "rects": []
+    },
+    {
+      "selector": ".more-settings",
+      "rects": []
+    },
+    {
+      "selector": ".back-heading",
+      "rects": []
+    },
+    {
+      "selector": ".detail-name",
+      "rects": []
+    },
+    {
+      "selector": ".detail-name h2",
+      "rects": []
+    },
+    {
+      "selector": ".status-line",
+      "rects": []
+    },
+    {
+      "selector": ".section",
+      "rects": []
+    },
+    {
+      "selector": ".section-head",
+      "rects": []
+    },
+    {
+      "selector": ".target-lines",
+      "rects": []
+    },
+    {
+      "selector": ".target-line",
+      "rects": []
+    },
+    {
+      "selector": ".detail-actions",
+      "rects": []
+    },
+    {
+      "selector": ".secondary",
+      "rects": []
+    },
+    {
+      "selector": ".note-copy",
+      "rects": []
+    },
+    {
+      "selector": ".plan-list",
+      "rects": []
+    },
+    {
+      "selector": ".plan-item",
+      "rects": []
+    },
+    {
+      "selector": ".more-operations",
+      "rects": []
+    },
+    {
+      "selector": ".mine-intro",
+      "rects": []
+    },
+    {
+      "selector": ".setting-row",
+      "rects": []
+    },
+    {
+      "selector": ".menu-icon",
+      "rects": []
+    },
+    {
+      "selector": ".demo-footer",
+      "rects": []
+    }
+  ]
+}

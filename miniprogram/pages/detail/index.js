@@ -6,6 +6,7 @@ const { THEMES } = require('../../config/theme-tokens');
 const PIN_READ_ERROR = '暂时未读取到置顶设置，打卡不受影响';
 const { media } = require('../../services/media-client');
 const { supervision } = require('../../services/supervision-client');
+const checkin = require('../../services/checkin-ui');
 
 function drafts() {
   const app = getApp();
@@ -14,7 +15,10 @@ function drafts() {
 }
 
 Page(ui.withLifecycle({
+  ...ui.taskActions,
+  ...checkin.actions,
   data: { error: '', loading: true, dataUnavailable: false, dataReady: false,
+    ...checkin.photoData, pending: [], todayGoalOpen: false, todayTarget: '', todayGoalError: '',
     invalid: false, largeFont: false,
     title: '', schedule: '', current: null, future: null, task: null, history: [], note: '',
     noteDirty: false, noteExpired: false, noteDate: '', date: '', statusText: '',
@@ -25,6 +29,8 @@ Page(ui.withLifecycle({
     let largeFont = false;
     try { largeFont = wx.getSystemInfoSync().fontSizeSetting > 16; } catch (_) {}
     this.setData({ largeFont });
+    this.startPhotoCheckin();
+    this.loadCheckinRequirements();
     const service = features();
     if (!service.status().enabled) return;
     const showVersion = this._showVersion;
@@ -71,13 +77,30 @@ Page(ui.withLifecycle({
       const last = habit.versions[habit.versions.length - 1];
       const future = last.effectiveDate > date ? last : null;
       const display = current || last;
-      const task = ui.domain.taskAt(state, habit, date);
+      const rawTask = ui.domain.taskAt(state, habit, date);
+      const task = rawTask && { ...rawTask, photoRequired: this._checkinRequirementsScope === context + ':' + date && !!(this._checkinRequirements && this._checkinRequirements[this._id]) };
+      const goalScope = context + ':' + date;
+      if (this._todayGoalScope !== goalScope) {
+        this._todayGoalScope = goalScope;
+        this._todayGoalDraft = null;
+        this._todayGoalAttempt = null;
+        this.setData({ todayGoalOpen: false, todayTarget: '', todayGoalError: '' });
+      }
+      if (this._todayGoalAttempt && task && task.simplified && task.target === this._todayGoalAttempt.target && !ui.storageInfo().pending) {
+        this._todayGoalAttempt = null;
+        this.setData({ todayGoalOpen: false, todayTarget: '', todayGoalError: '' });
+      }
       const preferences = features().cachedPreferences();
       const history = ui.date.range(date, 28).reverse().map(day => {
         const record = ui.domain.taskAt(state, habit, day);
         return record ? { date: day, status: ui.taskStatusLabel(record), goal: `${record.target} ${record.unit}`, done: record.done } : null;
       }).filter(Boolean);
-      this.setData({ title: display.title, current, future, task, history, date,
+      const historyCells = ui.date.range(date, 28).map(day => {
+        const record = ui.domain.taskAt(state, habit, day);
+        return { date: day, day: Number(day.slice(8)), today: day === date, tone: record ? record.done ? record.status : 'pending' : 'rest',
+          description: day + ' · ' + (record ? ui.taskStatusLabel(record) : '没有安排') };
+      });
+      this.setData({ title: display.title, current, future, task, startDate: habit.versions[0].effectiveDate, displayStatusText: current ? ({ active: '进行中', paused: '已暂停', archived: '已归档' })[current.status] : '尚未开始', pending: task && !task.done ? [task] : [], history, historyCells, date,
         plannedStatus: last.status,
         featuresEnabled: features().status().enabled, pinned: !!preferences && preferences.pinnedHabitId === this._id,
         sharingEnabled: features().status().publicShares, photoEnabled: media().status().enabled, supervisionEnabled: supervision().status().enabled,
@@ -86,11 +109,14 @@ Page(ui.withLifecycle({
         noteDate: draft ? draft.date : date, noteExpired: !!draft && (draft.date !== date || !task),
         schedule: ui.domain.weekdayText(display.weekdays),
         statusText: ({ active: '进行中', paused: '已暂停', archived: '已归档' })[last.status] });
+      if (this._photoCheckin) this.setData(this._photoCheckin.view());
+      if (this.data.supervisionEnabled && this._checkinRequirementsScope !== goalScope && !this._loadingCheckinRequirements) Promise.resolve().then(() => this.loadCheckinRequirements());
     });
     this.finishDelete();
     if (this._deleteNavigationFailed && this.data.invalid) this.setData({ error: '习惯已删除，请点击“返回我的习惯”。' });
   },
   onEdit() { wx.navigateTo({ url: '/pages/edit/index?id=' + this._id }); },
+  onBack() { wx.navigateBack({ fail: () => this.onToday() }); },
   onSharePlan() { wx.navigateTo({ url: '/pages/share-create/index?kind=plan&habitId=' + this._id }); },
   onInviteSupervision() { wx.navigateTo({ url: '/pages/supervision-invite/index?habitId=' + this._id }); },
   onPhotoRecord(event) { wx.navigateTo({ url: '/pages/photo-record/index?habitId=' + this._id + '&date=' + event.currentTarget.dataset.date }); },
@@ -213,8 +239,31 @@ Page(ui.withLifecycle({
     if (this._unsubscribeDelete) this._unsubscribeDelete();
     this._unsubscribeDelete = null; this._deleteAttempt = null;
   },
-  onHide() { this.clearDeleteAttempt(); this._deleteConfirmation = null; this.setData({ deleteConfirming: false }); },
-  onUnload() { this.clearDeleteAttempt(); this._deleteConfirmation = null; },
+  onHide() { this.stopPhotoCheckin(); this.clearDeleteAttempt(); this._deleteConfirmation = null; this.setData({ deleteConfirming: false }); },
+  onUnload() { this.stopPhotoCheckin(); this.clearDeleteAttempt(); this._deleteConfirmation = null; },
+  onToggleTodayGoal() {
+    if (this._mutating || this.data.dataReadOnly || !this.data.task || this.data.task.done) return;
+    this._todayGoalDraft = { context: ui.contextKey(), date: ui.date.today(), showVersion: this._showVersion, revision: this._revision };
+    this.setData({ todayGoalOpen: !this.data.todayGoalOpen, todayTarget: this.data.todayTarget || String(this.data.task.minimum || ''), todayGoalError: '' });
+  },
+  onTodayTarget(event) { this.setData({ todayTarget: event.detail.value, todayGoalError: '' }); },
+  async onApplyTodayGoal() {
+    const draft = this._todayGoalDraft;
+    if (!draft || this._mutating) return false;
+    try {
+      ui.assertContext(this); ui.assertWritable();
+      if (!ui.isCurrentView(this, draft.context, draft.showVersion) || draft.date !== ui.date.today() || draft.revision !== this._revision) throw Error('日期或计划已变化，请收起后重新调整');
+      const task = ui.domain.taskAt(ui.store().read(), ui.domain.findHabit(ui.store().read(), this._id), draft.date);
+      const target = Number(this.data.todayTarget);
+      if (!task || task.done) throw Error('请先撤销今天的打卡，再调整目标');
+      if (!Number.isInteger(target) || target < 1 || target >= task.originalTarget) throw Error('请输入小于原目标的正整数');
+      const attempt = this._todayGoalAttempt = { target };
+      const saved = await ui.mutate(this, { type: 'simplify', id: this._id, date: draft.date, target }, '今天目标已调小');
+      if (!saved && this._todayGoalAttempt === attempt && !ui.storageInfo().pending) this._todayGoalAttempt = null;
+      if (saved && ui.isCurrentView(this, draft.context, draft.showVersion) && draft.date === ui.date.today()) this.setData({ todayGoalOpen: false, todayGoalError: '', todayTarget: '' });
+      return saved;
+    } catch (err) { if (ui.isCurrentView(this, draft.context, draft.showVersion)) this.setData({ todayGoalError: err.message }); return false; }
+  },
   onToggleHistory() { this.setData({ showHistory: !this.data.showHistory }); this.refresh(); },
   onNote(event) {
     const text = event.detail.value;

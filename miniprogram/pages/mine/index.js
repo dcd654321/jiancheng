@@ -8,15 +8,18 @@ const { supervision } = require('../../services/supervision-client');
 Page(ui.withLifecycle({
   ...actions,
   data: { ...actions.data, sharingEnabled: false, remindersEnabled: false, supervisionEnabled: false,
+    todayDone: 0, socialOpen: false,
     appearanceEnabled: false, appearanceLabel: '', appearancePending: false },
   refresh() {
-    actions.refresh.call(this);
+    ui.read(this, (state, date) => this.setData({ count: state.habits.length, hideQuote: state.settings.hideQuote,
+      todayDone: ui.domain.tasksOn(state, date).filter(task => task.done).length }));
     const theme = themeSnapshot();
     this.setData({ sharingEnabled: features().status().publicShares, remindersEnabled: features().status().reminders, supervisionEnabled: supervision().status().enabled,
       appearanceEnabled: theme.enabled, appearancePending: !!theme.pendingTheme,
       appearanceLabel: theme.pendingTheme ? '主题保存结果待核对' : theme.themeName });
   },
   onAppearance() { wx.navigateTo({ url: '/pages/appearance/index' }); },
+  onToggleSocial() { this.setData({ socialOpen: !this.data.socialOpen }); },
   onReminders() { wx.navigateTo({url:'/pages/reminder/index'}); },
   onShares() { wx.navigateTo({ url: '/pages/share-list/index' }); },
   onSupervisions() { wx.navigateTo({ url: '/pages/supervision/index' }); },

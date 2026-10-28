@@ -5,7 +5,7 @@
 // alpha = clamp(strokeRadius + 0.5 - distance, 0, 1) 做抗锯齿；
 // 折线按线段距离取并集，转角自然得到 round 端点/连接效果（线宽 = 2 × strokeRadius）。
 // PNG 由内置 zlib 编码：RGBA8、每行 filter 0、IHDR/IDAT/IEND + CRC32。
-// 输出 miniprogram/assets/tabbar/ 下 81×81 的 9 个 PNG；脚本可重复执行（字节级幂等），不访问网络。
+// 输出 miniprogram/assets/tabbar/ 下 81×81 的 12 个 PNG；脚本可重复执行（字节级幂等），不访问网络。
 
 const fs = require('node:fs');
 const path = require('node:path');
@@ -16,11 +16,12 @@ const output = path.join(root, 'miniprogram', 'assets', 'tabbar');
 const SIZE = 81;
 const STROKE_RADIUS = 2.5;
 
-// 颜色：normal 两主题共用；选中态区分主题（mist 薄雾绿 / paper 暖纸白）。
+// 普通和选中态均使用当前主题的语义颜色。
 const COLORS = {
-  normal: '#647067',
-  'selected-mist': '#486557',
-  'selected-paper': '#79604F'
+  normal: require('../miniprogram/config/theme-tokens').THEMES.mist.secondary,
+  'normal-paper': require('../miniprogram/config/theme-tokens').THEMES.paper.secondary,
+  'selected-mist': require('../miniprogram/config/theme-tokens').THEMES.mist.primary,
+  'selected-paper': require('../miniprogram/config/theme-tokens').THEMES.paper.primary
 };
 
 // 三次贝塞尔曲线按 t 均分为折线（约定 20 段），供 mine 图标肩膀曲线使用。
@@ -76,6 +77,7 @@ const shapes = {
 const outputs = [];
 for (const name of Object.keys(shapes)) {
   outputs.push({ file: `${name}.png`, shape: name, color: COLORS.normal });
+  outputs.push({ file: `${name}-paper.png`, shape: name, color: COLORS['normal-paper'] });
   outputs.push({ file: `${name}-selected.png`, shape: name, color: COLORS['selected-mist'] });
   outputs.push({ file: `${name}-selected-paper.png`, shape: name, color: COLORS['selected-paper'] });
 }
@@ -183,4 +185,5 @@ function generate() {
   }
 }
 
-generate();
+if (require.main === module) generate();
+module.exports = { rasterize, encodePng, segmentsOf, cubicPolyline, shapes };

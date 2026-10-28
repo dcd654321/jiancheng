@@ -1,51 +1,33 @@
-<import src="../../templates/task-summary.wxml" />
-<view class="page theme-{{theme}}">
+<import src="../../templates/photo-checkin.wxml" />
+<view class="page detail-page {{largeFont ? 'large-font' : ''}} theme-{{theme}}">
+  <view class="back-heading"><button class="back-button" bindtap="onBack" aria-label="返回"><view class="chevron back-chevron" /></button><view class="heading">习惯详情</view></view>
   <view wx:if="{{loading}}" class="empty"><view class="section-title">正在读取习惯</view><view class="sub">请稍候。</view></view>
   <view wx:elif="{{dataUnavailable}}" class="empty"><view class="heading">暂时没能读取记录</view><view class="sub">{{error}}</view><button class="primary spaced" bindtap="onDataRetry">{{recoveryLabel || '重新读取'}}</button></view>
-  <view wx:elif="{{invalid}}" class="empty">
-    <view class="heading">没有找到这个习惯</view>
-    <view class="sub">{{error || '它可能已被删除，或链接不完整。'}}</view>
-    <button class="secondary spaced" bindtap="onManage">返回我的习惯</button>
-  </view>
+  <view wx:elif="{{invalid}}" class="empty"><view class="heading">没有找到这个习惯</view><view class="sub">{{error || '它可能已被删除，或链接不完整。'}}</view><button class="secondary spaced" bindtap="onManage">返回我的习惯</button></view>
   <block wx:elif="{{dataReady}}">
-    <view wx:if="{{error}}" class="error">{{error}}</view>
-    <view class="heading">{{title}}</view><view class="sub habit-state">{{statusText}} · {{schedule}}</view>
-    <block wx:if="{{featuresEnabled && current.status === 'active'}}"><button class="text-button" disabled="{{pinning || dataReadOnly || writeBusy}}" loading="{{pinning}}" bindtap="onPin">{{pinned ? '取消置顶' : '置顶这个习惯'}}</button><view class="sub">最多置顶一个；今天有安排时优先显示。</view><view wx:if="{{pinError}}" class="error">{{pinError}}</view></block>
-    <view wx:if="{{writeBusy}}" class="sub spaced">{{writeStatus}}</view>
-    <view wx:if="{{task}}"><view class="section-title">今天</view><template is="task-summary" data="{{task: task, largeFont: largeFont, taskIconColor: primary}}" /></view>
-    <view wx:else class="notice">今天没有安排，不计入未打卡。</view>
-    <view class="card detail-actions">
-      <view wx:if="{{task || noteDirty}}" class="note-section">
-        <button class="action-header note-header" bindtap="onToggleNote" aria-expanded="{{noteOpen || noteDirty}}"><text class="grow">{{noteDirty ? '备注草稿 · 尚未保存' : note ? '今天的备注' : '留一句话（选填）'}}</text><text class="sub">{{noteDirty ? '编辑中' : noteOpen ? '收起' : '编辑'}}</text><view class="chevron {{noteOpen || noteDirty ? 'up' : 'down'}}" /></button>
-        <view wx:if="{{!noteOpen && !noteDirty && note}}" class="note-preview">{{note}}</view>
-        <view wx:if="{{noteOpen || noteDirty}}" class="form-field note-form">
-          <label class="field-label" for="note">今天的备注</label>
-          <view wx:if="{{noteDirty}}" class="sub">{{noteExpired ? noteDate + ' 的草稿未提交，不能保存到今天。请先复制保留。' : '尚未保存 · 暂存于本次打开，退出小程序前请保存。'}}</view>
-          <textarea id="note" class="input {{focusNote ? 'focused' : ''}}" maxlength="140" value="{{note}}" bindinput="onNote" bindfocus="onNoteFocus" bindblur="onNoteBlur" placeholder="只留给自己，不会包含在分享中" />
-          <view class="row note-actions"><button class="text-button" disabled="{{noteExpired || dataReadOnly || writeBusy}}" bindtap="onSaveNote">保存备注</button><button wx:if="{{noteDirty}}" class="text-button" bindtap="onCopyNote">复制备注</button><button wx:if="{{noteDirty}}" class="text-button" bindtap="onDiscardNote">放弃草稿</button></view>
-        </view>
+    <view wx:if="{{error}}" class="error spaced">{{error}}</view>
+    <view class="detail-name"><view class="habit-name">{{title}}</view><view class="status-line"><text class="habit-status">{{displayStatusText}}</text><text class="sub">{{schedule}}</text></view></view>
+    <view wx:if="{{writeBusy}}" class="sub spaced" role="status">{{writeStatus}}</view>
+    <view wx:if="{{task}}" class="detail-section">
+      <view class="detail-section-head"><view class="section-title">今日目标</view><button wx:if="{{!task.done && task.originalTarget > 1}}" class="text-button" disabled="{{dataReadOnly || writeBusy}}" bindtap="onToggleTodayGoal" aria-expanded="{{todayGoalOpen}}">{{todayGoalOpen ? '收起' : '只调整今天'}}<view class="chevron {{todayGoalOpen ? 'up' : ''}}" /></button></view>
+      <view class="target-lines"><view class="target-line"><text>平时目标</text><text class="target-value">{{task.originalTarget}} {{task.unit}}</text></view><view wx:if="{{task.minimum}}" class="target-line"><text>忙时目标</text><text class="target-value">{{task.minimum}} {{task.unit}}</text></view><view wx:if="{{task.simplified}}" class="target-line"><text>今天的目标</text><text class="target-value">{{task.target}} {{task.unit}}</text></view></view>
+      <view wx:if="{{todayGoalOpen && !task.done}}" class="today-goal-form"><label class="field-label" for="today-target">只调整今天目标（不打卡）</label><view class="sub">输入小于 {{task.originalTarget}}{{task.unit}} 的正整数；平时计划保持不变。</view><input id="today-target" class="input spaced" type="number" maxlength="4" value="{{todayTarget}}" disabled="{{dataReadOnly || writeBusy}}" bindinput="onTodayTarget" aria-label="今天的目标数量" /><view wx:if="{{todayGoalError}}" class="field-error">{{todayGoalError}}</view><button class="secondary spaced" disabled="{{dataReadOnly || writeBusy}}" bindtap="onApplyTodayGoal">只改今天</button></view>
+      <view class="detail-checkin-actions {{task.done || task.simplified || !quickMinimumEnabled || !task.minimum ? 'single' : ''}}">
+        <button wx:if="{{task.done}}" class="secondary" disabled="{{dataReadOnly || writeBusy}}" data-id="{{task.id}}" data-date="{{task.date}}" data-done="{{true}}" bindtap="onComplete">{{recordingType === 'undo' && recordingId === task.id ? recordingLabel : (task.status === 'minimum' ? '忙时已完成' : '原目标已完成') + ' · ' + task.target + task.unit + ' · 撤销打卡'}}</button>
+        <block wx:else><button class="primary" disabled="{{dataReadOnly || writeBusy}}" data-id="{{task.id}}" data-date="{{task.date}}" data-done="{{false}}" bindtap="onComplete">{{recordingType === 'complete' && recordingId === task.id ? recordingLabel : (task.simplified ? '今天打卡' : '原目标打卡') + ' · ' + task.target + ' ' + task.unit}}</button><button wx:if="{{quickMinimumEnabled && task.minimum && !task.simplified}}" class="secondary" disabled="{{dataReadOnly || writeBusy}}" data-id="{{task.id}}" data-date="{{task.date}}" bindtap="onCompleteMinimum">{{recordingType === 'completeMinimum' && recordingId === task.id ? recordingLabel : '忙时打卡 · ' + task.minimum + ' ' + task.unit}}</button></block>
       </view>
-      <button class="action-header plan-action" bindtap="onEdit"><text class="grow">调整计划</text><view class="chevron" /></button>
-      <view class="more-group">
-        <button class="action-header more-header {{moreOpen ? 'is-expanded' : ''}}" bindtap="onMore" aria-expanded="{{moreOpen}}"><text class="grow">更多操作</text><text class="sub">{{plannedStatus === 'archived' ? '取消归档、删除' : plannedStatus === 'paused' ? '恢复、归档、删除' : '暂停、归档、删除'}}</text><view class="chevron {{moreOpen ? 'up' : 'down'}}" /></button>
-        <view wx:if="{{moreOpen}}" class="more-content">
-          <view class="sub more-help">状态调整从明天生效，今天和历史记录保留。</view>
-          <view class="more-actions">
-            <button wx:if="{{plannedStatus === 'active'}}" class="setting-row" disabled="{{dataReadOnly || writeBusy}}" data-status="paused" bindtap="onStatus">暂停</button>
-            <button wx:elif="{{plannedStatus === 'paused'}}" class="setting-row" disabled="{{dataReadOnly || writeBusy}}" bindtap="onResume">恢复</button>
-            <button wx:if="{{plannedStatus === 'archived'}}" class="setting-row" disabled="{{dataReadOnly || writeBusy}}" bindtap="onUnarchive">取消归档</button>
-            <button wx:else class="setting-row danger" disabled="{{dataReadOnly || writeBusy}}" data-status="archived" bindtap="onStatus">归档</button>
-            <button class="setting-row danger" disabled="{{dataReadOnly || writeBusy || pinning || deleteConfirming}}" loading="{{writeBusy && recordingType === 'deleteHabit'}}" bindtap="onDeleteHabit">{{writeBusy && recordingType === 'deleteHabit' ? '正在删除…' : '删除习惯'}}</button>
-          </view>
-          <view class="sub delete-help">删除立即生效，习惯及全部历史打卡、备注将一并删除，无法恢复。</view>
-        </view>
-      </view>
+      <button wx:if="{{task.simplified && !task.done}}" class="text-button restore-target" disabled="{{dataReadOnly || writeBusy}}" data-id="{{task.id}}" data-date="{{task.date}}" bindtap="onRestore">恢复今天原目标</button>
+      <view wx:if="{{task.simplified && !task.done}}" class="sub">按今天缩减目标打卡，会记为忙时完成。</view><view wx:if="{{task.photoRequired && !task.done}}" class="sub spaced">按监督约定，打卡需至少一张照片。</view><button wx:if="{{photoEnabled && task.done}}" class="text-button" data-date="{{task.date}}" bindtap="onPhotoRecord">查看或添加今天的照片</button>
     </view>
-    <button wx:if="{{supervisionEnabled && current.status === 'active'}}" class="text-button spaced" bindtap="onInviteSupervision">邀请一位好友监督</button>
-    <button wx:if="{{sharingEnabled && current.status === 'active' && current.minimum}}" class="text-button" bindtap="onSharePlan">分享这份轻计划</button>
-    <view class="section-title">近28天有安排的记录</view>
-    <view wx:if="{{!history.length}}" class="sub">这段时间还没有安排，不算漏做。</view>
-    <view wx:else class="card list-card"><view wx:for="{{visibleHistory}}" wx:key="date" class="setting-row"><view class="grow">{{item.date}}<view class="sub">{{item.goal}}</view></view><text class="sub">{{item.status}}</text><button wx:if="{{photoEnabled && item.done}}" class="text-button" data-date="{{item.date}}" bindtap="onPhotoRecord">照片</button></view></view>
-    <button wx:if="{{history.length > 7}}" class="text-button spaced" bindtap="onToggleHistory">{{showHistory ? '收起历史' : '查看全部 ' + history.length + ' 天'}}</button>
+    <view wx:else class="notice">今天没有安排，不计入未打卡。</view>
+    <view wx:if="{{task || noteDirty}}" class="detail-section note-section">
+      <view class="detail-section-head"><view class="section-title">备注</view><button class="text-button" bindtap="onToggleNote" aria-expanded="{{noteOpen || noteDirty}}">{{noteDirty ? '编辑中' : noteOpen ? '收起' : '编辑'}}</button></view>
+      <view wx:if="{{!noteOpen && !noteDirty}}" class="note-preview">{{note || '还没有备注。'}}</view>
+      <view wx:if="{{noteOpen || noteDirty}}" class="note-form"><label class="field-label" for="note">今天的备注（最多140字）</label><view wx:if="{{noteDirty}}" class="sub">{{noteExpired ? noteDate + ' 的草稿未提交，不能保存到今天。请先复制保留。' : '尚未保存 · 暂存于本次打开，退出小程序前请保存。'}}</view><textarea id="note" class="input {{focusNote ? 'focused' : ''}}" maxlength="140" value="{{note}}" bindinput="onNote" bindfocus="onNoteFocus" bindblur="onNoteBlur" placeholder="只留给自己，不会包含在分享中" /><view class="row note-actions"><button class="text-button" disabled="{{noteExpired || dataReadOnly || writeBusy}}" bindtap="onSaveNote">保存备注</button><button wx:if="{{noteDirty}}" class="text-button" bindtap="onCopyNote">复制备注</button><button wx:if="{{noteDirty}}" class="text-button" bindtap="onDiscardNote">放弃草稿</button></view></view>
+    </view>
+    <view class="detail-section"><view class="detail-section-head"><view class="section-title">习惯计划</view></view><view class="plan-list"><view class="plan-item"><text>重复</text><text>{{schedule}}</text></view><view class="plan-item"><text>开始日期</text><text>{{startDate}}</text></view><view class="plan-item"><text>计划时间</text><text>{{current.time || '未设置'}} · 仅排序</text></view></view><view wx:if="{{future}}" class="notice">{{future.effectiveDate}} 起：{{future.title}} · {{future.target}}{{future.unit}} · {{future.status === 'active' ? '进行中' : future.status === 'paused' ? '暂停' : '归档'}}</view><button class="secondary plan-edit" bindtap="onEdit">调整计划</button></view>
+    <view class="detail-section"><view class="detail-section-head"><view class="section-title">近28天有安排的记录</view></view><view class="history-grid" aria-label="近28天真实安排历史"><view wx:for="{{historyCells}}" wx:key="date" class="history-cell {{item.tone}} {{item.today ? 'today' : ''}}" aria-label="{{item.description}}"><text>{{item.day}}</text><view class="history-mark" /></view></view><view class="history-legend"><text>原目标</text><view class="history-key standard" /><text>忙时</text><view class="history-key minimum" /><text>未打卡</text><view class="history-key pending" /><text>无安排</text></view><view wx:if="{{!history.length}}" class="sub">这段时间还没有安排，不算漏做。</view><view wx:elif="{{showHistory}}" class="history-list"><view wx:for="{{visibleHistory}}" wx:key="date" class="setting-row"><view class="grow">{{item.date}}<view class="sub">{{item.goal}}</view></view><text class="sub">{{item.status}}</text><button wx:if="{{photoEnabled && item.done}}" class="text-button" data-date="{{item.date}}" bindtap="onPhotoRecord">照片</button></view></view><view class="history-help">无安排不计漏做；可在更多操作查看历史明细。</view></view>
+    <view class="detail-section more-group"><button class="action-header more-header {{moreOpen ? 'is-expanded' : ''}}" bindtap="onMore" aria-expanded="{{moreOpen}}"><view class="grow">更多操作<view class="sub">{{plannedStatus === 'archived' ? '取消归档、删除' : plannedStatus === 'paused' ? '恢复、归档、删除' : '暂停、归档、删除'}}</view></view><view class="chevron {{moreOpen ? 'up' : 'down'}}" /></button><view wx:if="{{moreOpen}}" class="more-content"><view class="sub">状态调整从明天生效，今天和历史记录保留。</view><view class="more-actions"><button class="setting-row" bindtap="onToggleHistory">{{showHistory ? '收起历史明细' : '查看历史明细'}}</button><button wx:if="{{featuresEnabled && current.status === 'active'}}" class="setting-row" disabled="{{pinning || dataReadOnly || writeBusy}}" loading="{{pinning}}" bindtap="onPin">{{pinned ? '取消置顶' : '置顶这个习惯'}}</button><view wx:if="{{pinError}}" class="error">{{pinError}}</view><button wx:if="{{supervisionEnabled && current.status === 'active'}}" class="setting-row" bindtap="onInviteSupervision">邀请一位好友监督</button><button wx:if="{{sharingEnabled && current.status === 'active' && current.minimum}}" class="setting-row" bindtap="onSharePlan">分享这份轻计划</button><button wx:if="{{plannedStatus === 'active'}}" class="setting-row" disabled="{{dataReadOnly || writeBusy}}" data-status="paused" bindtap="onStatus">暂停</button><button wx:elif="{{plannedStatus === 'paused'}}" class="setting-row" disabled="{{dataReadOnly || writeBusy}}" bindtap="onResume">恢复</button><button wx:if="{{plannedStatus === 'archived'}}" class="setting-row" disabled="{{dataReadOnly || writeBusy}}" bindtap="onUnarchive">取消归档</button><button wx:else class="setting-row danger" disabled="{{dataReadOnly || writeBusy}}" data-status="archived" bindtap="onStatus">归档</button><button class="setting-row danger" disabled="{{dataReadOnly || writeBusy || pinning || deleteConfirming}}" loading="{{writeBusy && recordingType === 'deleteHabit'}}" bindtap="onDeleteHabit">{{writeBusy && recordingType === 'deleteHabit' ? '正在删除…' : '删除习惯'}}</button></view><view class="sub">删除立即生效，习惯及全部历史打卡、备注将一并删除，无法恢复。</view></view></view>
   </block>
+  <template is="photo-checkin" data="{{photoOpen, photoTitle, photoRequired, photoBusy, photoError, photoItems, photoCanSubmit, photoPending}}" />
 </view>

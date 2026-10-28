@@ -2,7 +2,7 @@ const date = require('../core/date');
 const domain = require('../core/habits');
 const cloudConfig = require('../config/cloud');
 const { apiFunction } = require('../config/cloud-resources');
-const { themeSnapshot, appearanceController } = require('./appearance');
+const { themeSnapshot, appearanceController, applyPageAppearance } = require('./appearance');
 const quickMinimumEnabled = cloudConfig.enabled === true && cloudConfig.functionName === apiFunction && cloudConfig.completeMinimumEnabled === true;
 
 function store() { return getApp().store; }
@@ -211,6 +211,7 @@ function withLifecycle(definition, { watchDate = true } = {}) {
     bindTheme() {
       const controller = appearanceController();
       const update = () => {
+        applyPageAppearance(wx, themeSnapshot().theme, ['pages/today/index', 'pages/progress/index', 'pages/mine/index'].includes(this.route));
         if (typeof this.onThemeChange === 'function') this.onThemeChange();
         else this.setData(themeSnapshot());
       };

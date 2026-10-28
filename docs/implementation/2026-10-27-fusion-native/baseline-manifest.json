@@ -1,0 +1,41 @@
+{
+  "date": "2026-10-27",
+  "scope": "approved immutable reference",
+  "files": [
+    {
+      "source": "docs/designs/2026-10-27-ui-directions/design-demos/fusion.html",
+      "frozen": "fusion.html",
+      "sha256": "ec93a720685e808f7e12882d04abb0709c68e961a3e1e273c2a50f02b971fc34"
+    },
+    {
+      "source": "docs/designs/2026-10-27-ui-directions/fusion-design.md",
+      "frozen": "fusion-design.md",
+      "sha256": "dad02df3f527147b0c930628eac9013c5d43fea073ea0898fa06ac07e977ca1e"
+    },
+    {
+      "source": "docs/designs/2026-10-27-ui-directions/design-demos/fusion-captures/fusion-today-390.png",
+      "frozen": "fusion-today-390.png",
+      "sha256": "7a24d94d32d70230ecb5ec115044bb0bd626b678b49c4d1f275af377333324d1"
+    },
+    {
+      "source": "docs/designs/2026-10-27-ui-directions/design-demos/fusion-captures/fusion-progress-390.png",
+      "frozen": "fusion-progress-390.png",
+      "sha256": "19b03eb7acd222c7f9ffbd3ced362185308ecd6dbb805e1a8c6becfa8401981a"
+    },
+    {
+      "source": "docs/designs/2026-10-27-ui-directions/design-demos/fusion-captures/fusion-edit-390.png",
+      "frozen": "fusion-edit-390.png",
+      "sha256": "cc76a09beb5ca8334cf879567f83f0580b592db77385b6fe842788a359dc782c"
+    },
+    {
+      "source": "docs/designs/2026-10-27-ui-directions/design-demos/fusion-captures/fusion-detail-390.png",
+      "frozen": "fusion-detail-390.png",
+      "sha256": "0a835ced8ca5cda631f14ca5f885481e3e6a84b0a439468e34edad64b7836bdd"
+    },
+    {
+      "source": "docs/designs/2026-10-27-ui-directions/design-demos/fusion-captures/fusion-mine-390.png",
+      "frozen": "fusion-mine-390.png",
+      "sha256": "44f12099bcfd8dfeb42b7af287689116304b54ef537a67d65f15498f891aa78e"
+    }
+  ]
+}

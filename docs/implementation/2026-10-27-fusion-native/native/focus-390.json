@@ -1,0 +1,162 @@
+{
+  "label": "focus-390",
+  "level": "isolated-wechat-devtools-native",
+  "theme": "mist",
+  "simulatedFontSizeSetting": 16,
+  "variant": "snapshot",
+  "screenshots": [
+    {
+      "file": "focus-390-edit.png",
+      "route": "pages/edit/index",
+      "viewport": {
+        "windowWidth": 390,
+        "windowHeight": 671,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "statusBarHeight": 47,
+        "fontSizeSetting": 16
+      }
+    }
+  ],
+  "measurements": [
+    {
+      "page": "edit",
+      "document": {
+        "width": 390,
+        "height": 753
+      },
+      "elements": [
+        {
+          "selector": ".page",
+          "rects": [
+            {
+              "left": 0,
+              "top": 0,
+              "width": 390,
+              "height": 859.875,
+              "fontSize": "15px",
+              "lineHeight": "22.5px",
+              "text": "添加习惯平时认真做，忙时也能留下一小步。习惯名称0/20平时目标分钟忙时目标 可选分钟忙碌时做这个目标，也算完成一次打卡。重复星期每天一二三四五六日每天 · 不含节假日调休。开始日期今天 · 10月27日更多设置计划时间添加习惯"
+            }
+          ]
+        },
+        {
+          "selector": ".heading",
+          "rects": [
+            {
+              "left": 62,
+              "top": 25.484375,
+              "width": 88,
+              "height": 29.03125,
+              "fontSize": "22px",
+              "lineHeight": "29.04px",
+              "text": "添加习惯"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "exceptions": [],
+  "sourceFiles": [
+    {
+      "file": "app.wxss",
+      "sha256": "9874b9137bdddaf94daa259c22db9ee7c6c2b6da2dc0d8e5d67c3e6de23d234c"
+    },
+    {
+      "file": "app.json",
+      "sha256": "4f7bac145a9930108cc7019a5a128c43a14ae4fd61dfbd869170979ab1269314"
+    },
+    {
+      "file": "styles/theme.wxss",
+      "sha256": "9624a5f89e9067539b430411284121f5515676d871c5a5b7037a10bcb50b3cae"
+    },
+    {
+      "file": "config/theme-tokens.js",
+      "sha256": "742e1bdbec98679c26b8a437b7635dd9c110a8f26fbef106e07fae835dc6bb96"
+    },
+    {
+      "file": "services/ui.js",
+      "sha256": "2e04941edbbc79c5197c7b33b5b64e5cf0a59302fc3ac1752d884c24fab9cb6a"
+    },
+    {
+      "file": "services/appearance.js",
+      "sha256": "06c7e17b2b864d14b2606b9a233649c3c4ed8872f8b8b16e5c7b31a366b324de"
+    },
+    {
+      "file": "pages/edit/index.js",
+      "sha256": "c390ec3d475b14986609a5799f55baef03ad8418538a0cb06d96aadccc21007f"
+    },
+    {
+      "file": "pages/edit/index.wxml",
+      "sha256": "4b3e8a25e4fba772d369f335c310f619b6101795ecf5143cc613b910e006d191"
+    },
+    {
+      "file": "pages/edit/index.wxss",
+      "sha256": "e9b03ce886e25ec43d2e652c30667fd6c25b13aa1e2b3a15fa326fcf3254c11b"
+    }
+  ],
+  "startContext": {
+    "route": "pages/mine/index",
+    "theme": "mist"
+  },
+  "viewport": {
+    "windowWidth": 390,
+    "windowHeight": 671,
+    "screenWidth": 390,
+    "screenHeight": 844,
+    "pixelRatio": 3,
+    "fontSizeSetting": 16,
+    "platform": "devtools",
+    "SDKVersion": "3.17.4",
+    "model": "iPhone 12/13 (Pro)"
+  },
+  "visualSetup": "TEMP-only new form initial data: blank title, target20, minimum2, enabled; production defaults unchanged",
+  "guard": {
+    "cloudCalls": 0,
+    "networkCalls": 0,
+    "storageWrites": 0,
+    "businessWrites": 0,
+    "installed": {
+      "wx.cloud.init": true,
+      "wx.cloud.callFunction": true,
+      "wx.cloud.uploadFile": true,
+      "wx.cloud.downloadFile": true,
+      "wx.cloud.getTempFileURL": true,
+      "wx.cloud.deleteFile": true,
+      "wx.cloud.database": true,
+      "wx.cloud.Cloud": true,
+      "wx.cloud.callContainer": true,
+      "wx.cloud.connectContainer": true,
+      "wx.cloud.getCloudbaseExtConfig": true,
+      "wx.cloud.getOpenData": true,
+      "wx.cloud.getVoIPSign": true,
+      "wx.cloud.getWXContext": true,
+      "wx.cloud.extend": true,
+      "wx.cloud.constructor": true,
+      "wx.cloud.__defineGetter__": true,
+      "wx.cloud.__defineSetter__": true,
+      "wx.cloud.hasOwnProperty": true,
+      "wx.cloud.__lookupGetter__": true,
+      "wx.cloud.__lookupSetter__": true,
+      "wx.cloud.isPrototypeOf": true,
+      "wx.cloud.propertyIsEnumerable": true,
+      "wx.cloud.toString": true,
+      "wx.cloud.valueOf": true,
+      "wx.cloud.toLocaleString": true,
+      "wx.request": true,
+      "wx.uploadFile": true,
+      "wx.downloadFile": true,
+      "wx.connectSocket": true,
+      "wx.sendSocketMessage": true,
+      "wx.setStorage": true,
+      "wx.setStorageSync": true,
+      "wx.removeStorage": true,
+      "wx.removeStorageSync": true,
+      "wx.clearStorage": true,
+      "wx.clearStorageSync": true,
+      "wx.batchSetStorage": true,
+      "wx.batchSetStorageSync": true
+    }
+  }
+}

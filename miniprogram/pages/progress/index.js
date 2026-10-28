@@ -18,7 +18,7 @@ Page(ui.withLifecycle({
   data: { error: '', loading: true, dataUnavailable: false, dataReady: false,
     activeTab: 'week', days: 7, stats: null, calendar: null, selected: null,
     selectedDate: '', visibleMonth: '', todayDate: '', jumpDate: '', rangeLabel: '', startLabel: '',
-    advice: '', hasHabits: false, fontScale: 1, weekdays: ['一', '二', '三', '四', '五', '六', '日'] },
+    advice: '', hasHabits: false, fontScale: 1, chartDays: [], weekdays: ['一', '二', '三', '四', '五', '六', '日'] },
   refresh() {
     const fontScale = systemFontScale();
     if (fontScale !== this.data.fontScale) this.setData({ fontScale });
@@ -39,7 +39,10 @@ Page(ui.withLifecycle({
       }
       const calendar = review.buildMonth(state, { month: month || review.monthOf(today), selectedDate, today });
       const stats = review.summarizeRange(state, { start: ui.date.shift(today, 1 - this.data.days), end: today, today });
+      const chartDays = stats.cells.map(cell => ({ ...cell, dayLabel: Number(cell.date.slice(8)),
+        units: Array.from({ length: cell.planned }, (_, index) => ({ index, tone: index < cell.standard ? 'standard' : index < cell.standard + cell.minimum ? 'minimum' : 'pending' })) }));
       this.setData({ stats, calendar, selected: calendar.selected, selectedDate: calendar.selectedDate,
+        chartDays,
         visibleMonth: calendar.month, todayDate: today,
         jumpDate: calendar.selectedDate > today ? today : calendar.selectedDate,
         rangeLabel: ui.date.shortLabel(stats.start) + ' – ' + ui.date.shortLabel(stats.end),

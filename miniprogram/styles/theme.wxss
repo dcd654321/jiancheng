@@ -1,17 +1,21 @@
 /* 由 scripts/build-themes.cjs 从 miniprogram/config/theme-tokens.js 生成，请勿手改。 */
 /* 页面根节点使用 theme-mist / theme-paper 作用域；未加载主题时回退薄雾绿缺省值。 */
 .theme-mist {
-  --color-page: #F6F7F2;
+  --color-page: #FFFFFF;
   --color-surface: #FFFFFF;
-  --color-ink: #25352D;
-  --color-secondary: #5F6C63;
-  --color-primary: #355E4C;
+  --color-ink: #18382C;
+  --color-secondary: #587065;
+  --color-primary: #246446;
   --color-on-primary: #FFFFFF;
-  --color-busy-bg: #EDF2E3;
-  --color-busy-text: #4D6040;
-  --color-soft: #EEF2EC;
-  --color-line: #DBE2D9;
+  --color-busy-bg: #EDF6EF;
+  --color-busy-text: #246446;
+  --color-soft: #F7FAF7;
+  --color-line: #DCE7DF;
+  --color-busy-fill: #C1DECB;
   --color-control-border: #7A897D;
+  --color-field-border: #C6D8CC;
+  --color-chart-border: #CBDACF;
+  --color-accent-border: #B6CDBF;
   --color-error: #A23C2E;
   --color-error-bg: #FFF1EC;
 }
@@ -26,7 +30,11 @@
   --color-busy-text: #606449;
   --color-soft: #F3F0EA;
   --color-line: #E6E0D6;
+  --color-busy-fill: #D4D6B9;
   --color-control-border: #998A7D;
+  --color-field-border: #C8BEB0;
+  --color-chart-border: #D9D4C8;
+  --color-accent-border: #C8BEB0;
   --color-error: #A33D2A;
   --color-error-bg: #FFF1EB;
 }

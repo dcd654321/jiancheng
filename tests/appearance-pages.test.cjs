@@ -266,6 +266,6 @@ test('every registered page root consumes the theme scope with a single template
       assert.ok(themeScope.includes(value), name + '.' + key + ' 出现在生成的主题作用域中');
     }
   }
-  assert.equal(THEMES.mist.page, '#F6F7F2');
+  assert.equal(THEMES.mist.page, '#FFFFFF');
   assert.equal(THEMES.paper.primary, '#79604F');
 });

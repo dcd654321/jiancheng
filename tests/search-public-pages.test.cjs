@@ -185,6 +185,8 @@ test('native links expose public template routes and mine keeps its introduction
     for (const match of markup.matchAll(/<navigator\b[^>]*>/g)) assert.match(match[0], /open-type="redirect"/, 'repeated public browsing must leave room to open the confirmation page');
   }
   assert.doesNotMatch(mine.match(/<navigator\b[^>]*url="\/pages\/discover\/index"[^>]*>/)[0], /open-type="redirect"/, 'mine keeps a normal back route');
-  assert.ok(mine.lastIndexOf('</block>') < mine.indexOf('url="' + OVERVIEW_PATH + '"'), 'the public intro is outside account-ready blocks');
+  const unavailableGuide = mine.slice(mine.lastIndexOf('</block>'));
+  assert.match(unavailableGuide, /wx:if="\{\{!dataReady\}\}"/, 'the fallback public guide is shown before account data is ready');
+  assert.ok(unavailableGuide.includes('url="' + OVERVIEW_PATH + '"'), 'the public intro is outside account-ready blocks');
   for (const item of SEARCH_TEMPLATES) assert.equal(item.path, templatePath(item.key));
 });

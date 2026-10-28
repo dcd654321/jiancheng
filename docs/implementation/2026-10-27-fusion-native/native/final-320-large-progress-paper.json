@@ -1,0 +1,427 @@
+{
+  "label": "final-320-large-progress-paper",
+  "level": "isolated-wechat-devtools-native",
+  "theme": "paper",
+  "simulatedFontSizeSetting": 20,
+  "variant": "long",
+  "screenshots": [
+    {
+      "file": "final-320-large-progress-paper-progress.png",
+      "route": "pages/progress/index",
+      "viewport": {
+        "windowWidth": 320,
+        "windowHeight": 456,
+        "screenWidth": 320,
+        "screenHeight": 568,
+        "statusBarHeight": 20,
+        "fontSizeSetting": 20
+      }
+    }
+  ],
+  "measurements": [
+    {
+      "page": "progress",
+      "document": {
+        "width": 320,
+        "height": 456
+      },
+      "elements": [
+        {
+          "selector": ".page",
+          "rects": [
+            {
+              "left": 0,
+              "top": 0,
+              "width": 320,
+              "height": 1727.84375,
+              "fontSize": "18.75px",
+              "lineHeight": "28.125px",
+              "text": "打卡进度看见记录，也看见每一天的安排近7天近1个月日历10月21日 – 10月27日7天里，6天有打卡累计 17 次 · 原目标 13 次 · 忙时 4 次每天完成 / 安排每格 1 项3 / 421三4 / 422四0 / 423五4 / 424六3 / 425日2 / 426"
+            }
+          ]
+        },
+        {
+          "selector": ".heading",
+          "rects": [
+            {
+              "left": 16,
+              "top": 18,
+              "width": 120,
+              "height": 39.59375,
+              "fontSize": "30px",
+              "lineHeight": "39.6px",
+              "text": "打卡进度"
+            }
+          ]
+        },
+        {
+          "selector": ".subline",
+          "rects": [
+            {
+              "left": 16,
+              "top": 60.59375,
+              "width": 288,
+              "height": 24.375,
+              "fontSize": "16.25px",
+              "lineHeight": "24.375px",
+              "text": "看见记录，也看见每一天的安排"
+            }
+          ]
+        },
+        {
+          "selector": ".segments",
+          "rects": [
+            {
+              "left": 16,
+              "top": 100.96875,
+              "width": 288,
+              "height": 50.25,
+              "fontSize": "18.75px",
+              "lineHeight": "28.125px",
+              "text": "近7天近1个月日历"
+            }
+          ]
+        },
+        {
+          "selector": ".segment",
+          "rects": [
+            {
+              "left": 19,
+              "top": 103.96875,
+              "width": 94,
+              "height": 44.25,
+              "fontSize": "17.5px",
+              "lineHeight": "26.25px",
+              "text": "近7天"
+            },
+            {
+              "left": 113,
+              "top": 103.96875,
+              "width": 94,
+              "height": 44.25,
+              "fontSize": "17.5px",
+              "lineHeight": "26.25px",
+              "text": "近1个月"
+            },
+            {
+              "left": 207,
+              "top": 103.96875,
+              "width": 94,
+              "height": 44.25,
+              "fontSize": "17.5px",
+              "lineHeight": "26.25px",
+              "text": "日历"
+            }
+          ]
+        },
+        {
+          "selector": ".range",
+          "rects": [
+            {
+              "left": 16,
+              "top": 165.21875,
+              "width": 288,
+              "height": 22.5,
+              "fontSize": "15px",
+              "lineHeight": "22.5px",
+              "text": "10月21日 – 10月27日"
+            }
+          ]
+        },
+        {
+          "selector": ".progress-copy",
+          "rects": [
+            {
+              "left": 16,
+              "top": 203.71875,
+              "width": 288,
+              "height": 63.5,
+              "fontSize": "18.75px",
+              "lineHeight": "28.125px",
+              "text": "7天里，6天有打卡累计 17 次 · 原目标 13 次 · 忙时 4 次"
+            }
+          ]
+        },
+        {
+          "selector": ".progress-statement",
+          "rects": [
+            {
+              "left": 16,
+              "top": 203.71875,
+              "width": 288,
+              "height": 35,
+              "fontSize": "25px",
+              "lineHeight": "35px",
+              "text": "7天里，6天有打卡"
+            }
+          ]
+        },
+        {
+          "selector": ".chart-title",
+          "rects": [
+            {
+              "left": 16,
+              "top": 283.21875,
+              "width": 288,
+              "height": 24.375,
+              "fontSize": "13px",
+              "lineHeight": "19.5px",
+              "text": "每天完成 / 安排每格 1 项"
+            }
+          ]
+        },
+        {
+          "selector": ".week-trend",
+          "rects": [
+            {
+              "left": 6,
+              "top": 323.59375,
+              "width": 308,
+              "height": 176,
+              "fontSize": "18.75px",
+              "lineHeight": "28.125px",
+              "text": "3 / 421三4 / 422四0 / 423五4 / 424六3 / 425日2 / 426一1 / 427今天"
+            }
+          ]
+        },
+        {
+          "selector": ".trend-day",
+          "rects": [
+            {
+              "left": 6,
+              "top": 323.59375,
+              "width": 44,
+              "height": 176,
+              "fontSize": "18.75px",
+              "lineHeight": "28.125px",
+              "text": "3 / 421三"
+            },
+            {
+              "left": 50,
+              "top": 323.59375,
+              "width": 44,
+              "height": 176,
+              "fontSize": "18.75px",
+              "lineHeight": "28.125px",
+              "text": "4 / 422四"
+            },
+            {
+              "left": 94,
+              "top": 323.59375,
+              "width": 44,
+              "height": 176,
+              "fontSize": "18.75px",
+              "lineHeight": "28.125px",
+              "text": "0 / 423五"
+            },
+            {
+              "left": 138,
+              "top": 323.59375,
+              "width": 44,
+              "height": 176,
+              "fontSize": "18.75px",
+              "lineHeight": "28.125px",
+              "text": "4 / 424六"
+            },
+            {
+              "left": 182,
+              "top": 323.59375,
+              "width": 44,
+              "height": 176,
+              "fontSize": "18.75px",
+              "lineHeight": "28.125px",
+              "text": "3 / 425日"
+            },
+            {
+              "left": 226,
+              "top": 323.59375,
+              "width": 44,
+              "height": 176,
+              "fontSize": "18.75px",
+              "lineHeight": "28.125px",
+              "text": "2 / 426一"
+            },
+            {
+              "left": 270,
+              "top": 323.59375,
+              "width": 44,
+              "height": 176,
+              "fontSize": "18.75px",
+              "lineHeight": "28.125px",
+              "text": "1 / 427今天"
+            }
+          ]
+        },
+        {
+          "selector": ".bar-stack",
+          "rects": [
+            {
+              "left": 16.5,
+              "top": 349.59375,
+              "width": 23,
+              "height": 104,
+              "fontSize": "18.75px",
+              "lineHeight": "28.125px",
+              "text": ""
+            },
+            {
+              "left": 60.5,
+              "top": 349.59375,
+              "width": 23,
+              "height": 104,
+              "fontSize": "18.75px",
+              "lineHeight": "28.125px",
+              "text": ""
+            },
+            {
+              "left": 104.5,
+              "top": 349.59375,
+              "width": 23,
+              "height": 104,
+              "fontSize": "18.75px",
+              "lineHeight": "28.125px",
+              "text": ""
+            },
+            {
+              "left": 148.5,
+              "top": 349.59375,
+              "width": 23,
+              "height": 104,
+              "fontSize": "18.75px",
+              "lineHeight": "28.125px",
+              "text": ""
+            },
+            {
+              "left": 192.5,
+              "top": 349.59375,
+              "width": 23,
+              "height": 104,
+              "fontSize": "18.75px",
+              "lineHeight": "28.125px",
+              "text": ""
+            },
+            {
+              "left": 236.5,
+              "top": 349.59375,
+              "width": 23,
+              "height": 104,
+              "fontSize": "18.75px",
+              "lineHeight": "28.125px",
+              "text": ""
+            },
+            {
+              "left": 280.5,
+              "top": 349.59375,
+              "width": 23,
+              "height": 104,
+              "fontSize": "18.75px",
+              "lineHeight": "28.125px",
+              "text": ""
+            }
+          ]
+        },
+        {
+          "selector": ".trend-legend",
+          "rects": [
+            {
+              "left": 16,
+              "top": 509.59375,
+              "width": 288,
+              "height": 71.75,
+              "fontSize": "16.25px",
+              "lineHeight": "24.375px",
+              "text": "原目标忙时目标未打卡休息"
+            }
+          ]
+        },
+        {
+          "selector": ".rate-row",
+          "rects": [
+            {
+              "left": 16,
+              "top": 599.34375,
+              "width": 288,
+              "height": 41.5,
+              "fontSize": "16.25px",
+              "lineHeight": "24.375px",
+              "text": "截至昨天的按计划打卡率完成 16 / 安排 24 次67%"
+            }
+          ]
+        },
+        {
+          "selector": ".current-line",
+          "rects": [
+            {
+              "left": 16,
+              "top": 654.84375,
+              "width": 288,
+              "height": 39.5,
+              "fontSize": "18.75px",
+              "lineHeight": "28.125px",
+              "text": "今天 1 / 4，仍在进行中去打卡"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "exceptions": [],
+  "viewport": {
+    "windowWidth": 320,
+    "windowHeight": 456,
+    "screenWidth": 320,
+    "screenHeight": 568,
+    "pixelRatio": 2,
+    "fontSizeSetting": 20,
+    "platform": "devtools",
+    "SDKVersion": "3.17.4",
+    "model": "iPhone 5"
+  },
+  "guard": {
+    "cloudCalls": 0,
+    "networkCalls": 0,
+    "storageWrites": 0,
+    "businessWrites": 0,
+    "installed": {
+      "wx.cloud.init": true,
+      "wx.cloud.callFunction": true,
+      "wx.cloud.uploadFile": true,
+      "wx.cloud.downloadFile": true,
+      "wx.cloud.getTempFileURL": true,
+      "wx.cloud.deleteFile": true,
+      "wx.cloud.database": true,
+      "wx.cloud.Cloud": true,
+      "wx.cloud.callContainer": true,
+      "wx.cloud.connectContainer": true,
+      "wx.cloud.getCloudbaseExtConfig": true,
+      "wx.cloud.getOpenData": true,
+      "wx.cloud.getVoIPSign": true,
+      "wx.cloud.getWXContext": true,
+      "wx.cloud.extend": true,
+      "wx.cloud.constructor": true,
+      "wx.cloud.__defineGetter__": true,
+      "wx.cloud.__defineSetter__": true,
+      "wx.cloud.hasOwnProperty": true,
+      "wx.cloud.__lookupGetter__": true,
+      "wx.cloud.__lookupSetter__": true,
+      "wx.cloud.isPrototypeOf": true,
+      "wx.cloud.propertyIsEnumerable": true,
+      "wx.cloud.toString": true,
+      "wx.cloud.valueOf": true,
+      "wx.cloud.toLocaleString": true,
+      "wx.request": true,
+      "wx.uploadFile": true,
+      "wx.downloadFile": true,
+      "wx.connectSocket": true,
+      "wx.sendSocketMessage": true,
+      "wx.setStorage": true,
+      "wx.setStorageSync": true,
+      "wx.removeStorage": true,
+      "wx.removeStorageSync": true,
+      "wx.clearStorage": true,
+      "wx.clearStorageSync": true,
+      "wx.batchSetStorage": true,
+      "wx.batchSetStorageSync": true
+    }
+  }
+}

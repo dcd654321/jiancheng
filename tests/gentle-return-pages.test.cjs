@@ -157,13 +157,13 @@ test('failed completion does not report success or remove the return state', t =
   assert.match(h.page.data.error, /保存失败/);
 });
 
-test('native markup shows one shared message before the tasks without duplicating actions', () => {
+test('native markup shows one shared message after the timeline without duplicating actions', () => {
   const root = path.resolve(__dirname, '../miniprogram');
   const markup = fs.readFileSync(path.join(root, 'pages/today/index.wxml'), 'utf8');
   assert.doesNotMatch(markup, /回来就从今天的一点开始。|return-line/);
   assert.match(markup, /wx:if="\{\{!hideQuote && total\}\}" class="sub quote"/);
   assert.equal((markup.match(/class="sub quote"/g) || []).length, 1);
-  assert.ok(markup.indexOf('class="sub quote"') < markup.indexOf('wx:for="{{pending}}"'));
+  assert.ok(markup.indexOf('class="sub quote"') > markup.indexOf('wx:for="{{timelineTasks}}"'));
   const template = fs.readFileSync(path.join(root, 'templates/task.wxml'), 'utf8');
   assert.doesNotMatch(markup, /onReturnOriginal|onReturnMinimum|onReturnSmall|return-actions/);
   assert.match(template, /bindtap="onComplete"/);

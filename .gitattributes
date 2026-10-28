@@ -1,0 +1,5 @@
+# 已确认的融合原型及冻结副本按原始 LF 保存，保证跨系统的基准哈希一致。
+docs/designs/2026-10-27-ui-directions/design-demos/fusion.html text eol=lf
+docs/designs/2026-10-27-ui-directions/fusion-design.md text eol=lf
+docs/implementation/2026-10-27-fusion-native/baseline/fusion.html text eol=lf
+docs/implementation/2026-10-27-fusion-native/baseline/fusion-design.md text eol=lf

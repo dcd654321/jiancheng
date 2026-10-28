@@ -50,8 +50,8 @@ test('confirmed check-in has one native 1.2 second toast and refresh never repea
   assert.equal(h.toasts.length, 1); assert.equal(h.toasts[0].title, '打卡成功');
   assert.equal(h.toasts.at(-1).duration, 1200);
   p.refresh(); p.refresh(); assert.equal(h.toasts.length, 1); assert.equal(p.data.completionFeedback, undefined);
-  assert.equal(p.data.completed.length, 1); assert.equal(p.data.showCompleted, false);
-  p.onToggleCompleted(); assert.equal(p.data.showCompleted, true);
+  assert.equal(p.data.completed.length, 1); assert.equal(p.data.showCompleted, true);
+  p.onToggleCompleted(); assert.equal(p.data.showCompleted, false);
   p.onComplete(event({ id: 'read', date: h.day, done: true }));
   assert.equal(p.data.done, 0); assert.equal(p.data.pending[0].target, 2);
   assert.equal(h.toasts.length, 2); assert.equal(h.toasts[1].title, '已撤销打卡');
@@ -62,7 +62,7 @@ test('consecutive confirmations produce one toast each and retain the user list 
   p.onComplete(event({ id: 'read', date: h.day })); p.onToggleCompleted();
   p.onCompleteMinimum(event({ id: 'walk', date: h.day }));
   assert.equal(h.toasts.length, 2); assert.ok(h.toasts.every(toast => toast.duration === 1200));
-  assert.equal(p.data.showCompleted, true); assert.equal(p.data.completed.length, 2);
+  assert.equal(p.data.showCompleted, false); assert.equal(p.data.completed.length, 2);
   p.onComplete(event({ id: 'walk', date: h.day, done: true }));
   assert.equal(h.toasts.length, 3); p.refresh(); assert.equal(h.toasts.length, 3);
   assert.equal(p.data.done, 1); assert.equal(p.data.completionFeedback, undefined);

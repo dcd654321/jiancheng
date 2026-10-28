@@ -1,0 +1,51 @@
+{
+  "label": "final-390-paper",
+  "note": "Full screens normalized to390 logical width. Native raw PNG preview scale is not used for the2px geometry gate; use the original automator logical rectangles.",
+  "pairs": [
+    {
+      "page": "today",
+      "raw": "final-390-paper-today.png",
+      "rawWidth": 363,
+      "rawHeight": 785,
+      "displayWidth": 390,
+      "displayHeight": 844,
+      "pair": "final-390-paper-today-pair.png"
+    },
+    {
+      "page": "progress",
+      "raw": "final-390-paper-progress.png",
+      "rawWidth": 363,
+      "rawHeight": 785,
+      "displayWidth": 390,
+      "displayHeight": 844,
+      "pair": "final-390-paper-progress-pair.png"
+    },
+    {
+      "page": "edit",
+      "raw": "final-390-paper-edit.png",
+      "rawWidth": 363,
+      "rawHeight": 785,
+      "displayWidth": 390,
+      "displayHeight": 844,
+      "pair": "final-390-paper-edit-pair.png"
+    },
+    {
+      "page": "detail",
+      "raw": "final-390-paper-detail.png",
+      "rawWidth": 363,
+      "rawHeight": 785,
+      "displayWidth": 390,
+      "displayHeight": 844,
+      "pair": "final-390-paper-detail-pair.png"
+    },
+    {
+      "page": "mine",
+      "raw": "final-390-paper-mine.png",
+      "rawWidth": 363,
+      "rawHeight": 785,
+      "displayWidth": 390,
+      "displayHeight": 844,
+      "pair": "final-390-paper-mine-pair.png"
+    }
+  ]
+}

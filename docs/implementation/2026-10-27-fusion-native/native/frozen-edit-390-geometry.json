@@ -1,0 +1,586 @@
+{
+  "level": "frozen-html-reference-measurement",
+  "viewport": {
+    "width": 390,
+    "height": 780
+  },
+  "bodyOrigin": {
+    "left": 0,
+    "top": 44,
+    "width": 390,
+    "height": 670
+  },
+  "elements": [
+    {
+      "selector": ".page",
+      "rects": [
+        {
+          "left": 0,
+          "top": 0,
+          "width": 390,
+          "height": 853.875,
+          "fontSize": "15px",
+          "lineHeight": "22.5px",
+          "text": "添加习惯\n\n平时认真做，忙时也能留下一小步。\n\n习惯名称\n必填\n平时目标\n必填\n分钟\n次\n页\n忙时目标\n可选\n分钟\n\n忙碌时做这个目标，也算完成一次打卡。\n\n重复星期\n一\n二\n三\n四\n五\n六\n日\n\n每天\n\n开始日期\n今天 · 10月27日\n明天 · 10月28日\n更多设置\n添加到"
+        }
+      ]
+    },
+    {
+      "selector": ".heading",
+      "rects": [
+        {
+          "left": 10,
+          "top": 18,
+          "width": 360,
+          "height": 44,
+          "fontSize": "15px",
+          "lineHeight": "22.5px",
+          "text": "添加习惯"
+        }
+      ]
+    },
+    {
+      "selector": "h1",
+      "rects": [
+        {
+          "left": 62,
+          "top": 25.484375,
+          "width": 86.25,
+          "height": 29.03125,
+          "fontSize": "22px",
+          "lineHeight": "29.04px",
+          "text": "添加习惯"
+        }
+      ]
+    },
+    {
+      "selector": ".subline",
+      "rects": []
+    },
+    {
+      "selector": ".today-summary",
+      "rects": []
+    },
+    {
+      "selector": ".summary-top",
+      "rects": []
+    },
+    {
+      "selector": ".summary-bottom",
+      "rects": []
+    },
+    {
+      "selector": ".timeline-head",
+      "rects": []
+    },
+    {
+      "selector": ".timeline",
+      "rects": []
+    },
+    {
+      "selector": ".schedule-row",
+      "rects": []
+    },
+    {
+      "selector": ".time",
+      "rects": []
+    },
+    {
+      "selector": ".rail",
+      "rects": []
+    },
+    {
+      "selector": ".slot",
+      "rects": []
+    },
+    {
+      "selector": ".task-title",
+      "rects": []
+    },
+    {
+      "selector": ".task-meta",
+      "rects": []
+    },
+    {
+      "selector": ".checkin",
+      "rects": []
+    },
+    {
+      "selector": ".busy-btn",
+      "rects": []
+    },
+    {
+      "selector": ".timeline-note",
+      "rects": []
+    },
+    {
+      "selector": ".segmented",
+      "rects": []
+    },
+    {
+      "selector": ".segment",
+      "rects": []
+    },
+    {
+      "selector": ".period",
+      "rects": []
+    },
+    {
+      "selector": ".progress-copy",
+      "rects": []
+    },
+    {
+      "selector": ".progress-copy h2",
+      "rects": []
+    },
+    {
+      "selector": ".chart-title",
+      "rects": []
+    },
+    {
+      "selector": ".daily-chart",
+      "rects": []
+    },
+    {
+      "selector": ".chart-column",
+      "rects": []
+    },
+    {
+      "selector": ".bar-stack",
+      "rects": []
+    },
+    {
+      "selector": ".chart-legend",
+      "rects": []
+    },
+    {
+      "selector": ".rate-row",
+      "rects": []
+    },
+    {
+      "selector": ".current-line",
+      "rects": []
+    },
+    {
+      "selector": ".form-intro",
+      "rects": [
+        {
+          "left": 20,
+          "top": 70,
+          "width": 350,
+          "height": 19.5,
+          "fontSize": "13px",
+          "lineHeight": "19.5px",
+          "text": "平时认真做，忙时也能留下一小步。"
+        }
+      ]
+    },
+    {
+      "selector": ".form-field",
+      "rects": [
+        {
+          "left": 20,
+          "top": 109.5,
+          "width": 350,
+          "height": 77,
+          "fontSize": "15px",
+          "lineHeight": "22.5px",
+          "text": "习惯名称\n必填"
+        },
+        {
+          "left": 20,
+          "top": 206.5,
+          "width": 350,
+          "height": 77,
+          "fontSize": "15px",
+          "lineHeight": "22.5px",
+          "text": "平时目标\n必填\n分钟\n次\n页"
+        },
+        {
+          "left": 20,
+          "top": 303.5,
+          "width": 350,
+          "height": 126.1875,
+          "fontSize": "15px",
+          "lineHeight": "22.5px",
+          "text": "忙时目标\n可选\n分钟\n\n忙碌时做这个目标，也算完成一次打卡。"
+        },
+        {
+          "left": 20,
+          "top": 449.6875,
+          "width": 350,
+          "height": 99.1875,
+          "fontSize": "15px",
+          "lineHeight": "22.5px",
+          "text": "重复星期\n一\n二\n三\n四\n五\n六\n日\n\n每天"
+        },
+        {
+          "left": 20,
+          "top": 568.875,
+          "width": 350,
+          "height": 77,
+          "fontSize": "15px",
+          "lineHeight": "22.5px",
+          "text": "开始日期\n今天 · 10月27日\n明天 · 10月28日"
+        },
+        {
+          "left": 20,
+          "top": 734.875,
+          "width": 350,
+          "height": 103.1875,
+          "fontSize": "15px",
+          "lineHeight": "22.5px",
+          "text": ""
+        },
+        {
+          "left": 20,
+          "top": 858.0625,
+          "width": 350,
+          "height": 121,
+          "fontSize": "15px",
+          "lineHeight": "22.5px",
+          "text": ""
+        }
+      ]
+    },
+    {
+      "selector": ".field-label",
+      "rects": [
+        {
+          "left": 20,
+          "top": 109.5,
+          "width": 350,
+          "height": 21,
+          "fontSize": "14px",
+          "lineHeight": "21px",
+          "text": "习惯名称\n必填"
+        },
+        {
+          "left": 20,
+          "top": 206.5,
+          "width": 350,
+          "height": 21,
+          "fontSize": "14px",
+          "lineHeight": "21px",
+          "text": "平时目标\n必填"
+        },
+        {
+          "left": 20,
+          "top": 315,
+          "width": 90,
+          "height": 21,
+          "fontSize": "14px",
+          "lineHeight": "21px",
+          "text": "忙时目标\n可选"
+        },
+        {
+          "left": 20,
+          "top": 449.6875,
+          "width": 350,
+          "height": 21,
+          "fontSize": "14px",
+          "lineHeight": "21px",
+          "text": "重复星期"
+        },
+        {
+          "left": 20,
+          "top": 568.875,
+          "width": 350,
+          "height": 21,
+          "fontSize": "14px",
+          "lineHeight": "21px",
+          "text": "开始日期"
+        },
+        {
+          "left": 20,
+          "top": 734.875,
+          "width": 350,
+          "height": 21,
+          "fontSize": "14px",
+          "lineHeight": "21px",
+          "text": ""
+        },
+        {
+          "left": 20,
+          "top": 858.0625,
+          "width": 350,
+          "height": 21,
+          "fontSize": "14px",
+          "lineHeight": "21px",
+          "text": ""
+        }
+      ]
+    },
+    {
+      "selector": "input",
+      "rects": [
+        {
+          "left": 20,
+          "top": 138.5,
+          "width": 350,
+          "height": 48,
+          "fontSize": "15px",
+          "lineHeight": "22.5px",
+          "text": ""
+        },
+        {
+          "left": 20,
+          "top": 235.5,
+          "width": 256,
+          "height": 48,
+          "fontSize": "15px",
+          "lineHeight": "22.5px",
+          "text": ""
+        },
+        {
+          "left": 20,
+          "top": 355.5,
+          "width": 256,
+          "height": 48,
+          "fontSize": "15px",
+          "lineHeight": "22.5px",
+          "text": ""
+        },
+        {
+          "left": 20,
+          "top": 763.875,
+          "width": 350,
+          "height": 48,
+          "fontSize": "15px",
+          "lineHeight": "22.5px",
+          "text": ""
+        }
+      ]
+    },
+    {
+      "selector": ".field-heading",
+      "rects": [
+        {
+          "left": 20,
+          "top": 303.5,
+          "width": 350,
+          "height": 44,
+          "fontSize": "15px",
+          "lineHeight": "22.5px",
+          "text": "忙时目标\n可选"
+        }
+      ]
+    },
+    {
+      "selector": ".weekdays",
+      "rects": [
+        {
+          "left": 20,
+          "top": 478.6875,
+          "width": 350,
+          "height": 44,
+          "fontSize": "15px",
+          "lineHeight": "22.5px",
+          "text": "一\n二\n三\n四\n五\n六\n日"
+        }
+      ]
+    },
+    {
+      "selector": ".weekday-btn",
+      "rects": [
+        {
+          "left": 20,
+          "top": 478.6875,
+          "width": 44,
+          "height": 44,
+          "fontSize": "13px",
+          "lineHeight": "normal",
+          "text": "一"
+        },
+        {
+          "left": 69,
+          "top": 478.6875,
+          "width": 44,
+          "height": 44,
+          "fontSize": "13px",
+          "lineHeight": "normal",
+          "text": "二"
+        },
+        {
+          "left": 118,
+          "top": 478.6875,
+          "width": 44,
+          "height": 44,
+          "fontSize": "13px",
+          "lineHeight": "normal",
+          "text": "三"
+        },
+        {
+          "left": 167,
+          "top": 478.6875,
+          "width": 44,
+          "height": 44,
+          "fontSize": "13px",
+          "lineHeight": "normal",
+          "text": "四"
+        },
+        {
+          "left": 216,
+          "top": 478.6875,
+          "width": 44,
+          "height": 44,
+          "fontSize": "13px",
+          "lineHeight": "normal",
+          "text": "五"
+        },
+        {
+          "left": 265,
+          "top": 478.6875,
+          "width": 44,
+          "height": 44,
+          "fontSize": "13px",
+          "lineHeight": "normal",
+          "text": "六"
+        },
+        {
+          "left": 314,
+          "top": 478.6875,
+          "width": 44,
+          "height": 44,
+          "fontSize": "13px",
+          "lineHeight": "normal",
+          "text": "日"
+        }
+      ]
+    },
+    {
+      "selector": ".primary",
+      "rects": [
+        {
+          "left": 20,
+          "top": 753.875,
+          "width": 350,
+          "height": 48,
+          "fontSize": "15px",
+          "lineHeight": "normal",
+          "text": "添加到我的习惯"
+        }
+      ]
+    },
+    {
+      "selector": ".save-block",
+      "rects": [
+        {
+          "left": 20,
+          "top": 749.875,
+          "width": 350,
+          "height": 80,
+          "fontSize": "15px",
+          "lineHeight": "22.5px",
+          "text": "添加到我的习惯\n\n演示只保存在当前窗口，刷新后恢复。"
+        }
+      ]
+    },
+    {
+      "selector": ".more-settings",
+      "rects": [
+        {
+          "left": 20,
+          "top": 671.875,
+          "width": 350,
+          "height": 58,
+          "fontSize": "15px",
+          "lineHeight": "22.5px",
+          "text": "更多设置"
+        }
+      ]
+    },
+    {
+      "selector": ".back-heading",
+      "rects": [
+        {
+          "left": 10,
+          "top": 18,
+          "width": 360,
+          "height": 44,
+          "fontSize": "15px",
+          "lineHeight": "22.5px",
+          "text": "添加习惯"
+        }
+      ]
+    },
+    {
+      "selector": ".detail-name",
+      "rects": []
+    },
+    {
+      "selector": ".detail-name h2",
+      "rects": []
+    },
+    {
+      "selector": ".status-line",
+      "rects": []
+    },
+    {
+      "selector": ".section",
+      "rects": []
+    },
+    {
+      "selector": ".section-head",
+      "rects": []
+    },
+    {
+      "selector": ".target-lines",
+      "rects": []
+    },
+    {
+      "selector": ".target-line",
+      "rects": []
+    },
+    {
+      "selector": ".detail-actions",
+      "rects": []
+    },
+    {
+      "selector": ".secondary",
+      "rects": [
+        {
+          "left": 284,
+          "top": 355.5,
+          "width": 86,
+          "height": 48,
+          "fontSize": "14px",
+          "lineHeight": "21px",
+          "text": "分钟"
+        }
+      ]
+    },
+    {
+      "selector": ".note-copy",
+      "rects": []
+    },
+    {
+      "selector": ".plan-list",
+      "rects": []
+    },
+    {
+      "selector": ".plan-item",
+      "rects": []
+    },
+    {
+      "selector": ".more-operations",
+      "rects": []
+    },
+    {
+      "selector": ".mine-intro",
+      "rects": []
+    },
+    {
+      "selector": ".setting-row",
+      "rects": []
+    },
+    {
+      "selector": ".menu-icon",
+      "rects": []
+    },
+    {
+      "selector": ".demo-footer",
+      "rects": []
+    }
+  ]
+}

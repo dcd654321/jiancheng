@@ -1,0 +1,283 @@
+{
+  "label": "final-320-large-mist",
+  "level": "isolated-wechat-devtools-native",
+  "theme": "mist",
+  "simulatedFontSizeSetting": 20,
+  "variant": "long-snapshot",
+  "screenshots": [
+    {
+      "file": "final-320-large-mist-today.png",
+      "route": "pages/today/index",
+      "viewport": {
+        "windowWidth": 320,
+        "windowHeight": 456,
+        "screenWidth": 320,
+        "screenHeight": 568,
+        "statusBarHeight": 20,
+        "fontSizeSetting": 20
+      }
+    },
+    {
+      "file": "final-320-large-mist-progress.png",
+      "route": "pages/progress/index",
+      "viewport": {
+        "windowWidth": 320,
+        "windowHeight": 456,
+        "screenWidth": 320,
+        "screenHeight": 568,
+        "statusBarHeight": 20,
+        "fontSizeSetting": 20
+      }
+    },
+    {
+      "file": "final-320-large-mist-detail.png",
+      "route": "pages/detail/index?id=read",
+      "viewport": {
+        "windowWidth": 320,
+        "windowHeight": 456,
+        "screenWidth": 320,
+        "screenHeight": 568,
+        "statusBarHeight": 20,
+        "fontSizeSetting": 20
+      }
+    }
+  ],
+  "measurements": [
+    {
+      "page": "today",
+      "document": {
+        "width": 320,
+        "height": 456
+      },
+      "elements": [
+        {
+          "selector": ".page",
+          "rects": [
+            {
+              "left": 0,
+              "top": 0,
+              "width": 320,
+              "height": 723.46875,
+              "fontSize": "15px",
+              "lineHeight": "22.5px",
+              "text": "今日添加习惯10月27日 周二1 / 4已打卡查看进度待做 3 项今天的安排收起已完成（1）07:30晨间拉伸已打卡 · 8分钟撤销12:30每天阅读并整理今天值得保留下来的学习内容平时 20分钟打卡忙时 2分钟打卡18:30走一会儿平时 20分钟打卡忙时 5分钟打卡21:30睡"
+            }
+          ]
+        },
+        {
+          "selector": ".heading",
+          "rects": [
+            {
+              "left": 16,
+              "top": 24.15625,
+              "width": 48,
+              "height": 31.671875,
+              "fontSize": "24px",
+              "lineHeight": "31.68px",
+              "text": "今日"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "page": "progress",
+      "document": {
+        "width": 320,
+        "height": 456
+      },
+      "elements": [
+        {
+          "selector": ".page",
+          "rects": [
+            {
+              "left": 0,
+              "top": 0,
+              "width": 320,
+              "height": 1729.84375,
+              "fontSize": "18.75px",
+              "lineHeight": "28.125px",
+              "text": "打卡进度看见记录，也看见每一天的安排近7天近1个月日历10月21日 – 10月27日7天里，6天有打卡累计 17 次 · 原目标 13 次 · 忙时 4 次每天完成 / 安排每格 1 项3 / 421三4 / 422四0 / 423五4 / 424六3 / 425日2 / 426"
+            }
+          ]
+        },
+        {
+          "selector": ".heading",
+          "rects": [
+            {
+              "left": 16,
+              "top": 18,
+              "width": 120,
+              "height": 39.59375,
+              "fontSize": "30px",
+              "lineHeight": "39.6px",
+              "text": "打卡进度"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "page": "detail",
+      "document": {
+        "width": 320,
+        "height": 504
+      },
+      "elements": [
+        {
+          "selector": ".page",
+          "rects": [
+            {
+              "left": 0,
+              "top": 0,
+              "width": 320,
+              "height": 1259.125,
+              "fontSize": "18px",
+              "lineHeight": "27px",
+              "text": "习惯详情每天阅读并整理今天值得保留下来的学习内容进行中每天今日目标只调整今天平时目标20 分钟忙时目标2 分钟原目标打卡 · 20 分钟忙时打卡 · 2 分钟备注编辑把书放在桌边，午饭后读几页。习惯计划重复每天开始日期2026-10-01计划时间12:30 · 仅排序调整计划近2"
+            }
+          ]
+        },
+        {
+          "selector": ".heading",
+          "rects": [
+            {
+              "left": 58,
+              "top": 25.484375,
+              "width": 88,
+              "height": 29.03125,
+              "fontSize": "22px",
+              "lineHeight": "29.04px",
+              "text": "习惯详情"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "exceptions": [],
+  "sourceFiles": [
+    {
+      "file": "app.wxss",
+      "sha256": "9874b9137bdddaf94daa259c22db9ee7c6c2b6da2dc0d8e5d67c3e6de23d234c"
+    },
+    {
+      "file": "app.json",
+      "sha256": "4f7bac145a9930108cc7019a5a128c43a14ae4fd61dfbd869170979ab1269314"
+    },
+    {
+      "file": "styles/theme.wxss",
+      "sha256": "9624a5f89e9067539b430411284121f5515676d871c5a5b7037a10bcb50b3cae"
+    },
+    {
+      "file": "config/theme-tokens.js",
+      "sha256": "742e1bdbec98679c26b8a437b7635dd9c110a8f26fbef106e07fae835dc6bb96"
+    },
+    {
+      "file": "services/ui.js",
+      "sha256": "2e04941edbbc79c5197c7b33b5b64e5cf0a59302fc3ac1752d884c24fab9cb6a"
+    },
+    {
+      "file": "services/appearance.js",
+      "sha256": "06c7e17b2b864d14b2606b9a233649c3c4ed8872f8b8b16e5c7b31a366b324de"
+    },
+    {
+      "file": "pages/today/index.js",
+      "sha256": "fe36518aae2cbfd86753435266b444efcd1c99225311758ec40574e7f4cf61f1"
+    },
+    {
+      "file": "pages/today/index.wxml",
+      "sha256": "9107bc8730160009e4e61a37df54d0d57da21f617be91e895f7dd3cbe37a9fb5"
+    },
+    {
+      "file": "pages/today/index.wxss",
+      "sha256": "08eba2052b0cdecdbdd71b5fe6f0440a7caa88f3293504dc14cdab3b6e358dff"
+    },
+    {
+      "file": "pages/progress/index.js",
+      "sha256": "e1603da92385d8676babfe1a57a33e98c7142e65a8911a45b7f6f11abbb0710e"
+    },
+    {
+      "file": "pages/progress/index.wxml",
+      "sha256": "a7b1d3251ca240c4f6483ac239b12846ffe81ce8c1eeeaf89932c3c0d64a2b86"
+    },
+    {
+      "file": "pages/progress/index.wxss",
+      "sha256": "b0f4dd4cad233f13345421c8399ddae2369cdf9875f1cf061b56fc2639ecf535"
+    },
+    {
+      "file": "pages/detail/index.js",
+      "sha256": "47c1f4bac2070c45f9059c99854807965f11a36a368017630dfeaf2033423059"
+    },
+    {
+      "file": "pages/detail/index.wxml",
+      "sha256": "d50968ab0b43b2a80f5d32f3f314682a61627dce7295449080205c9ca55c9fb1"
+    },
+    {
+      "file": "pages/detail/index.wxss",
+      "sha256": "e9641cec321874a1507fdef5cadaebf41ab3cd23ef944664a890e4aeb55821b5"
+    }
+  ],
+  "startContext": {
+    "route": "pages/progress/index",
+    "theme": "mist"
+  },
+  "viewport": {
+    "windowWidth": 320,
+    "windowHeight": 456,
+    "screenWidth": 320,
+    "screenHeight": 568,
+    "pixelRatio": 2,
+    "fontSizeSetting": 20,
+    "platform": "devtools",
+    "SDKVersion": "3.17.4",
+    "model": "iPhone 5"
+  },
+  "guard": {
+    "cloudCalls": 0,
+    "networkCalls": 0,
+    "storageWrites": 0,
+    "businessWrites": 0,
+    "installed": {
+      "wx.cloud.init": true,
+      "wx.cloud.callFunction": true,
+      "wx.cloud.uploadFile": true,
+      "wx.cloud.downloadFile": true,
+      "wx.cloud.getTempFileURL": true,
+      "wx.cloud.deleteFile": true,
+      "wx.cloud.database": true,
+      "wx.cloud.Cloud": true,
+      "wx.cloud.callContainer": true,
+      "wx.cloud.connectContainer": true,
+      "wx.cloud.getCloudbaseExtConfig": true,
+      "wx.cloud.getOpenData": true,
+      "wx.cloud.getVoIPSign": true,
+      "wx.cloud.getWXContext": true,
+      "wx.cloud.extend": true,
+      "wx.cloud.constructor": true,
+      "wx.cloud.__defineGetter__": true,
+      "wx.cloud.__defineSetter__": true,
+      "wx.cloud.hasOwnProperty": true,
+      "wx.cloud.__lookupGetter__": true,
+      "wx.cloud.__lookupSetter__": true,
+      "wx.cloud.isPrototypeOf": true,
+      "wx.cloud.propertyIsEnumerable": true,
+      "wx.cloud.toString": true,
+      "wx.cloud.valueOf": true,
+      "wx.cloud.toLocaleString": true,
+      "wx.request": true,
+      "wx.uploadFile": true,
+      "wx.downloadFile": true,
+      "wx.connectSocket": true,
+      "wx.sendSocketMessage": true,
+      "wx.setStorage": true,
+      "wx.setStorageSync": true,
+      "wx.removeStorage": true,
+      "wx.removeStorageSync": true,
+      "wx.clearStorage": true,
+      "wx.clearStorageSync": true,
+      "wx.batchSetStorage": true,
+      "wx.batchSetStorageSync": true
+    }
+  }
+}

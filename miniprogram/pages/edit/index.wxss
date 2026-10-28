@@ -1,12 +1,9 @@
 /* 提交底栏：键盘关闭时固定在底部（44px 按钮 + 安全区），
    键盘打开时回到内容流，保证当前输入与错误可以滚动到键盘上方。 */
-.edit-page { padding-bottom: calc(100px + env(safe-area-inset-bottom)); }
+.edit-page { padding-bottom: calc(24px + env(safe-area-inset-bottom)); }
 .edit-page.keyboard-open { padding-bottom: calc(28px + env(safe-area-inset-bottom)); }
 .submit-bar {
-  position: fixed; left: 0; right: 0; bottom: 0; z-index: 10;
-  background: var(--color-surface, #FFFFFF);
-  border-top: 1px solid var(--color-line, #E2E7DF);
-  padding: 8px 16px calc(12px + env(safe-area-inset-bottom));
+  position: static; background: transparent; border-top: 0; padding: 16px 0 0;
 }
 .submit-bar.inline { position: static; border-top: 0; padding: 16px 0 0; background: transparent; }
 .submit-bar .primary { display: block; max-width: 560px; margin: 0 auto; }
@@ -14,3 +11,29 @@
 .input.invalid, .picker.invalid, .week-options.invalid { border-color: var(--color-error, #A33D2A); box-shadow: inset 0 0 0 1px var(--color-error, #A33D2A); }
 
 .week-options.invalid { box-shadow: inset 0 0 0 2px var(--color-error, #A33D2A); border-radius: 12px; }
+.edit-page .form-intro { margin: 8px 0 20px; }
+.edit-page .form-field { margin: 0 0 20px; }
+.edit-page .field-label { font-size: 14px; margin-bottom: 8px; }
+.edit-page .input, .edit-page .picker { height: 48px; min-height: 48px; border-color: var(--color-field-border, var(--color-control-border)); border-radius: 9px; }
+.edit-page .picker { padding: 11px 12px; }
+.edit-page .picker-select { white-space: nowrap; gap: 8px; }
+.edit-page .goal-row { gap: 8px; }
+.edit-page .goal-row picker, .unit-display { width: 86px; flex-shrink: 0; }
+.unit-display { height: 48px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--color-field-border, var(--color-line)); border-radius: 9px; font-size: 13px; color: var(--color-secondary); }
+.edit-page .field-hint { font-size: 12px; margin-top: 7px; line-height: 1.6; }
+.optional-label { font-size: 12px; font-weight: 400; color: var(--color-secondary); margin-left: 5px; }
+.minimum-heading { min-height: 44px; margin-bottom: 8px; }
+.minimum-heading .field-label { margin: 0; }
+.minimum-heading switch { transform: scale(.85); transform-origin: right center; }
+.edit-page .week-options { grid-template-columns: repeat(7,44px); gap: 5px; }
+.edit-page .week-options .day-option { width: 44px; border-radius: 8px; font-size: 13px; border-color: var(--color-field-border, var(--color-line)); }
+.edit-page .day-option.selected { color: var(--color-primary); border-color: var(--color-primary); background: var(--color-busy-bg); }
+.edit-page .frequency-actions { gap: 12px; }
+.edit-page .frequency-actions .text-button { min-height: 44px; padding: 9px 0; font-size: 12px; }
+.edit-page .form-field .form-field { margin: 0; }
+.edit-page .disclosure { border-left: 0; border-right: 0; border-radius: 0; padding: 12px 0; background: transparent; min-height: 58px; margin: 26px 0 20px; }
+.edit-page .disclosure .sub { display: none; }
+.edit-page .submit-bar .primary { min-height: 48px; }
+.edit-page .submit-bar { padding: 4px 0 0; }
+@media (max-width: 379px) { .edit-page .week-options { grid-template-columns: repeat(4,minmax(0,1fr)); gap: 8px; } .edit-page .week-options .day-option { width: 100%; } }
+@media (max-width: 359px) { .edit-page .submit-bar { padding-left: 16px; padding-right: 16px; } }
