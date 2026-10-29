@@ -2,6 +2,7 @@ const ui = require('../../services/ui');
 const actions = require('../../services/data-actions');
 const { features } = require('../../services/features-client');
 const { themeSnapshot } = require('../../services/appearance');
+const appearanceConfig = require('../../config/appearance');
 const { APP_NAME } = require('../../config/brand');
 const { OVERVIEW_PATH, STATIC_SHARE_IMAGE } = require('../../config/search-pages');
 const { supervision } = require('../../services/supervision-client');
@@ -15,7 +16,7 @@ Page(ui.withLifecycle({
       todayDone: ui.domain.tasksOn(state, date).filter(task => task.done).length }));
     const theme = themeSnapshot();
     this.setData({ sharingEnabled: features().status().publicShares, remindersEnabled: features().status().reminders, supervisionEnabled: supervision().status().enabled,
-      appearanceEnabled: theme.enabled, appearancePending: !!theme.pendingTheme,
+      appearanceEnabled: theme.enabled && appearanceConfig.showEntry !== false, appearancePending: !!theme.pendingTheme,
       appearanceLabel: theme.pendingTheme ? '主题保存结果待核对' : theme.themeName });
   },
   onAppearance() { wx.navigateTo({ url: '/pages/appearance/index' }); },

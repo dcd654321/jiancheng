@@ -123,11 +123,39 @@ test('preview keeps its root color after a forced read and delayed first read', 
   const first = delayed.page('appearance');
   first.onPick({ currentTarget: { dataset: { theme: 'paper' } } });
   assert.equal(first.data.hasRevision, false);
+  assert.equal(first.data.primaryLabel, '正在读取主题…');
+  assert.match(first.data.statusNote, /正在读取已保存的主题/);
   release();
   await delayed.controller.ensureRead();
   assert.equal(first.data.theme, 'paper');
   assert.equal(first.data.savedTheme, 'mist');
   assert.equal(delayed.calls.filter(call => call.action === 'setAppearance').length, 0);
+});
+
+test('a rejected appearance read explains the disabled save and recovers without losing the preview', async t => {
+  let unavailable = true;
+  const h = await setup(t, { route: async (event, f) => unavailable
+    ? { ok: false, code: 'NOT_ENABLED', message: '服务尚未开放' }
+    : f.features(event, f.identity) });
+  const page = await h.open('appearance');
+  page.onPick({ currentTarget: { dataset: { theme: 'paper' } } });
+  assert.equal(page.data.hasRevision, false);
+  assert.equal(page.data.primaryDisabled, true);
+  assert.equal(page.data.primaryLabel, '暂时无法保存');
+  assert.match(page.data.statusNote, /外观主题服务尚未开放/);
+  assert.deepEqual(page.data.options.map(option => option.badge), ['', '预览中']);
+  await page.onApply();
+  assert.equal(h.calls.filter(call => call.action === 'setAppearance').length, 0);
+  unavailable = false;
+  page.onReload();
+  await h.controller.ensureRead();
+  assert.equal(page.data.preview, 'paper');
+  assert.equal(page.data.hasRevision, true);
+  assert.equal(page.data.primaryDisabled, false);
+  assert.equal(page.data.primaryLabel, '使用暖纸白');
+  await page.onApply();
+  assert.equal(h.controller.current(), 'paper');
+  assert.equal(h.calls.filter(call => call.action === 'setAppearance').length, 1);
 });
 
 test('leaving without saving discards the preview while a save applies one request and keeps the page', async t => {
@@ -235,7 +263,7 @@ test('a save that outlives the page still updates the global theme without touch
   assert.equal(h.controller.current(), 'paper', '已发出的云事务由会话协调器按有效回执更新全局');
 });
 
-test('mine shows the confirmed theme name and the pending re-check note', async t => {
+test('mine hides the theme entry while retaining the appearance state', async t => {
   const h = await setup(t, { route: async (event, f) => {
     if (event.action === 'setAppearance') throw Error('timeout');
     return f.features(event, f.identity);
@@ -244,7 +272,7 @@ test('mine shows the confirmed theme name and the pending re-check note', async 
   page.onPick({ currentTarget: { dataset: { theme: 'paper' } } });
   await page.onApply();
   const mine = await h.open('mine');
-  assert.equal(mine.data.appearanceEnabled, true);
+  assert.equal(mine.data.appearanceEnabled, false);
   assert.equal(mine.data.appearancePending, true);
   assert.equal(mine.data.appearanceLabel, '主题保存结果待核对');
   const markup = fs.readFileSync(path.resolve(__dirname, '../miniprogram/pages/mine/index.wxml'), 'utf8');

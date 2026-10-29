@@ -53,11 +53,18 @@ Page(ui.withLifecycle({
     if (pending) statusNote = '主题保存结果待核对，请点“重新核对”确认，不会重复保存。';
     else if (this.data.saving) statusNote = '';
     else if (offline) statusNote = '连接网络后可保存主题；现在可以先预览。';
-    else if (!hasRevision) statusNote = '主题暂未读取，可稍后重试；预览仍可使用，读取成功后才能保存。';
+    else if (!hasRevision) {
+      if (view.loadState === 'loading') statusNote = '正在读取已保存的主题，请稍候；现在可以先预览。';
+      else if (view.loadError === '服务尚未开放' || view.loadError === '外观主题服务尚未开放') {
+        statusNote = '外观主题服务尚未开放，暂时无法保存；现在可以先预览。';
+      } else statusNote = (view.loadError || '主题暂未读取') + '；可点“重新读取主题”重试，读取成功后才能保存。';
+    }
     else if (!usingSaved) statusNote = '当前是预览，点下面的按钮保存到云端。';
     this.setData({ enabled: true, theme: preview, savedTheme: view.theme, preview, hasRevision,
-      pendingTheme: view.pendingTheme || '', offline, options: optionsFor(preview, view.theme),
-      primaryLabel: this.data.saving ? '正在保存…' : pending ? '重新核对' : usingSaved ? '正在使用' : '使用' + option.name,
+      pendingTheme: view.pendingTheme || '', offline, options: optionsFor(preview, hasRevision ? view.theme : null),
+      primaryLabel: this.data.saving ? '正在保存…' : pending ? '重新核对'
+        : !hasRevision ? (view.loadState === 'loading' ? '正在读取主题…' : '暂时无法保存')
+        : usingSaved ? '正在使用' : '使用' + option.name,
       primaryDisabled: this.data.saving || usingSaved || offline || (!pending && !hasRevision),
       statusNote }, ui.coreContentRendered(this));
   },
